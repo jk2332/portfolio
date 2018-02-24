@@ -33,7 +33,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
  */
 public class FloorController extends WorldController implements ContactListener {
     /** The texture file for the character avatar (no animation) */
-    private static final String DUDE_FILE  = "floor/dude.png";
+    private static final String DUDE_FILE  = "floor/joe.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
