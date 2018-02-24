@@ -55,7 +55,8 @@ public class ScientistModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
 
     /** The current horizontal movement of the character */
-    private float   movement;
+    private float movement;
+    private int id;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** How long until we can jump again */
@@ -86,6 +87,11 @@ public class ScientistModel extends CapsuleObstacle {
         return movement;
     }
 
+    public int getid() {return id;}
+
+    public boolean canShoot() {
+        return shootCooldown <= 0;
+    }
     /**
      * Sets left/right movement of this character.
      *
