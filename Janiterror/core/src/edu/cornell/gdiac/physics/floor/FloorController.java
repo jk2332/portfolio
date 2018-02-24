@@ -50,12 +50,8 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
-    /** Texture asset for the spinning barrier */
-    private TextureRegion barrierTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
-    /** Texture asset for the bridge plank */
-    private TextureRegion bridgeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -111,9 +107,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         avatarTexture = createTexture(manager,DUDE_FILE,false);
-        barrierTexture = createTexture(manager,BARRIER_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
-        bridgeTexture = createTexture(manager,ROPE_FILE,false);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
