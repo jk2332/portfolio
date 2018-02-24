@@ -36,9 +36,9 @@ public class JoeModel extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 5.0f;
     /** The impulse for the character jump */
-    private static final float DUDE_JUMP = 5.5f;
+//	private static final float DUDE_JUMP = 5.5f;
     /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
+//	private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
@@ -55,17 +55,19 @@ public class JoeModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
 
     /** The current horizontal movement of the character */
-    private float   movement;
+    private float   movementX;
+    private float movementY;
     /** Which direction is the character facing */
     private boolean faceRight;
+    private boolean faceUp;
     /** How long until we can jump again */
-    private int jumpCooldown;
+//	private int jumpCooldown;
     /** Whether we are actively jumping */
-    private boolean isJumping;
+//	private boolean isJumping;
     /** How long until we can shoot again */
     private int shootCooldown;
     /** Whether our feet are on the ground */
-    private boolean isGrounded;
+//	private boolean isGrounded;
     /** Whether we are actively shooting */
     private boolean isShooting;
     /** Ground sensor to represent our feet */
@@ -82,8 +84,12 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @return left/right movement of this character.
      */
-    public float getMovement() {
-        return movement;
+    public float getMovementX() {
+        return movementX;
+    }
+
+    public float getMovementY() {
+        return movementY;
     }
 
     /**
@@ -93,13 +99,22 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @param value left/right movement of this character.
      */
-    public void setMovement(float value) {
-        movement = value;
+    public void setMovementX(float value) {
+        movementX = value;
         // Change facing if appropriate
-        if (movement < 0) {
+        if (movementX < 0) {
             faceRight = false;
-        } else if (movement > 0) {
+        } else if (movementX > 0) {
             faceRight = true;
+        }
+    }
+    public void setMovementY(float value) {
+        movementY = value;
+        // Change facing if appropriate
+        if (movementY < 0) {
+            faceUp = false;
+        } else if (movementY > 0) {
+            faceUp = true;
         }
     }
 
@@ -126,36 +141,36 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @return true if the dude is actively jumping.
      */
-    public boolean isJumping() {
-        return isJumping && isGrounded && jumpCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively jumping.
-     *
-     * @param value whether the dude is actively jumping.
-     */
-    public void setJumping(boolean value) {
-        isJumping = value;
-    }
-
-    /**
-     * Returns true if the dude is on the ground.
-     *
-     * @return true if the dude is on the ground.
-     */
-    public boolean isGrounded() {
-        return isGrounded;
-    }
-
-    /**
-     * Sets whether the dude is on the ground.
-     *
-     * @param value whether the dude is on the ground.
-     */
-    public void setGrounded(boolean value) {
-        isGrounded = value;
-    }
+//	public boolean isJumping() {
+//		return isJumping && isGrounded && jumpCooldown <= 0;
+//	}
+//
+//	/**
+//	 * Sets whether the dude is actively jumping.
+//	 *
+//	 * @param value whether the dude is actively jumping.
+//	 */
+//	public void setJumping(boolean value) {
+//		isJumping = value;
+//	}
+//
+//	/**
+//	 * Returns true if the dude is on the ground.
+//	 *
+//	 * @return true if the dude is on the ground.
+//	 */
+//	public boolean isGrounded() {
+//		return isGrounded;
+//	}
+//
+//	/**
+//	 * Sets whether the dude is on the ground.
+//	 *
+//	 * @param value whether the dude is on the ground.
+//	 */
+//	public void setGrounded(boolean value) {
+//		isGrounded = value;
+//	}
 
     /**
      * Returns how much force to apply to get the dude moving
@@ -208,6 +223,10 @@ public class JoeModel extends CapsuleObstacle {
         return faceRight;
     }
 
+    public boolean isFacingUp () {
+        return faceUp;
+    }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -241,13 +260,14 @@ public class JoeModel extends CapsuleObstacle {
         setFixedRotation(true);
 
         // Gameplay attributes
-        isGrounded = false;
+//		isGrounded = false;
         isShooting = false;
-        isJumping = false;
+//		isJumping = false;
         faceRight = true;
+        faceUp = true;
 
         shootCooldown = 0;
-        jumpCooldown = 0;
+//		jumpCooldown = 0;
         setName("dude");
     }
 
@@ -300,24 +320,32 @@ public class JoeModel extends CapsuleObstacle {
         }
 
         // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
+        if (getMovementX() == 0f) {
+            forceCache.set(-getDamping()*getVX(),getMovementY());
             body.applyForce(forceCache,getPosition(),true);
         }
-
+        if (getMovementY() == 0f) {
+            forceCache.set(getMovementX(),-getDamping()*getVY());
+            body.applyForce(forceCache,getPosition(),true);
+        }
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
+        }
+        if (Math.abs(getVY()) >= getMaxSpeed()) {
+            setVY(Math.signum(getVY())*getMaxSpeed());
         }
 
+        forceCache.set(getMovementX(),getMovementY());
+        body.applyForce(forceCache,getPosition(),true);
+
+
+
         // Jump!
-        if (isJumping()) {
-            forceCache.set(0, DUDE_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
-        }
+//		if (isJumping()) {
+//			forceCache.set(0, DUDE_JUMP);
+//			body.applyLinearImpulse(forceCache,getPosition(),true);
+//		}
     }
 
     /**
@@ -329,11 +357,11 @@ public class JoeModel extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
-        if (isJumping()) {
-            jumpCooldown = JUMP_COOLDOWN;
-        } else {
-            jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
+//		if (isJumping()) {
+//			jumpCooldown = JUMP_COOLDOWN;
+//		} else {
+//			jumpCooldown = Math.max(0, jumpCooldown - 1);
+//		}
 
         if (isShooting()) {
             shootCooldown = SHOOT_COOLDOWN;

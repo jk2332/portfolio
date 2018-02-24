@@ -1,6 +1,5 @@
-package edu.cornell.gdiac.physics.floor;
 /*
- * FloorController.java
+ * PlatformController.java
  *
  * This is one of the files that you are expected to modify. Please limit changes to
  * the regions that say INSERT CODE HERE.
@@ -9,6 +8,7 @@ package edu.cornell.gdiac.physics.floor;
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
+package edu.cornell.gdiac.physics.floor;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -18,37 +18,35 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.physics.floor.JoeModel;
-import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
- * Gameplay specific controller for the platformer game.
+ * Gameplay specific controller for the platformer game.  
  *
- * You will notice that asset loading is not done with static methods this time.
- * Instance asset loading makes it easier to process our game modes in a loop, which
+ * You will notice that asset loading is not done with static methods this time.  
+ * Instance asset loading makes it easier to process our game modes in a loop, which 
  * is much more scalable. However, we still want the assets themselves to be static.
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
     /** The texture file for the character avatar (no animation) */
-    private static final String DUDE_FILE  = "platform/dude.png";
+    private static final String DUDE_FILE  = "floor/dude.png";
     /** The texture file for the spinning barrier */
-    private static final String BARRIER_FILE = "platform/barrier.png";
+    private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
-    private static final String BULLET_FILE  = "platform/bullet.png";
+    private static final String BULLET_FILE  = "floor/bullet.png";
     /** The texture file for the bridge plank */
-    private static final String ROPE_FILE  = "platform/ropebridge.png";
+    private static final String ROPE_FILE  = "floor/ropebridge.png";
 
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "platform/jump.mp3";
+    private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
-    private static final String PEW_FILE = "platform/pew.mp3";
+    private static final String PEW_FILE = "floor/pew.mp3";
     /** The sound file for a bullet collision */
-    private static final String POP_FILE = "platform/plop.mp3";
+    private static final String POP_FILE = "floor/plop.mp3";
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
@@ -127,7 +125,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     // Physics constants for initialization
     /** The new heavier gravity for this world (so it is not so floaty) */
-    private static final float  DEFAULT_GRAVITY = -14.7f;
+    private static final float  DEFAULT_GRAVITY = 0.0f;
     /** The density for most physics objects */
     private static final float  BASIC_DENSITY = 0.0f;
     /** The density for a bullet */
@@ -277,8 +275,6 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         addObject(avatar);
-
-        // Create platforms/other objects here
     }
 
     /**
@@ -317,8 +313,9 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         // Process actions in object model
-        avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
-        avatar.setJumping(InputController.getInstance().didPrimary());
+        avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
+        avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
+//		avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setShooting(InputController.getInstance().didSecondary());
 
         // Add a bullet if we fire
@@ -327,9 +324,9 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         avatar.applyForce();
-        if (avatar.isJumping()) {
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-        }
+//	    if (avatar.isJumping()) {
+//	        SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+//	    }
 
         // If we use sound, we must remember this.
         SoundController.getInstance().update();
@@ -402,11 +399,11 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             // See if we have landed on the ground.
-            if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-                    (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-                avatar.setGrounded(true);
-                sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
-            }
+//			if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+//				(avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+//				avatar.setGrounded(true);
+//				sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+//			}
 
             // Check for win condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
@@ -443,7 +440,7 @@ public class FloorController extends WorldController implements ContactListener 
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
             if (sensorFixtures.size == 0) {
-                avatar.setGrounded(false);
+//				avatar.setGrounded(false);
             }
         }
     }
