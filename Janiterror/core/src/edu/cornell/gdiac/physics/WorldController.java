@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
+import edu.cornell.gdiac.physics.floor.MopCartMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 
@@ -67,6 +68,8 @@ public abstract class WorldController implements Screen {
 	private static String EARTH_FILE = "shared/earthtile.png";
 	/** File to texture for the win door */
 	private static String GOAL_FILE = "shared/goaldoor.png";
+	/** File to texture for the mop cart */
+	private static String MOP_FILE = "shared/goaldoor.png";
 	/** Retro font for displaying messages */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
 	private static int FONT_SIZE = 64;
@@ -75,6 +78,8 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion earthTile;
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
+	/** The texture for the mop cart*/
+	protected TextureRegion mopTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
 
@@ -99,7 +104,10 @@ public abstract class WorldController implements Screen {
 		assets.add(EARTH_FILE);
 		manager.load(GOAL_FILE,Texture.class);
 		assets.add(GOAL_FILE);
-		
+		manager.load(MOP_FILE,Texture.class);
+		assets.add(MOP_FILE);
+
+
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
@@ -126,6 +134,7 @@ public abstract class WorldController implements Screen {
 		// Allocate the tiles
 		earthTile = createTexture(manager,EARTH_FILE,true);
 		goalTile  = createTexture(manager,GOAL_FILE,true);
+		mopTile = createTexture(manager,MOP_FILE, true);
 		
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
@@ -295,6 +304,13 @@ public abstract class WorldController implements Screen {
 			countdown = EXIT_COUNT;
 		}
 		complete = value;
+	}
+
+	public void setMopCart(boolean value) {
+		if (value) {
+			System.out.println("MOPCART IS TOUCHED");
+		}
+//		complete = value;
 	}
 
 	/**
