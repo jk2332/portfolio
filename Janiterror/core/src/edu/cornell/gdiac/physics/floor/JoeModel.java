@@ -88,6 +88,13 @@ public class JoeModel extends CapsuleObstacle {
         return movementX;
     }
 
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return up/down movement of this character.
+     */
     public float getMovementY() {
         return movementY;
     }
@@ -108,6 +115,14 @@ public class JoeModel extends CapsuleObstacle {
             faceRight = true;
         }
     }
+
+    /**
+     * Sets up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @param value up/down movement of this character.
+     */
     public void setMovementY(float value) {
         movementY = value;
         // Change facing if appropriate
@@ -319,6 +334,7 @@ public class JoeModel extends CapsuleObstacle {
             return;
         }
 
+        // TODO: maybe optimize later - make w less operations? doubt it matters though
         // Don't want to be moving. Damp out player motion
         if (getMovementX() == 0f) {
             forceCache.set(-getDamping()*getVX(),getMovementY());
@@ -328,6 +344,7 @@ public class JoeModel extends CapsuleObstacle {
             forceCache.set(getMovementX(),-getDamping()*getVY());
             body.applyForce(forceCache,getPosition(),true);
         }
+
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());

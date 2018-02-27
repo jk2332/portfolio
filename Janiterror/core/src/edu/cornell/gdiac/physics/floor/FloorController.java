@@ -128,8 +128,6 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  BASIC_FRICTION = 0.4f;
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
-    /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 14.0f;
     /** Offset for bullet when firing */
     private static final float  BULLET_OFFSET = 0.2f;
     /** The speed of the bullet after firing */
@@ -144,7 +142,9 @@ public class FloorController extends WorldController implements ContactListener 
             {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
                     1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
             {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-                    31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}
+                    31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
+            {1.0f, 0.0f, 1.0f,  1.0f, 31.0f,  1.0f,
+                    31.0f, 0.0f}
     };
 
     /** The outlines of all of the platforms */
@@ -163,7 +163,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     // Other game objects
     /** The goal door position */
-    private static Vector2 GOAL_POS = new Vector2(4.0f,14.0f);
+    private static Vector2 GOAL_POS = new Vector2(29.0f,15.0f);
     /** The position of the spinning barrier */
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
     /** The initial position of the dude */
@@ -284,11 +284,6 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public boolean preUpdate(float dt) {
         if (!super.preUpdate(dt)) {
-            return false;
-        }
-
-        if (!isFailure() && avatar.getY() < -1) {
-            setFailure(true);
             return false;
         }
 
