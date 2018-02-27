@@ -164,6 +164,9 @@ public class FloorController extends WorldController implements ContactListener 
     // Other game objects
     /** The goal door position */
     private static Vector2 GOAL_POS = new Vector2(4.0f,14.0f);
+
+    /** The mop cart position */
+    private static Vector2 CART_POS = new Vector2(10.0f,14.0f);
     /** The position of the spinning barrier */
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
     /** The initial position of the dude */
@@ -176,6 +179,8 @@ public class FloorController extends WorldController implements ContactListener 
     private JoeModel avatar;
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
+    /** Reference to the mopCart (for collision detection) */
+    private BoxObstacle mopCart;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -233,6 +238,20 @@ public class FloorController extends WorldController implements ContactListener 
         goalDoor.setTexture(goalTile);
         goalDoor.setName("goal");
         addObject(goalDoor);
+        // Add mopCart
+        float mopWidth  = mopTile.getRegionWidth()/scale.x;
+        float mopHeight = mopTile.getRegionHeight()/scale.y;
+        mopCart = new BoxObstacle(CART_POS.x,CART_POS.y,dwidth,dheight);
+        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
+        mopCart.setDensity(0.0f);
+        mopCart.setFriction(0.0f);
+        mopCart.setRestitution(0.0f);
+        mopCart.setSensor(true);
+        mopCart.setDrawScale(scale);
+        mopCart.setTexture(mopTile);
+        mopCart.setName("mopCart");
+        addObject(mopCart);
+        addObject(mopCart);
 
         String wname = "wall";
         for (int ii = 0; ii < WALLS.length; ii++) {
@@ -403,6 +422,10 @@ public class FloorController extends WorldController implements ContactListener 
             if ((bd1 == avatar   && bd2 == goalDoor) ||
                     (bd1 == goalDoor && bd2 == avatar)) {
                 setComplete(true);
+            }
+            if ((bd1 == avatar   && bd2 == mopCart) ||
+                    (bd1 == mopCart && bd2 == avatar)) {
+                setMopCart(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
