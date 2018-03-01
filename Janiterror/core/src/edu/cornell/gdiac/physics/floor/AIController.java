@@ -11,14 +11,15 @@
  * Based on original AI Game Lab by Yi Xu and Don Holden, 2007
  * LibGDX version, 1/24/2015
  */
-package edu.cornell.gdiac.physics.floor.monster;
+package edu.cornell.gdiac.physics.floor;
 
 import java.lang.reflect.Array;
 import java.util.*;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.Board;
-import edu.cornell.gdiac.physics.floor.*;
+import edu.cornell.gdiac.physics.floor.monster.JoeModel;
+import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
 /**
  * InputController corresponding to AI control.
@@ -75,7 +76,7 @@ public class AIController extends InputController {
      * @param board The game board (for pathfinding)
      * @param scientists The list of ships (for targetting)
      */
-    public AIController(int id, Board board, ScientistModel[] scientists) {
+    public AIController(int id, Board board, ScientistModel[] scientists, JoeModel target) {
         this.ai = (ScientistModel) Array.get(scientists, id);
         this.board = board;
         this.fleet = scientists;
@@ -85,8 +86,7 @@ public class AIController extends InputController {
         ticks = 0;
 
         // Select an initial target
-        target = null;
-        selectTarget();
+        this.target = target;
     }
 
     /**
@@ -107,7 +107,7 @@ public class AIController extends InputController {
         ticks++;
 
         // Do not need to rework ourselves every frame. Just every 10 ticks.
-        if ((ai.getid() + ticks) % 10 == 0) {
+        if ((ai.getId() + ticks) % 10 == 0) {
             // Process the FSM
             changeStateIfApplicable();
 
@@ -185,21 +185,6 @@ public class AIController extends InputController {
     }
 
     /**
-     * Acquire a target to attack (and put it in field target).
-     *
-     * Insert your checking and target selection code here. Note that this
-     * code does not need to reassign <c>target</c> every single time it is
-     * called. Like all other methods, make sure it works with any number
-     * of players (between 0 and 32 players will be checked). Also, it is a
-     * good idea to make sure the ship does not target itself or an
-     * already-fallen (e.g. inactive) ship.
-     */
-    private void selectTarget() {
-        //#region PUT YOUR CODE HERE
-        //#endregion
-    }
-
-    /**
      * Returns true if we can hit a target from here.
      *
      * Insert code to return true if a shot fired from the given (x,y) would
@@ -217,8 +202,8 @@ public class AIController extends InputController {
         if (target==null) {return false;}
         int targetx = board.screenToBoard(target.getPosition().x);
         int targety = board.screenToBoard(target.getPosition().y);
-        if (targetx==x) {int distance = Math.abs(targety-y); if (distance<=5) {return true;}}
-        if (targety==y) {int distance = Math.abs(targetx-x); if (distance<=5) {return true;}}
+        if (targetx==x) {int distance = Math.abs(targety-y); if (distance<=ATTACK_DIST) {return true;}}
+        if (targety==y) {int distance = Math.abs(targetx-x); if (distance<=ATTACK_DIST) {return true;}}
         if (board.isPowerTileAt(x, y) && Math.abs(targetx-x)==Math.abs(targety-y)) {return true;}
         return false;
         //#endregion

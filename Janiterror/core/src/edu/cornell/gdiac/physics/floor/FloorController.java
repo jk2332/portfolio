@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
+import edu.cornell.gdiac.physics.floor.monster.*;
 
 /**
  * Gameplay specific controller for the platformer game.  
@@ -47,6 +48,12 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String PEW_FILE = "floor/pew.mp3";
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
+
+    private int NUM_OF_ENEMIES=10;
+    private float ENEMY_WIDTH=100;
+    private float ENEMY_HEIGHT=100;
+    private int BOARD_WIDTH=800;
+    private int BOARD_HEIGHT=800;
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
@@ -176,6 +183,10 @@ public class FloorController extends WorldController implements ContactListener 
     private JoeModel avatar;
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
+    /** Reference to the monsters */
+    private ScientistModel[] enemies;
+    /** List of all the input AI controllers */
+    protected AIController[] controls;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -213,13 +224,13 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);
-        populateLevel();
+        populateLevel(new Board(BOARD_WIDTH, BOARD_HEIGHT));
     }
 
     /**
      * Lays out the game geography.
      */
-    private void populateLevel() {
+    private void populateLevel(Board board) {
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -269,6 +280,17 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         addObject(avatar);
+
+        ScientistModel[] monsters=new ScientistModel[NUM_OF_ENEMIES];
+        for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
+            monsters[ii]=new ScientistModel(ENEMY_WIDTH, ENEMY_HEIGHT, ii);
+        }
+        this.enemies=monsters;
+        controls = new AIController[NUM_OF_ENEMIES];
+        for (int jj=0; jj<enemies.length; jj++){
+            System.out.println(avatar);
+            controls[jj]=new AIController(jj, board, enemies, avatar);
+        }
     }
 
     /**
@@ -309,13 +331,41 @@ public class FloorController extends WorldController implements ContactListener 
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
-            createBullet();
+            createBullet(avatar);
         }
 
         avatar.applyForce();
 //	    if (avatar.isJumping()) {
 //	        SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
 //	    }
+        for (ScientistModel s : enemies) {
+            //adjustForDrift(s);
+            //checkForDeath(s);
+            if (controls[s.getId()] != null) {
+                int action = controls[s.getId()].getAction();
+                boolean firing = (action & InputController.CONTROL_FIRE) != 0;
+                s.update(action);
+                if (firing && s.canShoot()) {
+                    createBullet(s); //fix this!
+                }
+                if (action==InputController.CONTROL_MOVE_RIGHT){
+                    s.setMovementX(-s.getForce());
+                }
+                if (action==InputController.CONTROL_MOVE_LEFT){
+                    s.setMovementX(s.getForce());
+                }
+                if (action==InputController.CONTROL_MOVE_DOWN){
+                    s.setMovementY(-s.getForce());
+                }
+                if (action==InputController.CONTROL_MOVE_UP){
+                    s.setMovementY(s.getForce());
+
+                }
+            } else {
+                s.update(InputController.CONTROL_NO_ACTION);
+            }
+            //s.applyForce();
+        }
 
         // If we use sound, we must remember this.
         SoundController.getInstance().update();
@@ -324,10 +374,10 @@ public class FloorController extends WorldController implements ContactListener 
     /**
      * Add a new bullet to the world and send it in the right direction.
      */
-    private void createBullet() {
-        float offset = (avatar.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
+    private void createBullet(JoeModel player) {
+        float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
-        WheelObstacle bullet = new WheelObstacle(avatar.getX()+offset, avatar.getY(), radius);
+        WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
 
         bullet.setName("bullet");
         bullet.setDensity(HEAVY_DENSITY);
@@ -337,7 +387,30 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setGravityScale(0);
 
         // Compute position and velocity
-        float speed  = (avatar.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
+        float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
+        bullet.setVX(speed);
+        addQueuedObject(bullet);
+
+        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+    }
+
+    /**
+     * Add a new bullet to the world and send it in the right direction.
+     */
+    private void createBullet(ScientistModel player) {
+        float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
+        float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
+        WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
+
+        bullet.setName("bullet");
+        bullet.setDensity(HEAVY_DENSITY);
+        bullet.setDrawScale(scale);
+        bullet.setTexture(bulletTexture);
+        bullet.setBullet(true);
+        bullet.setGravityScale(0);
+
+        // Compute position and velocity
+        float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
         bullet.setVX(speed);
         addQueuedObject(bullet);
 

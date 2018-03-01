@@ -1,5 +1,5 @@
 /*
- * ScientistModel.java
+ * JoeModel.java
  *
  * You SHOULD NOT need to modify this file.  However, you may learn valuable lessons
  * for the rest of the lab by looking at it.
@@ -36,9 +36,9 @@ public class ScientistModel extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 5.0f;
     /** The impulse for the character jump */
-    private static final float DUDE_JUMP = 5.5f;
+//	private static final float DUDE_JUMP = 5.5f;
     /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
+//	private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
@@ -55,27 +55,31 @@ public class ScientistModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
 
     /** The current horizontal movement of the character */
-    private float movement;
-    private int id;
+    private float   movementX;
+    private float movementY;
     /** Which direction is the character facing */
     private boolean faceRight;
+    private boolean faceUp;
     /** How long until we can jump again */
-    private int jumpCooldown;
+//	private int jumpCooldown;
     /** Whether we are actively jumping */
-    private boolean isJumping;
+//	private boolean isJumping;
     /** How long until we can shoot again */
     private int shootCooldown;
     /** Whether our feet are on the ground */
-    private boolean isGrounded;
+//	private boolean isGrounded;
     /** Whether we are actively shooting */
     private boolean isShooting;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    private int id;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
+
+    public int getId(){return id;}
     /**
      * Returns left/right movement of this character.
      *
@@ -83,15 +87,31 @@ public class ScientistModel extends CapsuleObstacle {
      *
      * @return left/right movement of this character.
      */
-    public float getMovement() {
-        return movement;
+    public float getMovementX() {
+        return movementX;
     }
 
-    public int getid() {return id;}
-
+    /**
+     * Returns whether or not this ship can fire its weapon.
+     *
+     * @return whether or not this ship can fire its weapon.
+     */
     public boolean canShoot() {
         return shootCooldown <= 0;
     }
+
+
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return up/down movement of this character.
+     */
+    public float getMovementY() {
+        return movementY;
+    }
+
     /**
      * Sets left/right movement of this character.
      *
@@ -99,13 +119,30 @@ public class ScientistModel extends CapsuleObstacle {
      *
      * @param value left/right movement of this character.
      */
-    public void setMovement(float value) {
-        movement = value;
+    public void setMovementX(float value) {
+        movementX = value;
         // Change facing if appropriate
-        if (movement < 0) {
+        if (movementX < 0) {
             faceRight = false;
-        } else if (movement > 0) {
+        } else if (movementX > 0) {
             faceRight = true;
+        }
+    }
+
+    /**
+     * Sets up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @param value up/down movement of this character.
+     */
+    public void setMovementY(float value) {
+        movementY = value;
+        // Change facing if appropriate
+        if (movementY < 0) {
+            faceUp = false;
+        } else if (movementY > 0) {
+            faceUp = true;
         }
     }
 
@@ -132,36 +169,36 @@ public class ScientistModel extends CapsuleObstacle {
      *
      * @return true if the dude is actively jumping.
      */
-    public boolean isJumping() {
-        return isJumping && isGrounded && jumpCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively jumping.
-     *
-     * @param value whether the dude is actively jumping.
-     */
-    public void setJumping(boolean value) {
-        isJumping = value;
-    }
-
-    /**
-     * Returns true if the dude is on the ground.
-     *
-     * @return true if the dude is on the ground.
-     */
-    public boolean isGrounded() {
-        return isGrounded;
-    }
-
-    /**
-     * Sets whether the dude is on the ground.
-     *
-     * @param value whether the dude is on the ground.
-     */
-    public void setGrounded(boolean value) {
-        isGrounded = value;
-    }
+//	public boolean isJumping() {
+//		return isJumping && isGrounded && jumpCooldown <= 0;
+//	}
+//
+//	/**
+//	 * Sets whether the dude is actively jumping.
+//	 *
+//	 * @param value whether the dude is actively jumping.
+//	 */
+//	public void setJumping(boolean value) {
+//		isJumping = value;
+//	}
+//
+//	/**
+//	 * Returns true if the dude is on the ground.
+//	 *
+//	 * @return true if the dude is on the ground.
+//	 */
+//	public boolean isGrounded() {
+//		return isGrounded;
+//	}
+//
+//	/**
+//	 * Sets whether the dude is on the ground.
+//	 *
+//	 * @param value whether the dude is on the ground.
+//	 */
+//	public void setGrounded(boolean value) {
+//		isGrounded = value;
+//	}
 
     /**
      * Returns how much force to apply to get the dude moving
@@ -214,6 +251,10 @@ public class ScientistModel extends CapsuleObstacle {
         return faceRight;
     }
 
+    public boolean isFacingUp () {
+        return faceUp;
+    }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -224,8 +265,8 @@ public class ScientistModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public ScientistModel(float width, float height) {
-        this(0,0,width,height);
+    public ScientistModel(float width, float height, int id) {
+        this(0,0,width,height, id);
     }
 
     /**
@@ -240,20 +281,21 @@ public class ScientistModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public ScientistModel(float x, float y, float width, float height) {
+    public ScientistModel(float x, float y, float width, float height, int id) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
 
         // Gameplay attributes
-        isGrounded = false;
+//		isGrounded = false;
         isShooting = false;
-        isJumping = false;
+//		isJumping = false;
         faceRight = true;
-
+        faceUp = true;
+        this.id=id;
         shootCooldown = 0;
-        jumpCooldown = 0;
+//		jumpCooldown = 0;
         setName("dude");
     }
 
@@ -305,25 +347,35 @@ public class ScientistModel extends CapsuleObstacle {
             return;
         }
 
+        // TODO: maybe optimize later - make w less operations? doubt it matters though
         // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
+        if (getMovementX() == 0f) {
+            forceCache.set(-getDamping()*getVX(),getMovementY());
+            body.applyForce(forceCache,getPosition(),true);
+        }
+        if (getMovementY() == 0f) {
+            forceCache.set(getMovementX(),-getDamping()*getVY());
             body.applyForce(forceCache,getPosition(),true);
         }
 
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
+        }
+        if (Math.abs(getVY()) >= getMaxSpeed()) {
+            setVY(Math.signum(getVY())*getMaxSpeed());
         }
 
+        forceCache.set(getMovementX(),getMovementY());
+        body.applyForce(forceCache,getPosition(),true);
+
+
+
         // Jump!
-        if (isJumping()) {
-            forceCache.set(0, DUDE_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
-        }
+//		if (isJumping()) {
+//			forceCache.set(0, DUDE_JUMP);
+//			body.applyLinearImpulse(forceCache,getPosition(),true);
+//		}
     }
 
     /**
@@ -335,11 +387,11 @@ public class ScientistModel extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
-        if (isJumping()) {
-            jumpCooldown = JUMP_COOLDOWN;
-        } else {
-            jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
+//		if (isJumping()) {
+//			jumpCooldown = JUMP_COOLDOWN;
+//		} else {
+//			jumpCooldown = Math.max(0, jumpCooldown - 1);
+//		}
 
         if (isShooting()) {
             shootCooldown = SHOOT_COOLDOWN;
