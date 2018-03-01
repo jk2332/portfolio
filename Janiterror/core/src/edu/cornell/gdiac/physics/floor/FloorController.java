@@ -11,6 +11,10 @@
 package edu.cornell.gdiac.physics.floor;
 
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.assets.*;
@@ -164,6 +168,8 @@ public class FloorController extends WorldController implements ContactListener 
     // Other game objects
     /** The goal door position */
     private static Vector2 GOAL_POS = new Vector2(29.0f,15.0f);
+    /** The mop cart  position */
+    private static Vector2 MopCart_POS = new Vector2(10.0f,14.0f);
     /** The position of the spinning barrier */
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
     /** The initial position of the dude */
@@ -176,7 +182,8 @@ public class FloorController extends WorldController implements ContactListener 
     private JoeModel avatar;
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
-
+    /** Reference to the mopCart (for collision detection) */
+    private BoxObstacle mopCart;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -189,6 +196,7 @@ public class FloorController extends WorldController implements ContactListener 
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         setDebug(false);
         setComplete(false);
+        setMopCart(false);
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
@@ -211,6 +219,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         world = new World(gravity,false);
         world.setContactListener(this);
+        setMopCart(false);
         setComplete(false);
         setFailure(false);
         populateLevel();
@@ -233,6 +242,21 @@ public class FloorController extends WorldController implements ContactListener 
         goalDoor.setTexture(goalTile);
         goalDoor.setName("goal");
         addObject(goalDoor);
+        // Add mopcart
+        float mopwidth  = mopTile.getRegionWidth()/scale.x;
+        float mopheight= mopTile.getRegionHeight()/scale.y;
+        mopCart = new BoxObstacle(MopCart_POS.x,MopCart_POS.y,mopwidth,mopheight);
+        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
+        mopCart.setDensity(0.0f);
+        mopCart.setFriction(0.0f);
+        mopCart.setRestitution(0.0f);
+        mopCart.setSensor(true);
+        mopCart.setDrawScale(scale);
+        mopCart.setTexture(mopTile);
+        mopCart.setName("mopCart");
+        addObject(mopCart);
+
+
 
         String wname = "wall";
         for (int ii = 0; ii < WALLS.length; ii++) {
@@ -306,10 +330,14 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
 //		avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setShooting(InputController.getInstance().didSecondary());
+        avatar.setSwapping(InputController.getInstance().didPrimary());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet();
+        }
+        if (avatar.isSwapping() && isMopCart()) {
+            System.out.println("You are swapping weapons");
         }
 
         avatar.applyForce();
@@ -399,6 +427,10 @@ public class FloorController extends WorldController implements ContactListener 
                     (bd1 == goalDoor && bd2 == avatar)) {
                 setComplete(true);
             }
+            if ((bd1 == avatar   && bd2 == mopCart) ||
+                    (bd1 == mopCart && bd2 == avatar)) {
+                setMopCart(true);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -424,6 +456,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         Object bd1 = body1.getUserData();
         Object bd2 = body2.getUserData();
+
+        if ((bd1 == avatar   && bd2 == mopCart) ||
+                (bd1 == mopCart && bd2 == avatar)) {
+            setMopCart(false);
+        }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
