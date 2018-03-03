@@ -71,6 +71,8 @@ public class JoeModel extends CapsuleObstacle {
 //	private boolean isGrounded;
     /** Whether we are actively shooting */
     private boolean isShooting;
+    /** Whether we are actively swapping */
+    private boolean isSwapping;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -154,7 +156,23 @@ public class JoeModel extends CapsuleObstacle {
     public void setShooting(boolean value) {
         isShooting = value;
     }
+    /**
+     * Returns true if the dude is actively swapping.
+     *
+     * @return true if the dude is actively swapping.
+     */
+    public boolean isSwapping() {
+        return isSwapping ;
+    }
 
+    /**
+     * Sets whether the dude is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setSwapping(boolean value) {
+        isSwapping = value;
+    }
     /**
      * Returns true if the dude is actively jumping.
      *
@@ -281,6 +299,7 @@ public class JoeModel extends CapsuleObstacle {
         // Gameplay attributes
 //		isGrounded = false;
         isShooting = false;
+        isSwapping = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = true;

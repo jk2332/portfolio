@@ -72,7 +72,10 @@ public abstract class WorldController implements Screen {
 	private static String MOP_FILE = "shared/goaldoor.png";
 	/** Retro font for displaying messages */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
-	private static int FONT_SIZE = 64;
+	private static int FONT_SIZE = 32;
+    //private float scale;
+    private static float ITEM_SCALE  = 0.75f;
+
 
 	/** The texture for walls and platforms */
 	protected TextureRegion earthTile;
@@ -82,6 +85,10 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion mopTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
+    private Texture itemSwap;
+    private static final String PLAY_BTN_FILE = "shared/play.png";
+    private Texture background;
+    private static final String BACKGROUND_FILE = "shared/loading.png";
 
 	/**
 	 * Preloads the assets for this controller.
@@ -258,7 +265,7 @@ public abstract class WorldController implements Screen {
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
-
+    private boolean mopCart;
 	/**
 	 * Returns true if debug mode is active.
 	 *
@@ -308,10 +315,13 @@ public abstract class WorldController implements Screen {
 
 	public void setMopCart(boolean value) {
 		if (value) {
-			System.out.println("MOPCART IS TOUCHED");
+			System.out.println("Press O to Swap Weapons");
 		}
-//		complete = value;
+		mopCart = value;
 	}
+    public boolean isMopCart( ) {
+        return mopCart;
+    }
 
 	/**
 	 * Returns true if the level is failed.
@@ -415,6 +425,7 @@ public abstract class WorldController implements Screen {
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1,1);
 		complete = false;
+		mopCart = false;
 		failed = false;
 		debug  = false;
 		active = false;
@@ -610,8 +621,20 @@ public abstract class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
-		
-		// Final message
+		if (mopCart){
+            itemSwap = new Texture(PLAY_BTN_FILE);
+            background = new Texture(BACKGROUND_FILE);
+            Color tint1 = Color.BLACK;
+//		    Color tint2 = Color.ORANGE;
+            canvas.begin();
+            canvas.draw(background, tint1, 10.0f, 14.0f,
+                    canvas.getWidth()/2, canvas.getHeight()/2, 0, .5f, .5f);
+            canvas.drawText("OUR DESIGNER IS LAZY", displayFont, canvas.getWidth()/2, 3*canvas.getHeight()/4);
+//            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
+//                    canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
+            canvas.end();
+        }
+            // Final message
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
