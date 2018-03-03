@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.physics.floor.weapon.WeaponModel;
 import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
@@ -73,6 +74,9 @@ public class JoeModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+
+    /** The current weapons Joe is holding */
+    private WeaponModel[] weps = new WeaponModel[2];
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
