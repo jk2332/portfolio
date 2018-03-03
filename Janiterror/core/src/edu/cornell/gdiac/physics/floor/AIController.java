@@ -11,7 +11,7 @@
  * Based on original AI Game Lab by Yi Xu and Don Holden, 2007
  * LibGDX version, 1/24/2015
  */
-package edu.cornell.gdiac.physics.floor.monster;
+package edu.cornell.gdiac.physics.floor;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -19,6 +19,8 @@ import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.*;
+import edu.cornell.gdiac.physics.floor.monster.JoeModel;
+import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
 /**
  * InputController corresponding to AI control.
@@ -75,7 +77,7 @@ public class AIController extends InputController {
      * @param board The game board (for pathfinding)
      * @param scientists The list of ships (for targetting)
      */
-    public AIController(int id, Board board, ScientistModel[] scientists) {
+    public AIController(int id, Board board, ScientistModel[] scientists, JoeModel target) {
         this.ai = (ScientistModel) Array.get(scientists, id);
         this.board = board;
         this.fleet = scientists;
@@ -85,7 +87,7 @@ public class AIController extends InputController {
         ticks = 0;
 
         // Select an initial target
-        target = null;
+        this.target = target;
         selectTarget();
     }
 
@@ -107,7 +109,7 @@ public class AIController extends InputController {
         ticks++;
 
         // Do not need to rework ourselves every frame. Just every 10 ticks.
-        if ((ai.getid() + ticks) % 10 == 0) {
+        if ((ai.getId() + ticks) % 10 == 0) {
             // Process the FSM
             changeStateIfApplicable();
 
