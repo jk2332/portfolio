@@ -18,6 +18,7 @@ import java.util.*;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.Board;
+import edu.cornell.gdiac.physics.floor.*;
 import edu.cornell.gdiac.physics.floor.monster.JoeModel;
 import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
@@ -87,6 +88,7 @@ public class AIController extends InputController {
 
         // Select an initial target
         this.target = target;
+        selectTarget();
     }
 
     /**
@@ -185,6 +187,21 @@ public class AIController extends InputController {
     }
 
     /**
+     * Acquire a target to attack (and put it in field target).
+     *
+     * Insert your checking and target selection code here. Note that this
+     * code does not need to reassign <c>target</c> every single time it is
+     * called. Like all other methods, make sure it works with any number
+     * of players (between 0 and 32 players will be checked). Also, it is a
+     * good idea to make sure the ship does not target itself or an
+     * already-fallen (e.g. inactive) ship.
+     */
+    private void selectTarget() {
+        //#region PUT YOUR CODE HERE
+        //#endregion
+    }
+
+    /**
      * Returns true if we can hit a target from here.
      *
      * Insert code to return true if a shot fired from the given (x,y) would
@@ -202,8 +219,8 @@ public class AIController extends InputController {
         if (target==null) {return false;}
         int targetx = board.screenToBoard(target.getPosition().x);
         int targety = board.screenToBoard(target.getPosition().y);
-        if (targetx==x) {int distance = Math.abs(targety-y); if (distance<=ATTACK_DIST) {return true;}}
-        if (targety==y) {int distance = Math.abs(targetx-x); if (distance<=ATTACK_DIST) {return true;}}
+        if (targetx==x) {int distance = Math.abs(targety-y); if (distance<=5) {return true;}}
+        if (targety==y) {int distance = Math.abs(targetx-x); if (distance<=5) {return true;}}
         if (board.isPowerTileAt(x, y) && Math.abs(targetx-x)==Math.abs(targety-y)) {return true;}
         return false;
         //#endregion
