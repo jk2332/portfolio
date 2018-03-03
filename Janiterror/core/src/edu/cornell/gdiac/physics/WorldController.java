@@ -69,7 +69,7 @@ public abstract class WorldController implements Screen {
 	/** File to texture for the win door */
 	private static String GOAL_FILE = "shared/goaldoor.png";
 	/** File to texture for the mop cart */
-	private static String MOP_FILE = "shared/goaldoor.png";
+	private static String MOP_FILE = "shared/mop-cart.png";
 	/** Retro font for displaying messages */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
 	private static int FONT_SIZE = 32;

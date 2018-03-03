@@ -149,7 +149,7 @@ public class AIController extends InputController {
                 if (target==null) {state=FSMState.WANDER;}
                 if (Math.random()<=0.5) {state=FSMState.CHASE;}
                 else if (ticks%3==0) {state=FSMState.ATTACK;}
-                //#endregion
+                //#en8dregion
                 break;
 
             case WANDER: // Do not pre-empt with FSMState in a case
