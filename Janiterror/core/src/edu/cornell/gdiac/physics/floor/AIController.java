@@ -1,412 +1,307 @@
-/*
- * AIController.java
- *
- * This class is an inplementation of InputController that uses AI and pathfinding
- * algorithms to determine the choice of input.
- *
- * NOTE: This is the file that you need to modify.  You should not need to
- * modify any other files (though you may need to read Board.java heavily).
- *
- * Author: Walker M. White, Cristian Zaloj
- * Based on original AI Game Lab by Yi Xu and Don Holden, 2007
- * LibGDX version, 1/24/2015
- */
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package edu.cornell.gdiac.physics.floor;
 
-import java.lang.reflect.Array;
-import java.util.*;
-import com.badlogic.gdx.math.*;
-import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.Board;
-import edu.cornell.gdiac.physics.floor.*;
+import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.floor.monster.JoeModel;
 import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
-/**
- * InputController corresponding to AI control.
- *
- * REMEMBER: As an implementation of InputController you will have access to
- * the control code constants in that interface.  You will want to use them.
- */
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.Random;
+
 public class AIController extends InputController {
-    /**
-     * Enumeration to encode the finite state machine.
-     */
-    private static enum FSMState {
-        /** The ship just spawned */
-        SPAWN,
-        /** The ship is patrolling around without a target */
-        WANDER,
-        /** The ship has a target, but must get closer */
-        CHASE,
-        /** The ship has a target and is attacking it */
-        ATTACK
-    }
-
-    // Constants for chase algorithms
-    /** How close a target must be for us to chase it */
-    private static final int CHASE_DIST  = 9;
-    /** How close a target must be for us to attack it */
+    private static final int CHASE_DIST = 9;
     private static final int ATTACK_DIST = 4;
-
-    // Instance Attributes
-    /** the ai controlled by this AIController */
-    private ScientistModel ai;
-    /** The game board; used for pathfinding */
+    private ScientistModel ship;
     private Board board;
-    /** The other ships; used to find targets */
     private ScientistModel[] fleet;
-    /** The ship's current state in the FSM */
-    private FSMState state;
-    /** The target ship (to chase or attack). */
+    private AIController.FSMState state;
     private JoeModel target;
-    /** The ship's next action (may include firing). */
-    private int move; // A ControlCode
-    /** The number of ticks since we started this controller */
+    private int move;
     private long ticks;
+    private int wx = 0;
+    private int wy = 0;
 
-    // Custom fields for AI algorithms
-    //#region ADD YOUR CODE:
-
-    //#endregion
-
-    /**
-     * Creates an AIController for the ship with the given id.
-     *
-     * @param id The unique ship identifier
-     * @param board The game board (for pathfinding)
-     * @param scientists The list of ships (for targetting)
-     */
-    public AIController(int id, Board board, ScientistModel[] scientists, JoeModel target) {
-        this.ai = (ScientistModel) Array.get(scientists, id);
+    public AIController(int id, Board board, ScientistModel[] ships, JoeModel target) {
+        this.ship =  (ScientistModel) Array.get(ships, id);
         this.board = board;
-        this.fleet = scientists;
-
-        state = FSMState.SPAWN;
-        move  = CONTROL_NO_ACTION;
-        ticks = 0;
-
-        // Select an initial target
+        this.fleet = ships;
+        this.state = FSMState.SPAWN;
+        this.move = 0;
+        this.ticks = 0L;
         this.target = target;
-        selectTarget();
+        //this.selectTarget();
     }
 
-    /**
-     * Returns the action selected by this InputController
-     *
-     * The returned int is a bit-vector of more than one possible input
-     * option. This is why we do not use an enumeration of Control Codes;
-     * Java does not (nicely) provide bitwise operation support for enums.
-     *
-     * This function tests the environment and uses the FSM to chose the next
-     * action of the ship. This function SHOULD NOT need to be modified.  It
-     * just contains code that drives the functions that you need to implement.
-     *
-     * @return the action selected by this InputController
-     */
     public int getAction() {
-        // Increment the number of ticks.
-        ticks++;
-
-        // Do not need to rework ourselves every frame. Just every 10 ticks.
-        if ((ai.getId() + ticks) % 10 == 0) {
-            // Process the FSM
-            changeStateIfApplicable();
-
-            // Pathfinding
-            markGoalTiles();
-            move = getMoveAlongPathToGoalTile();
+        ++this.ticks;
+        if (((long)this.ship.getId() + this.ticks) % 10L == 0L) {
+            this.changeStateIfApplicable();
+            this.markGoalTiles();
+            this.move = this.getMoveAlongPathToGoalTile();
         }
 
-        int action = move;
-
-        // If we're attacking someone and we can shoot him now, then do so.
-        if (state == FSMState.ATTACK && canShootTarget()) {
-            action |= CONTROL_FIRE;
+        int action = this.move;
+        if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
+            action |= 16;
         }
 
         return action;
     }
 
-    // FSM Code for Targeting (MODIFY ALL THE FOLLOWING METHODS)
-
-    /**
-     * Change the state of the ship.
-     *
-     * A Finite State Machine (FSM) is just a collection of rules that,
-     * given a current state, and given certain observations about the
-     * environment, chooses a new state. For example, if we are currently
-     * in the ATTACK state, we may want to switch to the CHASE state if the
-     * target gets out of range.
-     */
     private void changeStateIfApplicable() {
-        // Add initialization code as necessary
-        //#region PUT YOUR CODE HERE
-        //#endregion
-        // Next state depends on current state.
-        switch (state) {
-            case SPAWN: // Do not pre-empt with FSMState in a case
-                // Insert checks and spawning-to-??? transition code here
-                //#region PUT YOUR CODE HERE
-                if (target==null) {state=FSMState.WANDER;}
-                if (Math.random()<=0.5) {state=FSMState.CHASE;}
-                else if (ticks%3==0) {state=FSMState.ATTACK;}
-                //#en8dregion
+        Random rand = new Random();
+        int sx = this.board.screenToBoard(this.ship.getX());
+        int sy = this.board.screenToBoard(this.ship.getY());
+        int tx;
+        int ty;
+        int dieroll;
+        switch(state) {
+            case SPAWN:
+                dieroll = rand.nextInt(4);
+                if (dieroll != 0) {
+                    this.state = FSMState.WANDER;
+                } else {
+                    this.selectTarget();
+                    if (this.target == null) {
+                        this.state = FSMState.WANDER;
+                    } else {
+                        tx = this.board.screenToBoard(this.target.getX());
+                        ty = this.board.screenToBoard(this.target.getY());
+                        if (this.manhattan(sx, sy, tx, ty) > 4) {
+                            this.state = FSMState.CHASE;
+                        } else {
+                            this.state = FSMState.ATTACK;
+                        }
+                    }
+                }
                 break;
+            case WANDER:
+                this.selectTarget();
+                if (this.target != null) {
+                    tx = this.board.screenToBoard(this.target.getX());
+                    ty = this.board.screenToBoard(this.target.getY());
+                    int dist = this.manhattan(sx, sy, tx, ty);
+                    if (dist <= 4) {
+                        this.state =FSMState.ATTACK;
+                        this.wx = -1;
+                    } else if (dist <= 9) {
+                        this.state = FSMState.CHASE;
+                        this.wx = -1;
+                    }
+                }
 
-            case WANDER: // Do not pre-empt with FSMState in a case
-                // Insert checks and moving-to-??? transition code here
-                //#region PUT YOUR CODE HERE
-                if (Math.random()<=0.7f && target!=null) {state=FSMState.CHASE;}
-                //#endregion
+                if (this.wx == sx && this.wy == sy) {
+                    this.wx = -1;
+                    this.wy = -1;
+                }
                 break;
-
-            case CHASE: // Do not pre-empt with FSMState in a case
-                // insert checks and chasing-to-??? transition code here
-                //#region PUT YOUR CODE HERE
-                if (target==null) {state=FSMState.WANDER;}
-                if (Math.random()<=0.8) {state=FSMState.ATTACK;}
-                //#endregion
+            case CHASE:
+                dieroll = rand.nextInt(20);
+                if (dieroll != 0 && this.target != null && this.target.isActive()) {
+                    tx = this.board.screenToBoard(this.target.getX());
+                    ty = this.board.screenToBoard(this.target.getY());
+                    if (this.manhattan(sx, sy, tx, ty) <= 4) {
+                        this.state =FSMState.ATTACK;
+                    }
+                } else {
+                    this.state = FSMState.WANDER;
+                }
                 break;
+            case ATTACK:
+                dieroll = rand.nextInt(100);
+                if (this.target != null && this.target.isActive()) {
+                    tx = this.board.screenToBoard(this.target.getX());
+                    ty = this.board.screenToBoard(this.target.getY());
+                    if (this.manhattan(sx, sy, tx, ty) > 4) {
+                        this.state =FSMState.CHASE;
+                        dieroll = rand.nextInt(2);
+                    }
+                } else {
+                    this.state = FSMState.WANDER;
+                }
 
-            case ATTACK: // Do not pre-empt with FSMState in a case
-                // insert checks and attacking-to-??? transition code here
-                //#region PUT YOUR CODE HERE
-                if (target==null) {state=FSMState.WANDER;}
-                if (!canShootTarget()) {state=FSMState.CHASE;}
-                if (Math.random()<=0.2f) {state=FSMState.CHASE;}
-                //#endregion
+                if (dieroll == 0) {
+                    this.state = FSMState.WANDER;
+                }
                 break;
-
             default:
-                // Unknown or unhandled state, should never get here
-                assert (false);
-                state = FSMState.WANDER; // If debugging is off
-                break;
+                assert false;
+
+                this.state = FSMState.WANDER;
         }
+
     }
 
-    /**
-     * Acquire a target to attack (and put it in field target).
-     *
-     * Insert your checking and target selection code here. Note that this
-     * code does not need to reassign <c>target</c> every single time it is
-     * called. Like all other methods, make sure it works with any number
-     * of players (between 0 and 32 players will be checked). Also, it is a
-     * good idea to make sure the ship does not target itself or an
-     * already-fallen (e.g. inactive) ship.
-     */
     private void selectTarget() {
-        //#region PUT YOUR CODE HERE
-        //#endregion
     }
 
-    /**
-     * Returns true if we can hit a target from here.
-     *
-     * Insert code to return true if a shot fired from the given (x,y) would
-     * be likely to hit the target. We can hit a target if it is in a straight
-     * line from this tile and within attack range. The implementation must take
-     * into consideration whether or not the source tile is a Power Tile.
-     *
-     * @param x The x-index of the source tile
-     * @param y The y-index of the source tile
-     *
-     * @return true if we can hit a target from here.
-     */
     private boolean canShootTargetFrom(int x, int y) {
-        //#region PUT YOUR CODE HERE
-        if (target==null) {return false;}
-        int targetx = board.screenToBoard(target.getPosition().x);
-        int targety = board.screenToBoard(target.getPosition().y);
-        if (targetx==x) {int distance = Math.abs(targety-y); if (distance<=5) {return true;}}
-        if (targety==y) {int distance = Math.abs(targetx-x); if (distance<=5) {return true;}}
-        if (board.isPowerTileAt(x, y) && Math.abs(targetx-x)==Math.abs(targety-y)) {return true;}
-        return false;
-        //#endregion
+        int tx = this.board.screenToBoard(this.target.getX());
+        int ty = this.board.screenToBoard(this.target.getY());
+        int dx = tx > x ? tx - x : x - tx;
+        int dy = ty > y ? ty - y : y - ty;
+        boolean power = this.board.isPowerTileAt(x, y);
+        boolean canhit = dx <= 4 && dy == 0;
+        canhit |= dx == 0 && dy <= 4;
+        canhit |= power && dx == dy && dx <= 3;
+        canhit &= this.board.isSafeAt(x, y);
+        return canhit;
     }
 
-    /**
-     * Returns true if we can both fire and hit our target
-     *
-     * If we can fire now, and we could hit the target from where we are,
-     * we should hit the target now.
-     *
-     * @return true if we can both fire and hit our target
-     */
     private boolean canShootTarget() {
-        //#region PUT YOUR CODE HERE
-        if (target==null) {return false;}
-        int x = board.screenToBoard(ai.getPosition().x);
-        int y = board.screenToBoard(ai.getPosition().y);
-        if (ai.canShoot() && canShootTargetFrom(x,y)) {return true;}
-        return false;
-        //#endregion
+        int sx = this.board.screenToBoard(this.ship.getX());
+        int sy = this.board.screenToBoard(this.ship.getY());
+        return this.ship.canShoot() && this.canShootTargetFrom(sx, sy);
     }
 
-    // Pathfinding Code (MODIFY ALL THE FOLLOWING METHODS)
-
-    /**
-     * Mark all desirable tiles to move to.
-     *
-     * This method implements pathfinding through the use of goal tiles.
-     * It searches for all desirable tiles to move to (there may be more than
-     * one), and marks each one as a goal. Then, the pathfinding method
-     * getMoveAlongPathToGoalTile() moves the ship towards the closest one.
-     *
-     * POSTCONDITION: There is guaranteed to be at least one goal tile
-     * when completed.
-     */
     private void markGoalTiles() {
-        // Clear out previous pathfinding data.
-        board.clearMarks();
-        boolean setGoal = false; // Until we find a goal
-        int nums=0;
-        // Add initialization code as necessary
-        //#region PUT YOUR CODE HERE
-        int currx = board.screenToBoard(ai.getPosition().x);
-        int curry = board.screenToBoard(ai.getPosition().y);
-        //#endregion
-
-        switch (state) {
-            case SPAWN: // Do not pre-empt with FSMState in a case
-                // insert code here to mark tiles (if any) that spawning ships
-                // want to go to, and set setGoal to true if we marked any.
-                // Ships in the spawning state will immediately move to another
-                // state, so there is no need for goal tiles here.
-                //#region PUT YOUR CODE HERE
-                //#endregion
+        this.board.clearMarks();
+        boolean setGoal = false;
+        int tx;
+        int ty;
+        int sy;
+        switch(state) {
+            case SPAWN:
+                setGoal = false;
                 break;
+            case WANDER:
+                Random random = new Random();
+                if (this.wx == -1) {
+                    this.wx = random.nextInt(this.board.getWidth() - 1) + 1;
+                    this.wy = random.nextInt(this.board.getHeight() - 1) + 1;
+                }
 
-            case WANDER: // Do not pre-empt with FSMState in a case
-                // Insert code to mark tiles that will cause us to move around;
-                // set setGoal to true if we marked any tiles.
-                // NOTE: this case must work even if the ship has no target
-                // (and changeStateIfApplicable should make sure we are never
-                // in a state that won't work at the time)
-                //#region PUT YOUR CODE HERE
-                for (int i=0; i<50; i++) {
-                    int x = (int) Math.random()*board.getWidth();
-                    int y = (int) Math.random()*board.getHeight();
-                    if (!(currx==x&&curry==y)) {board.setGoal(x,y); nums++;}
-                }
-                if (nums!=0) {setGoal=true;}
-                //#endregion
+                this.board.setGoal(this.wx, this.wy);
+                setGoal = true;
                 break;
+            case CHASE:
+                tx = this.board.screenToBoard(this.target.getX());
+                ty = this.board.screenToBoard(this.target.getY());
+                this.board.setGoal(tx, ty);
+                setGoal = true;
+                break;
+            case ATTACK:
+                tx = this.board.screenToBoard(this.target.getX());
+                ty = this.board.screenToBoard(this.target.getY());
+                sy = tx < 4 ? 0 : tx - 4;
+                int maxx = tx >= this.board.getWidth() - 4 ? this.board.getWidth() - 1 : tx + 4;
+                int miny = ty < 4 ? 0 : ty - 4;
+                int maxy = ty >= this.board.getHeight() - 4 ? this.board.getHeight() - 1 : ty + 4;
 
-            case CHASE: // Do not pre-empt with FSMState in a case
-                // Insert code to mark tiles that will cause us to chase the target;
-                // set setGoal to true if we marked any tiles.
-                //#region PUT YOUR CODE HERE
-                int targetx = board.screenToBoard(target.getPosition().x);
-                int targety = board.screenToBoard(target.getPosition().y);
-                for (int i=0; i<50; i++) {
-                    int temp = (int) (Math.random()*board.getWidth());
-                    if (Math.abs(currx-temp)<=CHASE_DIST) {board.setGoal(temp, targety); nums++;}
+                for(int ii = sy; ii <= maxx; ++ii) {
+                    for(int jj = miny; jj <= maxy; ++jj) {
+                        if (this.canShootTargetFrom(ii, jj)) {
+                            this.board.setGoal(ii, jj);
+                            setGoal = true;
+                        }
+                    }
                 }
-                for (int i=0; i<50; i++) {
-                    int temp = (int) (Math.random()*board.getHeight());
-                    if (Math.abs(currx-temp)<=CHASE_DIST) {board.setGoal(targetx, temp); nums++;}
-                }
-                if (nums!=0) {setGoal=true;}
-                //#endregion
-                break;
 
-            case ATTACK: // Do not pre-empt with FSMState in a case
-                // Insert code here to mark tiles we can attack from, (see
-                // canShootTargetFrom); set setGoal to true if we marked any tiles.
-                //#region PUT YOUR CODE HERE
-                int tarx = board.screenToBoard(target.getPosition().x);
-                int tary = board.screenToBoard(target.getPosition().y);
-                for (int i=0; i<100; i++) {
-                    int temp = (int) (Math.random()*board.getWidth());
-                    if (Math.abs(currx-temp)<=ATTACK_DIST) {board.setGoal(temp, tary); nums++;}
+                if (!setGoal) {
+                    tx = this.board.screenToBoard(this.target.getX());
+                    ty = this.board.screenToBoard(this.target.getY());
+                    this.board.setGoal(tx, ty);
+                    setGoal = true;
                 }
-                for (int i=0; i<100; i++) {
-                    int temp = (int) (Math.random()*board.getHeight());
-                    if (Math.abs(curry-temp)<=ATTACK_DIST) {board.setGoal(tarx, temp); nums++;}
-                }
-                if (nums!=0) {setGoal=true;}
-                //#endregion
-                break;
         }
 
-        // If we have no goals, mark current position as a goal
-        // so we do not spend time looking for nothing:
         if (!setGoal) {
-            int sx = board.screenToBoard(ai.getX());
-            int sy = board.screenToBoard(ai.getY());
-            board.setGoal(sx, sy);
+            int sx = this.board.screenToBoard(this.ship.getX());
+            sy = this.board.screenToBoard(this.ship.getY());
+            this.board.setGoal(sx, sy);
         }
+
     }
 
-    /**
-     * Returns a movement direction that moves towards a goal tile.
-     *
-     * This is one of the longest parts of the assignment. Implement
-     * breadth-first search (from 2110) to find the best goal tile
-     * to move to. However, just return the movement direction for
-     * the next step, not the entire path.
-     *
-     * The value returned should be a control code.  See PlayerController
-     * for more information on how to use control codes.
-     *
-     * @return a movement direction that moves towards a goal tile.
-     */
     private int getMoveAlongPathToGoalTile() {
-        //#region PUT YOUR CODE HERE
-        int shipx = board.screenToBoard(ai.getPosition().x);
-        int shipy = board.screenToBoard(ai.getPosition().y);
-        Vector2 desTile = bfs(new Vector2(shipx, shipy));
-        if(desTile!=null) {
-            //BFSTile nextTile = getPath(sourceTile, getDes(sourceTile)).get(1);
-            if (desTile.x > shipx ) {
-                return CONTROL_MOVE_RIGHT;
+        ArrayDeque<PathNode> queue = new ArrayDeque();
+        PathNode curr = new PathNode(this.board.screenToBoard(this.ship.getX()), this.board.screenToBoard(this.ship.getY()), 0);
+        queue.add(curr);
+        if (board.inBounds(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);
+
+        while(queue.size() != 0) {
+            curr = (PathNode)queue.pollFirst();
+            if (this.board.isGoal(curr.x, curr.y)) {
+                return curr.act;
             }
-            if (desTile.x < shipx ) {
-                return CONTROL_MOVE_LEFT;
-            }
-            if (desTile.y > shipy ) {
-                return CONTROL_MOVE_UP;
-            }
-            if (desTile.y < shipy ) {
-                return CONTROL_MOVE_DOWN;
+
+            boolean horiz = this.choosePriority(curr);
+
+            for(int ii = 0; ii < 2; ++ii) {
+                for(int jj = 0; jj < 2; ++jj) {
+                    PathNode next = new PathNode(curr.x, curr.y, curr.act);
+                    if (ii == 0 && horiz || ii == 1 && !horiz) {
+                        next.x += jj == 0 ? -1 : 1;
+                    } else {
+                        next.y += jj == 0 ? -1 : 1;
+                    }
+
+                    if (!this.board.isVisited(next.x, next.y) && this.board.isSafeAt(next.x, next.y)) {
+                        int dir;
+                        if (ii == 0 && horiz || ii == 1 && !horiz) {
+                            dir = jj == 0 ? 1 : 2;
+                        } else {
+                            dir = jj == 0 ? 4 : 8;
+                        }
+
+                        next.act = curr.act == 0 ? dir : curr.act;
+                        this.board.setVisited(next.x, next.y);
+                        queue.add(next);
+                    }
+                }
             }
         }
-        return CONTROL_NO_ACTION;
-        //#endregion
+
+        return 0;
     }
 
-    // Add any auxiliary methods or data structures here
-    //#region PUT YOUR CODE HERE
-    private Vector2 bfs(Vector2 sourceTile) {
-        Vector2 currTile = sourceTile;
-        Queue<Vector2> queue = new LinkedList<Vector2>();
-        queue.add(currTile);
-        board.setVisited((int) currTile.x, (int) currTile.y);
-        while (!queue.isEmpty()) {
-            currTile = queue.remove();
-            if (board.isGoal((int) currTile.x, (int) currTile.y)) {
-                break;
-            } else {
-                bfs_helper(new Vector2(currTile.x + 1, currTile.y), queue);
-                bfs_helper(new Vector2(currTile.x, currTile.y + 1), queue);
-                bfs_helper(new Vector2(currTile.x, currTile.y - 1), queue);
-                bfs_helper(new Vector2(currTile.x - 1, currTile.y), queue);
+    private boolean choosePriority(PathNode curr) {
+        boolean horiz = true;
+        if (this.state == FSMState.CHASE) {
+            int dx = Math.abs(curr.x - this.board.screenToBoard(this.target.getX()));
+            int dy = Math.abs(curr.y - this.board.screenToBoard(this.target.getY()));
+            if (dy > dx) {
+                horiz = false;
             }
+        } else if (this.state == FSMState.ATTACK) {
+            float a = this.ship.getAngle();
+            horiz = 0.0F <= a && a < 45.0F || 135.0F < a && a < 225.0F || 335.0F < a && a <= 360.0F;
         }
-        if (!board.isGoal((int) currTile.x, (int) currTile.y)) {
-            return null;
-        }
-        return currTile;
+
+        return horiz;
     }
 
-    private void bfs_helper (Vector2 nextTile, Queue<Vector2> q){
-        int x = (int) nextTile.x; int y = (int) nextTile.y;
-        if (board.inBounds(x,y) && (!board.isVisited(x,y)) ) {
-            q.add(nextTile); board.setVisited(x,y);
+    private int manhattan(int x0, int y0, int x1, int y1) {
+        return Math.abs(x1 - x0) + Math.abs(y1 - y0);
+    }
+
+    private static enum FSMState {
+        SPAWN,
+        WANDER,
+        CHASE,
+        ATTACK;
+
+        private FSMState() {
         }
     }
 
-    //#endregion
+    private static class PathNode {
+        public int x;
+        public int y;
+        public int act;
+
+        public PathNode(int x, int y, int act) {
+            this.x = x;
+            this.y = y;
+            this.act = act;
+        }
+    }
 }
+
