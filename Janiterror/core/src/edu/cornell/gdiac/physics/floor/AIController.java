@@ -32,7 +32,7 @@ public class AIController extends InputController {
         this.ship =  (ScientistModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
-        this.state = AIController.FSMState.SPAWN;
+        this.state = FSMState.SPAWN;
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
@@ -48,7 +48,7 @@ public class AIController extends InputController {
         }
 
         int action = this.move;
-        if (this.state == AIController.FSMState.ATTACK && this.canShootTarget()) {
+        if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action |= 16;
         }
 
@@ -66,18 +66,18 @@ public class AIController extends InputController {
             case SPAWN:
                 dieroll = rand.nextInt(4);
                 if (dieroll != 0) {
-                    this.state = AIController.FSMState.WANDER;
+                    this.state = FSMState.WANDER;
                 } else {
                     this.selectTarget();
                     if (this.target == null) {
-                        this.state = AIController.FSMState.WANDER;
+                        this.state = FSMState.WANDER;
                     } else {
                         tx = this.board.screenToBoard(this.target.getX());
                         ty = this.board.screenToBoard(this.target.getY());
                         if (this.manhattan(sx, sy, tx, ty) > 4) {
-                            this.state = AIController.FSMState.CHASE;
+                            this.state = FSMState.CHASE;
                         } else {
-                            this.state = AIController.FSMState.ATTACK;
+                            this.state = FSMState.ATTACK;
                         }
                     }
                 }
@@ -89,10 +89,10 @@ public class AIController extends InputController {
                     ty = this.board.screenToBoard(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
                     if (dist <= 4) {
-                        this.state = AIController.FSMState.ATTACK;
+                        this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= 9) {
-                        this.state = AIController.FSMState.CHASE;
+                        this.state = FSMState.CHASE;
                         this.wx = -1;
                     }
                 }
@@ -108,10 +108,10 @@ public class AIController extends InputController {
                     tx = this.board.screenToBoard(this.target.getX());
                     ty = this.board.screenToBoard(this.target.getY());
                     if (this.manhattan(sx, sy, tx, ty) <= 4) {
-                        this.state = AIController.FSMState.ATTACK;
+                        this.state =FSMState.ATTACK;
                     }
                 } else {
-                    this.state = AIController.FSMState.WANDER;
+                    this.state = FSMState.WANDER;
                 }
                 break;
             case ATTACK:
@@ -120,21 +120,21 @@ public class AIController extends InputController {
                     tx = this.board.screenToBoard(this.target.getX());
                     ty = this.board.screenToBoard(this.target.getY());
                     if (this.manhattan(sx, sy, tx, ty) > 4) {
-                        this.state = AIController.FSMState.CHASE;
+                        this.state =FSMState.CHASE;
                         dieroll = rand.nextInt(2);
                     }
                 } else {
-                    this.state = AIController.FSMState.WANDER;
+                    this.state = FSMState.WANDER;
                 }
 
                 if (dieroll == 0) {
-                    this.state = AIController.FSMState.WANDER;
+                    this.state = FSMState.WANDER;
                 }
                 break;
             default:
                 assert false;
 
-                this.state = AIController.FSMState.WANDER;
+                this.state = FSMState.WANDER;
         }
 
     }
@@ -221,13 +221,13 @@ public class AIController extends InputController {
     }
 
     private int getMoveAlongPathToGoalTile() {
-        ArrayDeque<AIController.PathNode> queue = new ArrayDeque();
-        AIController.PathNode curr = new AIController.PathNode(this.board.screenToBoard(this.ship.getX()), this.board.screenToBoard(this.ship.getY()), 0);
+        ArrayDeque<PathNode> queue = new ArrayDeque();
+        PathNode curr = new PathNode(this.board.screenToBoard(this.ship.getX()), this.board.screenToBoard(this.ship.getY()), 0);
         queue.add(curr);
         if (board.inBounds(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);
 
         while(queue.size() != 0) {
-            curr = (AIController.PathNode)queue.pollFirst();
+            curr = (PathNode)queue.pollFirst();
             if (this.board.isGoal(curr.x, curr.y)) {
                 return curr.act;
             }
@@ -236,7 +236,7 @@ public class AIController extends InputController {
 
             for(int ii = 0; ii < 2; ++ii) {
                 for(int jj = 0; jj < 2; ++jj) {
-                    AIController.PathNode next = new AIController.PathNode(curr.x, curr.y, curr.act);
+                    PathNode next = new PathNode(curr.x, curr.y, curr.act);
                     if (ii == 0 && horiz || ii == 1 && !horiz) {
                         next.x += jj == 0 ? -1 : 1;
                     } else {
@@ -262,15 +262,15 @@ public class AIController extends InputController {
         return 0;
     }
 
-    private boolean choosePriority(AIController.PathNode curr) {
+    private boolean choosePriority(PathNode curr) {
         boolean horiz = true;
-        if (this.state == AIController.FSMState.CHASE) {
+        if (this.state == FSMState.CHASE) {
             int dx = Math.abs(curr.x - this.board.screenToBoard(this.target.getX()));
             int dy = Math.abs(curr.y - this.board.screenToBoard(this.target.getY()));
             if (dy > dx) {
                 horiz = false;
             }
-        } else if (this.state == AIController.FSMState.ATTACK) {
+        } else if (this.state == FSMState.ATTACK) {
             float a = this.ship.getAngle();
             horiz = 0.0F <= a && a < 45.0F || 135.0F < a && a < 225.0F || 335.0F < a && a <= 360.0F;
         }
