@@ -132,7 +132,7 @@ public class Board {
 
     public void destroyTileAt(int x, int y) {
         if (this.inBounds(x, y)) {
-            this.getTileState(x, y).falling = true;
+            this.getTileState(x, y).falling = false;
         }
     }
 
