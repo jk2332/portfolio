@@ -10,6 +10,7 @@
  */
 package edu.cornell.gdiac.physics.floor;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -26,6 +27,8 @@ import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 import edu.cornell.gdiac.physics.floor.monster.*;
+
+import java.util.Iterator;
 
 /**
  * Gameplay specific controller for the platformer game.  
@@ -56,6 +59,12 @@ public class FloorController extends WorldController implements ContactListener 
     private int NUM_OF_ENEMIES=10;
     private int BOARD_WIDTH=32;
     private int BOARD_HEIGHT=18;
+    private static int CONTROL_NO_ACTION = 0;
+    private static int CONTROL_MOVE_LEFT = 1;
+    private static int CONTROL_MOVE_RIGHT = 2;
+    private static int CONTROL_MOVE_UP = 4;
+    private static int CONTROL_MOVE_DOWN = 8;
+    private static int CONTROL_FIRE = 16;
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
@@ -232,6 +241,8 @@ public class FloorController extends WorldController implements ContactListener 
         setMopCart(false);
         setComplete(false);
         setFailure(false);
+        enemies=new ScientistModel[NUM_OF_ENEMIES];
+        controls = new AIController[NUM_OF_ENEMIES];
         populateLevel(new Board(BOARD_WIDTH, BOARD_HEIGHT));
     }
 
@@ -302,19 +313,16 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setTexture(avatarTexture);
         addObject(avatar);
 
-        ScientistModel[] monsters=new ScientistModel[NUM_OF_ENEMIES];
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
             ScientistModel mon =new ScientistModel((float) Math.random()*BOARD_WIDTH,
                     (float) Math.random()*BOARD_HEIGHT, dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(avatarTexture);
             addObject(mon);
-            monsters[ii]=mon;
+            enemies[ii]=mon;
         }
-        this.enemies=monsters;
-        controls = new AIController[NUM_OF_ENEMIES];
-        for (int jj=0; jj<enemies.length; jj++){
-            controls[jj]=new AIController(jj, board, enemies, avatar);
+        for (ScientistModel s: enemies){
+            controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);
         }
     }
 
@@ -351,10 +359,9 @@ public class FloorController extends WorldController implements ContactListener 
         // Process actions in object model
         avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
-//		avatar.setJumping(InputController.getInstance().didPrimary());
+		//avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setShooting(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didPrimary());
-
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet(avatar);
@@ -362,42 +369,49 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping() && isMopCart()) {
             System.out.println("You are swapping weapons");
         }
-
         avatar.applyForce();
-//	    if (avatar.isJumping()) {
-//	        SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-//	    }
-        for (ScientistModel s : enemies) {
-            //adjustForDrift(s);
-            //checkForDeath(s);
-            if (controls[s.getId()] != null) {
-                int action = controls[s.getId()].getAction();
-                boolean firing = (action & InputController.CONTROL_FIRE) != 0;
-                s.update(action);
-                if (firing && s.canShoot()) {
-                    createBullet(s); //fix this!
-                }
-                if (action==InputController.CONTROL_MOVE_RIGHT){
-                    s.setMovementX(s.getForce());
-                }
-                if (action==InputController.CONTROL_MOVE_LEFT){
-                    s.setMovementX(-s.getForce());
-                }
-                if (action==InputController.CONTROL_MOVE_DOWN){
-                    s.setMovementY(-s.getForce());
-                }
-                if (action==InputController.CONTROL_MOVE_UP){
-                    s.setMovementY(s.getForce());
-
-                }
-            } else {
-                s.update(InputController.CONTROL_NO_ACTION);
-            }
-            //s.applyForce();
-        }
-
+	    //if (avatar.isJumping()) {
+	    //    SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+	    //}
         // If we use sound, we must remember this.
+        /**
+        while(true) {
+            while (true) {**/
+                for (ScientistModel s : enemies) {
+                    //this.adjustForDrift(s);
+                    //this.checkForDeath(s);
+                    if (this.controls[s.getId()] != null) {
+                        int action = this.controls[s.getId()].getAction();
+                        s.update(dt);
+                        if (s.isShooting()) {
+                            System.out.println("shoot");
+                            createBullet(s);
+                        }
+                        if (action == CONTROL_MOVE_LEFT) {
+                            System.out.println("left");
+                            s.setMovementX(-s.getForce());
+                        }
+                        if (action == CONTROL_MOVE_UP) {
+                            System.out.println("up");
+                            s.setMovementY(s.getForce());
+                        }
+                        if (action == CONTROL_MOVE_DOWN) {
+                            System.out.println("down");
+                            s.setMovementY(-s.getForce());
+                        }
+                        if (action == CONTROL_MOVE_RIGHT) {
+                            System.out.println("right");
+                            s.setMovementX(s.getForce());
+                        }
+                        s.applyForce();
+                    }
+                }
+
         SoundController.getInstance().update();
+
+        /**
+       }
+   }**/
     }
 
     /**

@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.physics.floor.weapon.WeaponModel;
 import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
@@ -70,16 +71,19 @@ public class ScientistModel extends CapsuleObstacle {
 //	private boolean isGrounded;
     /** Whether we are actively shooting */
     private boolean isShooting;
+    /** Whether we are actively swapping */
+    private boolean isSwapping;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private int id;
 
+    /** The current weapons Joe is holding */
+    private WeaponModel[] weps = new WeaponModel[2];
+
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
-
-    public int getId(){return id;}
     /**
      * Returns left/right movement of this character.
      *
@@ -90,16 +94,6 @@ public class ScientistModel extends CapsuleObstacle {
     public float getMovementX() {
         return movementX;
     }
-
-    /**
-     * Returns whether or not this ship can fire its weapon.
-     *
-     * @return whether or not this ship can fire its weapon.
-     */
-    public boolean canShoot() {
-        return shootCooldown <= 0;
-    }
-
 
     /**
      * Returns up/down movement of this character.
@@ -163,7 +157,23 @@ public class ScientistModel extends CapsuleObstacle {
     public void setShooting(boolean value) {
         isShooting = value;
     }
+    /**
+     * Returns true if the dude is actively swapping.
+     *
+     * @return true if the dude is actively swapping.
+     */
+    public boolean isSwapping() {
+        return isSwapping ;
+    }
 
+    /**
+     * Sets whether the dude is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setSwapping(boolean value) {
+        isSwapping = value;
+    }
     /**
      * Returns true if the dude is actively jumping.
      *
@@ -219,6 +229,9 @@ public class ScientistModel extends CapsuleObstacle {
     public float getDamping() {
         return DUDE_DAMPING;
     }
+    public boolean canShoot() {return shootCooldown<=0;}
+
+    public int getId() {return this.id;}
 
     /**
      * Returns the upper limit on dude left-right movement.
@@ -249,6 +262,14 @@ public class ScientistModel extends CapsuleObstacle {
      */
     public boolean isFacingRight() {
         return faceRight;
+    }
+
+    public void coolDown(boolean flag) {
+        if (flag && this.shootCooldown > 0) {
+            --this.shootCooldown;
+        } else if (!flag) {
+            this.shootCooldown = 60;
+        }
     }
 
     public boolean isFacingUp () {
@@ -290,10 +311,12 @@ public class ScientistModel extends CapsuleObstacle {
         // Gameplay attributes
 //		isGrounded = false;
         isShooting = false;
+        isSwapping = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = true;
-        this.id=id;
+        this.id = id;
+
         shootCooldown = 0;
 //		jumpCooldown = 0;
         setName("dude");
