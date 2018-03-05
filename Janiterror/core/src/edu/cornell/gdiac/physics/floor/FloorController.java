@@ -44,6 +44,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String DUDE_FILE  = "floor/joe.png";
     /** The texture file for the character avatar walking */
     private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
+    /** The texture file for the character avatar walking */
+    private static final String SCIENTIST_FILE  = "floor/scientist.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
@@ -75,6 +77,8 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion avatarTexture;
     /** Texture asset for character avatar */
     private TextureRegion avatarWalkingTexture;
+    /** Texture asset for character avatar */
+    private TextureRegion scientistTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
 
@@ -99,8 +103,10 @@ public class FloorController extends WorldController implements ContactListener 
         platformAssetState = AssetState.LOADING;
         manager.load(DUDE_FILE, Texture.class);
         assets.add(DUDE_FILE);
-        manager.load(DUDE_WALKING_FILE, Texture.class);
-        assets.add(DUDE_WALKING_FILE);
+        // manager.load(DUDE_WALKING_FILE, Texture.class); TODO
+        // assets.add(DUDE_WALKING_FILE);
+        manager.load(SCIENTIST_FILE, Texture.class);
+        assets.add(SCIENTIST_FILE);
         manager.load(BARRIER_FILE, Texture.class);
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
@@ -134,7 +140,8 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         avatarTexture = createTexture(manager,DUDE_FILE,false);
-        avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false);
+        // avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false); TODO
+        scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
 
         SoundController sounds = SoundController.getInstance();
@@ -321,14 +328,14 @@ public class FloorController extends WorldController implements ContactListener 
         avatar = new JoeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
-        avatar.setWalkingTexture(avatarWalkingTexture);
+        //avatar.setWalkingTexture(avatarWalkingTexture); // TODO drawing stuff slows frame rate?
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
             ScientistModel mon =new ScientistModel((float) Math.random()*BOARD_WIDTH,
                     (float) Math.random()*BOARD_HEIGHT, dwidth, dheight, ii);
             mon.setDrawScale(scale);
-            mon.setTexture(avatarTexture);
+            mon.setTexture(scientistTexture);
             addObject(mon);
             enemies[ii]=mon;
         }
