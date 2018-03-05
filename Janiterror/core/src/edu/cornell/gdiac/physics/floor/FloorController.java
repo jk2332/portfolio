@@ -52,6 +52,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String BULLET_FILE  = "floor/bullet.png";
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
+    private static final String BACKGROUND_FILE = "shared/loading.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -81,9 +82,13 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion scientistTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
+    /** Texture asset for the mop cart background */
+    private Texture backgroundTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
+
+
 
     /**
      * Preloads the assets for this controller.
@@ -143,6 +148,7 @@ public class FloorController extends WorldController implements ContactListener 
         // avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false); TODO
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
+        backgroundTexture = new Texture(BACKGROUND_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -220,6 +226,9 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
+
+
+    private boolean atMopCart;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -232,7 +241,7 @@ public class FloorController extends WorldController implements ContactListener 
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         setDebug(false);
         setComplete(false);
-        setMopCart(false);
+        setAtMopCart(false);
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
@@ -255,7 +264,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         world = new World(gravity,false);
         world.setContactListener(this);
-        setMopCart(false);
+        setAtMopCart(false);
         setComplete(false);
         setFailure(false);
         enemies=new ScientistModel[NUM_OF_ENEMIES];
@@ -535,7 +544,7 @@ public class FloorController extends WorldController implements ContactListener 
             }
             if ((bd1 == avatar   && bd2 == mopCart) ||
                     (bd1 == mopCart && bd2 == avatar)) {
-                setMopCart(true);
+                setAtMopCart(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -565,7 +574,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         if ((bd1 == avatar   && bd2 == mopCart) ||
                 (bd1 == mopCart && bd2 == avatar)) {
-            setMopCart(false);
+            setAtMopCart(false);
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -583,6 +592,19 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.begin();
         String hpDisplay = "HP: "+avatar.getHP();
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
+
+
+        if (atMopCart){
+            // itemSwap = new Texture(PLAY_BTN_FILE);
+            Color tint1 = Color.BLACK;
+//		    Color tint2 = Color.ORANGE;
+            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
+                    canvas.getWidth()/2, canvas.getHeight()/2, 0, .5f, .5f);
+            canvas.drawText("OUR DESIGNER IS LAZY", displayFont, canvas.getWidth()/2, 3*canvas.getHeight()/4);
+//            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
+//                    canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
+        }
+
         canvas.end();
     }
 
@@ -590,4 +612,14 @@ public class FloorController extends WorldController implements ContactListener 
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
+
+    public void setAtMopCart(boolean value) {
+        if (value) {
+            System.out.println("Press O to Swap Weapons");
+        }
+        atMopCart = value;
+    }
+    public boolean isMopCart( ) {
+        return atMopCart;
+    }
 }

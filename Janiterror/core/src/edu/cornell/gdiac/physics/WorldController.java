@@ -87,8 +87,8 @@ public abstract class WorldController implements Screen {
 	protected BitmapFont displayFont;
     private Texture itemSwap;
     private static final String PLAY_BTN_FILE = "shared/play.png";
-    private Texture background;
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    // private Texture background;
+    // private static final String BACKGROUND_FILE = "shared/loading.png";
 
 	/**
 	 * Preloads the assets for this controller.
@@ -265,7 +265,6 @@ public abstract class WorldController implements Screen {
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
-    private boolean mopCart;
 	/**
 	 * Returns true if debug mode is active.
 	 *
@@ -312,16 +311,6 @@ public abstract class WorldController implements Screen {
 		}
 		complete = value;
 	}
-
-	public void setMopCart(boolean value) {
-		if (value) {
-			System.out.println("Press O to Swap Weapons");
-		}
-		mopCart = value;
-	}
-    public boolean isMopCart( ) {
-        return mopCart;
-    }
 
 	/**
 	 * Returns true if the level is failed.
@@ -425,7 +414,6 @@ public abstract class WorldController implements Screen {
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1,1);
 		complete = false;
-		mopCart = false;
 		failed = false;
 		debug  = false;
 		active = false;
@@ -621,19 +609,6 @@ public abstract class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
-		if (mopCart){
-            itemSwap = new Texture(PLAY_BTN_FILE);
-            background = new Texture(BACKGROUND_FILE);
-            Color tint1 = Color.BLACK;
-//		    Color tint2 = Color.ORANGE;
-            canvas.begin();
-            canvas.draw(background, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2, canvas.getHeight()/2, 0, .5f, .5f);
-            canvas.drawText("OUR DESIGNER IS LAZY", displayFont, canvas.getWidth()/2, 3*canvas.getHeight()/4);
-//            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
-//                    canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
-            canvas.end();
-        }
             // Final message
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
