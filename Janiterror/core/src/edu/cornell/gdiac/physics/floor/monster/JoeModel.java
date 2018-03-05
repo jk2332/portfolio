@@ -10,6 +10,7 @@
  */
 package edu.cornell.gdiac.physics.floor.monster;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -54,6 +55,8 @@ public class JoeModel extends CapsuleObstacle {
     private static final float DUDE_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
+    /* Joe's max HP */
+    private static final int MAX_HP = 15;
 
     /** The current horizontal movement of the character */
     private float   movementX;
@@ -76,7 +79,11 @@ public class JoeModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    /** Joe's HP */
+    private int hp;
 
+    /* Joe's walking sprite */
+    protected TextureRegion textureWalking;
     /** The current weapons Joe is holding */
     private WeaponModel[] weps = new WeaponModel[2];
 
@@ -304,6 +311,8 @@ public class JoeModel extends CapsuleObstacle {
         faceRight = true;
         faceUp = true;
 
+        hp = MAX_HP;
+
         shootCooldown = 0;
 //		jumpCooldown = 0;
         setName("dude");
@@ -419,7 +428,11 @@ public class JoeModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if (movementX == 0 && movementY == 0) {
+            canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        } else {
+            canvas.draw(textureWalking,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
 
     /**
@@ -431,6 +444,23 @@ public class JoeModel extends CapsuleObstacle {
      */
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(sensorShape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+    }
+
+    /**
+     * Sets the object texture for drawing purposes.
+     *
+     * In order for drawing to work properly, you MUST set the drawScale.
+     * The drawScale converts the physics units to pixels.
+     *
+     * @param value  the object texture for drawing purposes.
+     */
+    public void setWalkingTexture(TextureRegion value) {
+        textureWalking = value;
+        origin.set(textureWalking.getRegionWidth()/2.0f, textureWalking.getRegionHeight()/2.0f);
+    }
+
+    public int getHP() {
+        return hp;
     }
 }

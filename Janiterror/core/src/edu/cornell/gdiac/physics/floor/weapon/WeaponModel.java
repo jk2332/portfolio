@@ -25,6 +25,4 @@ abstract public class WeaponModel {
     public float getRange() {
         return range;
     }
-
-    abstract public void attack();
 }

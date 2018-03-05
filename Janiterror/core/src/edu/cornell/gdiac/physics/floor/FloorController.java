@@ -42,6 +42,8 @@ import java.util.Iterator;
 public class FloorController extends WorldController implements ContactListener {
     /** The texture file for the character avatar (no animation) */
     private static final String DUDE_FILE  = "floor/joe.png";
+    /** The texture file for the character avatar walking */
+    private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
@@ -59,6 +61,9 @@ public class FloorController extends WorldController implements ContactListener 
     private int NUM_OF_ENEMIES=10;
     private int BOARD_WIDTH=32;
     private int BOARD_HEIGHT=18;
+    /** Offset for the UI on the screen */
+    private static final float UI_OFFSET   = 5.0f;
+
     private static int CONTROL_NO_ACTION = 0;
     private static int CONTROL_MOVE_LEFT = 1;
     private static int CONTROL_MOVE_RIGHT = 2;
@@ -68,6 +73,8 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
+    /** Texture asset for character avatar */
+    private TextureRegion avatarWalkingTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
 
@@ -92,6 +99,8 @@ public class FloorController extends WorldController implements ContactListener 
         platformAssetState = AssetState.LOADING;
         manager.load(DUDE_FILE, Texture.class);
         assets.add(DUDE_FILE);
+        manager.load(DUDE_WALKING_FILE, Texture.class);
+        assets.add(DUDE_WALKING_FILE);
         manager.load(BARRIER_FILE, Texture.class);
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
@@ -125,6 +134,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         avatarTexture = createTexture(manager,DUDE_FILE,false);
+        avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
 
         SoundController sounds = SoundController.getInstance();
@@ -311,6 +321,7 @@ public class FloorController extends WorldController implements ContactListener 
         avatar = new JoeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
+        avatar.setWalkingTexture(avatarWalkingTexture);
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
@@ -557,6 +568,15 @@ public class FloorController extends WorldController implements ContactListener 
 //				avatar.setGrounded(false);
             }
         }
+    }
+
+    public void draw(float delta) {
+        super.draw(delta);
+        GameCanvas canvas = super.getCanvas();
+        canvas.begin();
+        String hpDisplay = "HP: "+avatar.getHP();
+        canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
+        canvas.end();
     }
 
     /** Unused ContactListener method */
