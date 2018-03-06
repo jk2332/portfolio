@@ -55,6 +55,9 @@ public class ScientistModel extends CapsuleObstacle {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
 
+    /** The amount of max HP a scientist has */
+    private static final int MAX_HP = 5;
+
     /** The current horizontal movement of the character */
     private float   movementX;
     private float movementY;
@@ -77,6 +80,12 @@ public class ScientistModel extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private int id;
+
+    /* Whether scientist is in contact with Joe (determines whether scientist is attacking)*/
+    private boolean inContact;
+
+    /* The amount of HP the scientist has left */
+    private int hp;
 
     /** The current weapons Joe is holding */
     private WeaponModel[] weps = new WeaponModel[2];
@@ -316,6 +325,7 @@ public class ScientistModel extends CapsuleObstacle {
         faceRight = true;
         faceUp = true;
         this.id = id;
+        hp = MAX_HP;
 
         shootCooldown = 0;
 //		jumpCooldown = 0;
@@ -446,4 +456,26 @@ public class ScientistModel extends CapsuleObstacle {
         super.drawDebug(canvas);
         canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
+
+    public int getHP() {
+        return hp;
+    }
+    public void decrHP() {
+        hp -= 1; /* TODO dont do if negative */
+    }
+    public void isAttacked() {
+
+    }
+    public void setAttacked(boolean value) {
+        // TODO
+    }
+
+    public boolean getInContact() {
+        return inContact;
+    }
+
+    public void setInContact(boolean value) {
+        inContact = value;
+    }
+
 }

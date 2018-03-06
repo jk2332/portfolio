@@ -18,6 +18,11 @@ abstract public class WeaponModel {
         return maxDurability;
     }
 
+    /*TODO prevent from becoming negative */
+    public void decrDurability() {
+        durability -= 1;
+    }
+
     public int getCooldown() {
         return cooldown;
     }

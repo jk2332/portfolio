@@ -12,6 +12,7 @@
  */
 package edu.cornell.gdiac.physics.desktop;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import edu.cornell.gdiac.physics.GDXRoot;
@@ -37,6 +38,8 @@ public class DesktopLauncher {
 		config.width  = 1024;
 		config.height = 576;
 		config.resizable = false;
+		config.title = "Janiterror";
+		config.addIcon("shared/icon.png", Files.FileType.Local); // TODO: figure out how to change icon >:)
 		new LwjglApplication(new GDXRoot(), config);
 	}
 }

@@ -64,6 +64,7 @@ public class InputController {
 	private boolean secondPrevious;
 	/** Whether the teritiary action button was pressed. */
 	private boolean tertiaryPressed;
+	private boolean tertiaryPrevious;
 	/** Whether the debug toggle was pressed. */
 	private boolean debugPressed;
 	private boolean debugPrevious;
@@ -155,7 +156,7 @@ public class InputController {
 	 * @return true if the secondary action button was pressed.
 	 */
 	public boolean didTertiary() {
-		return tertiaryPressed;
+		return tertiaryPressed && !tertiaryPrevious;
 	}
 
 	/**
@@ -231,6 +232,7 @@ public class InputController {
 		// Helps us ignore buttons that are held down
 		primePrevious  = primePressed;
 		secondPrevious = secondPressed;
+		tertiaryPrevious = tertiaryPressed;
 		resetPrevious  = resetPressed;
 		debugPrevious  = debugPressed;
 		exitPrevious = exitPressed;
@@ -257,6 +259,7 @@ public class InputController {
 	 * @param scale  The drawing scale
 	 */
 	private void readGamepad(Rectangle bounds, Vector2 scale) {
+		/* TODO fix gamepad inputs (tertiary should be a button not a crosshair */
 		resetPressed = xbox.getStart();
 		exitPressed  = xbox.getBack();
 		nextPressed  = xbox.getRB();
@@ -296,36 +299,38 @@ public class InputController {
 	private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
 		// Give priority to gamepad results
 		resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
-		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
-		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Z));
+		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
+		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+		tertiaryPressed = (secondary && tertiaryPressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
+		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.M));
 		nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
 		exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
 			horizontal += 1.0f;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
 			horizontal -= 1.0f;
 		}
 
 		vertical = (secondary ? vertical : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
 			vertical += 1.0f;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
 			vertical -= 1.0f;
 		}
 
+		/*
 		// Mouse results
 		tertiaryPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
 		crosshair.set(Gdx.input.getX(), Gdx.input.getY());
 		crosshair.scl(1/scale.x,-1/scale.y);
 		crosshair.y += bounds.height;
-		clampPosition(bounds);
+		clampPosition(bounds);*/
 	}
 
 	/**

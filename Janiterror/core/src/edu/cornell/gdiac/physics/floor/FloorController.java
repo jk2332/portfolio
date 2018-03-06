@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import edu.cornell.gdiac.physics.floor.weapon.*;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
@@ -387,14 +388,21 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
 		//avatar.setJumping(InputController.getInstance().didPrimary());
-        avatar.setShooting(InputController.getInstance().didSecondary());
-        avatar.setSwapping(InputController.getInstance().didPrimary());
+        //avatar.setShooting(InputController.getInstance().didSecondary());
+        avatar.setAttacking1(InputController.getInstance().didPrimary());
+        avatar.setAttacking2(InputController.getInstance().didSecondary());
+        avatar.setSwapping(InputController.getInstance().didTertiary());
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet(avatar);
         }
-        if (avatar.isSwapping() && isMopCart()) {
+        if (avatar.isSwapping() && isAtMopCart()) {
             System.out.println("You are swapping weapons");
+        }
+        if (avatar.isAttacking1()) {
+            attack(avatar.getWep1());
+        } else if (avatar.isAttacking2()) {
+            attack(avatar.getWep2());
         }
         avatar.applyForce();
 	    //if (avatar.isJumping()) {
@@ -411,23 +419,23 @@ public class FloorController extends WorldController implements ContactListener 
                         int action = this.controls[s.getId()].getAction();
                         s.update(dt);
                         if (s.isShooting()) {
-                            System.out.println("shoot");
+                            //System.out.println("shoot");
                             createBullet(s);
                         }
                         if (action == CONTROL_MOVE_LEFT) {
-                            System.out.println("left");
+                            //System.out.println("left");
                             s.setMovementX(-s.getForce());
                         }
                         if (action == CONTROL_MOVE_UP) {
-                            System.out.println("up");
+                            //System.out.println("up");
                             s.setMovementY(s.getForce());
                         }
                         if (action == CONTROL_MOVE_DOWN) {
-                            System.out.println("down");
+                            //System.out.println("down");
                             s.setMovementY(-s.getForce());
                         }
                         if (action == CONTROL_MOVE_RIGHT) {
-                            System.out.println("right");
+                            //System.out.println("right");
                             s.setMovementX(s.getForce());
                         }
                         s.applyForce();
@@ -497,6 +505,32 @@ public class FloorController extends WorldController implements ContactListener 
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
 
+    public void attack(WeaponModel wep) { /* TODO is it okay to import weaponmodel here */
+        if (wep == null) {
+            return;
+        } else if (wep instanceof MopModel) { // TODO same q for mop model
+            MopModel mop = (MopModel) wep;
+            if (mop.getDurability() != 0) {
+                for (ScientistModel s : enemies) {
+                    if (s.getInContact()) {
+                        if (s.getHP() == 1) {
+                            s.markRemoved(true);
+                        } else {
+                            s.decrHP();
+                        }
+                        mop.decrDurability();
+                    }
+                }
+            }
+        } else if (wep instanceof SprayModel) {
+
+        } else if (wep instanceof LidModel) {
+
+        } else if (wep instanceof VacuumModel) {
+
+        }
+    }
+
 
     /**
      * Callback method for the start of a collision
@@ -536,6 +570,14 @@ public class FloorController extends WorldController implements ContactListener 
 //				avatar.setGrounded(true);
 //				sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
 //			}
+
+            if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
+                ((ScientistModel) bd2).setInContact(true);
+            }
+
+            if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
+                ((ScientistModel) bd1).setInContact(true);
+            }
 
             // Check for win condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
@@ -577,6 +619,14 @@ public class FloorController extends WorldController implements ContactListener 
             setAtMopCart(false);
         }
 
+        if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
+            ((ScientistModel) bd2).setInContact(false);
+        }
+
+        if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
+            ((ScientistModel) bd1).setInContact(false);
+        }
+
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
@@ -591,8 +641,30 @@ public class FloorController extends WorldController implements ContactListener 
         GameCanvas canvas = super.getCanvas();
         canvas.begin();
         String hpDisplay = "HP: "+avatar.getHP();
+        String wep1Display;
+        if (avatar.getWep1() != null) {
+            wep1Display = "Weapon 1: " + avatar.getWep1().getDurability();
+        } else {
+            wep1Display = "";
+        }
+        String wep2Display;
+        if (avatar.getWep2() != null) {
+            wep2Display = "Weapon 2: " + avatar.getWep2().getDurability();
+        } else {
+            wep2Display = "";
+        }
+        displayFont.setColor(Color.WHITE);
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
+        canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
 
+        displayFont.getData().setScale(0.5f);
+        for (ScientistModel s : enemies) {
+            if (!(s.isRemoved())) {
+                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
+            }
+        }
+        displayFont.getData().setScale(1.0f);
 
         if (atMopCart){
             // itemSwap = new Texture(PLAY_BTN_FILE);
@@ -600,7 +672,8 @@ public class FloorController extends WorldController implements ContactListener 
 //		    Color tint2 = Color.ORANGE;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
                     canvas.getWidth()/2, canvas.getHeight()/2, 0, .5f, .5f);
-            canvas.drawText("OUR DESIGNER IS LAZY", displayFont, canvas.getWidth()/2, 3*canvas.getHeight()/4);
+            displayFont.setColor(Color.WHITE);
+            canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
 //            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
 //                    canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
         }
@@ -619,7 +692,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         atMopCart = value;
     }
-    public boolean isMopCart( ) {
+    public boolean isAtMopCart( ) {
         return atMopCart;
     }
 }

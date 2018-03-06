@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.physics.floor.weapon.WeaponModel;
+import edu.cornell.gdiac.physics.floor.weapon.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
@@ -43,6 +43,8 @@ public class JoeModel extends CapsuleObstacle {
 //	private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
+    /** Cooldown (in animation frames) for shooting */
+    private static final int ATTACK_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -70,8 +72,14 @@ public class JoeModel extends CapsuleObstacle {
 //	private boolean isJumping;
     /** How long until we can shoot again */
     private int shootCooldown;
+    /** How long until we can attack again */
+    private int attackCooldown;
     /** Whether our feet are on the ground */
 //	private boolean isGrounded;
+    /** Whether we are actively attacking */
+    private boolean isAttacking1;
+    /** Whether we are actively attacking */
+    private boolean isAttacking2;
     /** Whether we are actively shooting */
     private boolean isShooting;
     /** Whether we are actively swapping */
@@ -81,11 +89,19 @@ public class JoeModel extends CapsuleObstacle {
     private PolygonShape sensorShape;
     /** Joe's HP */
     private int hp;
-
     /* Joe's walking sprite */
     protected TextureRegion textureWalking;
+    /* Mop */
+    MopModel mop;
+    /* Spray */
+    SprayModel spray;
+    /* Lid */
+    LidModel lid;
+    /* Vacuum */
+    VacuumModel vacuum;
     /** The current weapons Joe is holding */
-    private WeaponModel[] weps = new WeaponModel[2];
+    WeaponModel wep1;
+    WeaponModel wep2;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -163,6 +179,43 @@ public class JoeModel extends CapsuleObstacle {
     public void setShooting(boolean value) {
         isShooting = value;
     }
+
+    /**
+     * Returns true if the dude is actively firing.
+     *
+     * @return true if the dude is actively firing.
+     */
+    public boolean isAttacking1() {
+        return isAttacking1 && attackCooldown <= 0;
+    }
+
+    /**
+     * Sets whether the dude is actively firing.
+     *
+     * @param value whether the dude is actively firing.
+     */
+    public void setAttacking1(boolean value) {
+        isAttacking1 = value;
+    }
+
+    /**
+     * Returns true if the dude is actively firing.
+     *
+     * @return true if the dude is actively firing.
+     */
+    public boolean isAttacking2() {
+        return isAttacking2 && attackCooldown <= 0;
+    }
+
+    /**
+     * Sets whether the dude is actively firing.
+     *
+     * @param value whether the dude is actively firing.
+     */
+    public void setAttacking2(boolean value) {
+        isAttacking2 = value;
+    }
+
     /**
      * Returns true if the dude is actively swapping.
      *
@@ -307,13 +360,23 @@ public class JoeModel extends CapsuleObstacle {
 //		isGrounded = false;
         isShooting = false;
         isSwapping = false;
+        isAttacking1 = false;
+        isAttacking2 = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = true;
 
         hp = MAX_HP;
+        mop = new MopModel();
+        spray = new SprayModel();
+        lid = new LidModel();
+        vacuum = new VacuumModel();
+
+        wep1 = mop;
+        wep2 = null;
 
         shootCooldown = 0;
+        attackCooldown = 0;
 //		jumpCooldown = 0;
         setName("dude");
     }
@@ -418,6 +481,12 @@ public class JoeModel extends CapsuleObstacle {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
 
+        if (isAttacking1() || isAttacking2()) {
+            attackCooldown = ATTACK_COOLDOWN;
+        } else {
+            attackCooldown = Math.max(0, attackCooldown - 1);
+        }
+
         super.update(dt);
     }
 
@@ -463,5 +532,16 @@ public class JoeModel extends CapsuleObstacle {
 
     public int getHP() {
         return hp;
+    }
+    public void decrHP() {
+        hp -= 1; /* TODO dont do if negative */
+    }
+
+    public WeaponModel getWep1() {
+        return wep1;
+    }
+
+    public WeaponModel getWep2() {
+        return wep2;
     }
 }
