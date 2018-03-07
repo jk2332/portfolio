@@ -182,18 +182,19 @@ public class FloorController extends WorldController implements ContactListener 
     // Wall vertices
 
     private static final float[][] WALLS = {
-            /**
+
             {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
                     1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
             {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
                     31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
             {1.0f, 0.0f, 1.0f,  1.0f, 31.0f,  1.0f,
                     31.0f, 0.0f}
-             **/
+
     };
 
     /** The outlines of all of the platforms */
     private static final float[][] PLATFORMS = {
+            /**
             { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
             { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
             {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
@@ -204,6 +205,7 @@ public class FloorController extends WorldController implements ContactListener 
             {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
             {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
             { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+             **/
     };
 
     // Other game objects
@@ -345,7 +347,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel(4, 4, dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel((float) (30*Math.random())+1, (float) (16*Math.random())+1, dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
@@ -420,24 +422,23 @@ public class FloorController extends WorldController implements ContactListener 
                     if (this.controls[s.getId()] != null) {
                         int action = this.controls[s.getId()].getAction();
                         s.update(dt);
-                        if (s.isShooting()) {
-                            //System.out.println("shoot");
-                            createBullet(s);
+                        if (action==CONTROL_FIRE && s.canShoot()){
+
+                        }
+                        if (action == CONTROL_MOVE_DOWN) {
+                            System.out.println("down");
+                            s.setMovementY(-s.getForce());
                         }
                         if (action == CONTROL_MOVE_LEFT) {
-                            //System.out.println("left");
+                            System.out.println("left");
                             s.setMovementX(-s.getForce());
                         }
                         if (action == CONTROL_MOVE_UP) {
-                            //System.out.println("up");
+                            System.out.println("up");
                             s.setMovementY(s.getForce());
                         }
-                        if (action == CONTROL_MOVE_DOWN) {
-                            //System.out.println("down");
-                            s.setMovementY(-s.getForce());
-                        }
                         if (action == CONTROL_MOVE_RIGHT) {
-                            //System.out.println("right");
+                            System.out.println("right");
                             s.setMovementX(s.getForce());
                         }
                         s.applyForce();

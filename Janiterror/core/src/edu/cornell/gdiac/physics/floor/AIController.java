@@ -151,7 +151,7 @@ public class AIController extends InputController {
         boolean canhit = dx <= 4 && dy == 0;
         canhit |= dx == 0 && dy <= 4;
         //canhit |= power && dx == dy && dx <= 3;
-        canhit &= this.board.inBounds(x, y);
+        canhit &= this.board.isSafeAt(x, y);
         return canhit;
     }
 
@@ -223,8 +223,8 @@ public class AIController extends InputController {
 
     private int getMoveAlongPathToGoalTile() {
         ArrayDeque<PathNode> queue = new ArrayDeque();
-        System.out.println("ai positionx: "+(this.ship.getX())+" /ai positiony: "+(this.ship.getY()));
-        System.out.println("ai boardx: "+this.board.screenToBoardX(this.ship.getX())+" /ai boardy: "+this.board.screenToBoardY(this.ship.getY()));
+        //System.out.println("ai positionx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
+        System.out.println("ai boardx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
         PathNode curr = new PathNode(this.board.screenToBoardX(this.ship.getX()), this.board.screenToBoardY(this.ship.getY()), 0);
         queue.add(curr);
         if (board.inBounds(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);
@@ -246,7 +246,7 @@ public class AIController extends InputController {
                         next.y += jj == 0 ? -1 : 1;
                     }
 
-                    if (!this.board.isVisited(next.x, next.y) && this.board.inBounds(next.x, next.y)) {
+                    if (!this.board.isVisited(next.x, next.y) && this.board.isSafeAt(next.x, next.y)) {
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
                             dir = jj == 0 ? 1 : 2;

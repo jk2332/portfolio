@@ -21,16 +21,18 @@ public class Board {
     private int width;
     private int height;
     private TileState[] tiles;
-    private int BOARD_WIDTH=32;
-    private int BOARD_HEIGHT=18;
+    private float BOARD_WIDTH=32;
+    private float BOARD_HEIGHT=18;
 
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
         this.tiles = new Board.TileState[width * height];
 
-        for(int ii = 0; ii < this.tiles.length; ++ii) {
-            this.tiles[ii] = new TileState();
+        for (int ii=0; ii<width; ii++){
+            for (int jj=0; jj<height; jj++){
+                tiles[jj*width+ii]=new TileState(ii, jj, width, height);
+            }
         }
         this.resetTiles();
     }
@@ -73,15 +75,15 @@ public class Board {
     public int getHeight() {return height;}
 
     public int screenToBoardX(float f){
-        return (int) f/(BOARD_WIDTH/width);
+        return (int) (f/(BOARD_WIDTH/width));
     }
 
     public int screenToBoardY(float f){
-        return (int) f/(BOARD_HEIGHT/height);
+        return (int) (f/(BOARD_HEIGHT/height));
     }
 
     public boolean isSafeAt(int x, int y) {
-        return x >= 0 && y >= 0 && x < this.width && y < this.height ;
+        return x >= 0 && y >= 0 && x < this.width && y < this.height && !this.getTileState(x, y).falling;
     }
 
     public void clearMarks() {
@@ -98,17 +100,23 @@ public class Board {
         return x >= 0 && y >= 0 && x < this.width && y < this.height;
     }
 
-    private Board.TileState getTileState(int x, int y) {
-        return !this.inBounds(x, y) ? null : this.tiles[x * this.height + y];
+    private TileState getTileState(int x, int y) {
+        return !this.inBounds(x, y) ? null : this.tiles[width*y+x];
     }
 
     private static class TileState {
         public boolean goal;
         public boolean visited;
+        public boolean falling;
+        public int tilex;
+        public int tiley;
 
-        private TileState() {
+        private TileState(int x, int y, int width, int height) {
+            tilex=x;
+            tiley=y;
             this.goal = false;
             this.visited = false;
+            if (x==1 || y==1 || x==width || y==height) {falling=true;} else {falling=false;}
         }
     }
 
