@@ -63,8 +63,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int NUM_OF_ENEMIES=10;
-    private int BOARD_WIDTH=32;
-    private int BOARD_HEIGHT=18;
+    private int BOARD_WIDTH=1024/64;
+    private int BOARD_HEIGHT=576/64;
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
 
@@ -180,13 +180,16 @@ public class FloorController extends WorldController implements ContactListener 
     // Since these appear only once, we do not care about the magic numbers.
     // In an actual game, this information would go in a data file.
     // Wall vertices
+
     private static final float[][] WALLS = {
+            /**
             {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
                     1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
             {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
                     31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
             {1.0f, 0.0f, 1.0f,  1.0f, 31.0f,  1.0f,
                     31.0f, 0.0f}
+             **/
     };
 
     /** The outlines of all of the platforms */
@@ -342,8 +345,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) Math.random()*BOARD_WIDTH,
-                    (float) Math.random()*BOARD_HEIGHT, dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel(4, 4, dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
