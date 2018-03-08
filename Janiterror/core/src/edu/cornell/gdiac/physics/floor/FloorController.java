@@ -63,17 +63,17 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int NUM_OF_ENEMIES=10;
-    private int BOARD_WIDTH=1024/64;
-    private int BOARD_HEIGHT=576/64;
+    private int BOARD_WIDTH=1024/32;
+    private int BOARD_HEIGHT=576/32;
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
 
-    private static int CONTROL_NO_ACTION = 0;
-    private static int CONTROL_MOVE_LEFT = 1;
-    private static int CONTROL_MOVE_RIGHT = 2;
-    private static int CONTROL_MOVE_UP = 4;
-    private static int CONTROL_MOVE_DOWN = 8;
-    private static int CONTROL_FIRE = 16;
+    public static int CONTROL_NO_ACTION = 0;
+    public static int CONTROL_MOVE_LEFT = 1;
+    public static int CONTROL_MOVE_RIGHT = 2;
+    public static int CONTROL_MOVE_UP = 4;
+    public static int CONTROL_MOVE_DOWN = 8;
+    public static int CONTROL_FIRE = 16;
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
@@ -347,7 +347,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) (30*Math.random())+1, (float) (16*Math.random())+1, dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel((float) (29*Math.random())+1, (float) (15*Math.random())+1, dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
@@ -409,47 +409,36 @@ public class FloorController extends WorldController implements ContactListener 
             attack(avatar.getWep2());
         }
         avatar.applyForce();
-	    //if (avatar.isJumping()) {
-	    //    SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-	    //}
-        // If we use sound, we must remember this.
-        /**
-        while(true) {
-            while (true) {**/
-                for (ScientistModel s : enemies) {
-                    //this.adjustForDrift(s);
-                    //this.checkForDeath(s);
-                    if (this.controls[s.getId()] != null) {
-                        int action = this.controls[s.getId()].getAction();
-                        s.update(dt);
-                        if (action==CONTROL_FIRE && s.canShoot()){
 
-                        }
-                        if (action == CONTROL_MOVE_DOWN) {
-                            System.out.println("down");
-                            s.setMovementY(-s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_LEFT) {
-                            System.out.println("left");
-                            s.setMovementX(-s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_UP) {
-                            System.out.println("up");
-                            s.setMovementY(s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_RIGHT) {
-                            System.out.println("right");
-                            s.setMovementX(s.getForce());
-                        }
-                        s.applyForce();
-                    }
+        for (ScientistModel s : enemies) {
+            //this.adjustForDrift(s);
+            //this.checkForDeath(s);
+            if (this.controls[s.getId()] != null) {
+                int action = this.controls[s.getId()].getAction();
+                s.update(dt);
+                if (action==CONTROL_FIRE && s.canShoot()){
+
                 }
-
+                if (action == CONTROL_MOVE_DOWN) {
+                    System.out.println("down");
+                    s.setMovementY(-s.getForce());
+                }
+                if (action == CONTROL_MOVE_LEFT) {
+                    System.out.println("left");
+                    s.setMovementX(-s.getForce());
+                }
+                if (action == CONTROL_MOVE_UP) {
+                    System.out.println("up");
+                    s.setMovementY(s.getForce());
+                }
+                if (action == CONTROL_MOVE_RIGHT) {
+                    System.out.println("right");
+                    s.setMovementX(s.getForce());
+                }
+                s.applyForce();
+            }
+        }
         SoundController.getInstance().update();
-
-        /**
-       }
-   }**/
     }
 
     /**
