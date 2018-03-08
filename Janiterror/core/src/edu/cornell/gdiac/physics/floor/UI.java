@@ -42,6 +42,6 @@ public class UI {
 
         //durability_one = JoeModel.get_durability_one()
         //durability_two = JoeModel.get_durability_two()
-        //box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
+//        box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
     }
 }

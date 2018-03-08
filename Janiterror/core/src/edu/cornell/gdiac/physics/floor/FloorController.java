@@ -54,6 +54,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
     private static final String BACKGROUND_FILE = "shared/loading.png";
+    /** The texture file for the mop icon */
+    private static final String MOP_FILE  = "floor/mop.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -63,17 +65,17 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int NUM_OF_ENEMIES=10;
-    private int BOARD_WIDTH=32;
-    private int BOARD_HEIGHT=18;
+    private int BOARD_WIDTH=1024/32;
+    private int BOARD_HEIGHT=576/32;
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
 
-    private static int CONTROL_NO_ACTION = 0;
-    private static int CONTROL_MOVE_LEFT = 1;
-    private static int CONTROL_MOVE_RIGHT = 2;
-    private static int CONTROL_MOVE_UP = 4;
-    private static int CONTROL_MOVE_DOWN = 8;
-    private static int CONTROL_FIRE = 16;
+    public static int CONTROL_NO_ACTION = 0;
+    public static int CONTROL_MOVE_LEFT = 1;
+    public static int CONTROL_MOVE_RIGHT = 2;
+    public static int CONTROL_MOVE_UP = 4;
+    public static int CONTROL_MOVE_DOWN = 8;
+    public static int CONTROL_FIRE = 16;
 
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
@@ -85,6 +87,8 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion bulletTexture;
     /** Texture asset for the mop cart background */
     private Texture backgroundTexture;
+    /** Texture Asset for Mop Icon */
+    private Texture mopTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -119,6 +123,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(BULLET_FILE);
         manager.load(ROPE_FILE, Texture.class);
         assets.add(ROPE_FILE);
+        manager.load(MOP_FILE, Texture.class);
+        assets.add(MOP_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -150,6 +156,7 @@ public class FloorController extends WorldController implements ContactListener 
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
+        mopTexture = new Texture(MOP_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -180,17 +187,21 @@ public class FloorController extends WorldController implements ContactListener 
     // Since these appear only once, we do not care about the magic numbers.
     // In an actual game, this information would go in a data file.
     // Wall vertices
+
     private static final float[][] WALLS = {
+
             {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
                     1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
             {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
                     31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
             {1.0f, 0.0f, 1.0f,  1.0f, 31.0f,  1.0f,
                     31.0f, 0.0f}
+
     };
 
     /** The outlines of all of the platforms */
     private static final float[][] PLATFORMS = {
+            /**
             { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
             { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
             {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
@@ -201,6 +212,7 @@ public class FloorController extends WorldController implements ContactListener 
             {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
             {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
             { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+             **/
     };
 
     // Other game objects
@@ -342,8 +354,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) Math.random()*BOARD_WIDTH,
-                    (float) Math.random()*BOARD_HEIGHT, dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel((float) (29*Math.random())+1, (float) (15*Math.random())+1, dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
@@ -405,48 +416,36 @@ public class FloorController extends WorldController implements ContactListener 
             attack(avatar.getWep2());
         }
         avatar.applyForce();
-	    //if (avatar.isJumping()) {
-	    //    SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-	    //}
-        // If we use sound, we must remember this.
-        /**
-        while(true) {
-            while (true) {**/
-                for (ScientistModel s : enemies) {
-                    //this.adjustForDrift(s);
-                    //this.checkForDeath(s);
-                    if (this.controls[s.getId()] != null) {
-                        int action = this.controls[s.getId()].getAction();
-                        s.update(dt);
-                        if (s.isShooting()) {
-                            //System.out.println("shoot");
-                            createBullet(s);
-                        }
-                        if (action == CONTROL_MOVE_LEFT) {
-                            //System.out.println("left");
-                            s.setMovementX(-s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_UP) {
-                            //System.out.println("up");
-                            s.setMovementY(s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_DOWN) {
-                            //System.out.println("down");
-                            s.setMovementY(-s.getForce());
-                        }
-                        if (action == CONTROL_MOVE_RIGHT) {
-                            //System.out.println("right");
-                            s.setMovementX(s.getForce());
-                        }
-                        s.applyForce();
-                    }
+
+        for (ScientistModel s : enemies) {
+            //this.adjustForDrift(s);
+            //this.checkForDeath(s);
+            if (this.controls[s.getId()] != null) {
+                int action = this.controls[s.getId()].getAction();
+                s.update(dt);
+                if (action==CONTROL_FIRE && s.canShoot()){
+
                 }
-
+                if (action == CONTROL_MOVE_DOWN) {
+                    System.out.println("down");
+                    s.setMovementY(-s.getForce());
+                }
+                if (action == CONTROL_MOVE_LEFT) {
+                    System.out.println("left");
+                    s.setMovementX(-s.getForce());
+                }
+                if (action == CONTROL_MOVE_UP) {
+                    System.out.println("up");
+                    s.setMovementY(s.getForce());
+                }
+                if (action == CONTROL_MOVE_RIGHT) {
+                    System.out.println("right");
+                    s.setMovementX(s.getForce());
+                }
+                s.applyForce();
+            }
+        }
         SoundController.getInstance().update();
-
-        /**
-       }
-   }**/
     }
 
     /**
@@ -644,23 +643,40 @@ public class FloorController extends WorldController implements ContactListener 
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
         canvas.begin();
-        String hpDisplay = "HP: "+avatar.getHP();
+//        String hpDisplay = "HP: " + avatar.getHP();
+        String hpDisplay = "HP: ";
         String wep1Display;
         if (avatar.getWep1() != null) {
-            wep1Display = "Weapon 1: " + avatar.getWep1().getDurability();
+            wep1Display = "Weapon 1: ";
         } else {
             wep1Display = "";
         }
         String wep2Display;
         if (avatar.getWep2() != null) {
-            wep2Display = "Weapon 2: " + avatar.getWep2().getDurability();
+            wep2Display = "Weapon 2: ";
         } else {
             wep2Display = "";
         }
+
         displayFont.setColor(Color.WHITE);
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
         canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
         canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+
+        /* THIS ACTUALLY WILL BE HOW TO DO HP SPONGES, not durability */
+        /* Show Multiple Mop Icons */
+        int margin = 0;
+        int durability = avatar.getWep1().getDurability();
+        for (int j = 0; j < durability; j++) {
+            canvas.draw(mopTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
+            margin = margin + 30;
+        }
+
+        /* Durability Percent Bars */
+        int max_durability = avatar.getWep1().getMaxDurability();
+        int min_durability = 0;
+        float step = 1 / max_durability;
+//        box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
 
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
