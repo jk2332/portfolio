@@ -54,6 +54,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
     private static final String BACKGROUND_FILE = "shared/loading.png";
+    /** The texture file for the mop icon */
+    private static final String MOP_FILE  = "floor/mop.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -85,6 +87,8 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion bulletTexture;
     /** Texture asset for the mop cart background */
     private Texture backgroundTexture;
+    /** Texture Asset for Mop Icon */
+    private Texture mopTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -119,6 +123,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(BULLET_FILE);
         manager.load(ROPE_FILE, Texture.class);
         assets.add(ROPE_FILE);
+        manager.load(MOP_FILE, Texture.class);
+        assets.add(MOP_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -150,6 +156,7 @@ public class FloorController extends WorldController implements ContactListener 
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
+        mopTexture = new Texture(MOP_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -643,23 +650,34 @@ public class FloorController extends WorldController implements ContactListener 
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
         canvas.begin();
-        String hpDisplay = "HP: "+avatar.getHP();
+//        String hpDisplay = "HP: " + avatar.getHP();
+        String hpDisplay = "HP: ";
         String wep1Display;
         if (avatar.getWep1() != null) {
-            wep1Display = "Weapon 1: " + avatar.getWep1().getDurability();
+            wep1Display = "Weapon 1: ";
         } else {
             wep1Display = "";
         }
         String wep2Display;
         if (avatar.getWep2() != null) {
-            wep2Display = "Weapon 2: " + avatar.getWep2().getDurability();
+            wep2Display = "Weapon 2: ";
         } else {
             wep2Display = "";
         }
+
         displayFont.setColor(Color.WHITE);
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
         canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
         canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+
+        /* THIS ACTUALLY WILL BE HOW TO DO HP SPONGES, not durability */
+        /* Show Multiple Mop Icons */
+        int margin = 0;
+        int durability = avatar.getWep1().getDurability();
+        for (int j = 0; j < durability; j++) {
+            canvas.draw(mopTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
+            margin = margin + 30;
+        }
 
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
