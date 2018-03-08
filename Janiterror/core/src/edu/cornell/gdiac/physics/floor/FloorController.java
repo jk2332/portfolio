@@ -668,6 +668,12 @@ public class FloorController extends WorldController implements ContactListener 
             margin = margin + 30;
         }
 
+        /* Durability Percent Bars */
+        int max_durability = avatar.getWep1().getMaxDurability();
+        int min_durability = 0;
+        float step = 1 / max_durability;
+//        box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
+
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
             if (!(s.isRemoved())) {
