@@ -573,10 +573,12 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
+                System.out.println("in contact");
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
+                System.out.println("in contact");
             }
 
             // Check for win condition
@@ -621,10 +623,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
