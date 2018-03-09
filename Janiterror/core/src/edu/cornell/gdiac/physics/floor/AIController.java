@@ -43,7 +43,7 @@ public class AIController extends InputController {
         ++this.ticks;
         if (((long)this.ship.getId() + this.ticks) % 10L == 0L) {
             this.changeStateIfApplicable();
-            this.markGoalTiles(); System.out.println("id: "+ship.getId());
+            this.markGoalTiles(); //System.out.println("id: "+ship.getId());
             this.move = this.getMoveAlongPathToGoalTile();
         }
 
