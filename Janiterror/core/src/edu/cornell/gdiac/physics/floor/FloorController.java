@@ -64,7 +64,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int NUM_OF_ENEMIES=10;
+    private int NUM_OF_ENEMIES=1;
     private int BOARD_WIDTH=1024/32;
     private int BOARD_HEIGHT=576/32;
     /** Offset for the UI on the screen */
@@ -242,6 +242,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** List of all the input AI controllers */
     protected AIController[] controls;
 
+    private Board board;
+
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
 
@@ -287,13 +289,14 @@ public class FloorController extends WorldController implements ContactListener 
         setFailure(false);
         enemies=new ScientistModel[NUM_OF_ENEMIES];
         controls = new AIController[NUM_OF_ENEMIES];
-        populateLevel(new Board(BOARD_WIDTH, BOARD_HEIGHT));
+        board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
+        populateLevel();
     }
 
     /**
      * Lays out the game geography.
      */
-    private void populateLevel(Board board) {
+    private void populateLevel() {
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -436,19 +439,19 @@ public class FloorController extends WorldController implements ContactListener 
 
                 }
                 if (action == CONTROL_MOVE_DOWN) {
-                    System.out.println("down");
+                    //System.out.println("down");
                     s.setMovementY(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_LEFT) {
-                    System.out.println("left");
+                    //System.out.println("left");
                     s.setMovementX(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_UP) {
-                    System.out.println("up");
+                    //System.out.println("up");
                     s.setMovementY(s.getForce());
                 }
                 if (action == CONTROL_MOVE_RIGHT) {
-                    System.out.println("right");
+                    //System.out.println("right");
                     s.setMovementX(s.getForce());
                 }
                 s.applyForce();
@@ -520,7 +523,9 @@ public class FloorController extends WorldController implements ContactListener 
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 for (ScientistModel s : enemies) {
-                    if (s.getInContact()) {
+                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2
+                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
+                    if (inRange && !s.isRemoved()) {
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
                         } else {
@@ -581,10 +586,12 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
+                System.out.println("in contact");
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
+                System.out.println("in contact");
             }
 
             // Check for win condition
@@ -629,10 +636,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
