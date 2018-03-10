@@ -12,10 +12,9 @@ package edu.cornell.gdiac.physics.floor;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.assets.*;
@@ -56,6 +55,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String BACKGROUND_FILE = "shared/loading.png";
     /** The texture file for the mop icon */
     private static final String MOP_FILE  = "floor/mop.png";
+    private static final String HEART_FILE  = "floor/heart.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -89,6 +89,8 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture backgroundTexture;
     /** Texture Asset for Mop Icon */
     private Texture mopTexture;
+    /** Texture Asset for Mop Icon */
+    private Texture heartTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -125,6 +127,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(ROPE_FILE);
         manager.load(MOP_FILE, Texture.class);
         assets.add(MOP_FILE);
+        manager.load(HEART_FILE, Texture.class);
+        assets.add(HEART_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -157,6 +161,7 @@ public class FloorController extends WorldController implements ContactListener 
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
         mopTexture = new Texture(MOP_FILE);
+        heartTexture = new Texture(HEART_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -407,6 +412,10 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isShooting()) {
             createBullet(avatar);
         }
+        if (isAtMopCart()) {
+            //recharge durability of weapon 1
+            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+        }
         if (avatar.isSwapping() && isAtMopCart()) {
             System.out.println("You are swapping weapons");
         }
@@ -640,7 +649,7 @@ public class FloorController extends WorldController implements ContactListener 
         GameCanvas canvas = super.getCanvas();
         canvas.begin();
 //        String hpDisplay = "HP: " + avatar.getHP();
-        String hpDisplay = "HP: ";
+        String hpDisplay = "HP:";
         String wep1Display;
         if (avatar.getWep1() != null) {
             wep1Display = "Weapon 1: ";
@@ -659,20 +668,60 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
         canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
 
-        /* THIS ACTUALLY WILL BE HOW TO DO HP SPONGES, not durability */
-        /* Show Multiple Mop Icons */
+        /* Show Multiple HP and Mop Icons */
         int margin = 0;
+        int HP = avatar.getHP();
+        for (int j = 0; j < HP; j++) {
+            canvas.draw(heartTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
+            margin = margin + 35;
+        }
+        int margin2 = 0;
         int durability = avatar.getWep1().getDurability();
         for (int j = 0; j < durability; j++) {
-            canvas.draw(mopTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
-            margin = margin + 30;
+            canvas.draw(mopTexture, UI_OFFSET + 200 + margin2, canvas.getHeight()-UI_OFFSET - 70);
+            margin2 = margin2 + 25;
         }
 
         /* Durability Percent Bars */
         int max_durability = avatar.getWep1().getMaxDurability();
         int min_durability = 0;
         float step = 1 / max_durability;
-//        box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
+
+        /* Online Code Insert */
+//        Pixmap pixmap = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+//        pixmap.setColor(Color.RED);
+//        pixmap.fill();
+//        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+//        pixmap.dispose();
+//        ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle();
+//        progressBarStyle.background = drawable;
+//        pixmap = new Pixmap(0, 20, Pixmap.Format.RGBA8888);
+//        pixmap.setColor(Color.GREEN);
+//        pixmap.fill();
+//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+//        pixmap.dispose();
+//        progressBarStyle.knob = drawable;
+//
+//        Pixmap pixmap2 = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+//        pixmap2.setColor(Color.GREEN);
+//        pixmap2.fill();
+//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap2)));
+//        pixmap2.dispose();
+//        progressBarStyle.knobBefore = drawable;
+//
+//        Stage stage = new Stage();
+//        ProgressBar healthBar = new ProgressBar(0.0f, 1.0f, 0.01f, false, progressBarStyle);
+//        healthBar.setValue(0.5f);
+//        healthBar.setAnimateDuration(0.25f);
+//        healthBar.setBounds(10, 10, 100, 20);
+//        stage.addActor(healthBar);
+//        stage.draw();
+//        stage.act();
+//        stage.dispose();
+
+
+//        ProgressBar.ProgressBarStyle barstyle = new ProgressBar.ProgressBarStyle();
+//        ProgressBar(min_durability, max_durability, step, false, ProgressBar.ProgressBarStyle style);
 
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
@@ -707,6 +756,8 @@ public class FloorController extends WorldController implements ContactListener 
             System.out.println("Press O to Swap Weapons");
         }
         atMopCart = value;
+
+        //get player durability and change it
     }
     public boolean isAtMopCart( ) {
         return atMopCart;

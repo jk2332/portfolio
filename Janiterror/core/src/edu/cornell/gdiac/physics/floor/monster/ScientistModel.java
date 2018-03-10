@@ -56,7 +56,7 @@ public class ScientistModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
 
     /** The amount of max HP a scientist has */
-    private static final int MAX_HP = 5;
+    private static final int MAX_HP = 2;
 
     /** The current horizontal movement of the character */
     private float   movementX;
