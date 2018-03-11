@@ -249,6 +249,7 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     private boolean atMopCart;
+    private boolean bulletTouch;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -263,6 +264,7 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setAtMopCart(false);
         setFailure(false);
+        setBulletTouch(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
     }
@@ -287,6 +289,7 @@ public class FloorController extends WorldController implements ContactListener 
         setAtMopCart(false);
         setComplete(false);
         setFailure(false);
+        setBulletTouch(false);
         enemies=new ScientistModel[NUM_OF_ENEMIES];
         controls = new AIController[NUM_OF_ENEMIES];
         board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
@@ -412,12 +415,13 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setAttacking2(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didTertiary());
         // Add a bullet if we fire
-        if (avatar.isShooting()) {
+        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0) {
             createBullet(avatar);
         }
         if (isAtMopCart()) {
             //recharge durability of weapon 1
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
         }
         if (avatar.isSwapping() && isAtMopCart()) {
             System.out.println("You are swapping weapons");
@@ -467,7 +471,6 @@ public class FloorController extends WorldController implements ContactListener 
         float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
-
         bullet.setName("bullet");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
@@ -515,6 +518,14 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
+    public void removeBullet2(Obstacle bullet,ScientistModel scientist) {
+        bullet.markRemoved(true);
+        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
+        scientist.decrHP();
+        if (scientist.getHP()<= 0) {
+            scientist.markRemoved(true);
+        }
+    }
 
     public void attack(WeaponModel wep) { /* TODO is it okay to import weaponmodel here */
         if (wep == null) {
@@ -523,7 +534,7 @@ public class FloorController extends WorldController implements ContactListener 
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 for (ScientistModel s : enemies) {
-                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2
+                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX())) <= 2
                             && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
                     if (inRange && !s.isRemoved()) {
                         if (s.getHP() == 1) {
@@ -536,11 +547,33 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         } else if (wep instanceof SprayModel) {
+            SprayModel spray = (SprayModel) wep;
+            if (spray.getDurability() != 0) {
+                spray.decrDurability();
+                for (ScientistModel s : enemies) {
+                    for (Obstacle obj : objects) {
+                        if (obj.isBullet()) {
+                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
+                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
 
-        } else if (wep instanceof LidModel) {
+                            if (inRangeB && !s.isRemoved()) {
+                                if (s.getHP() == 1) {
+                                    s.markRemoved(true);
+                                } else {
+                                    s.decrHP();
 
-        } else if (wep instanceof VacuumModel) {
+                                }
 
+                            }
+
+                        }
+                    }
+                }
+            } else if (wep instanceof LidModel) {
+
+            } else if (wep instanceof VacuumModel) {
+
+            }
         }
     }
 
@@ -567,13 +600,31 @@ public class FloorController extends WorldController implements ContactListener 
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
+            for (ScientistModel s : enemies){
+                if (bd1.getName().equals("bullet") && bd2 == s) {
+                    removeBullet2(bd1,s);
 
+                }
+                if (bd2.getName().equals("bullet") && bd1 == s) {
+                    removeBullet2(bd2,s);
+
+                }
+            }
             // Test bullet collision with world
             if (bd1.getName().equals("bullet") && bd2 != avatar) {
                 removeBullet(bd1);
             }
 
             if (bd2.getName().equals("bullet") && bd1 != avatar) {
+                removeBullet(bd2);
+            }
+            if (bd1.getName().equals("bullet") && (bd2 instanceof ScientistModel)) {
+                setBulletTouch(true);
+                removeBullet(bd1);
+            }
+
+            if (bd2.getName().equals("bullet") && (bd1 instanceof ScientistModel)) {
+                setBulletTouch(true);
                 removeBullet(bd2);
             }
 
@@ -653,6 +704,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
     }
 
+
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
@@ -675,7 +727,7 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.setColor(Color.WHITE);
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
         canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
-        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 60);
 
         /* Show Multiple HP and Mop Icons */
         int margin = 0;
@@ -690,9 +742,17 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(mopTexture, UI_OFFSET + 200 + margin2, canvas.getHeight()-UI_OFFSET - 70);
             margin2 = margin2 + 25;
         }
+        int margin3 = 0;
+        int durability2 = avatar.getWep2().getDurability();
+        for (int j = 0; j < durability2; j++) {
+            canvas.draw(mopTexture, UI_OFFSET + 200  + margin3, canvas.getHeight()-UI_OFFSET - 100);
+            margin3 = margin3 + 25;
+        }
+
 
         /* Durability Percent Bars */
         int max_durability = avatar.getWep1().getMaxDurability();
+        int max_durability2 = avatar.getWep2().getMaxDurability();
         int min_durability = 0;
         float step = 1 / max_durability;
 
@@ -768,7 +828,13 @@ public class FloorController extends WorldController implements ContactListener 
 
         //get player durability and change it
     }
+    public void setBulletTouch(boolean value){
+        bulletTouch = value;
+    }
     public boolean isAtMopCart( ) {
         return atMopCart;
+    }
+    public boolean isBullettouch( ){
+        return bulletTouch;
     }
 }
