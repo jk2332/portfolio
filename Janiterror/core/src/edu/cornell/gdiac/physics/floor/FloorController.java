@@ -12,10 +12,9 @@ package edu.cornell.gdiac.physics.floor;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.assets.*;
@@ -32,10 +31,10 @@ import edu.cornell.gdiac.physics.floor.monster.*;
 import java.util.Iterator;
 
 /**
- * Gameplay specific controller for the platformer game.  
+ * Gameplay specific controller for the platformer game.
  *
- * You will notice that asset loading is not done with static methods this time.  
- * Instance asset loading makes it easier to process our game modes in a loop, which 
+ * You will notice that asset loading is not done with static methods this time.
+ * Instance asset loading makes it easier to process our game modes in a loop, which
  * is much more scalable. However, we still want the assets themselves to be static.
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
@@ -56,6 +55,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String BACKGROUND_FILE = "shared/loading.png";
     /** The texture file for the mop icon */
     private static final String MOP_FILE  = "floor/mop.png";
+    private static final String HEART_FILE  = "floor/heart.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -89,6 +89,8 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture backgroundTexture;
     /** Texture Asset for Mop Icon */
     private Texture mopTexture;
+    /** Texture Asset for Mop Icon */
+    private Texture heartTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -125,6 +127,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(ROPE_FILE);
         manager.load(MOP_FILE, Texture.class);
         assets.add(MOP_FILE);
+        manager.load(HEART_FILE, Texture.class);
+        assets.add(HEART_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -157,6 +161,7 @@ public class FloorController extends WorldController implements ContactListener 
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
         mopTexture = new Texture(MOP_FILE);
+        heartTexture = new Texture(HEART_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -237,11 +242,14 @@ public class FloorController extends WorldController implements ContactListener 
     /** List of all the input AI controllers */
     protected AIController[] controls;
 
+    private Board board;
+
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
 
 
     private boolean atMopCart;
+    private boolean bulletTouch;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -256,6 +264,7 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setAtMopCart(false);
         setFailure(false);
+        setBulletTouch(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
     }
@@ -280,15 +289,17 @@ public class FloorController extends WorldController implements ContactListener 
         setAtMopCart(false);
         setComplete(false);
         setFailure(false);
+        setBulletTouch(false);
         enemies=new ScientistModel[NUM_OF_ENEMIES];
         controls = new AIController[NUM_OF_ENEMIES];
-        populateLevel(new Board(BOARD_WIDTH, BOARD_HEIGHT));
+        board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
+        populateLevel();
     }
 
     /**
      * Lays out the game geography.
      */
-    private void populateLevel(Board board) {
+    private void populateLevel() {
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -398,14 +409,19 @@ public class FloorController extends WorldController implements ContactListener 
         // Process actions in object model
         avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
-		//avatar.setJumping(InputController.getInstance().didPrimary());
+        //avatar.setJumping(InputController.getInstance().didPrimary());
         //avatar.setShooting(InputController.getInstance().didSecondary());
         avatar.setAttacking1(InputController.getInstance().didPrimary());
         avatar.setAttacking2(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didTertiary());
         // Add a bullet if we fire
-        if (avatar.isShooting()) {
+        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0) {
             createBullet(avatar);
+        }
+        if (isAtMopCart()) {
+            //recharge durability of weapon 1
+            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
         }
         if (avatar.isSwapping() && isAtMopCart()) {
             System.out.println("You are swapping weapons");
@@ -427,15 +443,19 @@ public class FloorController extends WorldController implements ContactListener 
 
                 }
                 if (action == CONTROL_MOVE_DOWN) {
+                    //System.out.println("down");
                     s.setMovementY(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_LEFT) {
+                    //System.out.println("left");
                     s.setMovementX(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_UP) {
+                    //System.out.println("up");
                     s.setMovementY(s.getForce());
                 }
                 if (action == CONTROL_MOVE_RIGHT) {
+                    //System.out.println("right");
                     s.setMovementX(s.getForce());
                 }
                 s.applyForce();
@@ -451,7 +471,6 @@ public class FloorController extends WorldController implements ContactListener 
         float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
-
         bullet.setName("bullet");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
@@ -499,6 +518,14 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
+    public void removeBullet2(Obstacle bullet,ScientistModel scientist) {
+        bullet.markRemoved(true);
+        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
+        scientist.decrHP();
+        if (scientist.getHP()<= 0) {
+            scientist.markRemoved(true);
+        }
+    }
 
     public void attack(WeaponModel wep) { /* TODO is it okay to import weaponmodel here */
         if (wep == null) {
@@ -507,7 +534,9 @@ public class FloorController extends WorldController implements ContactListener 
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 for (ScientistModel s : enemies) {
-                    if (s.getInContact()) {
+                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX())) <= 2
+                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
+                    if (inRange && !s.isRemoved()) {
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
                         } else {
@@ -518,11 +547,33 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         } else if (wep instanceof SprayModel) {
+            SprayModel spray = (SprayModel) wep;
+            if (spray.getDurability() != 0) {
+                spray.decrDurability();
+                for (ScientistModel s : enemies) {
+                    for (Obstacle obj : objects) {
+                        if (obj.isBullet()) {
+                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
+                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
 
-        } else if (wep instanceof LidModel) {
+                            if (inRangeB && !s.isRemoved()) {
+                                if (s.getHP() == 1) {
+                                    s.markRemoved(true);
+                                } else {
+                                    s.decrHP();
 
-        } else if (wep instanceof VacuumModel) {
+                                }
 
+                            }
+
+                        }
+                    }
+                }
+            } else if (wep instanceof LidModel) {
+
+            } else if (wep instanceof VacuumModel) {
+
+            }
         }
     }
 
@@ -549,13 +600,31 @@ public class FloorController extends WorldController implements ContactListener 
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
+            for (ScientistModel s : enemies){
+                if (bd1.getName().equals("bullet") && bd2 == s) {
+                    removeBullet2(bd1,s);
 
+                }
+                if (bd2.getName().equals("bullet") && bd1 == s) {
+                    removeBullet2(bd2,s);
+
+                }
+            }
             // Test bullet collision with world
             if (bd1.getName().equals("bullet") && bd2 != avatar) {
                 removeBullet(bd1);
             }
 
             if (bd2.getName().equals("bullet") && bd1 != avatar) {
+                removeBullet(bd2);
+            }
+            if (bd1.getName().equals("bullet") && (bd2 instanceof ScientistModel)) {
+                setBulletTouch(true);
+                removeBullet(bd1);
+            }
+
+            if (bd2.getName().equals("bullet") && (bd1 instanceof ScientistModel)) {
+                setBulletTouch(true);
                 removeBullet(bd2);
             }
 
@@ -568,14 +637,12 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
-                //avatar.decrHP();
-                //System.out.println("contact happened");
+                System.out.println("in contact");
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
-                //avatar.decrHP();
-                //System.out.println("contact happened");
+                System.out.println("in contact");
             }
 
             // Check for win condition
@@ -620,10 +687,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
+            System.out.println("out of contact");
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -635,12 +704,13 @@ public class FloorController extends WorldController implements ContactListener 
         }
     }
 
+
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
         canvas.begin();
 //        String hpDisplay = "HP: " + avatar.getHP();
-        String hpDisplay = "HP: ";
+        String hpDisplay = "HP:";
         String wep1Display;
         if (avatar.getWep1() != null) {
             wep1Display = "Weapon 1: ";
@@ -657,22 +727,70 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.setColor(Color.WHITE);
         canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
         canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
-        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 60);
 
-        /* THIS ACTUALLY WILL BE HOW TO DO HP SPONGES, not durability */
-        /* Show Multiple Mop Icons */
+        /* Show Multiple HP and Mop Icons */
         int margin = 0;
+        int HP = avatar.getHP();
+        for (int j = 0; j < HP; j++) {
+            canvas.draw(heartTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
+            margin = margin + 35;
+        }
+        int margin2 = 0;
         int durability = avatar.getWep1().getDurability();
         for (int j = 0; j < durability; j++) {
-            canvas.draw(mopTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
-            margin = margin + 30;
+            canvas.draw(mopTexture, UI_OFFSET + 200 + margin2, canvas.getHeight()-UI_OFFSET - 70);
+            margin2 = margin2 + 25;
         }
+        int margin3 = 0;
+        int durability2 = avatar.getWep2().getDurability();
+        for (int j = 0; j < durability2; j++) {
+            canvas.draw(mopTexture, UI_OFFSET + 200  + margin3, canvas.getHeight()-UI_OFFSET - 100);
+            margin3 = margin3 + 25;
+        }
+
 
         /* Durability Percent Bars */
         int max_durability = avatar.getWep1().getMaxDurability();
+        int max_durability2 = avatar.getWep2().getMaxDurability();
         int min_durability = 0;
         float step = 1 / max_durability;
-//        box2d.ProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBar.ProgressBarStyle style)
+
+        /* Online Code Insert */
+//        Pixmap pixmap = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+//        pixmap.setColor(Color.RED);
+//        pixmap.fill();
+//        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+//        pixmap.dispose();
+//        ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle();
+//        progressBarStyle.background = drawable;
+//        pixmap = new Pixmap(0, 20, Pixmap.Format.RGBA8888);
+//        pixmap.setColor(Color.GREEN);
+//        pixmap.fill();
+//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+//        pixmap.dispose();
+//        progressBarStyle.knob = drawable;
+//
+//        Pixmap pixmap2 = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+//        pixmap2.setColor(Color.GREEN);
+//        pixmap2.fill();
+//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap2)));
+//        pixmap2.dispose();
+//        progressBarStyle.knobBefore = drawable;
+//
+//        Stage stage = new Stage();
+//        ProgressBar healthBar = new ProgressBar(0.0f, 1.0f, 0.01f, false, progressBarStyle);
+//        healthBar.setValue(0.5f);
+//        healthBar.setAnimateDuration(0.25f);
+//        healthBar.setBounds(10, 10, 100, 20);
+//        stage.addActor(healthBar);
+//        stage.draw();
+//        stage.act();
+//        stage.dispose();
+
+
+//        ProgressBar.ProgressBarStyle barstyle = new ProgressBar.ProgressBarStyle();
+//        ProgressBar(min_durability, max_durability, step, false, ProgressBar.ProgressBarStyle style);
 
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
@@ -707,8 +825,16 @@ public class FloorController extends WorldController implements ContactListener 
             System.out.println("Press O to Swap Weapons");
         }
         atMopCart = value;
+
+        //get player durability and change it
+    }
+    public void setBulletTouch(boolean value){
+        bulletTouch = value;
     }
     public boolean isAtMopCart( ) {
         return atMopCart;
+    }
+    public boolean isBullettouch( ){
+        return bulletTouch;
     }
 }

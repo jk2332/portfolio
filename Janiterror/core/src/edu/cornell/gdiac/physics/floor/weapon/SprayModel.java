@@ -9,10 +9,10 @@ public class SprayModel extends WeaponModel {
     private static final int SPRAY_STUNTIME = 10;
 
 
-
-    int maxDurability = SPRAY_DURABILITY;
-
     public SprayModel() {
+        maxDurability = SPRAY_DURABILITY;
+        cooldown = SPRAY_COOLDOWN;
+        range = SPRAY_RANGE;
         resetDurability();
     }
 

@@ -373,7 +373,7 @@ public class JoeModel extends CapsuleObstacle {
         vacuum = new VacuumModel();
 
         wep1 = mop;
-        wep2 = null;
+        wep2 = spray;
 
         shootCooldown = 0;
         attackCooldown = 0;
