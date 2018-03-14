@@ -64,9 +64,10 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int NUM_OF_ENEMIES=10;
-    private int BOARD_WIDTH=1024/32;
-    private int BOARD_HEIGHT=576/32;
+    private int WALL_THICKNESS = 32;
+    private int NUM_OF_ENEMIES=5;
+    private int BOARD_WIDTH=1024/WALL_THICKNESS;
+    private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
 
@@ -637,12 +638,19 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
-                System.out.println("in contact");
+                ((ScientistModel) bd2).setMovementX(0);
+                ((ScientistModel) bd2).setMovementY(0);
+                //body2.setLinearVelocity(new Vector2(0, 0));
+                System.out.println("in contact/ "+bd2.getVX()+" /"+bd2.getVY());
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
-                System.out.println("in contact");
+                ((ScientistModel) bd1).setMovementX(0);
+                ((ScientistModel) bd1).setMovementY(0);
+                body1.setLinearVelocity(new Vector2(0, 0));
+
+                System.out.println("in contact/ "+bd1.getVX()+" /"+bd1.getVY());
             }
 
             // Check for win condition

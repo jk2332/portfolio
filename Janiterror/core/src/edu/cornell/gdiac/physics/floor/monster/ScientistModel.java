@@ -26,10 +26,12 @@ import edu.cornell.gdiac.physics.obstacle.*;
  */
 public class ScientistModel extends CapsuleObstacle {
     // Physics constants
+    private static final float SPEED_DAMPNING = 0.75f;
+    private static final float EPSILON_CLAMP = 0.01f;
     /** The density of the character */
-    private static final float DUDE_DENSITY = 1.0f;
+    private static final float DUDE_DENSITY = 0.01f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 20.0f;
+    private static final float DUDE_FORCE = 5;
     /** The amount to slow the character down */
     private static final float DUDE_DAMPING = 10.0f;
     /** The dude is a slippery one */
@@ -380,35 +382,18 @@ public class ScientistModel extends CapsuleObstacle {
             return;
         }
 
-        // TODO: maybe optimize later - make w less operations? doubt it matters though
-        // Don't want to be moving. Damp out player motion
-        if (getMovementX() == 0f) {
-            forceCache.set(-getDamping()*getVX(),getMovementY());
-            body.applyForce(forceCache,getPosition(),true);
+        if (getMovementX()==0f && getMovementY()==0f) {
+            body.setLinearVelocity(0, 0);
+            /**
+            body.setLinearVelocity(getVX()*SPEED_DAMPNING, getVY()*SPEED_DAMPNING);
+            if (Math.abs(getVX()) < EPSILON_CLAMP) {
+                body.setLinearVelocity(0, getVY());
+            }
+            if (Math.abs(getVY()) < EPSILON_CLAMP) {
+                body.setLinearVelocity(getVX(), 0);
+            }**/
         }
-        if (getMovementY() == 0f) {
-            forceCache.set(getMovementX(),-getDamping()*getVY());
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        }
-        if (Math.abs(getVY()) >= getMaxSpeed()) {
-            setVY(Math.signum(getVY())*getMaxSpeed());
-        }
-
-        forceCache.set(getMovementX(),getMovementY());
-        body.applyForce(forceCache,getPosition(),true);
-
-
-
-        // Jump!
-//		if (isJumping()) {
-//			forceCache.set(0, DUDE_JUMP);
-//			body.applyLinearImpulse(forceCache,getPosition(),true);
-//		}
+        body.setLinearVelocity(getMovementX(), getMovementY());
     }
 
     /**
