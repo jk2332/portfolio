@@ -427,19 +427,15 @@ public class FloorController extends WorldController implements ContactListener 
 
                 }
                 if (action == CONTROL_MOVE_DOWN) {
-                    System.out.println("down");
                     s.setMovementY(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_LEFT) {
-                    System.out.println("left");
                     s.setMovementX(-s.getForce());
                 }
                 if (action == CONTROL_MOVE_UP) {
-                    System.out.println("up");
                     s.setMovementY(s.getForce());
                 }
                 if (action == CONTROL_MOVE_RIGHT) {
-                    System.out.println("right");
                     s.setMovementX(s.getForce());
                 }
                 s.applyForce();
@@ -572,10 +568,14 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
+                //avatar.decrHP();
+                //System.out.println("contact happened");
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
+                //avatar.decrHP();
+                //System.out.println("contact happened");
             }
 
             // Check for win condition
