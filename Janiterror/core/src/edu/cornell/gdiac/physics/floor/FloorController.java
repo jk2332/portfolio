@@ -64,8 +64,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 32;
-    private int NUM_OF_ENEMIES=5;
+    private int WALL_THICKNESS = 64;
+    private int NUM_OF_ENEMIES=1;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -366,7 +366,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) (29*Math.random())+1, (float) (15*Math.random())+1, dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel((float) (BOARD_WIDTH*Math.random()), (float) (BOARD_HEIGHT*Math.random()), dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
@@ -441,7 +441,8 @@ public class FloorController extends WorldController implements ContactListener 
                 int action = this.controls[s.getId()].getAction();
                 s.update(dt);
                 if (action==CONTROL_FIRE && s.canShoot()){
-
+                    s.setMovementX(0);
+                    s.setMovementY(0);
                 }
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
@@ -638,19 +639,24 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
-                ((ScientistModel) bd2).setMovementX(0);
-                ((ScientistModel) bd2).setMovementY(0);
-                //body2.setLinearVelocity(new Vector2(0, 0));
-                System.out.println("in contact/ "+bd2.getVX()+" /"+bd2.getVY());
+                String result1 = "in contact/ state: "+controls[((ScientistModel) bd2).getId()].getAction();
+                String result2="";
+                if (controls[((ScientistModel) bd2).getId()].getAction()==16) {
+                    ((JoeModel) bd1).decrHP();
+                    result2 ="/ Decrement HP";
+                }
+                System.out.println(result1+result2);
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
-                ((ScientistModel) bd1).setMovementX(0);
-                ((ScientistModel) bd1).setMovementY(0);
-                body1.setLinearVelocity(new Vector2(0, 0));
-
-                System.out.println("in contact/ "+bd1.getVX()+" /"+bd1.getVY());
+                String result1 = "in contact/ state: "+controls[((ScientistModel) bd1).getId()].getAction();
+                String result2="";
+                if (controls[((ScientistModel) bd1).getId()].getAction()==16) {
+                    ((JoeModel) bd2).decrHP();
+                    result2 ="/ Decrement HP";
+                }
+                System.out.println(result1+result2);
             }
 
             // Check for win condition

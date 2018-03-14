@@ -29,7 +29,7 @@ public class ScientistModel extends CapsuleObstacle {
     private static final float SPEED_DAMPNING = 0.75f;
     private static final float EPSILON_CLAMP = 0.01f;
     /** The density of the character */
-    private static final float DUDE_DENSITY = 0.01f;
+    private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
     private static final float DUDE_FORCE = 5;
     /** The amount to slow the character down */
@@ -275,14 +275,6 @@ public class ScientistModel extends CapsuleObstacle {
         return faceRight;
     }
 
-    public void coolDown(boolean flag) {
-        if (flag && this.shootCooldown > 0) {
-            --this.shootCooldown;
-        } else if (!flag) {
-            this.shootCooldown = 60;
-        }
-    }
-
     public boolean isFacingUp () {
         return faceUp;
     }
@@ -462,5 +454,6 @@ public class ScientistModel extends CapsuleObstacle {
     public void setInContact(boolean value) {
         inContact = value;
     }
+    public boolean getContact(){return inContact;}
 
 }

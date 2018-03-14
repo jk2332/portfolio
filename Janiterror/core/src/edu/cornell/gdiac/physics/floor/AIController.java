@@ -43,13 +43,14 @@ public class AIController extends InputController {
         ++this.ticks;
         if (((long)this.ship.getId() + this.ticks) % 10L == 0L) {
             this.changeStateIfApplicable();
-            this.markGoalTiles(); //System.out.println("id: "+ship.getId());
+            this.markGoalTiles();
             this.move = this.getMoveAlongPathToGoalTile();
         }
 
         int action = this.move;
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
-            action |= 16;
+            //System.out.println("STATE ATTACK");
+            action = 16;
         }
 
         return action;
@@ -76,7 +77,7 @@ public class AIController extends InputController {
                         ty = this.board.screenToBoardY(this.target.getY());
                         if (this.manhattan(sx, sy, tx, ty) > ATTACK_DIST) {
                             this.state = FSMState.CHASE;
-                        } else {
+                        } else if (ship.getInContact()==true) {
                             this.state = FSMState.ATTACK;
                         }
                     }
@@ -88,7 +89,7 @@ public class AIController extends InputController {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
-                    if (dist <= ATTACK_DIST) {
+                    if (ship.getInContact()==true) {
                         this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= CHASE_DIST) {
@@ -107,11 +108,11 @@ public class AIController extends InputController {
                 if (dieroll != 0 && this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.manhattan(sx, sy, tx, ty) <= ATTACK_DIST) {
-                        this.state =FSMState.ATTACK;
+                    if (ship.getInContact()==true) {
+                        this.state = AIController.FSMState.ATTACK;
                     }
                 } else {
-                    this.state = FSMState.WANDER;
+                    this.state = AIController.FSMState.WANDER;
                 }
                 break;
             case ATTACK:
@@ -185,14 +186,6 @@ public class AIController extends InputController {
             case CHASE:
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                //System.out.println("targetx: "+tx+"//targety: "+ty);
-                this.board.setGoal(tx, ty);
-                setGoal = true;
-                break;
-            case ATTACK:
-                tx = this.board.screenToBoardX(this.target.getX());
-                ty = this.board.screenToBoardY(this.target.getY());
-                this.board.setGoal(tx, ty);
                 int nums=0;
                 if (board.inBounds(tx+ATTACK_DIST, ty)) {
                     this.board.setGoal(tx+ATTACK_DIST, ty); nums++;
@@ -200,7 +193,14 @@ public class AIController extends InputController {
                 if (board.inBounds(tx-ATTACK_DIST, ty)) {this.board.setGoal(tx-ATTACK_DIST, ty);  nums++;}
                 if (board.inBounds(tx, ty+ATTACK_DIST)) {this.board.setGoal(tx, ty+ATTACK_DIST); nums++;}
                 if (board.inBounds(tx, ty-ATTACK_DIST)) {this.board.setGoal(tx, ty-ATTACK_DIST); nums++;}
-                if (nums!=0) setGoal=true;
+                if (nums!=0) {setGoal=true;}
+            case ATTACK:
+                tx = this.board.screenToBoardX(this.target.getX());
+                ty = this.board.screenToBoardY(this.target.getY());
+                //System.out.println("targetx: "+tx+"//targety: "+ty);
+                this.board.setGoal(tx, ty);
+                setGoal = true;
+                break;
         }
 
         if (!setGoal) {
@@ -212,8 +212,6 @@ public class AIController extends InputController {
 
     private int getMoveAlongPathToGoalTile() {
         ArrayDeque<PathNode> queue = new ArrayDeque();
-        //System.out.println("ai positionx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
-        //System.out.println("ai boardx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
         PathNode curr = new PathNode(this.board.screenToBoardX(this.ship.getX()), this.board.screenToBoardY(this.ship.getY()), 0);
         queue.add(curr);
         if (board.isSafeAt(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);
