@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class AIController extends InputController {
-    private static final int CHASE_DIST = 9;
+    private static final int CHASE_DIST = 6;
     private static final int ATTACK_DIST = 1;
     private ScientistModel ship;
     private Board board;
@@ -187,12 +187,12 @@ public class AIController extends InputController {
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums=0;
-                if (board.inBounds(tx+ATTACK_DIST, ty)) {
-                    this.board.setGoal(tx+ATTACK_DIST, ty); nums++;
+                if (board.inBounds(tx+CHASE_DIST, ty)) {
+                    this.board.setGoal(tx+CHASE_DIST, ty); nums++;
                 }
-                if (board.inBounds(tx-ATTACK_DIST, ty)) {this.board.setGoal(tx-ATTACK_DIST, ty);  nums++;}
-                if (board.inBounds(tx, ty+ATTACK_DIST)) {this.board.setGoal(tx, ty+ATTACK_DIST); nums++;}
-                if (board.inBounds(tx, ty-ATTACK_DIST)) {this.board.setGoal(tx, ty-ATTACK_DIST); nums++;}
+                if (board.inBounds(tx-CHASE_DIST, ty)) {this.board.setGoal(tx-CHASE_DIST, ty);  nums++;}
+                if (board.inBounds(tx, ty+CHASE_DIST)) {this.board.setGoal(tx, ty+CHASE_DIST); nums++;}
+                if (board.inBounds(tx, ty-CHASE_DIST)) {this.board.setGoal(tx, ty-CHASE_DIST); nums++;}
                 if (nums!=0) {setGoal=true;}
             case ATTACK:
                 tx = this.board.screenToBoardX(this.target.getX());

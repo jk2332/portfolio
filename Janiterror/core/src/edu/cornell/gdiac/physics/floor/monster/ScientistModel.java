@@ -82,6 +82,8 @@ public class ScientistModel extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private int id;
+    private int attackAnimationFrame;
+    private long ticks;
 
     /* Whether scientist is in contact with Joe (determines whether scientist is attacking)*/
     private boolean inContact;
@@ -157,7 +159,7 @@ public class ScientistModel extends CapsuleObstacle {
      * @return true if the dude is actively firing.
      */
     public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
+        return isShooting;
     }
 
     /**
@@ -237,9 +239,6 @@ public class ScientistModel extends CapsuleObstacle {
      *
      * @return ow hard the brakes are applied to get a dude to stop moving
      */
-    public float getDamping() {
-        return DUDE_DAMPING;
-    }
     public boolean canShoot() {return shootCooldown<=0;}
 
     public int getId() {return this.id;}
@@ -324,6 +323,8 @@ public class ScientistModel extends CapsuleObstacle {
         shootCooldown = 0;
 //		jumpCooldown = 0;
         setName("dude");
+        attackAnimationFrame=0;
+        this.ticks = 0L;
     }
 
     /**
@@ -388,28 +389,26 @@ public class ScientistModel extends CapsuleObstacle {
         body.setLinearVelocity(getMovementX(), getMovementY());
     }
 
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * We use this method to reset cooldowns.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    public void update(float dt) {
-        // Apply cooldowns
-//		if (isJumping()) {
-//			jumpCooldown = JUMP_COOLDOWN;
-//		} else {
-//			jumpCooldown = Math.max(0, jumpCooldown - 1);
-//		}
-
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
-        } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
+    public void coolDown(boolean flag) {
+        if (flag && this.shootCooldown > 0) {
+            --this.shootCooldown;
+        } else if (!flag) {
+            this.shootCooldown = SHOOT_COOLDOWN;
         }
 
-        super.update(dt);
+    }
+
+    public int getAttackAniFrame(){
+        return attackAnimationFrame;
+    }
+    public void incrAttackAniFrame(){
+        if (attackAnimationFrame<3) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
+    }
+    public void resetAttackAniFrame(){
+        attackAnimationFrame=0;
+    }
+    public boolean endOfAttack(){
+        return attackAnimationFrame==3;
     }
 
     /**
@@ -419,7 +418,18 @@ public class ScientistModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if (attackAnimationFrame==1){
+            canvas.draw(texture,Color.BLUE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        if (attackAnimationFrame==2){
+            canvas.draw(texture,Color.YELLOW,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        if (attackAnimationFrame==3){
+            canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        else {
+            canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
 
     /**

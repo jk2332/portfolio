@@ -65,7 +65,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_ENEMIES=1;
+    private int NUM_OF_ENEMIES=8;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -92,6 +92,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture mopTexture;
     /** Texture Asset for Mop Icon */
     private Texture heartTexture;
+    private long scientistContactTicks;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -268,6 +269,7 @@ public class FloorController extends WorldController implements ContactListener 
         setBulletTouch(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
+        scientistContactTicks=0;
     }
 
     /**
@@ -362,13 +364,16 @@ public class FloorController extends WorldController implements ContactListener 
         avatar = new JoeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
+        avatar.setName("joe");
         //avatar.setWalkingTexture(avatarWalkingTexture); // TODO drawing stuff slows frame rate?
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) (BOARD_WIDTH*Math.random()), (float) (BOARD_HEIGHT*Math.random()), dwidth, dheight, ii);
+            ScientistModel mon =new ScientistModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+                    dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
+            mon.setName("scientist");
             addObject(mon);
             enemies[ii]=mon;
         }
@@ -439,11 +444,6 @@ public class FloorController extends WorldController implements ContactListener 
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
                 int action = this.controls[s.getId()].getAction();
-                s.update(dt);
-                if (action==CONTROL_FIRE && s.canShoot()){
-                    s.setMovementX(0);
-                    s.setMovementY(0);
-                }
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
                     s.setMovementY(-s.getForce());
@@ -459,6 +459,15 @@ public class FloorController extends WorldController implements ContactListener 
                 if (action == CONTROL_MOVE_RIGHT) {
                     //System.out.println("right");
                     s.setMovementX(s.getForce());
+                }
+                if (action==CONTROL_FIRE && s.canShoot()){
+                    s.setMovementX(0);
+                    s.setMovementY(0);
+                    s.setShooting(true);
+                    s.coolDown(false);
+                }
+                else {
+                    s.coolDown(true);
                 }
                 s.applyForce();
             }
@@ -536,9 +545,13 @@ public class FloorController extends WorldController implements ContactListener 
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 for (ScientistModel s : enemies) {
-                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX())) <= 2
-                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
-                    if (inRange && !s.isRemoved()) {
+                    int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                    int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                    boolean case1 = Math.abs(horiGap)<=1 && horiGap>0 && !avatar.isFacingRight() && vertiGap==0;
+                    boolean case2 = Math.abs(horiGap)<=1 && horiGap<0 && avatar.isFacingRight() && vertiGap==0;
+                    boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>0 && !avatar.isFacingUp() && horiGap==0;
+                    boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<0 && avatar.isFacingUp() && horiGap==0;
+                    if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
                         } else {
@@ -638,25 +651,36 @@ public class FloorController extends WorldController implements ContactListener 
 //			}
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
+                scientistContactTicks++;
+                System.out.println("in contact");
                 ((ScientistModel) bd2).setInContact(true);
-                String result1 = "in contact/ state: "+controls[((ScientistModel) bd2).getId()].getAction();
-                String result2="";
-                if (controls[((ScientistModel) bd2).getId()].getAction()==16) {
-                    ((JoeModel) bd1).decrHP();
-                    result2 ="/ Decrement HP";
+                if (((ScientistModel) bd2).isShooting()) {
+                    System.out.println(scientistContactTicks);
+                    if (scientistContactTicks%2==0L) {
+                        ((ScientistModel) bd2).incrAttackAniFrame();
+                        System.out.println("frame: "+ ((ScientistModel) bd2).getAttackAniFrame());
+                        if(((ScientistModel) bd2).endOfAttack()){
+                            ((JoeModel) bd1).decrHP();
+                        }
+                    }
                 }
-                System.out.println(result1+result2);
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
+                System.out.println("in contact");
+                scientistContactTicks++;
                 ((ScientistModel) bd1).setInContact(true);
-                String result1 = "in contact/ state: "+controls[((ScientistModel) bd1).getId()].getAction();
-                String result2="";
-                if (controls[((ScientistModel) bd1).getId()].getAction()==16) {
-                    ((JoeModel) bd2).decrHP();
-                    result2 ="/ Decrement HP";
+                if (((ScientistModel) bd1).isShooting()) {
+                    System.out.println(scientistContactTicks);
+                    if (scientistContactTicks%2==0L) {
+                        ((ScientistModel) bd1).incrAttackAniFrame();
+                        System.out.println("frame: "+ ((ScientistModel) bd1).getAttackAniFrame());
+                        if(((ScientistModel) bd1).endOfAttack()){
+                            ((JoeModel) bd2).decrHP();
+                            System.out.println("decrHP");
+                        }
+                    }
                 }
-                System.out.println(result1+result2);
             }
 
             // Check for win condition
@@ -702,11 +726,15 @@ public class FloorController extends WorldController implements ContactListener 
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
             System.out.println("out of contact");
+            scientistContactTicks=0;
+            ((ScientistModel) bd2).resetAttackAniFrame();
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
             System.out.println("out of contact");
+            scientistContactTicks=0;
+            ((ScientistModel) bd1).resetAttackAniFrame();
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
