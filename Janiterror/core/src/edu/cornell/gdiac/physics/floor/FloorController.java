@@ -65,7 +65,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_ENEMIES=8;
+    private int NUM_OF_ENEMIES=5;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -412,6 +412,11 @@ public class FloorController extends WorldController implements ContactListener 
      * @param delta Number of seconds since last animation frame
      */
     public void update(float dt) {
+        if(avatar.getHP()<=0) {
+            avatar.markRemoved(true);
+            setFailure(true);
+        }
+
         // Process actions in object model
         avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
@@ -447,24 +452,48 @@ public class FloorController extends WorldController implements ContactListener 
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
                     s.setMovementY(-s.getForce());
+                    s.resetAttackAniFrame();
+                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_LEFT) {
                     //System.out.println("left");
                     s.setMovementX(-s.getForce());
+                    s.resetAttackAniFrame();
+                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_UP) {
                     //System.out.println("up");
                     s.setMovementY(s.getForce());
+                    s.resetAttackAniFrame();
+                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_RIGHT) {
                     //System.out.println("right");
                     s.setMovementX(s.getForce());
+                    s.resetAttackAniFrame();
+                    scientistContactTicks=0;
+
                 }
-                if (action==CONTROL_FIRE && s.canShoot()){
+                if (action==CONTROL_FIRE){
+                    scientistContactTicks++;
                     s.setMovementX(0);
                     s.setMovementY(0);
-                    s.setShooting(true);
                     s.coolDown(false);
+                    System.out.println("ticks: "+scientistContactTicks);
+                    if (scientistContactTicks%2==0) {
+                        s.incrAttackAniFrame();
+                        System.out.println("frame: "+ s.getAttackAniFrame());
+                        boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
+                                && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
+                        boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
+                                && board.screenToBoardX(s.getPosition().x)==board.screenToBoardX(avatar.getPosition().x);
+                        if((hori || verti) && s.endOfAttack()){
+                            if (s.endOfAttack()) {
+                                avatar.decrHP();
+                                scientistContactTicks=0;
+                            }
+                        }
+                    }
                 }
                 else {
                     s.coolDown(true);
@@ -534,6 +563,7 @@ public class FloorController extends WorldController implements ContactListener 
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         scientist.decrHP();
         if (scientist.getHP()<= 0) {
+            controls[scientist.getId()]=null;
             scientist.markRemoved(true);
         }
     }
@@ -553,6 +583,7 @@ public class FloorController extends WorldController implements ContactListener 
                     boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<0 && avatar.isFacingUp() && horiGap==0;
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
+                            controls[s.getId()]=null;
                             s.markRemoved(true);
                         } else {
                             s.decrHP();
@@ -650,6 +681,7 @@ public class FloorController extends WorldController implements ContactListener 
 //				sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
 //			}
 
+            /**
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 scientistContactTicks++;
                 System.out.println("in contact");
@@ -682,6 +714,7 @@ public class FloorController extends WorldController implements ContactListener 
                     }
                 }
             }
+             **/
 
             // Check for win condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
@@ -723,19 +756,17 @@ public class FloorController extends WorldController implements ContactListener 
             setAtMopCart(false);
         }
 
+        /**
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
-            System.out.println("out of contact");
-            scientistContactTicks=0;
             ((ScientistModel) bd2).resetAttackAniFrame();
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
-            System.out.println("out of contact");
-            scientistContactTicks=0;
             ((ScientistModel) bd1).resetAttackAniFrame();
         }
+        **/
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {

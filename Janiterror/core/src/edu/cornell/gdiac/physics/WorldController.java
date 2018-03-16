@@ -260,6 +260,8 @@ public abstract class WorldController implements Screen {
 	private boolean active;
 	/** Whether we have completed this level */
 	private boolean complete;
+	/** Whether a player has lost in this level*/
+	private boolean lost;
 	/** Whether we have failed at this world (and need a reset) */
 	private boolean failed;
 	/** Whether or not debug mode is active */

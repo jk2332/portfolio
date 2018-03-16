@@ -24,7 +24,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class ScientistModel extends CapsuleObstacle {
+public class RobotModel extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float DUDE_DENSITY = 1f;
@@ -194,7 +194,7 @@ public class ScientistModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public ScientistModel(float x, float y, float width, float height, int id) {
+    public RobotModel(float x, float y, float width, float height, int id) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
@@ -265,13 +265,13 @@ public class ScientistModel extends CapsuleObstacle {
         if (getMovementX()==0f && getMovementY()==0f) {
             body.setLinearVelocity(0, 0);
             /**
-            body.setLinearVelocity(getVX()*SPEED_DAMPNING, getVY()*SPEED_DAMPNING);
-            if (Math.abs(getVX()) < EPSILON_CLAMP) {
-                body.setLinearVelocity(0, getVY());
-            }
-            if (Math.abs(getVY()) < EPSILON_CLAMP) {
-                body.setLinearVelocity(getVX(), 0);
-            }**/
+             body.setLinearVelocity(getVX()*SPEED_DAMPNING, getVY()*SPEED_DAMPNING);
+             if (Math.abs(getVX()) < EPSILON_CLAMP) {
+             body.setLinearVelocity(0, getVY());
+             }
+             if (Math.abs(getVY()) < EPSILON_CLAMP) {
+             body.setLinearVelocity(getVX(), 0);
+             }**/
         }
         body.setLinearVelocity(getMovementX(), getMovementY());
     }
