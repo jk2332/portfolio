@@ -443,11 +443,12 @@ public class FloorController extends WorldController implements ContactListener 
             attack(avatar.getWep2());
         }
         avatar.applyForce();
-
+        boolean winning = true;
         for (ScientistModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
+                winning=false;
                 int action = this.controls[s.getId()].getAction();
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
@@ -501,6 +502,7 @@ public class FloorController extends WorldController implements ContactListener 
                 s.applyForce();
             }
         }
+        if (winning) {setComplete(true);}
         SoundController.getInstance().update();
     }
 
