@@ -53,9 +53,13 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
     private static final String BACKGROUND_FILE = "shared/loading.png";
-    /** The texture file for the mop icon */
-    private static final String MOP_FILE  = "floor/mop.png";
-    private static final String HEART_FILE  = "floor/heart.png";
+
+    /** The texture files for the UI icons */
+    private static final String MOP_FILE  = "floor/ui-mop.png";
+    private static final String SPRAY_FILE  = "floor/ui-spray.png";
+    private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
+    private static final String LID_FILE  = "floor/ui-lid.png";
+    private static final String HEART_FILE  = "floor/sponge.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -88,16 +92,18 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion bulletTexture;
     /** Texture asset for the mop cart background */
     private Texture backgroundTexture;
-    /** Texture Asset for Mop Icon */
+
+    /** Texture Assets for UI Icons */
     private Texture mopTexture;
-    /** Texture Asset for Mop Icon */
+    private Texture sprayTexture;
+    private Texture vacuumTexture;
+    private Texture lidTexture;
     private Texture heartTexture;
+
     private long scientistContactTicks;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
-
-
 
     /**
      * Preloads the assets for this controller.
@@ -127,7 +133,15 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(BULLET_FILE);
         manager.load(ROPE_FILE, Texture.class);
         assets.add(ROPE_FILE);
+
+        //UI Icons
         manager.load(MOP_FILE, Texture.class);
+        assets.add(MOP_FILE);
+        manager.load(SPRAY_FILE, Texture.class);
+        assets.add(SPRAY_FILE);
+        manager.load(VACUUM_FILE, Texture.class);
+        assets.add(VACUUM_FILE);
+        manager.load(LID_FILE, Texture.class);
         assets.add(MOP_FILE);
         manager.load(HEART_FILE, Texture.class);
         assets.add(HEART_FILE);
@@ -162,7 +176,12 @@ public class FloorController extends WorldController implements ContactListener 
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
+
+        //UI Icons
         mopTexture = new Texture(MOP_FILE);
+        sprayTexture = new Texture(SPRAY_FILE);
+        vacuumTexture = new Texture(VACUUM_FILE);
+        lidTexture = new Texture(LID_FILE);
         heartTexture = new Texture(HEART_FILE);
 
         SoundController sounds = SoundController.getInstance();
@@ -800,72 +819,31 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         displayFont.setColor(Color.WHITE);
-        canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
-        canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
-        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 60);
+//        canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
+//        canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
+//        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 60);
 
         /* Show Multiple HP and Mop Icons */
         int margin = 0;
         int HP = avatar.getHP();
         for (int j = 0; j < HP; j++) {
-            canvas.draw(heartTexture, UI_OFFSET + 70 + margin, canvas.getHeight()-UI_OFFSET - 30);
-            margin = margin + 35;
+            canvas.draw(heartTexture, UI_OFFSET + 30 + margin, canvas.getHeight()-UI_OFFSET - 27);
+            margin = margin + 25;
         }
-        int margin2 = 0;
-        int durability = avatar.getWep1().getDurability();
-        for (int j = 0; j < durability; j++) {
-            canvas.draw(mopTexture, UI_OFFSET + 200 + margin2, canvas.getHeight()-UI_OFFSET - 70);
-            margin2 = margin2 + 25;
-        }
-        int margin3 = 0;
-        int durability2 = avatar.getWep2().getDurability();
-        for (int j = 0; j < durability2; j++) {
-            canvas.draw(mopTexture, UI_OFFSET + 200  + margin3, canvas.getHeight()-UI_OFFSET - 100);
-            margin3 = margin3 + 25;
-        }
-
-
-        /* Durability Percent Bars */
-        int max_durability = avatar.getWep1().getMaxDurability();
-        int max_durability2 = avatar.getWep2().getMaxDurability();
-        int min_durability = 0;
-        float step = 1 / max_durability;
-
-        /* Online Code Insert */
-//        Pixmap pixmap = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
-//        pixmap.setColor(Color.RED);
-//        pixmap.fill();
-//        TextureRegionDrawable drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
-//        pixmap.dispose();
-//        ProgressBar.ProgressBarStyle progressBarStyle = new ProgressBar.ProgressBarStyle();
-//        progressBarStyle.background = drawable;
-//        pixmap = new Pixmap(0, 20, Pixmap.Format.RGBA8888);
-//        pixmap.setColor(Color.GREEN);
-//        pixmap.fill();
-//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
-//        pixmap.dispose();
-//        progressBarStyle.knob = drawable;
-//
-//        Pixmap pixmap2 = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
-//        pixmap2.setColor(Color.GREEN);
-//        pixmap2.fill();
-//        drawable = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap2)));
-//        pixmap2.dispose();
-//        progressBarStyle.knobBefore = drawable;
-//
-//        Stage stage = new Stage();
-//        ProgressBar healthBar = new ProgressBar(0.0f, 1.0f, 0.01f, false, progressBarStyle);
-//        healthBar.setValue(0.5f);
-//        healthBar.setAnimateDuration(0.25f);
-//        healthBar.setBounds(10, 10, 100, 20);
-//        stage.addActor(healthBar);
-//        stage.draw();
-//        stage.act();
-//        stage.dispose();
-
-
-//        ProgressBar.ProgressBarStyle barstyle = new ProgressBar.ProgressBarStyle();
-//        ProgressBar(min_durability, max_durability, step, false, ProgressBar.ProgressBarStyle style);
+        String wep1FileName = "floor/ui-" + avatar.getWep1().getName() + ".png";
+        String wep2FileName = "floor/ui-" + avatar.getWep2().getName() + ".png";
+        //get textures via hash map?
+        canvas.draw(mopTexture, UI_OFFSET + 70, canvas.getHeight()-UI_OFFSET - 70);
+        canvas.draw(sprayTexture, UI_OFFSET + 190, canvas.getHeight()-UI_OFFSET - 70);
+        String durability1 = Integer.toString(avatar.getWep1().getDurability());
+        String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
+        String durability2 = Integer.toString(avatar.getWep2().getDurability());
+        String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
+        //draw weapon UI durability bars
+        canvas.drawText(durability1 + "/" + maxDurability1,
+                displayFont, UI_OFFSET + 30, canvas.getHeight()-UI_OFFSET - 80);
+        canvas.drawText(durability2 + "/" + maxDurability2,
+                displayFont, UI_OFFSET + 150, canvas.getHeight()-UI_OFFSET - 80);
 
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
@@ -880,7 +858,7 @@ public class FloorController extends WorldController implements ContactListener 
             Color tint1 = Color.BLACK;
 //		    Color tint2 = Color.ORANGE;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2, canvas.getHeight()/2, 0, .5f, .5f);
+                    canvas.getWidth()/2 + 120, canvas.getHeight()/2 + 200, 0, .4f, .2f);
             displayFont.setColor(Color.WHITE);
             canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
 //            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
