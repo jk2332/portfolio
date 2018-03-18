@@ -888,8 +888,8 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(lidTexture, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
 
             //IF YOU SWAP
-            avatar.setWep1(new VacuumModel());
-            avatar.setWep2(new LidModel());
+//            avatar.setWep1(new VacuumModel());
+//            avatar.setWep2(new LidModel());
 
 //            displayFont.setColor(Color.WHITE);
 //            canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
