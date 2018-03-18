@@ -46,6 +46,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
     /** The texture file for the character avatar walking */
     private static final String SCIENTIST_FILE  = "floor/scientist.png";
+    private static final String ROBOT_FILE = "floor/robot.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
@@ -69,7 +70,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_ENEMIES=5;
+    private int NUM_OF_SCIENTISTS=4;
+    private int NUM_OF_ROBOTS = 2;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -88,6 +90,7 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion avatarWalkingTexture;
     /** Texture asset for character avatar */
     private TextureRegion scientistTexture;
+    private TextureRegion robotTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
     /** Texture asset for the mop cart background */
@@ -128,6 +131,8 @@ public class FloorController extends WorldController implements ContactListener 
         // assets.add(DUDE_WALKING_FILE);
         manager.load(SCIENTIST_FILE, Texture.class);
         assets.add(SCIENTIST_FILE);
+        manager.load(ROBOT_FILE, Texture.class);
+        assets.add(ROBOT_FILE);
         manager.load(BARRIER_FILE, Texture.class);
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
@@ -175,6 +180,7 @@ public class FloorController extends WorldController implements ContactListener 
         avatarTexture = createTexture(manager,DUDE_FILE,false);
         // avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false); TODO
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
+        robotTexture = createTexture(manager,ROBOT_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
 
@@ -260,7 +266,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
     /** Reference to the monsters */
-    private ScientistModel[] enemies;
+    private EnemyModel[] enemies;
     /** List of all the input AI controllers */
     protected AIController[] controls;
 
@@ -313,8 +319,8 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setFailure(false);
         setBulletTouch(false);
-        enemies=new ScientistModel[NUM_OF_ENEMIES];
-        controls = new AIController[NUM_OF_ENEMIES];
+        enemies=new EnemyModel[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
+        controls = new AIController[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
         board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
         populateLevel();
     }
@@ -388,8 +394,8 @@ public class FloorController extends WorldController implements ContactListener 
         //avatar.setWalkingTexture(avatarWalkingTexture); // TODO drawing stuff slows frame rate?
         addObject(avatar);
 
-        for (int ii=0; ii<NUM_OF_ENEMIES; ii++){
-            ScientistModel mon =new ScientistModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+        for (int ii=0; ii<NUM_OF_SCIENTISTS; ii++){
+            EnemyModel mon =new ScientistModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
@@ -397,8 +403,17 @@ public class FloorController extends WorldController implements ContactListener 
             addObject(mon);
             enemies[ii]=mon;
         }
-        for (ScientistModel s: enemies){
-            controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);
+        for (int ii=0; ii<NUM_OF_ROBOTS; ii++){
+            EnemyModel mon =new RobotModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+                    dwidth, dheight, NUM_OF_SCIENTISTS+ii);
+            mon.setDrawScale(scale);
+            mon.setTexture(robotTexture);
+            mon.setName("robot");
+            addObject(mon);
+            enemies[NUM_OF_SCIENTISTS+ii]=mon;
+        }
+        for (EnemyModel s: enemies){
+            if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
     }
 
@@ -463,8 +478,9 @@ public class FloorController extends WorldController implements ContactListener 
             attack(avatar.getWep2());
         }
         avatar.applyForce();
+
         boolean winning = true;
-        for (ScientistModel s : enemies) {
+        for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
@@ -587,7 +603,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
-    public void removeBullet2(Obstacle bullet,ScientistModel scientist) {
+    public void removeBullet2(Obstacle bullet,EnemyModel scientist) {
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         scientist.decrHP();
@@ -603,7 +619,7 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof MopModel) { // TODO same q for mop model
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
-                for (ScientistModel s : enemies) {
+                for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
                     boolean case1 = Math.abs(horiGap)<=1 && horiGap>0 && !avatar.isFacingRight() && vertiGap==0;
@@ -612,8 +628,8 @@ public class FloorController extends WorldController implements ContactListener 
                     boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<0 && avatar.isFacingUp() && horiGap==0;
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
-                            controls[s.getId()]=null;
                             s.markRemoved(true);
+                            controls[s.getId()]=null;
                         } else {
                             s.decrHP();
                         }
@@ -624,8 +640,7 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof SprayModel) {
             SprayModel spray = (SprayModel) wep;
             if (spray.getDurability() != 0) {
-                spray.decrDurability();
-                for (ScientistModel s : enemies) {
+                for (EnemyModel s : enemies) {
                             int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                             int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
                             boolean case1 = Math.abs(horiGap)<=2 && horiGap>0 && !avatar.isFacingRight() && vertiGap==0;
@@ -641,6 +656,7 @@ public class FloorController extends WorldController implements ContactListener 
                                     s.setStunned(true);
                                     s.decrHP();
                                 }
+                                spray.decrDurability();
                             }
                         }
 
@@ -675,7 +691,7 @@ public class FloorController extends WorldController implements ContactListener 
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
-            for (ScientistModel s : enemies){
+            for (EnemyModel s : enemies){
                 if (bd1.getName().equals("bullet") && bd2 == s) {
                     removeBullet2(bd1,s);
 
@@ -854,7 +870,7 @@ public class FloorController extends WorldController implements ContactListener 
                 displayFont, UI_OFFSET + 150, canvas.getHeight()-UI_OFFSET - 80);
 
         displayFont.getData().setScale(0.5f);
-        for (ScientistModel s : enemies) {
+        for (EnemyModel s : enemies) {
             if (!(s.isRemoved())) {
                 canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
             }

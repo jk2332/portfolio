@@ -6,6 +6,7 @@
 package edu.cornell.gdiac.physics.floor;
 
 import edu.cornell.gdiac.physics.Board;
+import edu.cornell.gdiac.physics.floor.monster.EnemyModel;
 import edu.cornell.gdiac.physics.floor.monster.JoeModel;
 import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
@@ -17,9 +18,9 @@ import java.util.Random;
 public class AIController {
     private static final int CHASE_DIST = 6;
     private static final int ATTACK_DIST = 1;
-    private ScientistModel ship;
+    private EnemyModel ship;
     private Board board;
-    private ScientistModel[] fleet;
+    private EnemyModel[] fleet;
     private AIController.FSMState state;
     private JoeModel target;
     private int move;
@@ -27,8 +28,8 @@ public class AIController {
     private int wx = 0;
     private int wy = 0;
 
-    public AIController(int id, Board board, ScientistModel[] ships, JoeModel target) {
-        this.ship =  (ScientistModel) Array.get(ships, id);
+    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
+        this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
         this.state = FSMState.SPAWN;
