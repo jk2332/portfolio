@@ -6,7 +6,6 @@
 package edu.cornell.gdiac.physics.floor;
 
 import edu.cornell.gdiac.physics.Board;
-import edu.cornell.gdiac.physics.InputController;
 import edu.cornell.gdiac.physics.floor.monster.JoeModel;
 import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
@@ -15,7 +14,7 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Random;
 
-public class AIController extends InputController {
+public class AIController {
     private static final int CHASE_DIST = 6;
     private static final int ATTACK_DIST = 1;
     private ScientistModel ship;

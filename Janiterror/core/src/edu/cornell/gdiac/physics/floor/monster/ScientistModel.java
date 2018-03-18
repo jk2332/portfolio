@@ -49,7 +49,7 @@ public class ScientistModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
 
     /** The amount of max HP a scientist has */
-    private static final int MAX_HP = 2;
+    private static final int MAX_HP = 5;
 
     /** The current horizontal movement of the character */
     private float   movementX;
@@ -69,6 +69,8 @@ public class ScientistModel extends CapsuleObstacle {
     private int id;
     private int attackAnimationFrame;
     private long ticks;
+    private long stunTicks;
+    private boolean stunned;
 
     /* Whether scientist is in contact with Joe (determines whether scientist is attacking)*/
     private boolean inContact;
@@ -92,6 +94,7 @@ public class ScientistModel extends CapsuleObstacle {
     public float getMovementX() {
         return movementX;
     }
+
 
     /**
      * Returns up/down movement of this character.
@@ -212,6 +215,8 @@ public class ScientistModel extends CapsuleObstacle {
         setName("dude");
         attackAnimationFrame=0;
         this.ticks = 0L;
+        this.stunTicks=0;
+        this.stunned=false;
     }
 
     /**
@@ -285,6 +290,26 @@ public class ScientistModel extends CapsuleObstacle {
 
     }
 
+    public boolean getStunned(){
+        return this.stunned;
+    }
+
+    public void resetStunTicks(){
+        stunTicks=0;
+    }
+
+    public void setStunned(boolean b){
+        this.stunned=b;
+    }
+
+    public void incrStunTicks(){
+        if (this.stunned) stunTicks++;
+    }
+
+    public long getStunTicks(){
+        return this.stunTicks;
+    }
+
     public int getAttackAniFrame(){
         return attackAnimationFrame;
     }
@@ -307,15 +332,12 @@ public class ScientistModel extends CapsuleObstacle {
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
         if (attackAnimationFrame==1){
-            System.out.println("frame: 1");
             canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (attackAnimationFrame==2){
-            System.out.println("frame: 2");
             canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (attackAnimationFrame==3){
-            System.out.println("frame: 3");
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         else {

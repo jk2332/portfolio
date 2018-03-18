@@ -93,6 +93,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Texture Asset for Mop Icon */
     private Texture heartTexture;
     private long scientistContactTicks;
+    private long stunTicks;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -450,6 +451,15 @@ public class FloorController extends WorldController implements ContactListener 
             if (this.controls[s.getId()] != null) {
                 winning=false;
                 int action = this.controls[s.getId()].getAction();
+                if (s.getStunned()) {
+                    System.out.println("stunned");
+                    s.incrStunTicks();
+                    if (s.getStunTicks()<=500) {action=CONTROL_NO_ACTION;}
+                    else {s.resetStunTicks(); s.setStunned(false);}
+                }
+                if (action==CONTROL_NO_ACTION){
+                    s.setMovementY(0); s.setMovementX(0);
+                }
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
                     s.setMovementY(-s.getForce());
@@ -480,10 +490,8 @@ public class FloorController extends WorldController implements ContactListener 
                     s.setMovementX(0);
                     s.setMovementY(0);
                     s.coolDown(false);
-                    System.out.println("ticks: "+scientistContactTicks);
                     if (scientistContactTicks%2==0) {
                         s.incrAttackAniFrame();
-                        System.out.println("frame: "+ s.getAttackAniFrame());
                         boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
                                 && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
                         boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
@@ -599,24 +607,24 @@ public class FloorController extends WorldController implements ContactListener 
             if (spray.getDurability() != 0) {
                 spray.decrDurability();
                 for (ScientistModel s : enemies) {
-                    for (Obstacle obj : objects) {
-                        if (obj.isBullet()) {
-                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
-                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
-
-                            if (inRangeB && !s.isRemoved()) {
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            boolean case1 = Math.abs(horiGap)<=2 && horiGap>0 && !avatar.isFacingRight() && vertiGap==0;
+                            boolean case2 = Math.abs(horiGap)<=2 && horiGap<0 && avatar.isFacingRight() && vertiGap==0;
+                            boolean case3 = Math.abs(vertiGap)<=2 && vertiGap>0 && !avatar.isFacingUp() && horiGap==0;
+                            boolean case4 = Math.abs(vertiGap)<=2 && vertiGap<0 && avatar.isFacingUp() && horiGap==0;
+                            if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                                 if (s.getHP() == 1) {
+                                    controls[s.getId()]=null;
                                     s.markRemoved(true);
                                 } else {
+                                    System.out.println("set it stunned");
+                                    s.setStunned(true);
                                     s.decrHP();
-
                                 }
-
                             }
-
                         }
-                    }
-                }
+
             } else if (wep instanceof LidModel) {
 
             } else if (wep instanceof VacuumModel) {
