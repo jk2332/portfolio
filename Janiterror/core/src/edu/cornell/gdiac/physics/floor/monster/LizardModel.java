@@ -10,13 +10,12 @@
  */
 package edu.cornell.gdiac.physics.floor.monster;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.physics.floor.weapon.*;
+import edu.cornell.gdiac.physics.floor.weapon.WeaponModel;
 import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
@@ -25,27 +24,17 @@ import edu.cornell.gdiac.physics.obstacle.*;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class JoeModel extends CapsuleObstacle {
+public class LizardModel extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
-    private static final float DUDE_DENSITY = 100.0f;
+    private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 5.0f;
-    /** The amount to slow the character down */
-    private static final float DUDE_DAMPING = 20.0f;
-    private static final float SPEED_DAMPNING = 0.75f;
+    private static final float DUDE_FORCE = 5;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float DUDE_MAXSPEED = 5.0f;
-    /** The impulse for the character jump */
-//	private static final float DUDE_JUMP = 5.5f;
-    /** Cooldown (in animation frames) for jumping */
-//	private static final int JUMP_COOLDOWN = 30;
-    /** Cooldown (in animation frames) for shooting */
+    private static final float DUDE_MAXSPEED = 7.0f;
     private static final int SHOOT_COOLDOWN = 40;
-    /** Cooldown (in animation frames) for shooting */
-    private static final int ATTACK_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -58,9 +47,9 @@ public class JoeModel extends CapsuleObstacle {
     private static final float DUDE_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
-    /* Joe's max HP */
-    private static final int MAX_HP = 15;
-    private static final float EPSILON_CLAMP = 0.01f;
+
+    /** The amount of max HP a scientist has */
+    private static final int MAX_HP = 2;
 
     /** The current horizontal movement of the character */
     private float   movementX;
@@ -68,20 +57,8 @@ public class JoeModel extends CapsuleObstacle {
     /** Which direction is the character facing */
     private boolean faceRight;
     private boolean faceUp;
-    /** How long until we can jump again */
-//	private int jumpCooldown;
-    /** Whether we are actively jumping */
-//	private boolean isJumping;
     /** How long until we can shoot again */
     private int shootCooldown;
-    /** How long until we can attack again */
-    private int attackCooldown;
-    /** Whether our feet are on the ground */
-//	private boolean isGrounded;
-    /** Whether we are actively attacking */
-    private boolean isAttacking1;
-    /** Whether we are actively attacking */
-    private boolean isAttacking2;
     /** Whether we are actively shooting */
     private boolean isShooting;
     /** Whether we are actively swapping */
@@ -89,21 +66,18 @@ public class JoeModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
-    /** Joe's HP */
+    private int id;
+    private int attackAnimationFrame;
+    private long ticks;
+
+    /* Whether scientist is in contact with Joe (determines whether scientist is attacking)*/
+    private boolean inContact;
+
+    /* The amount of HP the scientist has left */
     private int hp;
-    /* Joe's walking sprite */
-    protected TextureRegion textureWalking;
-    /* Mop */
-    MopModel mop;
-    /* Spray */
-    SprayModel spray;
-    /* Lid */
-    LidModel lid;
-    /* Vacuum */
-    VacuumModel vacuum;
+
     /** The current weapons Joe is holding */
-    WeaponModel wep1;
-    WeaponModel wep2;
+    private WeaponModel[] weps = new WeaponModel[2];
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -165,113 +139,6 @@ public class JoeModel extends CapsuleObstacle {
     }
 
     /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setShooting(boolean value) {
-        isShooting = value;
-    }
-
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isAttacking1() {
-        return isAttacking1 && attackCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setAttacking1(boolean value) {
-        isAttacking1 = value;
-    }
-
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isAttacking2() {
-        return isAttacking2 && attackCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setAttacking2(boolean value) {
-        isAttacking2 = value;
-    }
-
-    /**
-     * Returns true if the dude is actively swapping.
-     *
-     * @return true if the dude is actively swapping.
-     */
-    public boolean isSwapping() {
-        return isSwapping ;
-    }
-
-    /**
-     * Sets whether the dude is actively swapping.
-     *
-     * @param value whether the dude is actively swapping.
-     */
-    public void setSwapping(boolean value) {
-        isSwapping = value;
-    }
-    /**
-     * Returns true if the dude is actively jumping.
-     *
-     * @return true if the dude is actively jumping.
-     */
-//	public boolean isJumping() {
-//		return isJumping && isGrounded && jumpCooldown <= 0;
-//	}
-//
-//	/**
-//	 * Sets whether the dude is actively jumping.
-//	 *
-//	 * @param value whether the dude is actively jumping.
-//	 */
-//	public void setJumping(boolean value) {
-//		isJumping = value;
-//	}
-//
-//	/**
-//	 * Returns true if the dude is on the ground.
-//	 *
-//	 * @return true if the dude is on the ground.
-//	 */
-//	public boolean isGrounded() {
-//		return isGrounded;
-//	}
-//
-//	/**
-//	 * Sets whether the dude is on the ground.
-//	 *
-//	 * @param value whether the dude is on the ground.
-//	 */
-//	public void setGrounded(boolean value) {
-//		isGrounded = value;
-//	}
-
-    /**
      * Returns how much force to apply to get the dude moving
      *
      * Multiply this by the input to get the movement value.
@@ -287,20 +154,9 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @return ow hard the brakes are applied to get a dude to stop moving
      */
-    public float getDamping() {
-        return DUDE_DAMPING;
-    }
+    public boolean canShoot() {return shootCooldown<=0;}
 
-    /**
-     * Returns the upper limit on dude left-right movement.
-     *
-     * This does NOT apply to vertical movement.
-     *
-     * @return the upper limit on dude left-right movement.
-     */
-    public float getMaxSpeed() {
-        return DUDE_MAXSPEED;
-    }
+    public int getId() {return this.id;}
 
     /**
      * Returns the name of the ground sensor
@@ -327,20 +183,6 @@ public class JoeModel extends CapsuleObstacle {
     }
 
     /**
-     * Creates a new dude at the origin.
-     *
-     * The size is expressed in physics units NOT pixels.  In order for
-     * drawing to work properly, you MUST set the drawScale. The drawScale
-     * converts the physics units to pixels.
-     *
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
-     */
-    public JoeModel(float width, float height) {
-        this(0,0,width,height);
-    }
-
-    /**
      * Creates a new dude avatar at the given position.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -352,35 +194,24 @@ public class JoeModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public JoeModel(float x, float y, float width, float height) {
+    public LizardModel (float x, float y, float width, float height, int id) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
         setFixedRotation(true);
 
         // Gameplay attributes
-//		isGrounded = false;
         isShooting = false;
         isSwapping = false;
-        isAttacking1 = false;
-        isAttacking2 = false;
-//		isJumping = false;
         faceRight = true;
         faceUp = true;
-
+        this.id = id;
         hp = MAX_HP;
-        mop = new MopModel();
-        spray = new SprayModel();
-        lid = new LidModel();
-        vacuum = new VacuumModel();
-
-        wep1 = mop;
-        wep2 = spray;
 
         shootCooldown = 0;
-        attackCooldown = 0;
-//		jumpCooldown = 0;
         setName("dude");
+        attackAnimationFrame=0;
+        this.ticks = 0L;
     }
 
     /**
@@ -433,38 +264,39 @@ public class JoeModel extends CapsuleObstacle {
 
         if (getMovementX()==0f && getMovementY()==0f) {
             body.setLinearVelocity(0, 0);
+            /**
+             body.setLinearVelocity(getVX()*SPEED_DAMPNING, getVY()*SPEED_DAMPNING);
+             if (Math.abs(getVX()) < EPSILON_CLAMP) {
+             body.setLinearVelocity(0, getVY());
+             }
+             if (Math.abs(getVY()) < EPSILON_CLAMP) {
+             body.setLinearVelocity(getVX(), 0);
+             }**/
         }
         body.setLinearVelocity(getMovementX(), getMovementY());
     }
 
-    /**
-     * Updates the object's physics state (NOT GAME LOGIC).
-     *
-     * We use this method to reset cooldowns.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    public void update(float dt) {
-        // Apply cooldowns
-//		if (isJumping()) {
-//			jumpCooldown = JUMP_COOLDOWN;
-//		} else {
-//			jumpCooldown = Math.max(0, jumpCooldown - 1);
-//		}
-
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
-        } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
+    public void coolDown(boolean flag) {
+        if (flag && this.shootCooldown > 0) {
+            --this.shootCooldown;
+        } else if (!flag) {
+            this.shootCooldown = SHOOT_COOLDOWN;
         }
 
-        if (isAttacking1() || isAttacking2()) {
-            attackCooldown = ATTACK_COOLDOWN;
-        } else {
-            attackCooldown = Math.max(0, attackCooldown - 1);
-        }
+    }
 
-        super.update(dt);
+    public int getAttackAniFrame(){
+        return attackAnimationFrame;
+    }
+
+    public void incrAttackAniFrame(){
+        if (attackAnimationFrame<3) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
+    }
+    public void resetAttackAniFrame(){
+        attackAnimationFrame=0;
+    }
+    public boolean endOfAttack(){
+        return attackAnimationFrame==3;
     }
 
     /**
@@ -474,12 +306,21 @@ public class JoeModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        /*if (movementX == 0 && movementY == 0) {
+        if (attackAnimationFrame==1){
+            System.out.println("frame: 1");
+            canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        if (attackAnimationFrame==2){
+            System.out.println("frame: 2");
+            canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        if (attackAnimationFrame==3){
+            System.out.println("frame: 3");
+            canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        else {
             canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        } else {
-            canvas.draw(textureWalking,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }*/
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
 
     /**
@@ -491,20 +332,7 @@ public class JoeModel extends CapsuleObstacle {
      */
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        canvas.drawPhysics(sensorShape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-    }
-
-    /**
-     * Sets the object texture for drawing purposes.
-     *
-     * In order for drawing to work properly, you MUST set the drawScale.
-     * The drawScale converts the physics units to pixels.
-     *
-     * @param value  the object texture for drawing purposes.
-     */
-    public void setWalkingTexture(TextureRegion value) {
-        textureWalking = value;
-        origin.set(textureWalking.getRegionWidth()/2.0f, textureWalking.getRegionHeight()/2.0f);
+        canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
     public int getHP() {
@@ -514,17 +342,4 @@ public class JoeModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
-    //Weapon Getters and Setters
-    public WeaponModel getWep1() {
-        return wep1;
-    }
-    public WeaponModel getWep2() {
-        return wep2;
-    }
-    public void setWep1(WeaponModel new_weapon) {
-        this.wep1 = new_weapon;
-    }
-    public void setWep2(WeaponModel new_weapon) {
-        this.wep2 = new_weapon;
-    }
 }

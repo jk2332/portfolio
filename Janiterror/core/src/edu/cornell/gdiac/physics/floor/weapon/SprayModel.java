@@ -2,6 +2,8 @@ package edu.cornell.gdiac.physics.floor.weapon;
 
 public class SprayModel extends WeaponModel {
     /*TODO: add to level editor */
+    private static final String name = "spray";
+
     private static final int SPRAY_DURABILITY = 10;
     private static final int SPRAY_RANGE = 10;
     private static final int SPRAY_COOLDOWN = 10;
