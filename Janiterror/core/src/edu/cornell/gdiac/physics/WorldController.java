@@ -595,13 +595,7 @@ public abstract class WorldController implements Screen {
 	 */
 	public void draw(float delta) {
 		canvas.clear();
-		
-		canvas.begin();
-		for(Obstacle obj : objects) {
-			obj.draw(canvas);
-		}
-		canvas.end();
-		
+
 		if (debug) {
 			canvas.beginDebug();
 			for(Obstacle obj : objects) {

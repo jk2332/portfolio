@@ -24,6 +24,9 @@ public class Board {
     private float BOARD_WIDTH=32;
     private float BOARD_HEIGHT=18;
 
+    /** Texture+Mesh for tile. Only need one, since all have same geometry */
+    private Texture tileTexture;
+
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -82,6 +85,26 @@ public class Board {
         return (int) (f/(BOARD_HEIGHT/height));
     }
 
+    /**
+     * Returns the screen position coordinate for a board cell index.
+     *
+     * While all positions are 2-dimensional, the dimensions to
+     * the board are symmetric. This allows us to use the same
+     * method to convert an x coordinate or a y coordinate to
+     * a cell index.
+     *
+     * @param n Tile cell index
+     *
+     * @return the screen position coordinate for a board cell index.
+     */
+    public float boardToScreenX(int n) {
+        return (float) (n + 0.5f) * (BOARD_WIDTH/width);
+    }
+
+    public float boardToScreenY(int n) {
+        return (float) (n + 0.5f) * (BOARD_HEIGHT/height);
+    }
+
     public boolean isSafeAt(int x, int y) {
         return inBounds(x, y) && !this.getTileState(x, y).falling;
     }
@@ -118,6 +141,72 @@ public class Board {
             //this.visited = false;
             if (x==0 || y==0 || x==width-1 || y==height-1) {falling=true; visited=true;} else {falling=false; visited=false;}
         }
+    }
+
+    /**
+     * Draws the board to the given canvas.
+     *
+     * This method draws all of the tiles in this board. It should be the first drawing
+     * pass in the GameEngine.
+     *
+     * @param canvas the drawing context
+     */
+    public void draw(GameCanvas canvas) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                drawTile(x, y, canvas);
+            }
+        }
+    }
+
+    // Drawing information
+    /**
+     * Returns the textured mesh for each tile.
+     *
+     * We only need one mesh, as all tiles look (mostly) the same.
+     *
+     * @return the textured mesh for each tile.
+     */
+    public Texture getTileTexture() {
+        return tileTexture;
+    }
+
+    /**
+     * Sets the textured mesh for each tile.
+     *
+     * We only need one mesh, as all tiles look (mostly) the same.
+     *
+     * @param mesh the textured mesh for each tile.
+     */
+    public void setTileTexture(Texture t) {
+        tileTexture = t;
+    }
+
+    /**
+     * Draws the individual tile at position (x,y).
+     *
+     * Fallen tiles are not drawn.
+     *
+     * @param x The x index for the Tile cell
+     * @param y The y index for the Tile cell
+     */
+    private void drawTile(int x, int y, GameCanvas canvas) {
+        TileState tile = getTileState(x, y);
+
+        // Compute drawing coordinates
+        float sx = boardToScreenX(x);
+        float sy = boardToScreenY(y);
+
+        /*tileMesh.setColor(BASIC_COLOR);
+        if (tile.power) {
+            tileMesh.setColor(POWER_COLOR);
+        }*/
+
+
+        // Draw
+        //canvas.drawTile(tileMesh, sx, sy, 0, 0);
+        canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                1024/width * x, 576/height * y, 0, 1.0f, 1.0f);
     }
 
 

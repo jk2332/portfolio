@@ -53,6 +53,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
     private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String TILE_FILE = "shared/basic-tile.png";
     /** The texture file for the mop icon */
     private static final String MOP_FILE  = "floor/mop.png";
     private static final String HEART_FILE  = "floor/heart.png";
@@ -91,6 +92,8 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture mopTexture;
     /** Texture Asset for Mop Icon */
     private Texture heartTexture;
+    /** Texture Asset for tiles */
+    private Texture tileTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -129,6 +132,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(MOP_FILE);
         manager.load(HEART_FILE, Texture.class);
         assets.add(HEART_FILE);
+        manager.load(TILE_FILE, Texture.class);
+        assets.add(TILE_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -162,6 +167,7 @@ public class FloorController extends WorldController implements ContactListener 
         backgroundTexture = new Texture(BACKGROUND_FILE);
         mopTexture = new Texture(MOP_FILE);
         heartTexture = new Texture(HEART_FILE);
+        tileTexture = new Texture(TILE_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, JUMP_FILE);
@@ -352,6 +358,8 @@ public class FloorController extends WorldController implements ContactListener 
             addObject(obj);
         }
 
+        board.setTileTexture(tileTexture);
+
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
@@ -457,6 +465,7 @@ public class FloorController extends WorldController implements ContactListener 
                 s.applyForce();
             }
         }
+
         SoundController.getInstance().update();
     }
 
@@ -523,8 +532,32 @@ public class FloorController extends WorldController implements ContactListener 
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 for (ScientistModel s : enemies) {
-                    boolean inRange = Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2
+                    int xDist = Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX()));
+                    int yDist = Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY()));
+                    boolean inRange = xDist <= 2
+                            && yDist <= 2;
+                    /*if (xDist <= 3 && yDist <= 3) {
+                        System.out.println("x");
+                        System.out.println(xDist);
+                        System.out.println("y");
+                        System.out.println(yDist);
+                        System.out.println("");
+                    }*/
+
+                    /*boolean inRangeR = avatar.isFacingRight() && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) >=-2
+                            && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <=0
                             && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
+                    boolean inRangeL = !avatar.isFacingRight() && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <=2
+                            && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) >=0
+                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
+                    boolean inRangeU = avatar.isFacingUp() && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) >=-2
+                            && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) <=0
+                            && Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2;
+                    boolean inRangeD = !avatar.isFacingUp() && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) <=2
+                            && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) >=0
+                            && Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2;
+
+                    inRange = inRangeR || inRangeL || inRangeU || inRangeD;*/
                     if (inRange && !s.isRemoved()) {
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
@@ -543,7 +576,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         }
     }
-
 
     /**
      * Callback method for the start of a collision
@@ -586,12 +618,12 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
                 ((ScientistModel) bd2).setInContact(true);
-                System.out.println("in contact");
+                //System.out.println("in contact");
             }
 
             if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
                 ((ScientistModel) bd1).setInContact(true);
-                System.out.println("in contact");
+                //System.out.println("in contact");
             }
 
             // Check for win condition
@@ -636,12 +668,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (bd1 == avatar && (bd2 instanceof ScientistModel)) {
             ((ScientistModel) bd2).setInContact(false);
-            System.out.println("out of contact");
+            //System.out.println("out of contact");
         }
 
         if ((bd1 instanceof ScientistModel) && bd2 == avatar) {
             ((ScientistModel) bd1).setInContact(false);
-            System.out.println("out of contact");
+            //System.out.println("out of contact");
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -656,7 +688,15 @@ public class FloorController extends WorldController implements ContactListener 
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
+
         canvas.begin();
+
+        board.draw(canvas);
+
+
+        for(Obstacle obj : objects) {
+            obj.draw(canvas);
+        }
 //        String hpDisplay = "HP: " + avatar.getHP();
         String hpDisplay = "HP:";
         String wep1Display;
@@ -731,7 +771,6 @@ public class FloorController extends WorldController implements ContactListener 
 
 //        ProgressBar.ProgressBarStyle barstyle = new ProgressBar.ProgressBarStyle();
 //        ProgressBar(min_durability, max_durability, step, false, ProgressBar.ProgressBarStyle style);
-
         displayFont.getData().setScale(0.5f);
         for (ScientistModel s : enemies) {
             if (!(s.isRemoved())) {
