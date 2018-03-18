@@ -107,7 +107,9 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture heartTexture;
     /** Weapon Name -> Texture Dictionary*/
     HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
+    String[] list_of_weapons = new String[4];
 
     private long scientistContactTicks;
     private long stunTicks;
@@ -361,11 +363,22 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setTexture(mopTile);
         mopCart.setName("mopCart");
         addObject(mopCart);
+
+        /** Add names to list of weapons */
+        list_of_weapons[0] = "mop";
+        list_of_weapons[1] = "spray";
+        list_of_weapons[2] = "vacuum";
+        list_of_weapons[3] = "lid";
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
+        /** Load name -> model dictionary */
+        wep_to_model.put("mop", new MopModel());
+        wep_to_model.put("spray", new SprayModel());
+        wep_to_model.put("vacuum", new VacuumModel());
+        wep_to_model.put("lid", new LidModel());
         /** Load name -> in use dictionary */
         wep_in_use.put("mop", true);
         wep_in_use.put("spray", true);
@@ -902,29 +915,37 @@ public class FloorController extends WorldController implements ContactListener 
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
                     canvas.getWidth()/2 + 120, canvas.getHeight()/2 + 200, 0, .4f, .2f);
-            //draw other weapons currently in cart
-            canvas.draw(vacuumTexture, canvas.getWidth()/2 + 200, canvas.getHeight()/2 + 230);
-            canvas.draw(lidTexture, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
+
+            //retrieve unused weapons
+            String[] unused = new String[2];
+            int unused_indexer = 0;
+            for (String wep: list_of_weapons) {
+                if (!wep_in_use.get(wep)) {
+                    //if weapon not in use
+                    unused[unused_indexer] = wep;
+                    unused_indexer += 1;
+                }
+            }
+            //draw unused weapons currently in cart
+            Texture unused_wep1 = wep_to_texture.get(unused[0]);
+            Texture unused_wep2 = wep_to_texture.get(unused[1]);
+            canvas.draw(unused_wep1, canvas.getWidth()/2 + 200, canvas.getHeight()/2 + 230);
+            canvas.draw(unused_wep2, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
 
             //IF YOU SWAP
             if (avatar.isSwapping()) {
-//                Set<String> keySet= wep_in_use.keySet();
-//
-//                for(int i:keySet){
-//                    System.out.println(map.get(i));
-//                }
+                //update what weapons are in use
+                for (String wep: list_of_weapons) {
+                    if (!wep_in_use.get(wep)) { wep_in_use.put(wep, true); }
+                    else { wep_in_use.put(wep, false); }
+                }
                 //get the new weapons from hashmap and create
-                WeaponModel new_wep1 = new VacuumModel();
-                WeaponModel new_wep2 = new LidModel();
+                WeaponModel new_wep1 = wep_to_model.get(unused[0]);
+                WeaponModel new_wep2 = wep_to_model.get(unused[1]);
                 //set the new weapons
                 avatar.setWep1(new_wep1);
                 avatar.setWep2(new_wep2);
             }
-
-//            displayFont.setColor(Color.WHITE);
-//            canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
-//            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
-//            canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
         }
 
         canvas.end();
