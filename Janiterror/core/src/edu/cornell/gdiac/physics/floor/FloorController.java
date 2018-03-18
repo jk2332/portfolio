@@ -856,13 +856,17 @@ public class FloorController extends WorldController implements ContactListener 
         if (atMopCart){
             // itemSwap = new Texture(PLAY_BTN_FILE);
             Color tint1 = Color.BLACK;
-//		    Color tint2 = Color.ORANGE;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
                     canvas.getWidth()/2 + 120, canvas.getHeight()/2 + 200, 0, .4f, .2f);
+
+            //get the other two weapons
+            canvas.draw(vacuumTexture, canvas.getWidth()/2 + 200, canvas.getHeight()/2 + 230);
+            canvas.draw(lidTexture, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
+
             displayFont.setColor(Color.WHITE);
             canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
 //            canvas.draw(itemSwap, tint2, itemSwap.getWidth()/2, itemSwap.getHeight()/2,
-//                    canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
+//            canvas.width/10, canvas.height/2, 0, ITEM_SCALE*2, ITEM_SCALE*2);
         }
 
         canvas.end();
