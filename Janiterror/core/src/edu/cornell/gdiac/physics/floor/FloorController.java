@@ -11,6 +11,7 @@
 package edu.cornell.gdiac.physics.floor;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g3d.particles.ParticleSorter;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -28,6 +29,8 @@ import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 import edu.cornell.gdiac.physics.floor.monster.*;
 
+import java.util.HashMap;
+import java.util.Set;
 import java.util.Iterator;
 
 /**
@@ -102,6 +105,9 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture vacuumTexture;
     private Texture lidTexture;
     private Texture heartTexture;
+    /** Weapon Name -> Texture Dictionary*/
+    HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
 
     private long scientistContactTicks;
     private long stunTicks;
@@ -355,6 +361,16 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setTexture(mopTile);
         mopCart.setName("mopCart");
         addObject(mopCart);
+        /** Load name -> texture dictionary */
+        wep_to_texture.put("mop", mopTexture);
+        wep_to_texture.put("spray", sprayTexture);
+        wep_to_texture.put("vacuum", vacuumTexture);
+        wep_to_texture.put("lid", lidTexture);
+        /** Load name -> in use dictionary */
+        wep_in_use.put("mop", true);
+        wep_in_use.put("spray", true);
+        wep_in_use.put("vacuum", false);
+        wep_in_use.put("lid", false);
 
         String wname = "wall";
         for (int ii = 0; ii < WALLS.length; ii++) {
@@ -854,16 +870,20 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(heartTexture, UI_OFFSET + 30 + margin, canvas.getHeight()-UI_OFFSET - 27);
             margin = margin + 25;
         }
-        String wep1FileName = "floor/ui-" + avatar.getWep1().getName() + ".png";
-        String wep2FileName = "floor/ui-" + avatar.getWep2().getName() + ".png";
-        //get textures via hash map?
-        canvas.draw(mopTexture, UI_OFFSET + 70, canvas.getHeight()-UI_OFFSET - 70);
-        canvas.draw(sprayTexture, UI_OFFSET + 190, canvas.getHeight()-UI_OFFSET - 70);
+        //get textures via hash map from weapons names
+        String wep1FileName = avatar.getWep1().getName();
+        String wep2FileName = avatar.getWep2().getName();
+        Texture wep1Texture = wep_to_texture.get(wep1FileName);
+        Texture wep2Texture = wep_to_texture.get(wep2FileName);
+        //draw retrieved textures
+        canvas.draw(wep1Texture, UI_OFFSET + 70, canvas.getHeight()-UI_OFFSET - 70);
+        canvas.draw(wep2Texture, UI_OFFSET + 190, canvas.getHeight()-UI_OFFSET - 70);
+
+        //draw weapon UI durability bars (currently temporary)
         String durability1 = Integer.toString(avatar.getWep1().getDurability());
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
         String durability2 = Integer.toString(avatar.getWep2().getDurability());
         String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
-        //draw weapon UI durability bars
         canvas.drawText(durability1 + "/" + maxDurability1,
                 displayFont, UI_OFFSET + 30, canvas.getHeight()-UI_OFFSET - 80);
         canvas.drawText(durability2 + "/" + maxDurability2,
@@ -882,14 +902,24 @@ public class FloorController extends WorldController implements ContactListener 
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
                     canvas.getWidth()/2 + 120, canvas.getHeight()/2 + 200, 0, .4f, .2f);
-
-            //get the other two weapons
+            //draw other weapons currently in cart
             canvas.draw(vacuumTexture, canvas.getWidth()/2 + 200, canvas.getHeight()/2 + 230);
             canvas.draw(lidTexture, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
 
             //IF YOU SWAP
-//            avatar.setWep1(new VacuumModel());
-//            avatar.setWep2(new LidModel());
+            if (avatar.isSwapping()) {
+//                Set<String> keySet= wep_in_use.keySet();
+//
+//                for(int i:keySet){
+//                    System.out.println(map.get(i));
+//                }
+                //get the new weapons from hashmap and create
+                WeaponModel new_wep1 = new VacuumModel();
+                WeaponModel new_wep2 = new LidModel();
+                //set the new weapons
+                avatar.setWep1(new_wep1);
+                avatar.setWep2(new_wep2);
+            }
 
 //            displayFont.setColor(Color.WHITE);
 //            canvas.drawText("MOP CART STUFF", displayFont, canvas.getWidth()/2 + 70, 3*canvas.getHeight()/4);
