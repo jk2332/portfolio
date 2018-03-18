@@ -514,11 +514,17 @@ public class JoeModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
+    //Weapon Getters and Setters
     public WeaponModel getWep1() {
         return wep1;
     }
-
     public WeaponModel getWep2() {
         return wep2;
+    }
+    public void setWep1(WeaponModel new_weapon) {
+        this.wep1 = new_weapon;
+    }
+    public void setWep2(WeaponModel new_weapon) {
+        this.wep2 = new_weapon;
     }
 }
