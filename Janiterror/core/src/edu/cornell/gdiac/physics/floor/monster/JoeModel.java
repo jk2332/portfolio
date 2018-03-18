@@ -514,7 +514,7 @@ public class JoeModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
-    //Weapon Getters and Setters
+//    Weapon Getters and Setters
     public WeaponModel getWep1() {
         return wep1;
     }

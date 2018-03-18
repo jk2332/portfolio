@@ -5,10 +5,15 @@ public class VacuumModel extends WeaponModel {
     private static final String VACUUM_NAME = "vacuum";
 
     private static final int VACUUM_DURABILITY = 10;
+    private static final int VACUUM_COOLDOWN = 10;
+    private static final int VACUUM_RANGE= 10;
+    private static final int VACUUM_STUNTIME = 10;
 
-    int maxDurability = VACUUM_DURABILITY;
 
     public VacuumModel() {
+        maxDurability = VACUUM_DURABILITY;
+        cooldown = VACUUM_COOLDOWN;
+        range = VACUUM_RANGE;
         name = VACUUM_NAME;
         resetDurability();
     }

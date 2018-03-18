@@ -219,7 +219,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
     /** Offset for bullet when firing */
-    private static final float  BULLET_OFFSET = 0.2f;
+    private static final float  BULLET_OFFSET = 1.0f;
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
@@ -285,7 +285,7 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     private boolean atMopCart;
-    private boolean bulletTouch;
+    private boolean isLidHand;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -300,7 +300,7 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setAtMopCart(false);
         setFailure(false);
-        setBulletTouch(false);
+        setLid(true);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
         scientistContactTicks=0;
@@ -326,7 +326,7 @@ public class FloorController extends WorldController implements ContactListener 
         setAtMopCart(false);
         setComplete(false);
         setFailure(false);
-        setBulletTouch(false);
+
         enemies=new EnemyModel[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
         controls = new AIController[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
         board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
@@ -490,7 +490,7 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setAttacking2(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didTertiary());
         // Add a bullet if we fire
-        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0) {
+        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0 && isLidHand && avatar.getWep2().getName() == "lid") {
             createBullet(avatar);
         }
         if (isAtMopCart()) {
@@ -507,7 +507,6 @@ public class FloorController extends WorldController implements ContactListener 
             attack(avatar.getWep2());
         }
         avatar.applyForce();
-
         boolean winning = true;
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
@@ -585,7 +584,7 @@ public class FloorController extends WorldController implements ContactListener 
         float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
-        bullet.setName("bullet");
+        bullet.setName("lid");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
         bullet.setTexture(bulletTexture);
@@ -634,12 +633,18 @@ public class FloorController extends WorldController implements ContactListener 
     }
     public void removeBullet2(Obstacle bullet,EnemyModel scientist) {
         bullet.markRemoved(true);
+        setLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         scientist.decrHP();
         if (scientist.getHP()<= 0) {
             controls[scientist.getId()]=null;
             scientist.markRemoved(true);
         }
+    }
+    public void removeBullet3(Obstacle bullet) {
+        bullet.setVX(0.0f);
+        bullet.setVY(0.0f);
+        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
 
     public void attack(WeaponModel wep) { /* TODO is it okay to import weaponmodel here */
@@ -669,33 +674,98 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof SprayModel) {
             SprayModel spray = (SprayModel) wep;
             if (spray.getDurability() != 0) {
+                spray.decrDurability();
                 for (EnemyModel s : enemies) {
-                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                            boolean case1 = Math.abs(horiGap)<=2 && horiGap>0 && !avatar.isFacingRight() && vertiGap==0;
-                            boolean case2 = Math.abs(horiGap)<=2 && horiGap<0 && avatar.isFacingRight() && vertiGap==0;
-                            boolean case3 = Math.abs(vertiGap)<=2 && vertiGap>0 && !avatar.isFacingUp() && horiGap==0;
-                            boolean case4 = Math.abs(vertiGap)<=2 && vertiGap<0 && avatar.isFacingUp() && horiGap==0;
-                            if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
-                                if (s.getHP() == 1) {
-                                    controls[s.getId()]=null;
-                                    s.markRemoved(true);
-                                } else {
-                                    System.out.println("set it stunned");
-                                    s.setStunned(true);
-                                    s.decrHP();
-                                }
-                                spray.decrDurability();
-                            }
+//                    for (Obstacle obj : objects) {
+//                        if (obj.isBullet()) {
+                    int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                    int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                    boolean case1 = Math.abs(horiGap) <= 2 && horiGap > 0 && !avatar.isFacingRight() && vertiGap == 0;
+                    boolean case2 = Math.abs(horiGap) <= 2 && horiGap < 0 && avatar.isFacingRight() && vertiGap == 0;
+                    boolean case3 = Math.abs(vertiGap) <= 2 && vertiGap > 0 && !avatar.isFacingUp() && horiGap == 0;
+                    boolean case4 = Math.abs(vertiGap) <= 2 && vertiGap < 0 && avatar.isFacingUp() && horiGap == 0;
+
+//                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
+//                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
+                    if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
+                        if (s.getHP() == 1) {
+                            s.markRemoved(true);
+                        } else {
+                            s.setStunned(true);
+                            s.decrHP();
+
                         }
 
-            } else if (wep instanceof LidModel) {
-
-            } else if (wep instanceof VacuumModel) {
-
+//                            }
+//
+//                        }
+                    }
+                }
             }
+        } else if (wep instanceof LidModel) {
+            LidModel lid = (LidModel) wep;
+            if (lid.getDurability() != 0 && isLidHand) {
+                lid.decrDurability();
+                setLid(false);
+                for (EnemyModel s : enemies) {
+                    for (Obstacle obj : objects) {
+                        if (obj.isBullet()) {
+                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
+                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
+
+                            if (inRangeB && !s.isRemoved()) {
+                                if (s.getHP() == 1) {
+                                    s.markRemoved(true);
+                                } else {
+                                    s.decrHP();
+
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+            }
+        }else if (wep instanceof VacuumModel) {
+                VacuumModel vacuum = (VacuumModel) wep;
+                if (vacuum.getDurability() != 0){
+                    System.out.println("vacuum");
+                    vacuum.decrDurability();
+                    for (EnemyModel s : enemies){
+                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                        boolean case1 = Math.abs(horiGap) <= 20 && horiGap > 0 && !avatar.isFacingRight() && vertiGap == 0;
+                        boolean case2 = Math.abs(horiGap) <= 20 && horiGap < 0 && avatar.isFacingRight() && vertiGap == 0;
+                        boolean case3 = Math.abs(vertiGap) <= 20 && vertiGap > 0 && !avatar.isFacingUp() && horiGap == 0;
+                        boolean case4 = Math.abs(vertiGap) <= 20 && vertiGap < 0 && avatar.isFacingUp() && horiGap == 0;
+                        if (!s.isRemoved() && (case1)) {
+                            System.out.println("case1");
+                            s.setMovementX(20);
+                            s.setMovementY(0);
+                        }
+                        if (!s.isRemoved() && (case2)) {
+                            System.out.println("case2");
+                            s.setMovementX(-20);
+                            s.setMovementY(0);
+                        }
+                        if (!s.isRemoved() && (case3)) {
+                            System.out.println("case3");
+                            s.setMovementX(0);
+                            s.setMovementY(20);
+                        }
+                        if (!s.isRemoved() && (case4)) {
+                            System.out.println("case4");
+                            s.setMovementX(0);
+                            s.setMovementY(-20);
+                        }
+
+                    }
+                }
+            }
+
         }
-    }
+
 
 
     /**
@@ -721,31 +791,29 @@ public class FloorController extends WorldController implements ContactListener 
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
             for (EnemyModel s : enemies){
-                if (bd1.getName().equals("bullet") && bd2 == s) {
+                if (bd1.getName().equals("lid") && bd2 == s) {
                     removeBullet2(bd1,s);
 
                 }
-                if (bd2.getName().equals("bullet") && bd1 == s) {
+                if (bd2.getName().equals("lid") && bd1 == s) {
                     removeBullet2(bd2,s);
 
                 }
-            }
-            // Test bullet collision with world
-            if (bd1.getName().equals("bullet") && bd2 != avatar) {
-                removeBullet(bd1);
-            }
+                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) ) {
+                    removeBullet3(bd1);
+                }
 
-            if (bd2.getName().equals("bullet") && bd1 != avatar) {
-                removeBullet(bd2);
+                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) ) {
+                    removeBullet3(bd2);
+                }
             }
-            if (bd1.getName().equals("bullet") && (bd2 instanceof ScientistModel)) {
-                setBulletTouch(true);
-                removeBullet(bd1);
-            }
-
-            if (bd2.getName().equals("bullet") && (bd1 instanceof ScientistModel)) {
-                setBulletTouch(true);
+            if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
                 removeBullet(bd2);
+                setLid(true);
+            }
+            if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
+                removeBullet(bd2);
+                setLid(true);
             }
 
             // See if we have landed on the ground.
@@ -964,13 +1032,18 @@ public class FloorController extends WorldController implements ContactListener 
 
         //get player durability and change it
     }
-    public void setBulletTouch(boolean value){
-        bulletTouch = value;
-    }
+
     public boolean isAtMopCart( ) {
         return atMopCart;
     }
-    public boolean isBullettouch( ){
-        return bulletTouch;
+    public void setLid(boolean value) {
+
+       isLidHand = value;
+
+        //get player durability and change it
+    }
+
+    public boolean isLid( ) {
+        return isLidHand;
     }
 }
