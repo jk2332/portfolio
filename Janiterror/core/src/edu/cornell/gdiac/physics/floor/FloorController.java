@@ -674,6 +674,7 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof MopModel) { // TODO same q for mop model
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
+                SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
                 for (EnemyModel s : enemies) {
                     /*if (xDist <= 3 && yDist <= 3) {
                         System.out.println("x");
@@ -723,6 +724,7 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         } else if (wep instanceof SprayModel) {
+            SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
             SprayModel spray = (SprayModel) wep;
             if (spray.getDurability() != 0) {
                 spray.decrDurability();
