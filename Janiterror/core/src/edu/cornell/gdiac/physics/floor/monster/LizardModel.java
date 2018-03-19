@@ -342,4 +342,5 @@ public class LizardModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
+
 }

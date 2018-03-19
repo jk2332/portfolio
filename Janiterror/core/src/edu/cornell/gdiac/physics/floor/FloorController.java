@@ -49,11 +49,14 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
     /** The texture file for the character avatar walking */
     private static final String SCIENTIST_FILE  = "floor/scientist.png";
+    private static final String SLIME_FILE  = "floor/slime.png";
     private static final String ROBOT_FILE = "floor/robot.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
     private static final String BULLET_FILE  = "floor/lid.png";
+
+    private static final String SLIMEBALL_FILE = "floor/lid.png";
     private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
@@ -75,8 +78,9 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_SCIENTISTS = 4;
-    private int NUM_OF_ROBOTS = 2;
+    private int NUM_OF_SCIENTISTS = 1;
+    private int NUM_OF_SLIMES = 1;
+    private int NUM_OF_ROBOTS = 1;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -95,9 +99,12 @@ public class FloorController extends WorldController implements ContactListener 
     private TextureRegion avatarWalkingTexture;
     /** Texture asset for character avatar */
     private TextureRegion scientistTexture;
+    private TextureRegion slimeTexture;
     private TextureRegion robotTexture;
     /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
+    /** Texture asset for the slimeball */
+    private TextureRegion slimeballTexture;
     /** Texture asset for the mop cart background */
     private Texture backgroundTexture;
 
@@ -143,12 +150,16 @@ public class FloorController extends WorldController implements ContactListener 
         // assets.add(DUDE_WALKING_FILE);
         manager.load(SCIENTIST_FILE, Texture.class);
         assets.add(SCIENTIST_FILE);
+        manager.load(SLIME_FILE, Texture.class);
+        assets.add(SLIME_FILE);
         manager.load(ROBOT_FILE, Texture.class);
         assets.add(ROBOT_FILE);
         manager.load(BARRIER_FILE, Texture.class);
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
         assets.add(BULLET_FILE);
+        manager.load(SLIMEBALL_FILE, Texture.class);
+        assets.add(SLIMEBALL_FILE);
         manager.load(SPRAY_TEMP_FILE, Texture.class);
         assets.add(SPRAY_TEMP_FILE);
         manager.load(ROPE_FILE, Texture.class);
@@ -197,7 +208,9 @@ public class FloorController extends WorldController implements ContactListener 
         // avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false); TODO
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         robotTexture = createTexture(manager,ROBOT_FILE,false);
+        slimeTexture = createTexture(manager,SLIME_FILE, false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
+        slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
         backgroundTexture = new Texture(BACKGROUND_FILE);
 
         //UI Icons
@@ -342,8 +355,8 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setFailure(false);
 
-        enemies=new EnemyModel[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
-        controls = new AIController[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS];
+        enemies=new EnemyModel[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+NUM_OF_SLIMES];
+        controls = new AIController[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+NUM_OF_SLIMES];
         board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
         populateLevel();
     }
@@ -458,6 +471,15 @@ public class FloorController extends WorldController implements ContactListener 
             addObject(mon);
             enemies[NUM_OF_SCIENTISTS+ii]=mon;
         }
+        for (int ii=0; ii<NUM_OF_SLIMES; ii++){
+            EnemyModel mon =new SlimeModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+                    dwidth, dheight, NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+ii);
+            mon.setDrawScale(scale);
+            mon.setTexture(slimeTexture);
+            mon.setName("slime");
+            addObject(mon);
+            enemies[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+ii]=mon;
+        }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
@@ -566,22 +588,27 @@ public class FloorController extends WorldController implements ContactListener 
 
                 }
                 if (action==CONTROL_FIRE){
-                    scientistContactTicks++;
                     s.setMovementX(0);
                     s.setMovementY(0);
                     s.coolDown(false);
-                    if (scientistContactTicks%2==0) {
-                        s.incrAttackAniFrame();
-                        boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
-                                && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
-                        boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
-                                && board.screenToBoardX(s.getPosition().x)==board.screenToBoardX(avatar.getPosition().x);
-                        if((hori || verti) && s.endOfAttack()){
-                            if (s.endOfAttack()) {
-                                avatar.decrHP();
-                                scientistContactTicks=0;
+                    if (s instanceof ScientistModel || s instanceof RobotModel) {
+                        scientistContactTicks++;
+                        if (scientistContactTicks%2==0) {
+                            s.incrAttackAniFrame();
+                            boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
+                                    && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
+                            boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
+                                    && board.screenToBoardX(s.getPosition().x)==board.screenToBoardX(avatar.getPosition().x);
+                            if((hori || verti) && s.endOfAttack()){
+                                if (s.endOfAttack()) {
+                                    avatar.decrHP();
+                                    scientistContactTicks=0;
+                                }
                             }
                         }
+                    } else if (s instanceof SlimeModel) {
+                        System.out.println("shoot1");
+                        createBullet((SlimeModel) s);
                     }
                 }
                 else {
@@ -639,6 +666,53 @@ public class FloorController extends WorldController implements ContactListener 
         // Compute position and velocity
         float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
         bullet.setVX(speed);
+        addQueuedObject(bullet);
+
+        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+    }
+
+    /**
+     * Add a new bullet to the world and send it in the right direction.
+     */
+    private void createBullet(SlimeModel player) {
+
+        // Compute position and velocity
+
+        int dirX = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(player.getX());
+        int dirY =  board.screenToBoardY(avatar.getY()) - board.screenToBoardY(player.getY());
+
+        float speedX  = 0;
+        float speedY = 0;
+        float offsetX = 0;
+        float offsetY = 0;
+
+        if (dirX > 0) {
+            speedX = BULLET_SPEED;
+            offsetX = BULLET_OFFSET;
+        } else if (dirX < 0) {
+            speedX = -BULLET_SPEED;
+            offsetX = -BULLET_OFFSET;
+        }
+
+        if (dirY > 0) {
+            speedY = BULLET_SPEED;
+            offsetY = BULLET_OFFSET;;
+        } else if (dirY < 0) {
+            speedY = -BULLET_SPEED;
+            offsetY = -BULLET_OFFSET;
+        }
+
+        float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
+        WheelObstacle bullet = new WheelObstacle(player.getX() + offsetX, player.getY() + offsetY, radius);
+
+        bullet.setName("slimeball");
+        bullet.setDensity(HEAVY_DENSITY);
+        bullet.setDrawScale(scale);
+        bullet.setTexture(slimeballTexture);
+        bullet.setBullet(true);
+        bullet.setGravityScale(0);
+        bullet.setVX(speedX);
+        bullet.setVY(speedY);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -876,6 +950,20 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
                 removeBullet(bd2);
                 setLid(true);
+            }
+
+            if (bd1.getName().equals("slimeball") && bd2 == avatar) {
+                removeBullet(bd1);
+                avatar.decrHP();
+            } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
+                removeBullet(bd1);
+            }
+
+            if (bd2.getName().equals("slimeball") && bd1 == avatar) {
+                removeBullet(bd2);
+                avatar.decrHP();
+            } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
+                removeBullet(bd2);
             }
 
             // See if we have landed on the ground.

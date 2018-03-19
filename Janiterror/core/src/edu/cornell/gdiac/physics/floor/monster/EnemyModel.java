@@ -294,4 +294,16 @@ public class EnemyModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
+
+    public boolean canShootTargetFrom(int x, int y, int tx, int ty) {
+        int dx = tx > x ? tx - x : x - tx;
+        int dy = ty > y ? ty - y : y - ty;
+        //boolean power = this.board.isPowerTileAt(x, y);
+        boolean canhit = dx <= 1 && dy == 0;
+        canhit |= dx == 0 && dy <= 1;
+        //canhit |= power && dx == dy && dx <= 3;
+        return canhit;
+        /*TODO override if monster has a different range */
+    }
+
 }

@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class AIController {
     private static final int CHASE_DIST = 6;
-    private static final int ATTACK_DIST = 1;
+    private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
     private EnemyModel[] fleet;
@@ -49,7 +49,7 @@ public class AIController {
 
         int action = this.move;
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
-            action |= 16;
+            action = 16;
         }
 
         return action;
@@ -74,7 +74,7 @@ public class AIController {
                     } else {
                         tx = this.board.screenToBoardX(this.target.getX());
                         ty = this.board.screenToBoardY(this.target.getY());
-                        if (this.manhattan(sx, sy, tx, ty) > ATTACK_DIST) {
+                        if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
                             this.state = FSMState.CHASE;
                         } else {
                             this.state = FSMState.ATTACK;
@@ -88,7 +88,7 @@ public class AIController {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
-                    if (dist <= ATTACK_DIST) {
+                    if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= CHASE_DIST) {
@@ -107,7 +107,7 @@ public class AIController {
                 if (dieroll != 0 && this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.manhattan(sx, sy, tx, ty) <= ATTACK_DIST) {
+                    if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                     }
                 } else {
@@ -119,7 +119,7 @@ public class AIController {
                 if (this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.manhattan(sx, sy, tx, ty) > ATTACK_DIST) {
+                    if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.CHASE;
                         dieroll = rand.nextInt(2);
                     }
@@ -143,16 +143,13 @@ public class AIController {
     }
 
     private boolean canShootTargetFrom(int x, int y) {
+        if (!this.board.inBounds(x, y)) {
+            return false;
+        }
+
         int tx = this.board.screenToBoardX(this.target.getX());
         int ty = this.board.screenToBoardY(this.target.getY());
-        int dx = tx > x ? tx - x : x - tx;
-        int dy = ty > y ? ty - y : y - ty;
-        //boolean power = this.board.isPowerTileAt(x, y);
-        boolean canhit = dx <= ATTACK_DIST && dy == 0;
-        canhit |= dx == 0 && dy <= ATTACK_DIST;
-        //canhit |= power && dx == dy && dx <= 3;
-        canhit &= this.board.inBounds(x, y);
-        return canhit;
+        return this.ship.canShootTargetFrom(x,y,tx,ty);
     }
 
     private boolean canShootTarget() {
