@@ -793,25 +793,25 @@ public class FloorController extends WorldController implements ContactListener 
                             System.out.println("case1");
                             s.setMovementX(100);
                             s.setMovementY(0);
-                            s.applyForce();
+                            s.setVelocity();
                         }
                         if ((case2)) {
                             System.out.println("case2");
                             s.setMovementX(-100);
                             s.setMovementY(0);
-                            s.applyForce();
+                            s.setVelocity();
                         }
                         if ((case3)) {
                             System.out.println("case3");
                             s.setMovementX(0);
                             s.setMovementY(100);
-                            s.applyForce();
+                            s.setVelocity();
                         }
                         if ((case4)) {
                             System.out.println("case4");
                             s.setMovementX(0);
                             s.setMovementY(-100);
-                            s.applyForce();
+                            s.setVelocity();
                         }
 
                     }
