@@ -426,7 +426,7 @@ public class JoeModel extends CapsuleObstacle {
      *
      * This method should be called after the force attribute is set.
      */
-    public void applyForce() {
+    public void setVelocity() {
         if (!isActive()) {
             return;
         }

@@ -74,8 +74,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_SCIENTISTS=4;
-    private int NUM_OF_ROBOTS = 2;
+    private int NUM_OF_SCIENTISTS=1;
+    private int NUM_OF_ROBOTS = 0;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -231,6 +231,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
 
+    /** disables setVelocity until knockback is finished */
+    private static final int KNOCKBACK_TIMER = 15;
+
     // Since these appear only once, we do not care about the magic numbers.
     // In an actual game, this information would go in a data file.
     // Wall vertices
@@ -294,6 +297,9 @@ public class FloorController extends WorldController implements ContactListener 
     private boolean isLidHand;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
+
+    /** For mop knockback force calculations*/
+    private Vector2 knockbackForce = new Vector2();
 
     /**
      * Creates and initialize a new instance of the platformer game
@@ -514,7 +520,7 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (avatar.isAttacking2()) {
             attack(avatar.getWep2());
         }
-        avatar.applyForce();
+        avatar.setVelocity();
         boolean winning = true;
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
@@ -578,7 +584,11 @@ public class FloorController extends WorldController implements ContactListener 
                 else {
                     s.coolDown(true);
                 }
-                s.applyForce();
+                if (s.getKnockbackTimer() == 0) {
+                    s.setVelocity();
+                } else {
+                    s.decrKnockbackTimer();
+                }
             }
         }
         if (winning) {setComplete(true);}
@@ -699,6 +709,12 @@ public class FloorController extends WorldController implements ContactListener 
                         } else {
                             s.decrHP();
                         }
+                        knockbackForce.set(horiGap * -30f, vertiGap * -30f);
+                        //knockbackForce.nor();
+
+                        s.applyForce(knockbackForce);
+                        s.setKnockbackTimer(KNOCKBACK_TIMER);
+                        System.out.println(knockbackForce);
                         mop.decrDurability();
                     }
                 }
