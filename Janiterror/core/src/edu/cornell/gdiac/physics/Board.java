@@ -40,8 +40,8 @@ public class Board {
         this.resetTiles();
     }
     public void resetTiles() {
-        for(int x = 1; x < this.width-1; ++x) {
-            for(int y = 1; y < this.height-1; ++y) {
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState tile = this.getTileState(x, y);
                 tile.goal = false;
                 tile.visited = false;
@@ -110,8 +110,8 @@ public class Board {
     }
 
     public void clearMarks() {
-        for(int x = 1; x < this.width-1; ++x) {
-            for(int y = 1; y < this.height-1; ++y) {
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState state = this.getTileState(x, y);
                 state.visited = false;
                 state.goal = false;
@@ -120,7 +120,7 @@ public class Board {
     }
 
     public boolean inBounds(int x, int y) {
-        return x >= 1 && y >= 1 && x < this.width-1 && y < this.height-1;
+        return x >= 0 && y >= 0 && x < this.width && y < this.height;
     }
 
     private TileState getTileState(int x, int y) {
@@ -139,7 +139,7 @@ public class Board {
             tiley=y;
             this.goal = false;
             //this.visited = false;
-            if (x==0 || y==0 || x==width-1 || y==height-1) {falling=true; visited=true;} else {falling=false; visited=false;}
+            //if (x==0 || y==0 || x==width-1 || y==height-1) {falling=true; visited=true;} else {falling=false; visited=false;}
         }
     }
 
