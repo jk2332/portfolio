@@ -654,10 +654,15 @@ public class FloorController extends WorldController implements ContactListener 
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
     public void removeBullet2(Obstacle bullet,EnemyModel scientist) {
+        float knockbackx = 10f;
+        float knockbackx2 = (bullet.getX() > scientist.getX() ? -knockbackx : knockbackx);
+        knockbackForce.set(knockbackx2,0f);
         bullet.markRemoved(true);
         setLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         scientist.decrHP();
+        scientist.setKnockbackTimer(KNOCKBACK_TIMER);
+        scientist.applyForce(knockbackForce);
         if (scientist.getHP()<= 0) {
             controls[scientist.getId()]=null;
             scientist.markRemoved(true);
@@ -763,10 +768,9 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     for (Obstacle obj : objects) {
                         if (obj.isBullet()) {
-                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
-                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
-
-                            if (inRangeB && !s.isRemoved()) {
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            if (!s.isRemoved()) {
                                 if (s.getHP() == 1) {
                                     s.markRemoved(true);
                                 } else {
