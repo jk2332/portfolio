@@ -74,8 +74,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 64;
-    private int NUM_OF_SCIENTISTS=1;
-    private int NUM_OF_ROBOTS = 0;
+    private int NUM_OF_SCIENTISTS = 4;
+    private int NUM_OF_ROBOTS = 2;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
