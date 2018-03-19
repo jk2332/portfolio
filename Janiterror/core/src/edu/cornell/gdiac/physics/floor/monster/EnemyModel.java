@@ -179,7 +179,7 @@ public class EnemyModel extends CapsuleObstacle {
     }
 
     public void incrAttackAniFrame(){
-        if (attackAnimationFrame<3) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
+        if (attackAnimationFrame<maxAniFrame) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
     }
 
 
