@@ -46,6 +46,7 @@ public class EnemyModel extends CapsuleObstacle {
     private int id;
     private long stunTicks;
     private boolean stunned;
+    private int knockbackTimer;
     private float density;
     private float force;
     private int attackAnimationFrame;
@@ -167,6 +168,7 @@ public class EnemyModel extends CapsuleObstacle {
         this.force=force;
         this.attackAnimationFrame=0;
         this.maxAniFrame=maxAniFrame;
+        this.knockbackTimer = 0;
     }
 
     public boolean endOfAttack(){
@@ -182,14 +184,15 @@ public class EnemyModel extends CapsuleObstacle {
         if (attackAnimationFrame<maxAniFrame) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
     }
 
-
     public float getForce(){return force;}
+
+
     /**
      * Applies the force to the body of this dude
      *
      * This method should be called after the force attribute is set.
      */
-    public void applyForce() {
+    public void setVelocity() {
         if (!isActive()) {
             return;
         }
@@ -198,6 +201,13 @@ public class EnemyModel extends CapsuleObstacle {
             body.setLinearVelocity(0, 0);
         }
         body.setLinearVelocity(getMovementX(), getMovementY());
+    }
+
+    public void applyForce(Vector2 f) {
+        if (!isActive()) {
+            return;
+        }
+        body.applyLinearImpulse(f,getPosition(),true);
     }
 
     public void coolDown(boolean flag) {
@@ -227,6 +237,18 @@ public class EnemyModel extends CapsuleObstacle {
 
     public long getStunTicks(){
         return this.stunTicks;
+    }
+
+    public void setKnockbackTimer(int knockbackTimer) {
+        this.knockbackTimer = knockbackTimer;
+    }
+
+    public int getKnockbackTimer() {
+        return knockbackTimer;
+    }
+
+    public void decrKnockbackTimer() {
+        knockbackTimer --;
     }
 
     public int getAttackAnimationFrame(){return attackAnimationFrame;}
