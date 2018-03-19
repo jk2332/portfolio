@@ -28,11 +28,12 @@ import edu.cornell.gdiac.physics.obstacle.*;
 public class JoeModel extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
-    private static final float DUDE_DENSITY = 1.0f;
+    private static final float DUDE_DENSITY = 15.0f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 20.0f;
+    private static final float DUDE_FORCE = 5.0f;
     /** The amount to slow the character down */
-    private static final float DUDE_DAMPING = 10.0f;
+    private static final float DUDE_DAMPING = 20.0f;
+    private static final float SPEED_DAMPNING = 0.75f;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
@@ -59,6 +60,7 @@ public class JoeModel extends CapsuleObstacle {
     private static final float DUDE_SSHRINK = 0.6f;
     /* Joe's max HP */
     private static final int MAX_HP = 15;
+    private static final float EPSILON_CLAMP = 0.01f;
 
     /** The current horizontal movement of the character */
     private float   movementX;
@@ -373,7 +375,7 @@ public class JoeModel extends CapsuleObstacle {
         vacuum = new VacuumModel();
 
         wep1 = mop;
-        wep2 = null;
+        wep2 = spray;
 
         shootCooldown = 0;
         attackCooldown = 0;
@@ -429,35 +431,10 @@ public class JoeModel extends CapsuleObstacle {
             return;
         }
 
-        // TODO: maybe optimize later - make w less operations? doubt it matters though
-        // Don't want to be moving. Damp out player motion
-        if (getMovementX() == 0f) {
-            forceCache.set(-getDamping()*getVX(),getMovementY());
-            body.applyForce(forceCache,getPosition(),true);
+        if (getMovementX()==0f && getMovementY()==0f) {
+            body.setLinearVelocity(0, 0);
         }
-        if (getMovementY() == 0f) {
-            forceCache.set(getMovementX(),-getDamping()*getVY());
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        }
-        if (Math.abs(getVY()) >= getMaxSpeed()) {
-            setVY(Math.signum(getVY())*getMaxSpeed());
-        }
-
-        forceCache.set(getMovementX(),getMovementY());
-        body.applyForce(forceCache,getPosition(),true);
-
-
-
-        // Jump!
-//		if (isJumping()) {
-//			forceCache.set(0, DUDE_JUMP);
-//			body.applyLinearImpulse(forceCache,getPosition(),true);
-//		}
+        body.setLinearVelocity(getMovementX(), getMovementY());
     }
 
     /**
@@ -537,11 +514,17 @@ public class JoeModel extends CapsuleObstacle {
         hp -= 1; /* TODO dont do if negative */
     }
 
+//    Weapon Getters and Setters
     public WeaponModel getWep1() {
         return wep1;
     }
-
     public WeaponModel getWep2() {
         return wep2;
+    }
+    public void setWep1(WeaponModel new_weapon) {
+        this.wep1 = new_weapon;
+    }
+    public void setWep2(WeaponModel new_weapon) {
+        this.wep2 = new_weapon;
     }
 }

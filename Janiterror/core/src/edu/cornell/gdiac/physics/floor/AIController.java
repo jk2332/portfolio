@@ -6,7 +6,7 @@
 package edu.cornell.gdiac.physics.floor;
 
 import edu.cornell.gdiac.physics.Board;
-import edu.cornell.gdiac.physics.InputController;
+import edu.cornell.gdiac.physics.floor.monster.EnemyModel;
 import edu.cornell.gdiac.physics.floor.monster.JoeModel;
 import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 
@@ -15,12 +15,12 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Random;
 
-public class AIController extends InputController {
-    private static final int CHASE_DIST = 9;
+public class AIController {
+    private static final int CHASE_DIST = 6;
     private static final int ATTACK_DIST = 1;
-    private ScientistModel ship;
+    private EnemyModel ship;
     private Board board;
-    private ScientistModel[] fleet;
+    private EnemyModel[] fleet;
     private AIController.FSMState state;
     private JoeModel target;
     private int move;
@@ -28,8 +28,8 @@ public class AIController extends InputController {
     private int wx = 0;
     private int wy = 0;
 
-    public AIController(int id, Board board, ScientistModel[] ships, JoeModel target) {
-        this.ship =  (ScientistModel) Array.get(ships, id);
+    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
+        this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
         this.state = FSMState.SPAWN;
@@ -185,22 +185,26 @@ public class AIController extends InputController {
             case CHASE:
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                //System.out.println("targetx: "+tx+"//targety: "+ty);
-                this.board.setGoal(tx, ty);
-                setGoal = true;
-                break;
+                int nums=0;
+                int rand = (int) (CHASE_DIST*Math.random());
+                if (board.inBounds(tx+rand, ty)) {
+                    this.board.setGoal(tx+rand, ty); nums++;
+                }
+                if (board.inBounds(tx-rand, ty)) {this.board.setGoal(tx-rand, ty);  nums++;}
+                if (board.inBounds(tx, ty+rand)) {this.board.setGoal(tx, ty+rand); nums++;}
+                if (board.inBounds(tx, ty-rand)) {this.board.setGoal(tx, ty-rand); nums++;}
+                if (nums!=0) setGoal=true;
             case ATTACK:
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                this.board.setGoal(tx, ty);
-                int nums=0;
+                int nums2=0;
                 if (board.inBounds(tx+ATTACK_DIST, ty)) {
-                    this.board.setGoal(tx+ATTACK_DIST, ty); nums++;
+                    this.board.setGoal(tx+ATTACK_DIST, ty); nums2++;
                 }
-                if (board.inBounds(tx-ATTACK_DIST, ty)) {this.board.setGoal(tx-ATTACK_DIST, ty);  nums++;}
-                if (board.inBounds(tx, ty+ATTACK_DIST)) {this.board.setGoal(tx, ty+ATTACK_DIST); nums++;}
-                if (board.inBounds(tx, ty-ATTACK_DIST)) {this.board.setGoal(tx, ty-ATTACK_DIST); nums++;}
-                if (nums!=0) setGoal=true;
+                if (board.inBounds(tx-ATTACK_DIST, ty)) {this.board.setGoal(tx-ATTACK_DIST, ty);  nums2++;}
+                if (board.inBounds(tx, ty+ATTACK_DIST)) {this.board.setGoal(tx, ty+ATTACK_DIST); nums2++;}
+                if (board.inBounds(tx, ty-ATTACK_DIST)) {this.board.setGoal(tx, ty-ATTACK_DIST); nums2++;}
+                if (nums2!=0) setGoal=true;
         }
 
         if (!setGoal) {
@@ -296,4 +300,3 @@ public class AIController extends InputController {
         }
     }
 }
-

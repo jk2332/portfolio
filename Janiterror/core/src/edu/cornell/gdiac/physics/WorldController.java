@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.physics.floor.MopCartMode;
+import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 
@@ -259,6 +260,8 @@ public abstract class WorldController implements Screen {
 	private boolean active;
 	/** Whether we have completed this level */
 	private boolean complete;
+	/** Whether a player has lost in this level*/
+	private boolean lost;
 	/** Whether we have failed at this world (and need a reset) */
 	private boolean failed;
 	/** Whether or not debug mode is active */

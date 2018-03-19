@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.physics.floor.weapon;
 
 abstract public class WeaponModel {
+    public String name;
     public int maxDurability;
     public int durability;
     public int cooldown;
@@ -17,6 +18,8 @@ abstract public class WeaponModel {
     public int getMaxDurability() {
         return maxDurability;
     }
+
+    public String getName() {return name;}
 
     /*TODO prevent from becoming negative */
     public void decrDurability() {
