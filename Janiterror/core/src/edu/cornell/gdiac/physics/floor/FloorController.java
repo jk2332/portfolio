@@ -1024,8 +1024,8 @@ public class FloorController extends WorldController implements ContactListener 
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_texture.get(wep2FileName);
         //draw retrieved textures
-        canvas.draw(wep1Texture, UI_OFFSET + 70, canvas.getHeight()-UI_OFFSET - 70);
-        canvas.draw(wep2Texture, UI_OFFSET + 190, canvas.getHeight()-UI_OFFSET - 70);
+        canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
+        canvas.draw(wep2Texture, UI_OFFSET + 170, canvas.getHeight()-UI_OFFSET - 100);
 
         //draw weapon UI durability bars (currently temporary)
         String durability1 = Integer.toString(avatar.getWep1().getDurability());
@@ -1033,9 +1033,9 @@ public class FloorController extends WorldController implements ContactListener 
         String durability2 = Integer.toString(avatar.getWep2().getDurability());
         String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
         canvas.drawText(durability1 + "/" + maxDurability1,
-                displayFont, UI_OFFSET + 30, canvas.getHeight()-UI_OFFSET - 80);
+                displayFont, UI_OFFSET + 30, canvas.getHeight()-UI_OFFSET - 110);
         canvas.drawText(durability2 + "/" + maxDurability2,
-                displayFont, UI_OFFSET + 150, canvas.getHeight()-UI_OFFSET - 80);
+                displayFont, UI_OFFSET + 150, canvas.getHeight()-UI_OFFSET - 110);
 
         displayFont.getData().setScale(0.5f);
         for (EnemyModel s : enemies) {
@@ -1049,7 +1049,11 @@ public class FloorController extends WorldController implements ContactListener 
             // itemSwap = new Texture(PLAY_BTN_FILE);
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2 + 120, canvas.getHeight()/2 + 200, 0, .4f, .2f);
+                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 200, 0, .18f, .28f);
+            displayFont.getData().setScale(0.5f);
+            canvas.drawText("Mop Cart", displayFont,
+                    canvas.getWidth()/2 + 375, canvas.getHeight()/2 + 280);
+            displayFont.getData().setScale(1.0f);
 
             //retrieve unused weapons
             String[] unused = new String[2];
@@ -1064,8 +1068,8 @@ public class FloorController extends WorldController implements ContactListener 
             //draw unused weapons currently in cart
             Texture unused_wep1 = wep_to_texture.get(unused[0]);
             Texture unused_wep2 = wep_to_texture.get(unused[1]);
-            canvas.draw(unused_wep1, canvas.getWidth()/2 + 200, canvas.getHeight()/2 + 230);
-            canvas.draw(unused_wep2, canvas.getWidth()/2 + 300, canvas.getHeight()/2 + 230);
+            canvas.draw(unused_wep1, canvas.getWidth()/2 + 360, canvas.getHeight()/2 + 200);
+            canvas.draw(unused_wep2, canvas.getWidth()/2 + 430, canvas.getHeight()/2 + 200);
 
             //IF YOU SWAP
             if (avatar.isSwapping()) {
