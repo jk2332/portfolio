@@ -602,6 +602,7 @@ public class FloorController extends WorldController implements ContactListener 
      * Add a new bullet to the world and send it in the right direction.
      */
     private void createBullet(JoeModel player) {
+
         float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
@@ -773,6 +774,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
 
+
                             }
 
                         }
@@ -787,33 +789,34 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 30 && horiGap > 0 && !avatar.isFacingRight() && Math.abs(vertiGap) < 1;
-                        boolean case2 = Math.abs(horiGap) <= 30 && horiGap < 0 && avatar.isFacingRight() && Math.abs(vertiGap) < 1;
-                        boolean case3 = Math.abs(vertiGap) <= 30 && vertiGap > 0 && !avatar.isFacingUp() && Math.abs(horiGap) < 1;
-                        boolean case4 = Math.abs(vertiGap) <= 30 && vertiGap < 0 && avatar.isFacingUp() && Math.abs(horiGap) < 1;
+                        boolean case1 = Math.abs(horiGap) <= 3 && horiGap > 0 && !avatar.isFacingRight() && Math.abs(vertiGap) < .2;
+                        boolean case2 = Math.abs(horiGap) <= 3 && horiGap < 0 && avatar.isFacingRight() && Math.abs(vertiGap) < .2;
+                        boolean case3 = Math.abs(vertiGap) <= 3 && vertiGap > 0 && !avatar.isFacingUp() && Math.abs(horiGap) < .2;
+                        boolean case4 = Math.abs(vertiGap) <= 3 && vertiGap < 0 && avatar.isFacingUp() && Math.abs(horiGap) < .2;
                         if ((case1)) {
-                            System.out.println("case1");
-                            s.setMovementX(100);
-                            s.setMovementY(0);
-                            s.setVelocity();
+                            knockbackForce.set(30f,0f);
+                            s.applyForce(knockbackForce);
+                            s.setKnockbackTimer(KNOCKBACK_TIMER);
+                            s.setStunned(true);
+
                         }
                         if ((case2)) {
-                            System.out.println("case2");
-                            s.setMovementX(-100);
-                            s.setMovementY(0);
-                            s.setVelocity();
+                            knockbackForce.set(-30f,0f);
+                            s.applyForce(knockbackForce);
+                            s.setKnockbackTimer(KNOCKBACK_TIMER);
+                            s.setStunned(true);
                         }
                         if ((case3)) {
-                            System.out.println("case3");
-                            s.setMovementX(0);
-                            s.setMovementY(100);
-                            s.setVelocity();
+                            knockbackForce.set(0f,30f);
+                            s.applyForce(knockbackForce);
+                            s.setKnockbackTimer(KNOCKBACK_TIMER);
+                            s.setStunned(true);
                         }
                         if ((case4)) {
-                            System.out.println("case4");
-                            s.setMovementX(0);
-                            s.setMovementY(-100);
-                            s.setVelocity();
+                            knockbackForce.set(0f,-30f);
+                            s.applyForce(knockbackForce);
+                            s.setKnockbackTimer(KNOCKBACK_TIMER);
+                            s.setStunned(true);
                         }
 
                     }
