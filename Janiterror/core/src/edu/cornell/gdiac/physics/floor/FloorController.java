@@ -53,7 +53,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "floor/barrier.png";
     /** The texture file for the bullet */
-    private static final String BULLET_FILE  = "floor/bullet.png";
+    private static final String BULLET_FILE  = "floor/lid.png";
+    private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
     private static final String BACKGROUND_FILE = "shared/loading.png";
@@ -148,6 +149,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
         assets.add(BULLET_FILE);
+        manager.load(SPRAY_TEMP_FILE, Texture.class);
+        assets.add(SPRAY_TEMP_FILE);
         manager.load(ROPE_FILE, Texture.class);
         assets.add(ROPE_FILE);
 
@@ -225,7 +228,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
     /** Offset for bullet when firing */
-    private static final float  BULLET_OFFSET = 1.0f;
+    private static final float  BULLET_OFFSET = 2.0f;
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
@@ -720,12 +723,11 @@ public class FloorController extends WorldController implements ContactListener 
 //                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
 //                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
-                        if (s.getHP() == 1) {
+                        if (s.getHP() == 1 ) {
                             s.markRemoved(true);
                         } else {
                             s.setStunned(true);
                             s.decrHP();
-
                         }
 
 //                            }
@@ -767,29 +769,33 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 20 && horiGap > 0 && !avatar.isFacingRight() && vertiGap == 0;
-                        boolean case2 = Math.abs(horiGap) <= 20 && horiGap < 0 && avatar.isFacingRight() && vertiGap == 0;
-                        boolean case3 = Math.abs(vertiGap) <= 20 && vertiGap > 0 && !avatar.isFacingUp() && horiGap == 0;
-                        boolean case4 = Math.abs(vertiGap) <= 20 && vertiGap < 0 && avatar.isFacingUp() && horiGap == 0;
-                        if (!s.isRemoved() && (case1)) {
+                        boolean case1 = Math.abs(horiGap) <= 30 && horiGap > 0 && !avatar.isFacingRight() && Math.abs(vertiGap) < 1;
+                        boolean case2 = Math.abs(horiGap) <= 30 && horiGap < 0 && avatar.isFacingRight() && Math.abs(vertiGap) < 1;
+                        boolean case3 = Math.abs(vertiGap) <= 30 && vertiGap > 0 && !avatar.isFacingUp() && Math.abs(horiGap) < 1;
+                        boolean case4 = Math.abs(vertiGap) <= 30 && vertiGap < 0 && avatar.isFacingUp() && Math.abs(horiGap) < 1;
+                        if ((case1)) {
                             System.out.println("case1");
-                            s.setMovementX(20);
+                            s.setMovementX(100);
                             s.setMovementY(0);
+                            s.applyForce();
                         }
-                        if (!s.isRemoved() && (case2)) {
+                        if ((case2)) {
                             System.out.println("case2");
-                            s.setMovementX(-20);
+                            s.setMovementX(-100);
                             s.setMovementY(0);
+                            s.applyForce();
                         }
-                        if (!s.isRemoved() && (case3)) {
+                        if ((case3)) {
                             System.out.println("case3");
                             s.setMovementX(0);
-                            s.setMovementY(20);
+                            s.setMovementY(100);
+                            s.applyForce();
                         }
-                        if (!s.isRemoved() && (case4)) {
+                        if ((case4)) {
                             System.out.println("case4");
                             s.setMovementX(0);
-                            s.setMovementY(-20);
+                            s.setMovementY(-100);
+                            s.applyForce();
                         }
 
                     }
@@ -964,6 +970,9 @@ public class FloorController extends WorldController implements ContactListener 
             obj.draw(canvas);
         }
 //        String hpDisplay = "HP: " + avatar.getHP();
+//        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0 && avatar.getWep2().getName() == "spray"){
+//            canvas.draw(sprayTexture);
+//        }
         String hpDisplay = "HP:";
         String wep1Display;
         if (avatar.getWep1() != null) {
