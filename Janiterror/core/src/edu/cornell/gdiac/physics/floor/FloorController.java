@@ -79,7 +79,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     private int WALL_THICKNESS = 64;
     private int NUM_OF_SCIENTISTS = 2;
-    private int NUM_OF_SLIMES = 0;
+    private int NUM_OF_SLIMES = 1;
     private int NUM_OF_ROBOTS = 1;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
