@@ -79,7 +79,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     private int WALL_THICKNESS = 64;
     private int NUM_OF_SCIENTISTS = 2;
-    private int NUM_OF_SLIMES = 1;
+    private int NUM_OF_SLIMES = 0;
     private int NUM_OF_ROBOTS = 1;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
@@ -630,9 +630,80 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void createBullet(JoeModel player) {
 
-        float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
+        float offsetx = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
+        float offsety = (player.isFacingUp() ? BULLET_OFFSET : -BULLET_OFFSET);
+
+        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+            offsety = 0;
+        }
+        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+            offsetx = 0;
+        }
+        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+            offsetx = 0;
+        }
+        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+            offsety = 0;
+        }
+        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+            offsetx = 0;
+        }
+        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+            offsetx = 0;
+        }
+        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+            offsety = 0;
+        }
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//            offsety = 0;
+//        }
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()!=0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//            offsetx = 0;
+//        }
+//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()!=0){
+//            offsety = 0;
+//        }
+//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()==0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()==0){
+//            offsety = 0;
+//        }
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
-        WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
+        WheelObstacle bullet = new WheelObstacle(player.getX()+offsetx, player.getY()+offsety, radius);
         bullet.setName("lid");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
@@ -642,7 +713,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         // Compute position and velocity
         float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-        bullet.setVX(speed);
+        float speed2  = (player.isFacingUp() ? BULLET_SPEED : -BULLET_SPEED);
+        if (Math.abs(offsetx)>0) {
+            bullet.setVX(speed);
+        }
+        else
+            bullet.setVY(speed2);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -652,6 +728,7 @@ public class FloorController extends WorldController implements ContactListener 
      * Add a new bullet to the world and send it in the right direction.
      */
     private void createBullet(ScientistModel player) {
+
         float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);

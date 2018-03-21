@@ -68,6 +68,8 @@ public class JoeModel extends CapsuleObstacle {
     /** Which direction is the character facing */
     private boolean faceRight;
     private boolean faceUp;
+    private boolean faceLeft;
+    private boolean faceDown;
     /** How long until we can jump again */
 //	private int jumpCooldown;
     /** Whether we are actively jumping */
@@ -142,8 +144,10 @@ public class JoeModel extends CapsuleObstacle {
         // Change facing if appropriate
         if (movementX < 0) {
             faceRight = false;
+            faceLeft = true;
         } else if (movementX > 0) {
             faceRight = true;
+            faceLeft = false;
         }
     }
 
@@ -159,8 +163,10 @@ public class JoeModel extends CapsuleObstacle {
         // Change facing if appropriate
         if (movementY < 0) {
             faceUp = false;
+            faceDown = true;
         } else if (movementY > 0) {
             faceUp = true;
+            faceDown = false;
         }
     }
 
@@ -326,6 +332,14 @@ public class JoeModel extends CapsuleObstacle {
         return faceUp;
     }
 
+    public boolean isFacingLeft() {
+        return faceLeft;
+    }
+
+    public boolean isFacingDown () {
+        return faceDown;
+    }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -366,7 +380,7 @@ public class JoeModel extends CapsuleObstacle {
         isAttacking2 = false;
 //		isJumping = false;
         faceRight = true;
-        faceUp = true;
+        faceUp = false;
 
         hp = MAX_HP;
         mop = new MopModel();
