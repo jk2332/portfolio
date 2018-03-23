@@ -77,6 +77,10 @@ public class InputController {
 	private boolean rightArrowPrevious;
 	private boolean leftArrowPressed;
 	private boolean leftArrowPrevious;
+	private boolean upArrowPressed;
+	private boolean upArrowPrevious;
+	private boolean downArrowPressed;
+	private boolean downArrowPrevious;
 
 	/** How much did we move horizontally? */
 	private float horizontal;
@@ -171,6 +175,12 @@ public class InputController {
 	public boolean didRightArrow() {
 		return rightArrowPressed && !rightArrowPrevious;
 	}
+	public boolean didUpArrow() {
+		return upArrowPressed && !upArrowPrevious;
+	}
+	public boolean didDownArrow() {
+		return downArrowPressed && !downArrowPrevious;
+	}
 
 
 	/**
@@ -252,6 +262,10 @@ public class InputController {
 		exitPrevious = exitPressed;
 		nextPrevious = nextPressed;
 		prevPrevious = prevPressed;
+		leftArrowPrevious = leftArrowPressed;
+		rightArrowPrevious = rightArrowPressed;
+		upArrowPrevious = upArrowPressed;
+		downArrowPrevious = downArrowPressed;
 
 		// Check to see if a GamePad is connected
 		if (xbox.isConnected()) {
@@ -314,8 +328,8 @@ public class InputController {
 		// Give priority to gamepad results
 		resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
 		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Z));
-		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
-		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+//		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
+//		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
 		tertiaryPressed = (secondary && tertiaryPressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
 		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.M));
 		nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
@@ -323,6 +337,8 @@ public class InputController {
 
 		leftArrowPressed  = (secondary && leftArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.LEFT));
 		rightArrowPressed  = (secondary && rightArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
+		upArrowPressed  = (secondary && upArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
+		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
@@ -334,10 +350,10 @@ public class InputController {
 		}
 
 		vertical = (secondary ? vertical : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+		if ( Gdx.input.isKeyPressed(Input.Keys.W)) {
 			vertical += 1.0f;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			vertical -= 1.0f;
 		}
 

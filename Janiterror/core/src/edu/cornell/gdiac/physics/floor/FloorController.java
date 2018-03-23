@@ -531,18 +531,17 @@ public class FloorController extends WorldController implements ContactListener 
         // Process actions in object model
         avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
-        //avatar.setJumping(InputController.getInstance().didPrimary());
-        //avatar.setShooting(InputController.getInstance().didSecondary());
-        avatar.setAttacking1(InputController.getInstance().didPrimary());
-        avatar.setAttacking2(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didTertiary());
 
-        avatar.setLookingAtWep1(InputController.getInstance().didLeftArrow());
-        avatar.setLookingAtWep2(InputController.getInstance().didRightArrow());
+        avatar.setLeft(InputController.getInstance().didLeftArrow());
+        avatar.setRight(InputController.getInstance().didRightArrow());
+        avatar.setUp(InputController.getInstance().didUpArrow());
+        avatar.setDown(InputController.getInstance().didDownArrow());
 
         // Add a bullet if we fire
-        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0 && isLidHand && avatar.getWep2().getName() == "lid") {
+        if ((avatar.isDown()||avatar.isUp()||avatar.isLeft()||avatar.isRight()) && avatar.getWep1().getDurability() > 0 && isLid() && avatar.getWep1().getName() == "lid") {
             createBullet(avatar);
+            setLid(false);
         }
         if (isAtMopCart()) {
             //recharge durability of weapons
@@ -550,11 +549,11 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
 
             //move mop cart index
-            if (avatar.isLookingAtWep1()) {
+            if (avatar.isLeft()) {
                 System.out.println("Move mop index left");
                 if (mopcart_index == 1) { mopcart_index = 0; }
                 else if (mopcart_index == 0) { mopcart_index = 1; }
-            } else if (avatar.isLookingAtWep2()) {
+            } else if (avatar.isRight()) {
                 System.out.println("Move mop index right");
                 if (mopcart_index == 0) { mopcart_index = 1; }
                 else if (mopcart_index == 1) { mopcart_index = 0; }
@@ -566,11 +565,12 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping() && !isAtMopCart()) {
             System.out.println("You are swapping NOT at the cart");
         }
-        if (avatar.isAttacking1()) {
+        if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())&& avatar.isAttackUp()) {
             attack(avatar.getWep1());
-        } else if (avatar.isAttacking2()) {
-            attack(avatar.getWep2());
         }
+//        } else if (avatar.isAttacking2()) {
+//            attack(avatar.getWep2());
+//        }
         avatar.setVelocity();
         boolean winning = true;
         for (EnemyModel s : enemies) {
@@ -655,79 +655,72 @@ public class FloorController extends WorldController implements ContactListener 
      * Add a new bullet to the world and send it in the right direction.
      */
     private void createBullet(JoeModel player) {
+          float offsetx = 0;
+          float offsety = 0;
+        if (player.isLeft()){
+            offsetx = -BULLET_OFFSET;
+        }
+        if (player.isRight()){
+            offsetx = BULLET_OFFSET;
+        }
+        if (player.isDown()){
+            offsety = -BULLET_OFFSET;
+        }
+        if (player.isUp()){
+            offsety = BULLET_OFFSET;
+        }
+//        float offsetx = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
+//        float offsety = (player.isFacingUp() ? BULLET_OFFSET : -BULLET_OFFSET);
 
-        float offsetx = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
-        float offsety = (player.isFacingUp() ? BULLET_OFFSET : -BULLET_OFFSET);
-
-        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
-            offsety = 0;
-        }
-        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
-            offsetx = 0;
-        }
-        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
-            offsetx = 0;
-        }
-        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
-            offsety = 0;
-        }
-        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
-            offsetx = 0;
-        }
-        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
-            offsetx = 0;
-        }
-        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
-            offsety = 0;
-        }
-//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
 //            offsety = 0;
 //        }
-//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
 //            offsety = 0;
 //        }
-//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()!=0){
+//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//            offsetx = 0;
+//        }
+//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
 //            offsety = 0;
 //        }
 //        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
 //            offsetx = 0;
 //        }
-//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()!=0){
+//        if (!player.isFacingRight()&& player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
 //            offsety = 0;
 //        }
-//        if (player.isFacingRight()&& player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()==0){
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
 //            offsety = 0;
 //        }
-//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementY() == 0 &&player.getMovementX()==0){
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
 //            offsety = 0;
 //        }
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//            offsetx = 0;
+//        }
+//        if (player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()!=0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() != 0 &&player.getMovementY()==0){
+//            offsety = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()!=0){
+//            offsetx = 0;
+//        }
+//        if (!player.isFacingRight()&& !player.isFacingUp()&& player.getMovementX() == 0 &&player.getMovementY()==0){
+//            offsety = 0;
+//        }
+
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX()+offsetx, player.getY()+offsety, radius);
         bullet.setName("lid");
@@ -738,13 +731,23 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setGravityScale(0);
 
         // Compute position and velocity
-        float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-        float speed2  = (player.isFacingUp() ? BULLET_SPEED : -BULLET_SPEED);
-        if (Math.abs(offsetx)>0) {
-            bullet.setVX(speed);
+        float speedx  = 0;
+        float speedy  = 0;
+        if (player.isLeft()){
+            speedx = -BULLET_SPEED;
         }
         else
-            bullet.setVY(speed2);
+            speedx = BULLET_SPEED;
+        if (player.isUp()){
+            speedy = BULLET_SPEED;
+        }
+        else
+            speedy = -BULLET_SPEED;
+        if (Math.abs(offsetx)>0) {
+            bullet.setVX(speedx);
+        }
+        else
+            bullet.setVY(speedy);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -799,7 +802,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (dirY > 0) {
             speedY = BULLET_SPEED;
-            offsetY = BULLET_OFFSET;;
+            offsetY = BULLET_OFFSET;
         } else if (dirY < 0) {
             speedY = -BULLET_SPEED;
             offsetY = -BULLET_OFFSET;
@@ -830,19 +833,19 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
-    public void removeBullet2(Obstacle bullet,EnemyModel scientist) {
+    public void removeBullet2(Obstacle bullet,EnemyModel enemy) {
         float knockbackx = 10f;
-        float knockbackx2 = (bullet.getX() > scientist.getX() ? -knockbackx : knockbackx);
+        float knockbackx2 = (bullet.getX() > enemy.getX() ? -knockbackx : knockbackx);
         knockbackForce.set(knockbackx2,0f);
         bullet.markRemoved(true);
         setLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
-        scientist.decrHP();
-        scientist.setKnockbackTimer(KNOCKBACK_TIMER);
-        scientist.applyForce(knockbackForce);
-        if (scientist.getHP()<= 0) {
-            controls[scientist.getId()]=null;
-            scientist.markRemoved(true);
+        enemy.decrHP();
+        enemy.setKnockbackTimer(KNOCKBACK_TIMER);
+        enemy.applyForce(knockbackForce);
+        if (enemy.getHP() <= 0) {
+//            controls[enemy.getId()]=null;
+            enemy.markRemoved(true);
         }
     }
     public void removeBullet3(Obstacle bullet) {
@@ -939,28 +942,26 @@ public class FloorController extends WorldController implements ContactListener 
             }
         } else if (wep instanceof LidModel) {
             LidModel lid = (LidModel) wep;
-            if (lid.getDurability() != 0 && isLidHand) {
+            if (lid.getDurability() != 0 && isLid()) {
                 lid.decrDurability();
-                setLid(false);
-                for (EnemyModel s : enemies) {
-                    for (Obstacle obj : objects) {
-                        if (obj.isBullet()) {
-                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                            if (!s.isRemoved()) {
-                                if (s.getHP() == 1) {
-                                    s.markRemoved(true);
-                                } else {
-                                    s.decrHP();
 
-                                }
-
-
-                            }
-
-                        }
-                    }
-                }
+//                for (EnemyModel s : enemies) {
+//                    for (Obstacle obj : objects) {
+//                        if (obj.isBullet()) {
+//                            if (!s.isRemoved()) {
+//                                if (s.getHP() == 1) {
+//                                    s.markRemoved(true);
+//                                } else {
+//                                    s.decrHP();
+//
+//                                }
+//
+//
+//                            }
+//
+//                        }
+//                    }
+//                }
             }
         }else if (wep instanceof VacuumModel) {
                 VacuumModel vacuum = (VacuumModel) wep;
@@ -1176,6 +1177,7 @@ public class FloorController extends WorldController implements ContactListener 
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
+
         canvas.begin();
 
         board.draw(canvas);
@@ -1277,13 +1279,6 @@ public class FloorController extends WorldController implements ContactListener 
 
             //IF YOU SWAP
             if (avatar.isSwapping()) {
-                //get what index mopcart index is at
-                //get weapon at that mopcart index
-
-                //cart_weapon = weapon1
-                //weapon1 = weapon2
-                //add weapon2 to cart (array?)
-
                 //update what weapons are in use
 //                for (String wep: list_of_weapons) {
 //                    if (!wep_in_use.get(wep)) { wep_in_use.put(wep, true); }

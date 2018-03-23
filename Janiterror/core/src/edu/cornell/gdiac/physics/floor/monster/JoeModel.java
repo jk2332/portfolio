@@ -89,9 +89,11 @@ public class JoeModel extends CapsuleObstacle {
     /** Whether we are actively swapping */
     private boolean isSwapping;
     /** Whether we are looking at wep1 in cart */
-    private boolean isLookingAtWep1;
+    private boolean isLeft;
     /** Whether we are looking at wep2 in cart */
-    private boolean isLookingAtWep2;
+    private boolean isRight;
+    private boolean isUp;
+    private boolean isDown;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -201,6 +203,12 @@ public class JoeModel extends CapsuleObstacle {
         return isAttacking1 && attackCooldown <= 0;
     }
 
+    public boolean isAttackUp (){
+       if (attackCooldown <= 0)
+           return true;
+       else
+           return false;
+    }
     /**
      * Sets whether the dude is actively firing.
      *
@@ -215,18 +223,18 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @return true if the dude is actively firing.
      */
-    public boolean isAttacking2() {
-        return isAttacking2 && attackCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setAttacking2(boolean value) {
-        isAttacking2 = value;
-    }
+//    public boolean isAttacking2() {
+//        return isAttacking2 && attackCooldown <= 0;
+//    }
+//
+//    /**
+//     * Sets whether the dude is actively firing.
+//     *
+//     * @param value whether the dude is actively firing.
+//     */
+//    public void setAttacking2(boolean value) {
+//        isAttacking2 = value;
+//    }
 
     /**
      * Returns true if the dude is actively swapping.
@@ -251,17 +259,28 @@ public class JoeModel extends CapsuleObstacle {
      *
      * @param value whether the dude is looking at wep1 in cart.
      */
-    public boolean isLookingAtWep1() {
-        return isLookingAtWep1;
+    public boolean isLeft() {
+        return isLeft;
     }
-    public boolean isLookingAtWep2() {
-        return isLookingAtWep2;
+    public boolean isRight() {
+        return isRight;
     }
-    public void setLookingAtWep1(boolean value) {
-        isLookingAtWep1 = value;
+    public void setLeft(boolean value) {
+        isLeft = value;
     }
-    public void setLookingAtWep2(boolean value) {
-        isLookingAtWep2 = value;
+    public void setRight(boolean value) {
+        isRight = value;
+    }
+
+    public boolean isUp() { return isUp; }
+    public boolean isDown() {
+        return isDown;
+    }
+    public void setUp(boolean value) {
+        isUp = value;
+    }
+    public void setDown(boolean value) {
+        isDown = value;
     }
 
     /**
@@ -400,9 +419,6 @@ public class JoeModel extends CapsuleObstacle {
         isShooting = false;
         isSwapping = false;
         isAttacking1 = false;
-        isAttacking2 = false;
-        isLookingAtWep1 = false;
-        isLookingAtWep2 = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = false;
@@ -497,7 +513,7 @@ public class JoeModel extends CapsuleObstacle {
             shootCooldown = Math.max(0, shootCooldown - 1);
         }
 
-        if (isAttacking1() || isAttacking2()) {
+        if (isUp()||isLeft()||isDown()||isRight()) {
             attackCooldown = ATTACK_COOLDOWN;
         } else {
             attackCooldown = Math.max(0, attackCooldown - 1);
