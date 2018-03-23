@@ -528,17 +528,31 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setAttacking1(InputController.getInstance().didPrimary());
         avatar.setAttacking2(InputController.getInstance().didSecondary());
         avatar.setSwapping(InputController.getInstance().didTertiary());
+
+        avatar.setLookingAtWep1(InputController.getInstance().didLeftArrow());
+        avatar.setLookingAtWep2(InputController.getInstance().didRightArrow());
+
         // Add a bullet if we fire
         if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0 && isLidHand && avatar.getWep2().getName() == "lid") {
             createBullet(avatar);
         }
         if (isAtMopCart()) {
-            //recharge durability of weapon 1
+            //recharge durability of weapons
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+
+            //move mop cart index
+            if (avatar.isLookingAtWep1()) {
+                System.out.println("Move mop index left");
+            } else if (avatar.isLookingAtWep2()) {
+                System.out.println("Move mop index right");
+            }
         }
         if (avatar.isSwapping() && isAtMopCart()) {
-            System.out.println("You are swapping weapons");
+            System.out.println("You are swapping weapons at the cart");
+        }
+        if (avatar.isSwapping() && !isAtMopCart()) {
+            System.out.println("You are swapping NOT at the cart");
         }
         if (avatar.isAttacking1()) {
             attack(avatar.getWep1());
@@ -1197,17 +1211,19 @@ public class FloorController extends WorldController implements ContactListener 
         Texture wep2Texture = wep_to_texture.get(wep2FileName);
         //draw retrieved textures
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
-        canvas.draw(wep2Texture, UI_OFFSET + 170, canvas.getHeight()-UI_OFFSET - 100);
+        canvas.draw(wep2Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 200);
 
         //draw weapon UI durability bars (currently temporary)
         String durability1 = Integer.toString(avatar.getWep1().getDurability());
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
         String durability2 = Integer.toString(avatar.getWep2().getDurability());
         String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
+        displayFont.getData().setScale(0.8f);
         canvas.drawText(durability1 + "/" + maxDurability1,
-                displayFont, UI_OFFSET + 30, canvas.getHeight()-UI_OFFSET - 110);
+                displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
         canvas.drawText(durability2 + "/" + maxDurability2,
-                displayFont, UI_OFFSET + 150, canvas.getHeight()-UI_OFFSET - 110);
+                displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+        displayFont.getData().setScale(1f);
 
         displayFont.getData().setScale(0.5f);
         for (EnemyModel s : enemies) {

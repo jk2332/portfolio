@@ -88,6 +88,10 @@ public class JoeModel extends CapsuleObstacle {
     private boolean isShooting;
     /** Whether we are actively swapping */
     private boolean isSwapping;
+    /** Whether we are looking at wep1 in cart */
+    private boolean isLookingAtWep1;
+    /** Whether we are looking at wep2 in cart */
+    private boolean isLookingAtWep2;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -241,6 +245,25 @@ public class JoeModel extends CapsuleObstacle {
     public void setSwapping(boolean value) {
         isSwapping = value;
     }
+
+    /**
+     * Sets whether the dude is looking at wep1 in cart.
+     *
+     * @param value whether the dude is looking at wep1 in cart.
+     */
+    public boolean isLookingAtWep1() {
+        return isLookingAtWep1;
+    }
+    public boolean isLookingAtWep2() {
+        return isLookingAtWep2;
+    }
+    public void setLookingAtWep1(boolean value) {
+        isLookingAtWep1 = value;
+    }
+    public void setLookingAtWep2(boolean value) {
+        isLookingAtWep2 = value;
+    }
+
     /**
      * Returns true if the dude is actively jumping.
      *
@@ -378,6 +401,8 @@ public class JoeModel extends CapsuleObstacle {
         isSwapping = false;
         isAttacking1 = false;
         isAttacking2 = false;
+        isLookingAtWep1 = false;
+        isLookingAtWep2 = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = false;

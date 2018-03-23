@@ -72,6 +72,12 @@ public class InputController {
 	private boolean exitPressed;
 	private boolean exitPrevious;
 
+	/** Whether the mop index buttons was pressed. */
+	private boolean rightArrowPressed;
+	private boolean rightArrowPrevious;
+	private boolean leftArrowPressed;
+	private boolean leftArrowPrevious;
+
 	/** How much did we move horizontally? */
 	private float horizontal;
 	/** How much did we move vertically? */
@@ -158,6 +164,14 @@ public class InputController {
 	public boolean didTertiary() {
 		return tertiaryPressed && !tertiaryPrevious;
 	}
+
+	public boolean didLeftArrow() {
+		return leftArrowPressed && !leftArrowPrevious;
+	}
+	public boolean didRightArrow() {
+		return rightArrowPressed && !rightArrowPrevious;
+	}
+
 
 	/**
 	 * Returns true if the reset button was pressed.
@@ -302,17 +316,20 @@ public class InputController {
 		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Z));
 		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
 		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
-		tertiaryPressed = (secondary && tertiaryPressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
+		tertiaryPressed = (secondary && tertiaryPressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
 		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.M));
 		nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
 		exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 
+		leftArrowPressed  = (secondary && leftArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.LEFT));
+		rightArrowPressed  = (secondary && rightArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
+
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			horizontal += 1.0f;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			horizontal -= 1.0f;
 		}
 
