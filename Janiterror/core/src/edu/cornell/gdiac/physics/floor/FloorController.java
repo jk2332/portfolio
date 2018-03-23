@@ -77,7 +77,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 64;
+    private int WALL_THICKNESS = 32;
     private int NUM_OF_SCIENTISTS = 2;
     private int NUM_OF_SLIMES = 1;
     private int NUM_OF_ROBOTS = 1;
