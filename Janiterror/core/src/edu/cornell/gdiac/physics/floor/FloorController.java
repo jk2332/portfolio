@@ -1227,15 +1227,42 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
         canvas.draw(wep2Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 200);
         //draw weapon UI durability bars (currently temporary)
-        String durability1 = Integer.toString(avatar.getWep1().getDurability());
+        int durability1 = avatar.getWep1().getDurability();
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
-        String durability2 = Integer.toString(avatar.getWep2().getDurability());
+        int durability2 = avatar.getWep2().getDurability();
         String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
         displayFont.getData().setScale(0.8f);
-        canvas.drawText(durability1 + "/" + maxDurability1,
-                displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-        canvas.drawText(durability2 + "/" + maxDurability2,
-                displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+        if (durability1 <= 3 && durability2 <= 3) {
+            displayFont.setColor(Color.RED);
+            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+            displayFont.setColor(Color.WHITE);
+        }
+        else if (durability1 <= 3) {
+            displayFont.setColor(Color.RED);
+            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+            displayFont.setColor(Color.WHITE);
+            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+        }
+        else if (durability2 <= 3) {
+            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+            displayFont.setColor(Color.RED);
+            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+            displayFont.setColor(Color.WHITE);
+        }
+        else {
+            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+        }
+
         displayFont.getData().setScale(1f);
 
         //if you're swapping between primary and secondary weapon
@@ -1271,25 +1298,22 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(unused_wep2, canvas.getWidth()/2 + 430, canvas.getHeight()/2 + 200);
 
             //DRAW MOPCART INDEX
-            //change the index at the top
-                //initialize this?
-            //draw current index
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
             canvas.draw(heartTexture, current_xlocation, canvas.getHeight()/2 + 170);
 
             //IF YOU SWAP
             if (avatar.isSwapping()) {
-                //update what weapons are in use
-//                for (String wep: list_of_weapons) {
-//                    if (!wep_in_use.get(wep)) { wep_in_use.put(wep, true); }
-//                    else { wep_in_use.put(wep, false); }
-//                }
-//                //get the new weapons from hashmap and create
-//                WeaponModel new_wep1 = wep_to_model.get(draw_mopcart[0]);
-//                WeaponModel new_wep2 = wep_to_model.get(draw_mopcart[1]);
-//                //set the new weapons
-//                avatar.setWep1(new_wep1);
-//                avatar.setWep2(new_wep2);
+                //get weapon at index
+                String swapping_weapon_name = mopcart[mopcart_index];
+                System.out.print(swapping_weapon_name);
+                WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
+
+                //reset all weapons
+                WeaponModel old_primary = avatar.getWep1();
+                WeaponModel old_secondary = avatar.getWep2();
+                avatar.setWep1(swapping_weapon);
+                avatar.setWep2(old_primary);
+                mopcart[mopcart_index] = old_secondary.name;
             }
         }
 
