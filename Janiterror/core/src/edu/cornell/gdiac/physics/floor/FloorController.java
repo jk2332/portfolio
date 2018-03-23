@@ -1212,7 +1212,6 @@ public class FloorController extends WorldController implements ContactListener 
         //draw retrieved textures
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
         canvas.draw(wep2Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 200);
-
         //draw weapon UI durability bars (currently temporary)
         String durability1 = Integer.toString(avatar.getWep1().getDurability());
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
@@ -1225,13 +1224,13 @@ public class FloorController extends WorldController implements ContactListener 
                 displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
         displayFont.getData().setScale(1f);
 
-        displayFont.getData().setScale(0.5f);
-        for (EnemyModel s : enemies) {
-            if (!(s.isRemoved())) {
-                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
-            }
+        //if you're swapping between primary and secondary weapon
+        if (avatar.isSwapping() && !atMopCart) {
+            WeaponModel current_wep1 = wep_to_model.get(wep1FileName);
+            WeaponModel current_wep2 = wep_to_model.get(wep2FileName);
+            avatar.setWep1(current_wep2);
+            avatar.setWep2(current_wep1);
         }
-        displayFont.getData().setScale(1.0f);
 
         if (atMopCart){
             // itemSwap = new Texture(PLAY_BTN_FILE);
@@ -1274,6 +1273,15 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setWep2(new_wep2);
             }
         }
+
+        //Draw Enemy Health
+        displayFont.getData().setScale(0.5f);
+        for (EnemyModel s : enemies) {
+            if (!(s.isRemoved())) {
+                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
+            }
+        }
+        displayFont.getData().setScale(1.0f);
 
         canvas.end();
     }
