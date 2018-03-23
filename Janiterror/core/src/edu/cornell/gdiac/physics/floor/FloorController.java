@@ -619,7 +619,7 @@ public class FloorController extends WorldController implements ContactListener 
                     s.coolDown(false);
                     if (s instanceof ScientistModel || s instanceof RobotModel) {
                         scientistContactTicks++;
-                        if (scientistContactTicks%2==0) {
+                        if (true) {
                             s.incrAttackAniFrame();
                             boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
                                     && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
@@ -633,7 +633,7 @@ public class FloorController extends WorldController implements ContactListener 
                             }
                         }
                     } else if (s instanceof SlimeModel) {
-                        System.out.println("shoot1");
+                        //System.out.println("shoot1");
                         createBullet((SlimeModel) s);
                     }
                 }
