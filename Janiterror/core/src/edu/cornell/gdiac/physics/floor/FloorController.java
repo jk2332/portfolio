@@ -117,10 +117,13 @@ public class FloorController extends WorldController implements ContactListener 
     /** Texture Asset for tiles */
     private Texture tileTexture;
     /** Weapon Name -> Texture Dictionary*/
-    HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
-    HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
-    HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
-    String[] list_of_weapons = new String[4];
+    private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
+    private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
+    private String[] list_of_weapons = new String[4];
+    private String[] mopcart = new String[2];
+    private int mopcart_index = 0;
+    private int[] mopcart_index_xlocation = new int[2];
 
     private long scientistContactTicks;
     private long stunTicks;
@@ -392,11 +395,16 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setName("mopCart");
         addObject(mopCart);
 
+
+        mopcart_index_xlocation[0] = 890;
+        mopcart_index_xlocation[1] = 960;
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
         list_of_weapons[2] = "vacuum";
         list_of_weapons[3] = "lid";
+        mopcart[0] = "vacuum";
+        mopcart[1] = "lid";
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
@@ -544,8 +552,12 @@ public class FloorController extends WorldController implements ContactListener 
             //move mop cart index
             if (avatar.isLookingAtWep1()) {
                 System.out.println("Move mop index left");
+                if (mopcart_index == 1) { mopcart_index = 0; }
+                else if (mopcart_index == 0) { mopcart_index = 1; }
             } else if (avatar.isLookingAtWep2()) {
                 System.out.println("Move mop index right");
+                if (mopcart_index == 0) { mopcart_index = 1; }
+                else if (mopcart_index == 1) { mopcart_index = 0; }
             }
         }
         if (avatar.isSwapping() && isAtMopCart()) {
@@ -1164,7 +1176,6 @@ public class FloorController extends WorldController implements ContactListener 
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
-
         canvas.begin();
 
         board.draw(canvas);
@@ -1204,6 +1215,7 @@ public class FloorController extends WorldController implements ContactListener 
             margin = margin + 25;
         }
 
+        // DISPLAY ACTIVE WEAPON UI
         //get textures via hash map from weapons names
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
@@ -1233,44 +1245,56 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         if (atMopCart){
-            // itemSwap = new Texture(PLAY_BTN_FILE);
+            //DRAW MOP CART TEXT AND BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 200, 0, .18f, .28f);
+                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 180, 0, .18f, .34f);
             displayFont.getData().setScale(0.5f);
             canvas.drawText("Mop Cart", displayFont,
                     canvas.getWidth()/2 + 375, canvas.getHeight()/2 + 280);
             displayFont.getData().setScale(1.0f);
 
-            //retrieve unused weapons
-            String[] unused = new String[2];
+            //RETRIEVE MOP CART WEAPONS
+            String[] draw_mopcart = new String[2];
             int unused_indexer = 0;
-            for (String wep: list_of_weapons) {
-                if (!wep_in_use.get(wep)) {
-                    //if weapon not in use
-                    unused[unused_indexer] = wep;
-                    unused_indexer += 1;
-                }
+            for (String wep: mopcart) {
+                //if weapon not in use
+                draw_mopcart[unused_indexer] = wep;
+                unused_indexer += 1;
             }
             //draw unused weapons currently in cart
-            Texture unused_wep1 = wep_to_texture.get(unused[0]);
-            Texture unused_wep2 = wep_to_texture.get(unused[1]);
+            Texture unused_wep1 = wep_to_texture.get(draw_mopcart[0]);
+            Texture unused_wep2 = wep_to_texture.get(draw_mopcart[1]);
             canvas.draw(unused_wep1, canvas.getWidth()/2 + 360, canvas.getHeight()/2 + 200);
             canvas.draw(unused_wep2, canvas.getWidth()/2 + 430, canvas.getHeight()/2 + 200);
 
+            //DRAW MOPCART INDEX
+            //change the index at the top
+                //initialize this?
+            //draw current index
+            int current_xlocation = mopcart_index_xlocation[mopcart_index];
+            canvas.draw(heartTexture, current_xlocation, canvas.getHeight()/2 + 170);
+
             //IF YOU SWAP
             if (avatar.isSwapping()) {
+                //get what index mopcart index is at
+                //get weapon at that mopcart index
+
+                //cart_weapon = weapon1
+                //weapon1 = weapon2
+                //add weapon2 to cart (array?)
+
                 //update what weapons are in use
-                for (String wep: list_of_weapons) {
-                    if (!wep_in_use.get(wep)) { wep_in_use.put(wep, true); }
-                    else { wep_in_use.put(wep, false); }
-                }
-                //get the new weapons from hashmap and create
-                WeaponModel new_wep1 = wep_to_model.get(unused[0]);
-                WeaponModel new_wep2 = wep_to_model.get(unused[1]);
-                //set the new weapons
-                avatar.setWep1(new_wep1);
-                avatar.setWep2(new_wep2);
+//                for (String wep: list_of_weapons) {
+//                    if (!wep_in_use.get(wep)) { wep_in_use.put(wep, true); }
+//                    else { wep_in_use.put(wep, false); }
+//                }
+//                //get the new weapons from hashmap and create
+//                WeaponModel new_wep1 = wep_to_model.get(draw_mopcart[0]);
+//                WeaponModel new_wep2 = wep_to_model.get(draw_mopcart[1]);
+//                //set the new weapons
+//                avatar.setWep1(new_wep1);
+//                avatar.setWep2(new_wep2);
             }
         }
 
