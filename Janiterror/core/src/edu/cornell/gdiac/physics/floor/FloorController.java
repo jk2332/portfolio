@@ -578,10 +578,7 @@ public class FloorController extends WorldController implements ContactListener 
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e222e955b273a1ae09025d8607d5f8f05e92776
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
                     System.out.println("stunned");
