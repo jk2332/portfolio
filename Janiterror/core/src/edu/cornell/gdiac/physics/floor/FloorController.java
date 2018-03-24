@@ -77,7 +77,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 32;
+    private int WALL_THICKNESS = 64;
     private int NUM_OF_SCIENTISTS = 2;
     private int NUM_OF_SLIMES = 1;
     private int NUM_OF_ROBOTS = 1;
@@ -622,11 +622,13 @@ public class FloorController extends WorldController implements ContactListener 
                         scientistContactTicks++;
                         if (true) {
                             s.incrAttackAniFrame();
-                            boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
-                                    && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
-                            boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
-                                    && board.screenToBoardX(s.getPosition().x)==board.screenToBoardX(avatar.getPosition().x);
-                            if((hori || verti) && s.endOfAttack()){
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            boolean case1 = Math.abs(horiGap)<=1 && horiGap>=0 && !s.isFacingRight();
+                            boolean case2 = Math.abs(horiGap)<=1 && horiGap<=0 && s.isFacingRight();
+                            boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>=0 && !s.isFacingUp();
+                            boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<=0 && s.isFacingUp();
+                            if((case1 || case2 || case3 || case4) && s.endOfAttack()){
                                 if (s.endOfAttack()) {
                                     avatar.decrHP();
                                     scientistContactTicks=0;

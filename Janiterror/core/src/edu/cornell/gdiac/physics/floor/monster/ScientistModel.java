@@ -27,7 +27,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
 public class ScientistModel extends EnemyModel {
     // Physics constants
     /** The density of the character */
-    private static final float DUDE_DENSITY = 1f;
+    private static final float DUDE_DENSITY = 0.1f;
     /** The factor to multiply by the input */
     private static final float DUDE_VEL = 2.5f;
     private static final float DUDE_FORCE = 2.5f;
