@@ -438,6 +438,7 @@ public class JoeModel extends CapsuleObstacle {
         setName("dude");
     }
 
+
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *

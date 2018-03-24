@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class AIController {
-    private static final int CHASE_DIST = 6;
+    private static final int CHASE_DIST = 9;
     private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
