@@ -77,7 +77,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 64;
+    private int WALL_THICKNESS = 32;
     private int NUM_OF_SCIENTISTS = 2;
     private int NUM_OF_SLIMES = 1;
     private int NUM_OF_ROBOTS = 1;
@@ -572,12 +572,10 @@ public class FloorController extends WorldController implements ContactListener 
 //            attack(avatar.getWep2());
 //        }
         avatar.setVelocity();
-        boolean winning = true;
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
-                winning=false;
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
                     System.out.println("stunned");
@@ -647,7 +645,6 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         }
-        if (winning) {setComplete(true);}
         SoundController.getInstance().update();
     }
 

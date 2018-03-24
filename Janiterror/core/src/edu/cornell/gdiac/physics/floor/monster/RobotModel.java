@@ -29,7 +29,7 @@ public class RobotModel extends EnemyModel {
     /** The density of the character */
     private static final float DUDE_DENSITY = 30f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 5;
+    private static final float DUDE_VEL = 2.5f;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** Height of the sensor attached to the player's feet */
@@ -56,7 +56,7 @@ public class RobotModel extends EnemyModel {
      * @return how much force to apply to get the dude moving
      */
     public float getForce() {
-        return DUDE_FORCE;
+        return DUDE_VEL;
     }
 
 
@@ -73,7 +73,7 @@ public class RobotModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public RobotModel(float x, float y, float width, float height, int id) {
-        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "scientist", DUDE_FORCE, 3);
+        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "scientist", DUDE_VEL, 3);
         setDensity(DUDE_DENSITY);
     }
 
@@ -85,17 +85,17 @@ public class RobotModel extends EnemyModel {
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
         if (getAttackAnimationFrame()==1){
-            //System.out.println("robot: frame1");
+            System.out.println("robot: frame1");
 
             canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (getAttackAnimationFrame()==2){
-            //System.out.println("robot: frame2");
+            System.out.println("robot: frame2");
 
             canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (getAttackAnimationFrame()==3){
-            //System.out.println("robot: frame3");
+            System.out.println("robot: frame3");
 
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
