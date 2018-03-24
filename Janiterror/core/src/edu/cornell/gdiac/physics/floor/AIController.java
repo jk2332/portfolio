@@ -104,7 +104,7 @@ public class AIController {
                 break;
             case CHASE:
                 dieroll = rand.nextInt(20);
-                if (this.target != null && this.target.isActive()) {
+                if (this.target != null) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
@@ -115,13 +115,11 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                dieroll = rand.nextInt(100);
-                if (this.target != null && this.target.isActive()) {
+                if (this.target != null) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.CHASE;
-                        dieroll = rand.nextInt(2);
                     }
                 } else {
                     this.state = FSMState.WANDER;
@@ -129,7 +127,6 @@ public class AIController {
                 break;
             default:
                 assert false;
-                this.state = FSMState.WANDER;
         }
 
     }
@@ -180,7 +177,7 @@ public class AIController {
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums=0;
-                int rand = (int) (CHASE_DIST*Math.random());
+                int rand = (int) ((CHASE_DIST-2)*Math.random())+2;
                 if (board.inBounds(tx+rand, ty)) {
                     this.board.setGoal(tx+rand, ty); nums++;
                 }
@@ -202,13 +199,13 @@ public class AIController {
                     if (!(i == 0) && board.inBounds(tx,ty + attackRange)) {
                         this.board.setGoal(tx, ty + attackRange); nums2++;
                     }
-                }/*
+                }
                 if (board.inBounds(tx+attackRange, ty)) {
                     this.board.setGoal(tx+attackRange, ty); nums2++;
                 }
                 if (board.inBounds(tx-attackRange, ty)) {this.board.setGoal(tx-attackRange, ty);  nums2++;}
                 if (board.inBounds(tx, ty+attackRange)) {this.board.setGoal(tx, ty+attackRange); nums2++;}
-                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}*/
+                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}
                 if (nums2!=0) setGoal=true;
         }
 

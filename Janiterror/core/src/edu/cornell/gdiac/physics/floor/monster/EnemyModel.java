@@ -185,7 +185,7 @@ public class EnemyModel extends CapsuleObstacle {
     }
 
     public void incrAttackAniFrame(){
-        if (attackAnimationFrame<maxAniFrame) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
+        attackAnimationFrame++;
     }
 
     public float getForce(){return force;}

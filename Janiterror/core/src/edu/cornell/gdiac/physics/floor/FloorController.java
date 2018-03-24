@@ -48,7 +48,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the character avatar walking */
     private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
     /** The texture file for the character avatar walking */
-    private static final String SCIENTIST_FILE  = "floor/scientist.png";
+    private static final String SCIENTIST_FILE  = "floor/sprite-0002.png";
     private static final String SLIME_FILE  = "floor/slime.png";
     private static final String ROBOT_FILE = "floor/robot.png";
     /** The texture file for the spinning barrier */
@@ -77,9 +77,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 32;
+    private int WALL_THICKNESS =32;
     private int NUM_OF_SCIENTISTS = 2;
-    private int NUM_OF_SLIMES = 1;
+    private int NUM_OF_SLIMES = 0;
     private int NUM_OF_ROBOTS = 1;
 
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
@@ -464,7 +464,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_SCIENTISTS; ii++){
-            EnemyModel mon =new ScientistModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+            EnemyModel mon =new ScientistModel((float) ((BOARD_WIDTH-2)*Math.random()+1), (float) ((BOARD_HEIGHT-2)*Math.random()+1),
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
@@ -622,22 +622,8 @@ public class FloorController extends WorldController implements ContactListener 
                     s.setMovementY(0);
                     s.coolDown(false);
                     if (s instanceof ScientistModel || s instanceof RobotModel) {
-                        scientistContactTicks++;
-                        if (true) {
-                            s.incrAttackAniFrame();
-                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                            boolean case1 = Math.abs(horiGap)<=1 && horiGap>=0 && !s.isFacingRight();
-                            boolean case2 = Math.abs(horiGap)<=1 && horiGap<=0 && s.isFacingRight();
-                            boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>=0 && !s.isFacingUp();
-                            boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<=0 && s.isFacingUp();
-                            if((case1 || case2 || case3 || case4) && s.endOfAttack()){
-                                if (s.endOfAttack()) {
-                                    avatar.decrHP();
-                                    scientistContactTicks=0;
-                                }
-                            }
-                        }
+                        System.out.println("reduce hp");
+                        avatar.decrHP();
                     } else if (s instanceof SlimeModel) {
                         //System.out.println("shoot1");
                         createBullet((SlimeModel) s);

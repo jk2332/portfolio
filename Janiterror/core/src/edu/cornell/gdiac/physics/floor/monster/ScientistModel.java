@@ -27,7 +27,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
 public class ScientistModel extends EnemyModel {
     // Physics constants
     /** The density of the character */
-    private static final float DUDE_DENSITY = 0.1f;
+    private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
     private static final float DUDE_VEL = 2.5f;
     private static final float DUDE_FORCE = 2.5f;
@@ -41,7 +41,7 @@ public class ScientistModel extends EnemyModel {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
 
-    private static final int ATTACK_RANGE = 1;
+    private static final int ATTACK_RANGE = 2;
 
     /** The amount of max HP a scientist has */
     private static final int MAX_HP = 5;
@@ -89,17 +89,17 @@ public class ScientistModel extends EnemyModel {
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
         if (getAttackAnimationFrame()==1){
-//            System.out.println("scientist: frame1");
+            System.out.println("scientist: frame1");
 
             canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (getAttackAnimationFrame()==2){
-//            System.out.println("scientist: frame2");
+            System.out.println("scientist: frame2");
 
             canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         if (getAttackAnimationFrame()==3){
-//            System.out.println("scientist: frame3");
+            System.out.println("scientist: frame3");
 
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
