@@ -395,7 +395,6 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setName("mopCart");
         addObject(mopCart);
 
-
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
         /** Add names to list of weapons */
@@ -539,7 +538,9 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setDown(InputController.getInstance().didDownArrow());
 
         // Add a bullet if we fire
-        if ((avatar.isDown()||avatar.isUp()||avatar.isLeft()||avatar.isRight()) && avatar.getWep1().getDurability() > 0 && isLid() && avatar.getWep1().getName() == "lid") {
+        if ((avatar.isDown()||avatar.isUp()||avatar.isLeft()||avatar.isRight())
+                && avatar.getWep1().getDurability() > 0 && isLid()
+                && avatar.getWep1().getName() == "lid" && !isAtMopCart()) {
             createBullet(avatar);
             setLid(false);
         }
@@ -565,7 +566,8 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping() && !isAtMopCart()) {
             System.out.println("You are swapping NOT at the cart");
         }
-        if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())&& avatar.isAttackUp()) {
+        if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
+                && avatar.isAttackUp() && !isAtMopCart()) {
             attack(avatar.getWep1());
         }
 //        } else if (avatar.isAttacking2()) {
@@ -1306,7 +1308,7 @@ public class FloorController extends WorldController implements ContactListener 
                 System.out.print(swapping_weapon_name);
                 WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
-                //reset all weapons
+                //set all new weapons
                 WeaponModel old_primary = avatar.getWep1();
                 WeaponModel old_secondary = avatar.getWep2();
                 avatar.setWep1(swapping_weapon);
