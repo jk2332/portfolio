@@ -586,7 +586,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (s.getStunned()) {
                     System.out.println("stunned");
                     s.incrStunTicks();
-                    if (s.getStunTicks()<=500) {action=CONTROL_NO_ACTION;}
+                    if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION;}
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
                 if (action==CONTROL_NO_ACTION){
@@ -881,7 +881,7 @@ public class FloorController extends WorldController implements ContactListener 
                         } else {
                             s.decrHP();
                         }
-                        knockbackForce.set(horiGap * -30f, vertiGap * -30f);
+                        knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
                         //knockbackForce.nor();
 
                         s.applyForce(knockbackForce);
@@ -954,10 +954,10 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 5 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
-                        boolean case2 = Math.abs(horiGap) <= 5 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
-                        boolean case3 = Math.abs(vertiGap) <= 5 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
-                        boolean case4 = Math.abs(vertiGap) <= 5 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
+                        boolean case1 = Math.abs(horiGap) <= 10 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
+                        boolean case2 = Math.abs(horiGap) <= 10 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
+                        boolean case3 = Math.abs(vertiGap) <= 10 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
+                        boolean case4 = Math.abs(vertiGap) <= 10 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
                         if ((case1)) {
                             knockbackForce.set(30f,0f);
                             s.applyForce(knockbackForce);
