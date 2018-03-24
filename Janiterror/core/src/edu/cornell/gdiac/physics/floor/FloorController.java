@@ -1249,8 +1249,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         //if you're swapping between primary and secondary weapon
         if (avatar.isSwapping() && !atMopCart) {
-            WeaponModel current_wep1 = wep_to_model.get(wep1FileName);
-            WeaponModel current_wep2 = wep_to_model.get(wep2FileName);
+            WeaponModel current_wep1 = avatar.getWep1();
+            WeaponModel current_wep2 = avatar.getWep2();
             avatar.setWep1(current_wep2);
             avatar.setWep2(current_wep1);
         }
