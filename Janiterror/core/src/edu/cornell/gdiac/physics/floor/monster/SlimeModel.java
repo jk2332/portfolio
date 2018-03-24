@@ -27,7 +27,7 @@ public class SlimeModel extends EnemyModel {
     /** The density of the character */
     private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
-    private static final float DUDE_VEL = 2.5f;
+    private static final float DUDE_VEL = 1.5f;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** Height of the sensor attached to the player's feet */

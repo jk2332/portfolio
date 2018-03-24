@@ -32,7 +32,7 @@ public class AIController {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
-        this.state = FSMState.SPAWN;
+        this.state = FSMState.CHASE;
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
@@ -104,7 +104,7 @@ public class AIController {
                 break;
             case CHASE:
                 dieroll = rand.nextInt(20);
-                if (dieroll != 0 && this.target != null && this.target.isActive()) {
+                if (this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
@@ -126,14 +126,9 @@ public class AIController {
                 } else {
                     this.state = FSMState.WANDER;
                 }
-
-                if (dieroll == 0) {
-                    this.state = FSMState.WANDER;
-                }
                 break;
             default:
                 assert false;
-
                 this.state = FSMState.WANDER;
         }
 

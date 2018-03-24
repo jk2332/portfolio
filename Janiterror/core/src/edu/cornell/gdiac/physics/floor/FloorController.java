@@ -78,9 +78,10 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 32;
-    private int NUM_OF_SCIENTISTS = 0;
+    private int NUM_OF_SCIENTISTS = 2;
     private int NUM_OF_SLIMES = 1;
-    private int NUM_OF_ROBOTS = 0;
+    private int NUM_OF_ROBOTS = 1;
+
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -624,11 +625,13 @@ public class FloorController extends WorldController implements ContactListener 
                         scientistContactTicks++;
                         if (true) {
                             s.incrAttackAniFrame();
-                            boolean hori = Math.abs(board.screenToBoardX(s.getPosition().x)-board.screenToBoardX(avatar.getPosition().x))<=1
-                                    && board.screenToBoardY(s.getPosition().y)==board.screenToBoardY(avatar.getPosition().y);
-                            boolean verti = Math.abs(board.screenToBoardY(s.getPosition().y)-board.screenToBoardY(avatar.getPosition().y))<=1
-                                    && board.screenToBoardX(s.getPosition().x)==board.screenToBoardX(avatar.getPosition().x);
-                            if((hori || verti) && s.endOfAttack()){
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            boolean case1 = Math.abs(horiGap)<=1 && horiGap>=0 && !s.isFacingRight();
+                            boolean case2 = Math.abs(horiGap)<=1 && horiGap<=0 && s.isFacingRight();
+                            boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>=0 && !s.isFacingUp();
+                            boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<=0 && s.isFacingUp();
+                            if((case1 || case2 || case3 || case4) && s.endOfAttack()){
                                 if (s.endOfAttack()) {
                                     avatar.decrHP();
                                     scientistContactTicks=0;
@@ -864,37 +867,14 @@ public class FloorController extends WorldController implements ContactListener 
             if (mop.getDurability() != 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
                 for (EnemyModel s : enemies) {
-                    /*if (xDist <= 3 && yDist <= 3) {
-                        System.out.println("x");
-                        System.out.println(xDist);
-                        System.out.println("y");
-                        System.out.println(yDist);
-                        System.out.println("");
-                    }*/
-
-                    /*boolean inRangeR = avatar.isFacingRight() && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) >=-2
-                            && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <=0
-                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
-                    boolean inRangeL = !avatar.isFacingRight() && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <=2
-                            && (board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) >=0
-                            && Math.abs(board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY())) <= 2;
-                    boolean inRangeU = avatar.isFacingUp() && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) >=-2
-                            && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) <=0
-                            && Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2;
-                    boolean inRangeD = !avatar.isFacingUp() && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) <=2
-                            && (board.screenToBoardY(avatar.getY())-board.screenToBoardY(s.getY())) >=0
-                            && Math.abs(board.screenToBoardX(avatar.getX())-board.screenToBoardX(s.getX())) <= 2;
-
-                    inRange = inRangeR || inRangeL || inRangeU || inRangeD;*/
-
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap)<=1 && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)< .5;
-                    boolean case2 = Math.abs(horiGap)<=1 && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)< .5;
-                    boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)< .5;
-                    boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)< .5;
+                    boolean case1 = Math.abs(horiGap)<=2 && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap)<=2 && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap)<=2 && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap)<=2 && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
-                    if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
+                    if ((case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
                             controls[s.getId()]=null;
@@ -921,10 +901,10 @@ public class FloorController extends WorldController implements ContactListener 
 //                        if (obj.isBullet()) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap) <= 2 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)< .5;
-                    boolean case2 = Math.abs(horiGap) <= 2 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)< .5;
-                    boolean case3 = Math.abs(vertiGap) <= 2 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)< .5;
-                    boolean case4 = Math.abs(vertiGap) <= 2 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)< .5;
+                    boolean case1 = Math.abs(horiGap) <= 3 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap) <= 3 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap) <= 3 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap) <= 3 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
 //                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
 //                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
@@ -973,10 +953,10 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 3 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) < .5;
-                        boolean case2 = Math.abs(horiGap) <= 3 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) < .5;
-                        boolean case3 = Math.abs(vertiGap) <= 3 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) < .5;
-                        boolean case4 = Math.abs(vertiGap) <= 3 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) < .5;
+                        boolean case1 = Math.abs(horiGap) <= 5 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
+                        boolean case2 = Math.abs(horiGap) <= 5 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
+                        boolean case3 = Math.abs(vertiGap) <= 5 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
+                        boolean case4 = Math.abs(vertiGap) <= 5 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
                         if ((case1)) {
                             knockbackForce.set(30f,0f);
                             s.applyForce(knockbackForce);
