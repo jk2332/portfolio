@@ -48,7 +48,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the character avatar walking */
     private static final String DUDE_WALKING_FILE  = "floor/janitor-walk-1.gif";
     /** The texture file for the character avatar walking */
-    private static final String SCIENTIST_FILE  = "floor/sprite-0002.png";
+    private static final String SCIENTIST_FILE  = "floor/scientist.png";
     private static final String SLIME_FILE  = "floor/slime.png";
     private static final String ROBOT_FILE = "floor/robot.png";
     /** The texture file for the spinning barrier */
@@ -79,7 +79,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     private int WALL_THICKNESS =32;
     private int NUM_OF_SCIENTISTS = 2;
-    private int NUM_OF_SLIMES = 0;
+    private int NUM_OF_SLIMES = 1;
     private int NUM_OF_ROBOTS = 1;
 
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
