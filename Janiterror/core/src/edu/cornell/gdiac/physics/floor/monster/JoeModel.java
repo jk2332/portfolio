@@ -45,7 +45,7 @@ public class JoeModel extends CapsuleObstacle {
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
     /** Cooldown (in animation frames) for shooting */
-    private static final int ATTACK_COOLDOWN = 40;
+    private static final int ATTACK_COOLDOWN = 20;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -419,6 +419,10 @@ public class JoeModel extends CapsuleObstacle {
         isShooting = false;
         isSwapping = false;
         isAttacking1 = false;
+        isUp = false;
+        isDown = false;
+        isRight = false;
+        isLeft = false;
 //		isJumping = false;
         faceRight = true;
         faceUp = false;

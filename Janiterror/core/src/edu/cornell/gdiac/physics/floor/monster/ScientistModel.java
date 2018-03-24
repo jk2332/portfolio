@@ -29,7 +29,11 @@ public class ScientistModel extends EnemyModel {
     /** The density of the character */
     private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
+<<<<<<< HEAD
     private static final float DUDE_VEL = 2.5f;
+=======
+    private static final float DUDE_FORCE = 2.5f;
+>>>>>>> 5e222e955b273a1ae09025d8607d5f8f05e92776
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** Height of the sensor attached to the player's feet */
