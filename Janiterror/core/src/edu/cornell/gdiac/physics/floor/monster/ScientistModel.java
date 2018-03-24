@@ -41,6 +41,8 @@ public class ScientistModel extends EnemyModel {
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
 
+    private static final int ATTACK_RANGE = 1;
+
     /** The amount of max HP a scientist has */
     private static final int MAX_HP = 5;
 
@@ -76,6 +78,7 @@ public class ScientistModel extends EnemyModel {
     public ScientistModel(float x, float y, float width, float height, int id) {
         super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "scientist", DUDE_VEL, 3);
         setDensity(DUDE_DENSITY);
+        attackRange = ATTACK_RANGE;
     }
 
     /**

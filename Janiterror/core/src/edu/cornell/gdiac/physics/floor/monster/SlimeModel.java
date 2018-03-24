@@ -15,8 +15,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.physics.floor.weapon.WeaponModel;
-import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Player avatar for the plaform game.
@@ -29,7 +27,7 @@ public class SlimeModel extends EnemyModel {
     /** The density of the character */
     private static final float DUDE_DENSITY = 1f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 5;
+    private static final float DUDE_VEL = 2.5f;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** Height of the sensor attached to the player's feet */
@@ -42,6 +40,8 @@ public class SlimeModel extends EnemyModel {
 
     /** The amount of max HP a scientist has */
     private static final int MAX_HP = 5;
+
+    private static final int ATTACK_RANGE = 8;
 
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
@@ -61,8 +61,9 @@ public class SlimeModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public SlimeModel(float x, float y, float width, float height, int id) {
-        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "slime", DUDE_FORCE, 3);
+        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "slime", DUDE_VEL, 3);
         setDensity(DUDE_DENSITY);
+        attackRange = ATTACK_RANGE;
     }
 
     /**
@@ -130,13 +131,13 @@ public class SlimeModel extends EnemyModel {
         sensorFixture = body.createFixture(sensorDef);
         sensorFixture.setUserData(SENSOR_NAME);
 
-        body.setType(BodyDef.BodyType.StaticBody);
+        //body.setType(BodyDef.BodyType.StaticBody);
 
         return true;
     }
 
     public boolean canShootTargetFrom(int x, int y, int tx, int ty) {
-        return tx == x || ty == y;
+        return tx == x && Math.abs(ty - y) <= ATTACK_RANGE || ty == y && Math.abs(tx - x) <= ATTACK_RANGE;
     }
 
 }

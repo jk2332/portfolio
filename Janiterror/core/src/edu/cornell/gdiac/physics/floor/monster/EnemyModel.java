@@ -52,6 +52,8 @@ public class EnemyModel extends CapsuleObstacle {
     private int attackAnimationFrame;
     private int maxAniFrame;
 
+    protected int attackRange;
+
 
     /* The amount of HP the scientist has left */
     private int hp;
@@ -78,6 +80,8 @@ public class EnemyModel extends CapsuleObstacle {
     public float getMovementY() {
         return movementY;
     }
+
+    public int getAttackRange() {return attackRange;}
 
     /**
      * Sets left/right movement of this character.

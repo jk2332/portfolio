@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class AIController {
     private static final int CHASE_DIST = 9;
-    private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
+    //private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
     private EnemyModel[] fleet;
@@ -170,6 +170,7 @@ public class AIController {
                 setGoal = false;
                 break;
             case WANDER:
+                //System.out.println("WANDER");
                 Random random = new Random();
                 if (this.wx == -1) {
                     this.wx = random.nextInt(this.board.getWidth() - 1) + 1;
@@ -180,6 +181,7 @@ public class AIController {
                 setGoal = true;
                 break;
             case CHASE:
+                //System.out.println("CHASE");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums=0;
@@ -192,15 +194,26 @@ public class AIController {
                 if (board.inBounds(tx, ty-rand)) {this.board.setGoal(tx, ty-rand); nums++;}
                 if (nums!=0) setGoal=true;
             case ATTACK:
+                //System.out.println("ATTACK");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums2=0;
-                if (board.inBounds(tx+ATTACK_DIST, ty)) {
-                    this.board.setGoal(tx+ATTACK_DIST, ty); nums2++;
+                int attackRange = this.ship.getAttackRange();
+                for (int i = -attackRange; i <= attackRange; i++) {
+                    System.out.println(i);
+                    if (!(i == 0) && board.inBounds(tx + attackRange,ty)) {
+                        this.board.setGoal(tx + attackRange, ty); nums2++;
+                    }
+                    if (!(i == 0) && board.inBounds(tx,ty + attackRange)) {
+                        this.board.setGoal(tx, ty + attackRange); nums2++;
+                    }
+                }/*
+                if (board.inBounds(tx+attackRange, ty)) {
+                    this.board.setGoal(tx+attackRange, ty); nums2++;
                 }
-                if (board.inBounds(tx-ATTACK_DIST, ty)) {this.board.setGoal(tx-ATTACK_DIST, ty);  nums2++;}
-                if (board.inBounds(tx, ty+ATTACK_DIST)) {this.board.setGoal(tx, ty+ATTACK_DIST); nums2++;}
-                if (board.inBounds(tx, ty-ATTACK_DIST)) {this.board.setGoal(tx, ty-ATTACK_DIST); nums2++;}
+                if (board.inBounds(tx-attackRange, ty)) {this.board.setGoal(tx-attackRange, ty);  nums2++;}
+                if (board.inBounds(tx, ty+attackRange)) {this.board.setGoal(tx, ty+attackRange); nums2++;}
+                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}*/
                 if (nums2!=0) setGoal=true;
         }
 

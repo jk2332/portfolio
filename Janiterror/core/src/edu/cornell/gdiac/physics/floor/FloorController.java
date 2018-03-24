@@ -56,7 +56,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The texture file for the bullet */
     private static final String BULLET_FILE  = "floor/lid.png";
 
-    private static final String SLIMEBALL_FILE = "floor/lid.png";
+    private static final String SLIMEBALL_FILE = "floor/slimeball.png";
     private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "floor/ropebridge.png";
@@ -78,9 +78,9 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private int WALL_THICKNESS = 32;
-    private int NUM_OF_SCIENTISTS = 2;
+    private int NUM_OF_SCIENTISTS = 0;
     private int NUM_OF_SLIMES = 1;
-    private int NUM_OF_ROBOTS = 1;
+    private int NUM_OF_ROBOTS = 0;
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
     /** Offset for the UI on the screen */
@@ -247,6 +247,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  BULLET_OFFSET = 2.0f;
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
+    /** The speed of the slimeball after firing */
+    private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
 
@@ -577,7 +579,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
-            if (this.controls[s.getId()] != null) {
+            if (this.controls[s.getId()] != null && !s.isRemoved()) {
 
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
@@ -793,18 +795,18 @@ public class FloorController extends WorldController implements ContactListener 
         float offsetY = 0;
 
         if (dirX > 0) {
-            speedX = BULLET_SPEED;
+            speedX = SLIMEBALL_SPEED;
             offsetX = BULLET_OFFSET;
         } else if (dirX < 0) {
-            speedX = -BULLET_SPEED;
+            speedX = -SLIMEBALL_SPEED;
             offsetX = -BULLET_OFFSET;
         }
 
         if (dirY > 0) {
-            speedY = BULLET_SPEED;
+            speedY = SLIMEBALL_SPEED;
             offsetY = BULLET_OFFSET;
         } else if (dirY < 0) {
-            speedY = -BULLET_SPEED;
+            speedY = -SLIMEBALL_SPEED;
             offsetY = -BULLET_OFFSET;
         }
 
