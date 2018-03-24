@@ -572,12 +572,11 @@ public class FloorController extends WorldController implements ContactListener 
 //            attack(avatar.getWep2());
 //        }
         avatar.setVelocity();
-        boolean winning = true;
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
-                winning=false;
+
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
                     System.out.println("stunned");
@@ -647,7 +646,6 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         }
-        if (winning) {setComplete(true);}
         SoundController.getInstance().update();
     }
 
