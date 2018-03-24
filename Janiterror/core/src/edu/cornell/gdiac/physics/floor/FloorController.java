@@ -911,10 +911,11 @@ public class FloorController extends WorldController implements ContactListener 
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1 ) {
                             s.markRemoved(true);
-                        } else {
+                        } else if(s.getName() == "robot"){
                             s.setStunned(true);
                             s.decrHP();
                         }
+                        else {s.setStunned(true);}
 
 //                            }
 //

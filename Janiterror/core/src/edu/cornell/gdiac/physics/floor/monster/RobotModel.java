@@ -46,6 +46,8 @@ public class RobotModel extends EnemyModel {
     /** The amount of max HP a scientist has */
     private static final int MAX_HP = 5;
 
+//    private static final String NAME = "Robot";
+
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -61,6 +63,8 @@ public class RobotModel extends EnemyModel {
         return DUDE_VEL;
     }
 
+//    public String getName () {return NAME; }
+
 
     /**
      * Creates a new dude avatar at the given position.
@@ -75,7 +79,7 @@ public class RobotModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public RobotModel(float x, float y, float width, float height, int id) {
-        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "scientist", DUDE_VEL, 3);
+        super(x,y,width, height, id, DUDE_FRICTION, MAX_HP, "robot", DUDE_VEL, 3);
         setDensity(DUDE_DENSITY);
         attackRange = ATTACK_RANGE;
     }
