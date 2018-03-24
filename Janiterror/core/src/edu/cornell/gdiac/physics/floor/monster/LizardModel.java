@@ -211,7 +211,7 @@ public class LizardModel extends CapsuleObstacle {
         hp = MAX_HP;
 
         shootCooldown = 0;
-        setName("dude");
+        setName("lizard");
         attackAnimationFrame=0;
         this.ticks = 0L;
         //attackRange = ATTACK_RANGE;
