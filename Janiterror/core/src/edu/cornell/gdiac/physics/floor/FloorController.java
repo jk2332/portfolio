@@ -583,47 +583,43 @@ public class FloorController extends WorldController implements ContactListener 
             if (this.controls[s.getId()] != null && !s.isRemoved()) {
 
                 int action = this.controls[s.getId()].getAction();
+                //System.out.println("action: "+action);
                 if (s.getStunned()) {
                     System.out.println("stunned");
                     s.incrStunTicks();
                     if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION;}
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
-                if (action==CONTROL_NO_ACTION){
-                    s.setMovementY(0); s.setMovementX(0);
-                }
                 if (action == CONTROL_MOVE_DOWN) {
                     //System.out.println("down");
                     s.setMovementY(-s.getForce());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_LEFT) {
                     //System.out.println("left");
                     s.setMovementX(-s.getForce());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_UP) {
                     //System.out.println("up");
                     s.setMovementY(s.getForce());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
                 }
                 if (action == CONTROL_MOVE_RIGHT) {
                     //System.out.println("right");
                     s.setMovementX(s.getForce());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
-
                 }
                 if (action==CONTROL_FIRE){
                     s.setMovementX(0);
                     s.setMovementY(0);
                     s.coolDown(false);
                     if (s instanceof ScientistModel || s instanceof RobotModel) {
-                        System.out.println("reduce hp");
-                        avatar.decrHP();
+                        s.incrAttackAniFrame();
+                        int avatarX = board.screenToBoardX(avatar.getX());
+                        int sX = board.screenToBoardX(s.getX());
+                        int avatarY = board.screenToBoardY(avatar.getY());
+                        int sY=board.screenToBoardY(s.getY());
+                        if ((avatarX==sX || avatarY==sY) && s.getAttackAnimationFrame()==4){
+                          avatar.decrHP();
+                          s.resetAttackAniFrame();
+                        }
                     } else if (s instanceof SlimeModel) {
                         //System.out.println("shoot1");
                         createBullet((SlimeModel) s);
@@ -872,7 +868,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                         s.applyForce(knockbackForce);
                         s.setKnockbackTimer(KNOCKBACK_TIMER);
-                        System.out.println(knockbackForce);
+                        //System.out.println(knockbackForce);
                         mop.decrDurability();
                     }
                 }

@@ -303,8 +303,8 @@ public class EnemyModel extends CapsuleObstacle {
         int dx = tx > x ? tx - x : x - tx;
         int dy = ty > y ? ty - y : y - ty;
         //boolean power = this.board.isPowerTileAt(x, y);
-        boolean canhit = dx <= 1 && dy == 0;
-        canhit |= dx == 0 && dy <= 1;
+        boolean canhit = dx <= 2 && dy == 0;
+        canhit |= dx == 0 && dy <= 2;
         //canhit |= power && dx == dy && dx <= 3;
         return canhit;
         /*TODO override if monster has a different range */
