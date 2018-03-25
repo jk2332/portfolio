@@ -49,7 +49,7 @@ public class AIController {
 
         int action = this.move;
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
-            action |= FloorController.CONTROL_FIRE;
+            action = FloorController.CONTROL_FIRE;
         }
 
         return action;
