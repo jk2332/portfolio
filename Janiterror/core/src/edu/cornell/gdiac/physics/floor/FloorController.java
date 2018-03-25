@@ -68,6 +68,10 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String SPRAY_FILE  = "floor/ui-spray.png";
     private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
     private static final String LID_FILE  = "floor/ui-lid.png";
+    private static final String MOP_FILE_SMALL  = "floor/ui-mop-small.png";
+    private static final String SPRAY_FILE_SMALL  = "floor/ui-spray-small.png";
+    private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
+    private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
     private static final String HEART_FILE  = "floor/sponge.png";
 
     /** The sound file for a jump */
@@ -114,11 +118,16 @@ public class FloorController extends WorldController implements ContactListener 
     private Texture sprayTexture;
     private Texture vacuumTexture;
     private Texture lidTexture;
+    private Texture mopTextureSmall;
+    private Texture sprayTextureSmall;
+    private Texture vacuumTextureSmall;
+    private Texture lidTextureSmall;
     private Texture heartTexture;
     /** Texture Asset for tiles */
     private Texture tileTexture;
     /** Weapon Name -> Texture Dictionary*/
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private String[] list_of_weapons = new String[4];
@@ -177,7 +186,16 @@ public class FloorController extends WorldController implements ContactListener 
         manager.load(VACUUM_FILE, Texture.class);
         assets.add(VACUUM_FILE);
         manager.load(LID_FILE, Texture.class);
-        assets.add(MOP_FILE);
+        assets.add(LID_FILE);
+        manager.load(MOP_FILE_SMALL, Texture.class);
+        assets.add(MOP_FILE_SMALL);
+        manager.load(SPRAY_FILE_SMALL, Texture.class);
+        assets.add(SPRAY_FILE_SMALL);
+        manager.load(VACUUM_FILE_SMALL, Texture.class);
+        assets.add(VACUUM_FILE_SMALL);
+        manager.load(LID_FILE_SMALL, Texture.class);
+        assets.add(LID_FILE_SMALL);
+
         manager.load(HEART_FILE, Texture.class);
         assets.add(HEART_FILE);
         manager.load(TILE_FILE, Texture.class);
@@ -222,6 +240,10 @@ public class FloorController extends WorldController implements ContactListener 
         sprayTexture = new Texture(SPRAY_FILE);
         vacuumTexture = new Texture(VACUUM_FILE);
         lidTexture = new Texture(LID_FILE);
+        mopTextureSmall = new Texture(MOP_FILE_SMALL);
+        sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
+        vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
+        lidTextureSmall = new Texture(LID_FILE_SMALL);
         heartTexture = new Texture(HEART_FILE);
         tileTexture = new Texture(TILE_FILE);
 
@@ -412,6 +434,11 @@ public class FloorController extends WorldController implements ContactListener 
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
+        /** Load name -> small texture dictionary */
+        wep_to_small_texture.put("mop", mopTextureSmall);
+        wep_to_small_texture.put("spray", sprayTextureSmall);
+        wep_to_small_texture.put("vacuum", vacuumTextureSmall);
+        wep_to_small_texture.put("lid", lidTextureSmall);
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel());
         wep_to_model.put("spray", new SprayModel());
@@ -1191,10 +1218,10 @@ public class FloorController extends WorldController implements ContactListener 
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
-        Texture wep2Texture = wep_to_texture.get(wep2FileName);
+        Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
         //draw retrieved textures
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
-        canvas.draw(wep2Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 200);
+        canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
         //draw weapon UI durability bars (currently temporary)
         int durability1 = avatar.getWep1().getDurability();
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
@@ -1206,7 +1233,7 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
             displayFont.setColor(Color.WHITE);
         }
         else if (durability1 <= 3) {
@@ -1215,21 +1242,21 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             displayFont.setColor(Color.WHITE);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
         else if (durability2 <= 3) {
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             displayFont.setColor(Color.RED);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
             displayFont.setColor(Color.WHITE);
         }
         else {
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
 
         displayFont.getData().setScale(1f);
