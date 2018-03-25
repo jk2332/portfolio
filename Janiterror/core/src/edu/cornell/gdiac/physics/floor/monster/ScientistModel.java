@@ -88,19 +88,7 @@ public class ScientistModel extends EnemyModel {
      */
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
-        if (getAttackAnimationFrame()==1){
-            System.out.println("scientist: frame1");
-
-            canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
-        if (getAttackAnimationFrame()==2){
-            System.out.println("scientist: frame2");
-
-            canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
         if (getAttackAnimationFrame()==3){
-            System.out.println("scientist: frame3");
-
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         else {
