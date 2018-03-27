@@ -1170,6 +1170,15 @@ public class FloorController extends WorldController implements ContactListener 
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
 
+        //LEVEL SCROLLING CODE COPIED FROM WALKER
+            //might not be in the right place (?)
+//        Affine2 oTran = new Affine2();
+//        oTran.setToTranslation(object.getPosition());
+//        Affine2 wTran = new Affine2();
+//        Vector2 wPos = viewWindow.getPosition();
+//        wTran.setToTranslation(-wPos.x,-wPos.y);
+//        oTran.mul(wTran);
+
         canvas.begin();
 
         board.draw(canvas);
