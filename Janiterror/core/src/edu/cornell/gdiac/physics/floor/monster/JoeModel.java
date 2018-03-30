@@ -94,6 +94,7 @@ public class JoeModel extends CapsuleObstacle {
     private boolean isRight;
     private boolean isUp;
     private boolean isDown;
+    private boolean alive;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
@@ -174,6 +175,14 @@ public class JoeModel extends CapsuleObstacle {
             faceUp = true;
             faceDown = false;
         }
+    }
+
+    public void setAlive (boolean b){
+        alive=b;
+    }
+
+    public boolean isAlive(){
+        return alive;
     }
 
     /**
@@ -393,7 +402,7 @@ public class JoeModel extends CapsuleObstacle {
      * @param height	The object width in physics units
      */
     public JoeModel(float width, float height) {
-        this(0,0,width,height);
+        this(0,0,width,height); alive=true;
     }
 
     /**

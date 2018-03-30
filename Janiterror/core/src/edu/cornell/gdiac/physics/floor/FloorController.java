@@ -553,61 +553,69 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         if(avatar.getHP()<=0) {
+            avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
         }
+        else {
+            // Process actions in object model
+            avatar.setMovementX(InputController.getInstance().getHorizontal() * avatar.getForce());
+            avatar.setMovementY(InputController.getInstance().getVertical() * avatar.getForce());
+            avatar.setSwapping(InputController.getInstance().didTertiary());
 
-        // Process actions in object model
-        avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getForce());
-        avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getForce());
-        avatar.setSwapping(InputController.getInstance().didTertiary());
+            avatar.setLeft(InputController.getInstance().didLeftArrow());
+            avatar.setRight(InputController.getInstance().didRightArrow());
+            avatar.setUp(InputController.getInstance().didUpArrow());
+            avatar.setDown(InputController.getInstance().didDownArrow());
 
-        avatar.setLeft(InputController.getInstance().didLeftArrow());
-        avatar.setRight(InputController.getInstance().didRightArrow());
-        avatar.setUp(InputController.getInstance().didUpArrow());
-        avatar.setDown(InputController.getInstance().didDownArrow());
-
-        // Add a bullet if we fire
-        if ((avatar.isDown()||avatar.isUp()||avatar.isLeft()||avatar.isRight())
-                && avatar.getWep1().getDurability() > 0 && isLid()
-                && avatar.getWep1().getName() == "lid" && !isAtMopCart()) {
-            createBullet(avatar);
-            setLid(false);
-        }
-        if (isAtMopCart()) {
-            //recharge durability of weapons
-            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-
-            //move mop cart index
-            if (avatar.isLeft()) {
-                System.out.println("Move mop index left");
-                if (mopcart_index == 1) { mopcart_index = 0; }
-                else if (mopcart_index == 0) { mopcart_index = 1; }
-            } else if (avatar.isRight()) {
-                System.out.println("Move mop index right");
-                if (mopcart_index == 0) { mopcart_index = 1; }
-                else if (mopcart_index == 1) { mopcart_index = 0; }
+            // Add a bullet if we fire
+            if ((avatar.isDown() || avatar.isUp() || avatar.isLeft() || avatar.isRight())
+                    && avatar.getWep1().getDurability() > 0 && isLid()
+                    && avatar.getWep1().getName() == "lid" && !isAtMopCart()) {
+                createBullet(avatar);
+                setLid(false);
             }
+            if (isAtMopCart()) {
+                //recharge durability of weapons
+                avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+                avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+
+                //move mop cart index
+                if (avatar.isLeft()) {
+                    System.out.println("Move mop index left");
+                    if (mopcart_index == 1) {
+                        mopcart_index = 0;
+                    } else if (mopcart_index == 0) {
+                        mopcart_index = 1;
+                    }
+                } else if (avatar.isRight()) {
+                    System.out.println("Move mop index right");
+                    if (mopcart_index == 0) {
+                        mopcart_index = 1;
+                    } else if (mopcart_index == 1) {
+                        mopcart_index = 0;
+                    }
+                }
+            }
+            if (avatar.isSwapping() && isAtMopCart()) {
+                System.out.println("You are swapping weapons at the cart");
+            }
+            if (avatar.isSwapping() && !isAtMopCart()) {
+                System.out.println("You are swapping NOT at the cart");
+            }
+            if ((avatar.isUp() || avatar.isDown() || avatar.isRight() || avatar.isLeft())
+                    && avatar.isAttackUp() && !isAtMopCart()) {
+                attack(avatar.getWep1());
+            }
+            //        } else if (avatar.isAttacking2()) {
+            //            attack(avatar.getWep2());
+            //        }
+            avatar.setVelocity();
         }
-        if (avatar.isSwapping() && isAtMopCart()) {
-            System.out.println("You are swapping weapons at the cart");
-        }
-        if (avatar.isSwapping() && !isAtMopCart()) {
-            System.out.println("You are swapping NOT at the cart");
-        }
-        if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
-                && avatar.isAttackUp() && !isAtMopCart()) {
-            attack(avatar.getWep1());
-        }
-//        } else if (avatar.isAttacking2()) {
-//            attack(avatar.getWep2());
-//        }
-        avatar.setVelocity();
         for (EnemyModel s : enemies) {
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
-            if (this.controls[s.getId()] != null && !s.isRemoved()) {
+            if (this.controls[s.getId()] != null) {
 
                 int action = this.controls[s.getId()].getAction();
                 //System.out.println("action: "+action);
@@ -643,7 +651,7 @@ public class FloorController extends WorldController implements ContactListener 
                     s.coolDown(false);
                     if (s instanceof ScientistModel || s instanceof RobotModel) {
                         s.incrAttackAniFrame();
-                        if (s.getAttackAnimationFrame()==4){
+                        if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                           avatar.decrHP();
                           s.resetAttackAniFrame();
                         }
@@ -858,7 +866,7 @@ public class FloorController extends WorldController implements ContactListener 
         enemy.setKnockbackTimer(KNOCKBACK_TIMER);
         enemy.applyForce(knockbackForce);
         if (enemy.getHP() <= 0) {
-//            controls[enemy.getId()]=null;
+            controls[enemy.getId()]=null;
             enemy.markRemoved(true);
         }
     }
@@ -910,15 +918,16 @@ public class FloorController extends WorldController implements ContactListener 
 //                        if (obj.isBullet()) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap) <= 3 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap) <= 3 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap) <= 3 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap) <= 3 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    boolean case1 = Math.abs(horiGap) <= 4 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap) <= 4 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap) <= 4 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap) <= 4 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
 //                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
 //                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1 ) {
+                            controls[s.getId()]=null;
                             s.markRemoved(true);
                         } else if(s.getName() == "robot"){
                             s.setStunned(true);

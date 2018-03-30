@@ -32,16 +32,16 @@ public class Board {
         this.height = height;
         this.tiles = new Board.TileState[width * height];
 
-        for (int ii=0; ii<width; ii++){
-            for (int jj=0; jj<height; jj++){
+        for (int ii=1; ii<width-1; ii++){
+            for (int jj=1; jj<height-1; jj++){
                 tiles[jj*width+ii]=new TileState(ii, jj, width, height);
             }
         }
         this.resetTiles();
     }
     public void resetTiles() {
-        for(int x = 0; x < this.width; ++x) {
-            for(int y = 0; y < this.height; ++y) {
+        for(int x = 1; x < this.width-1; ++x) {
+            for(int y = 1; y < this.height-1; ++y) {
                 Board.TileState tile = this.getTileState(x, y);
                 tile.goal = false;
                 tile.visited = false;
@@ -110,8 +110,8 @@ public class Board {
     }
 
     public void clearMarks() {
-        for(int x = 0; x < this.width; ++x) {
-            for(int y = 0; y < this.height; ++y) {
+        for(int x = 1; x < this.width-1; ++x) {
+            for(int y = 1; y < this.height-1; ++y) {
                 Board.TileState state = this.getTileState(x, y);
                 state.visited = false;
                 state.goal = false;
@@ -120,7 +120,7 @@ public class Board {
     }
 
     public boolean inBounds(int x, int y) {
-        return x >= 0 && y >= 0 && x < this.width && y < this.height;
+        return x >= 1 && y >= 1 && x < this.width-1 && y < this.height-1;
     }
 
     private TileState getTileState(int x, int y) {
