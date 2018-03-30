@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class AIController {
-    private static final int CHASE_DIST = 12;
+    private static final int CHASE_DIST = 6;
     //private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
@@ -70,7 +70,7 @@ public class AIController {
                     this.state = FSMState.WANDER;
                 } else {
                     this.selectTarget();
-                    if (!target.isAlive()) {
+                    if (!target.isRemoved()) {
                         this.state = FSMState.WANDER;
                     } else {
                         tx = this.board.screenToBoardX(this.target.getX());
@@ -85,7 +85,7 @@ public class AIController {
                 break;
             case WANDER:
                 this.selectTarget();
-                if (!target.isAlive()) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
@@ -105,7 +105,7 @@ public class AIController {
                 break;
             case CHASE:
                 dieroll = rand.nextInt(20);
-                if (!target.isAlive()) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
@@ -116,7 +116,7 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                if (!target.isAlive()) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
@@ -155,14 +155,15 @@ public class AIController {
     private void markGoalHelper(int n, int dist){
         int sx = board.screenToBoardX(ship.getX());
         int sy = board.screenToBoardY(ship.getY());
-        if (n==0 && board.inBounds(sx-dist, sy)) {
+
+        if (n==0 &&board.inBounds(sx-dist, sy)) {
             board.setGoal(sx-dist, sy);
         }
-        if (n==1 && board.inBounds(sx+dist, sy)) {
+        if (n==1&&board.inBounds(sx+dist, sy)) {
             board.setGoal(sx+dist, sy);
-        }if (n==2 && board.inBounds(sx, sy+dist)) {
+        }if (n==2&&board.inBounds(sx, sy+dist)) {
             board.setGoal(sx, sy+dist);
-        }if (n==3 && board.inBounds(sx, sy-dist)) {
+        }if (n==3&&board.inBounds(sx, sy-dist)) {
             board.setGoal(sx, sy-dist);
         }
     }
@@ -180,15 +181,14 @@ public class AIController {
                 break;
             case WANDER:
                 //System.out.println("WANDER");
-                if (this.patrolState==0) { markGoalHelper(2, 1); setGoal=true; patrolState++; break; }
-                if (this.patrolState==1) { markGoalHelper(0, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==2) { markGoalHelper(0, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==3) { markGoalHelper(3, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==4) { markGoalHelper(3, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==5) { markGoalHelper(1, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==6) { markGoalHelper(1, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==7) { markGoalHelper(2, 1); setGoal=true; patrolState=0; break; }
-
+                if (this.patrolState==0) { markGoalHelper(2, 2); setGoal=true; patrolState++; break; }
+                if (this.patrolState==1) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==2) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==3) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==4) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==5) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==6) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==7) { markGoalHelper(2, 2); setGoal=true; patrolState=0; break; }
                 break;
             case CHASE:
                 //System.out.println("CHASE");

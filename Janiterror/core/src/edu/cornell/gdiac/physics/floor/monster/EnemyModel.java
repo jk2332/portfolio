@@ -175,10 +175,6 @@ public class EnemyModel extends CapsuleObstacle {
         this.knockbackTimer = 0;
     }
 
-    public boolean endOfAttack(){
-        return attackAnimationFrame==maxAniFrame;
-    }
-
 
     public void resetAttackAniFrame(){
         attackAnimationFrame=0;

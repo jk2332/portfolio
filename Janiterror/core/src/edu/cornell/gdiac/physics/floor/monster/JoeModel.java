@@ -177,13 +177,7 @@ public class JoeModel extends CapsuleObstacle {
         }
     }
 
-    public void setAlive (boolean b){
-        alive=b;
-    }
 
-    public boolean isAlive(){
-        return alive;
-    }
 
     /**
      * Returns true if the dude is actively firing.

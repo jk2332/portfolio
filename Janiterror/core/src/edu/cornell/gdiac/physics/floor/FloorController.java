@@ -83,8 +83,8 @@ public class FloorController extends WorldController implements ContactListener 
 
     private int WALL_THICKNESS =32;
     private int NUM_OF_SCIENTISTS = 2;
-    private int NUM_OF_SLIMES = 1;
-    private int NUM_OF_ROBOTS = 1;
+    private int NUM_OF_SLIMES = 0;
+    private int NUM_OF_ROBOTS = 0;
 
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
@@ -553,7 +553,6 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         if(avatar.getHP()<=0) {
-            avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
         }
@@ -616,7 +615,6 @@ public class FloorController extends WorldController implements ContactListener 
             //this.adjustForDrift(s);
             //this.checkForDeath(s);
             if (this.controls[s.getId()] != null) {
-
                 int action = this.controls[s.getId()].getAction();
                 //System.out.println("action: "+action);
                 if (s.getStunned()) {
@@ -651,9 +649,11 @@ public class FloorController extends WorldController implements ContactListener 
                     s.coolDown(false);
                     if (s instanceof ScientistModel || s instanceof RobotModel) {
                         s.incrAttackAniFrame();
-                        if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
-                          avatar.decrHP();
-                          s.resetAttackAniFrame();
+                        System.out.println("aniframe: "+s.getAttackAnimationFrame());
+                        if (s.getAttackAnimationFrame()>=4 && !avatar.isRemoved()){
+                            System.out.println("decrhp");
+                            avatar.decrHP();
+                            s.resetAttackAniFrame();
                         }
                     } else if (s instanceof SlimeModel) {
                         //System.out.println("shoot1");
