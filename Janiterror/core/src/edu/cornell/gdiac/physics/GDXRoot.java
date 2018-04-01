@@ -20,13 +20,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 
-import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.floor.*;
-import edu.cornell.gdiac.physics.Board.*;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Root class for a LibGDX.  

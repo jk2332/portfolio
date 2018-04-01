@@ -6,13 +6,11 @@
 package edu.cornell.gdiac.physics.floor;
 
 import edu.cornell.gdiac.physics.Board;
-import edu.cornell.gdiac.physics.floor.monster.EnemyModel;
-import edu.cornell.gdiac.physics.floor.monster.JoeModel;
-import edu.cornell.gdiac.physics.floor.monster.ScientistModel;
+import edu.cornell.gdiac.physics.floor.character.EnemyModel;
+import edu.cornell.gdiac.physics.floor.character.JoeModel;
 
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
-import java.util.Iterator;
 import java.util.Random;
 
 public class AIController {
@@ -74,7 +72,7 @@ public class AIController {
                     } else {
                         tx = this.board.screenToBoardX(this.target.getX());
                         ty = this.board.screenToBoardY(this.target.getY());
-                        if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
+                        if (!this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
                             this.state = FSMState.CHASE;
                         } else {
                             this.state = FSMState.ATTACK;
@@ -88,7 +86,7 @@ public class AIController {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
-                    if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= CHASE_DIST) {
@@ -107,7 +105,7 @@ public class AIController {
                 if (this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                     }
                 } else {
@@ -119,7 +117,7 @@ public class AIController {
                 if (this.target != null && this.target.isActive()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (!this.ship.canShootTargetFrom(sx,sy,tx,ty)) {
+                    if (!this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.CHASE;
                         dieroll = rand.nextInt(2);
                     }
@@ -144,13 +142,13 @@ public class AIController {
 
         int tx = this.board.screenToBoardX(this.target.getX());
         int ty = this.board.screenToBoardY(this.target.getY());
-        return this.ship.canShootTargetFrom(x,y,tx,ty);
+        return this.ship.canHitTargetFrom(x,y,tx,ty);
     }
 
     private boolean canShootTarget() {
         int sx = this.board.screenToBoardX(this.ship.getX());
         int sy = this.board.screenToBoardY(this.ship.getY());
-        return this.ship.canShoot() && this.canShootTargetFrom(sx, sy);
+        return this.ship.canAttack() && this.canShootTargetFrom(sx, sy);
     }
 
 
@@ -162,10 +160,11 @@ public class AIController {
         int sy;
         switch(state) {
             case SPAWN:
+                System.out.println("SPAWN");
                 setGoal = false;
                 break;
             case WANDER:
-                //System.out.println("WANDER");
+                System.out.println("WANDER");
                 Random random = new Random();
                 if (this.wx == -1) {
                     this.wx = random.nextInt(this.board.getWidth() - 1) + 1;
@@ -176,7 +175,7 @@ public class AIController {
                 setGoal = true;
                 break;
             case CHASE:
-                //System.out.println("CHASE");
+                System.out.println("CHASE");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums=0;
@@ -189,13 +188,12 @@ public class AIController {
                 if (board.inBounds(tx, ty-rand)) {this.board.setGoal(tx, ty-rand); nums++;}
                 if (nums!=0) setGoal=true;
             case ATTACK:
-                //System.out.println("ATTACK");
+                System.out.println("ATTACK");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums2=0;
                 int attackRange = this.ship.getAttackRange();
                 for (int i = -attackRange; i <= attackRange; i++) {
-                    System.out.println(i);
                     if (!(i == 0) && board.inBounds(tx + attackRange,ty)) {
                         this.board.setGoal(tx + attackRange, ty); nums2++;
                     }
