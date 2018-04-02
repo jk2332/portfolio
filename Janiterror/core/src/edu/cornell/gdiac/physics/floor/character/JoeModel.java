@@ -16,21 +16,12 @@ public class JoeModel extends CharacterModel {
     private static final float JOE_DENSITY = 15.0f;
     /** The velocity of Joe */
     private static final float JOE_VELOCITY = 5.0f;
-    /** Cooldown (in animation frames) for shooting */
-    private static final int SHOOT_COOLDOWN = 40;
-    /** Cooldown (in animation frames) for shooting */
-    private static final int ATTACK_COOLDOWN = 20; /* TODO urgent reconcile w attack_cooldown in charactermodel*/
+    /** Cooldown (in animation frames) for attacking */
+    private static final int JOE_MAX_ATTACK_COOLDOWN = 20;
 
     /** Joe's max HP */
     private static final int JOE_MAX_HP = 15;
 
-    /** Whether we are actively attacking */
-    private boolean isAttacking1;
-    /** Whether we are actively attacking */
-    private boolean isAttacking2;
-    /** Whether we are actively shooting */
-    // TODO rename?
-    private boolean isShooting;
     /** Whether we are actively swapping */
     private boolean isSwapping;
 
@@ -41,6 +32,7 @@ public class JoeModel extends CharacterModel {
     private boolean isRight;
     private boolean isUp;
     private boolean isDown;
+    private boolean alive;
 
     /** Mop */
     MopModel mop;
@@ -57,11 +49,47 @@ public class JoeModel extends CharacterModel {
 
     private int attackCooldown;
 
-    public boolean isAttackUp (){
-       if (attackCooldown <= 0)
-           return true;
-       else
-           return false;
+    /** Whether Joe is at the mop cart or not */
+    private boolean atMopCart;
+
+    /** Whether Joe is holding the lid weapon or not */
+    private boolean hasLid;
+
+
+    public boolean canAttack(){
+        return attackCooldown <= 0;
+    }
+
+    /**
+     * Returns weapon in slot 1
+     * @return weapon in slot 1
+     */
+    public WeaponModel getWep1() {
+        return wep1;
+    }
+
+    /**
+     * Returns weapon in slot 2
+     * @return weapon in slot 2
+     */
+    public WeaponModel getWep2() {
+        return wep2;
+    }
+
+    /** Sets new weapon in slot 1
+     *
+     * @param new_weapon new weapon to be put in slot 1
+     */
+    public void setWep1(WeaponModel new_weapon) {
+        this.wep1 = new_weapon;
+    }
+
+    /** Sets new weapon in slot 2
+     *
+     * @param new_weapon new weapon to be put in slot 2
+     */
+    public void setWep2(WeaponModel new_weapon) {
+        this.wep2 = new_weapon;
     }
 
     /**
@@ -155,6 +183,46 @@ public class JoeModel extends CharacterModel {
     }
 
     /**
+     * Sets whether Joe is at the mop cart
+     * @param value whether or not Joe is at the mop cart
+     */
+    public void setAtMopCart(boolean value) {
+        atMopCart = value;
+    }
+
+    /**
+     * Returns whether Joe is at the mop cart
+     * @return whether Joe is at the mop cart
+     */
+    public boolean isAtMopCart( ) {
+        return atMopCart;
+    }
+
+    /**
+     * Sets whether Joe is holding the lid weapon
+     * @param value whether Joe is holding the lid weapon
+     */
+    public void setHasLid(boolean value) {
+        hasLid = value;
+    }
+
+    /**
+     * Returns whether Joe is holding the lid weapon
+     * @return whether Joe is holding the lid weapon
+     */
+    public boolean getHasLid() {
+        return hasLid;
+    }
+
+    public void setAlive (boolean b){
+        alive=b;
+    }
+
+    public boolean isAlive(){
+        return alive;
+    }
+
+    /**
      * Creates a new dude avatar at the given position.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -167,11 +235,9 @@ public class JoeModel extends CharacterModel {
      * @param height	The object width in physics units
      */
     public JoeModel(float x, float y, float width, float height) {
-        super(x,y,width,height,"joe", JOE_MAX_HP,JOE_DENSITY,JOE_VELOCITY);
+        super(x,y,width,height,"joe", JOE_MAX_HP,JOE_DENSITY,JOE_VELOCITY,JOE_MAX_ATTACK_COOLDOWN);
 
-        isShooting = false;
         isSwapping = false;
-        isAttacking1 = false;
         isUp = false;
         isDown = false;
         isRight = false;
@@ -183,6 +249,9 @@ public class JoeModel extends CharacterModel {
         wep1 = mop;
         wep2 = spray;
         attackCooldown = 0;
+        atMopCart = false;
+        hasLid = false;
+        alive = true;
     }
 
     /**
@@ -195,7 +264,7 @@ public class JoeModel extends CharacterModel {
     public void update(float dt) {
 //TODO reconcile with other attack cooldown and deleted shoot cooldown
         if (isUp()||isLeft()||isDown()||isRight()) {
-            attackCooldown = ATTACK_COOLDOWN;
+            attackCooldown = JOE_MAX_ATTACK_COOLDOWN;
         } else {
             attackCooldown = Math.max(0, attackCooldown - 1);
         }
@@ -203,17 +272,4 @@ public class JoeModel extends CharacterModel {
         super.update(dt);
     }
 
-//    Weapon Getters and Setters
-    public WeaponModel getWep1() {
-        return wep1;
-    }
-    public WeaponModel getWep2() {
-        return wep2;
-    }
-    public void setWep1(WeaponModel new_weapon) {
-        this.wep1 = new_weapon;
-    }
-    public void setWep2(WeaponModel new_weapon) {
-        this.wep2 = new_weapon;
-    }
 }

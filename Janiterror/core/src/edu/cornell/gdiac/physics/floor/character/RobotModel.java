@@ -3,6 +3,9 @@
  */
 package edu.cornell.gdiac.physics.floor.character;
 
+import com.badlogic.gdx.graphics.Color;
+import edu.cornell.gdiac.physics.GameCanvas;
+
 /**
  * Model class for the robot enemy in the game.
  */
@@ -13,7 +16,7 @@ public class RobotModel extends EnemyModel {
     /** The velocity of the robot */
     private static final float ROBOT_VELOCITY = 2.5f;
 
-    private static final int ROBOT_ATTACK_RANGE = 1;
+    private static final int ROBOT_ATTACK_RANGE = 2;
 
     /** The amount of max HP a robot has */
     private static final int ROBOT_MAX_HP = 5;

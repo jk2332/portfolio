@@ -9,6 +9,9 @@ import edu.cornell.gdiac.physics.*;
  * Model class for all enemies in the game
  */
 public class EnemyModel extends CharacterModel {
+
+    private static final int ENEMY_MAX_ATTACK_COOLDOWN = 40;
+
     private int id;
     private long stunTicks;
     private boolean stunned;
@@ -47,7 +50,7 @@ public class EnemyModel extends CharacterModel {
      */
     public EnemyModel(float x, float y, float width, float height, String name, int hp,
                       float density, float velocity, int attackRange, int id, int maxAniFrame) {
-        super(x, y, width, height, name, hp, density, velocity);
+        super(x, y, width, height, name, hp, density, velocity, ENEMY_MAX_ATTACK_COOLDOWN);
 
         this.attackRange = attackRange;
         this.stunTicks=0;
@@ -60,17 +63,13 @@ public class EnemyModel extends CharacterModel {
 
     // TODO figure out what these functions do
 
-    public boolean endOfAttack(){
-        return attackAnimationFrame==maxAniFrame;
-    }
-
 
     public void resetAttackAniFrame(){
         attackAnimationFrame=0;
     }
 
     public void incrAttackAniFrame(){
-        if (attackAnimationFrame<maxAniFrame) {attackAnimationFrame++;} else {attackAnimationFrame=0;}
+        attackAnimationFrame++;
     }
 
     public boolean getStunned(){
@@ -114,15 +113,9 @@ public class EnemyModel extends CharacterModel {
      */
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
-        if (attackAnimationFrame==1){
-            canvas.draw(texture,Color.PURPLE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
-        if (attackAnimationFrame==2){
-            canvas.draw(texture,Color.GREEN,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
-        if (attackAnimationFrame==3){
+        if (getAttackAnimationFrame()>=3){
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
+         }
         else {
             canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
@@ -142,11 +135,10 @@ public class EnemyModel extends CharacterModel {
         int dx = tx > x ? tx - x : x - tx;
         int dy = ty > y ? ty - y : y - ty;
         //boolean power = this.board.isPowerTileAt(x, y);
-        boolean canhit = dx <= 1 && dy == 0;
-        canhit |= dx == 0 && dy <= 1;
+        boolean canhit = dx <= 2 && dy == 0;
+        canhit |= dx == 0 && dy <= 2;
         //canhit |= power && dx == dy && dx <= 3;
         return canhit;
-        /*TODO override if character has a different range */
         /* TODO look over this again to make sure its right*/
     }
 

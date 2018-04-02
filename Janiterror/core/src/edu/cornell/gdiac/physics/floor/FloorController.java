@@ -28,30 +28,31 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    /** The texture file for the character avatar (no animation) */
+    /** The texture files for characters/attacks */
     private static final String DUDE_FILE  = "floor/joe.png";
-    /** The texture file for the character avatar walking */
     private static final String SCIENTIST_FILE  = "floor/scientist.png";
     private static final String SLIME_FILE  = "floor/slime.png";
     private static final String ROBOT_FILE = "floor/robot.png";
-    /** The texture file for the spinning barrier */
-    private static final String BARRIER_FILE = "floor/barrier.png";
-    /** The texture file for the bullet */
     private static final String BULLET_FILE  = "floor/lid.png";
-
     private static final String SLIMEBALL_FILE = "floor/slimeball.png";
-    private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
-    /** The texture file for the bridge plank */
-    private static final String ROPE_FILE  = "floor/ropebridge.png";
-    private static final String BACKGROUND_FILE = "shared/loading.png";
-    private static final String TILE_FILE = "shared/basic-tile.png";
 
     /** The texture files for the UI icons */
     private static final String MOP_FILE  = "floor/ui-mop.png";
     private static final String SPRAY_FILE  = "floor/ui-spray.png";
     private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
     private static final String LID_FILE  = "floor/ui-lid.png";
+    private static final String MOP_FILE_SMALL  = "floor/ui-mop-small.png";
+    private static final String SPRAY_FILE_SMALL  = "floor/ui-spray-small.png";
+    private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
+    private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
     private static final String HEART_FILE  = "floor/sponge.png";
+
+    /*TODO check if these textures are necessary*/
+    private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
+    private static final String BARRIER_FILE = "floor/barrier.png";
+    private static final String ROPE_FILE  = "floor/ropebridge.png";
+    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String TILE_FILE = "shared/basic-tile.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
@@ -67,6 +68,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     private int BOARD_WIDTH=1024/WALL_THICKNESS;
     private int BOARD_HEIGHT=576/WALL_THICKNESS;
+
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
 
@@ -77,38 +79,40 @@ public class FloorController extends WorldController implements ContactListener 
     public static int CONTROL_MOVE_DOWN = 8;
     public static int CONTROL_FIRE = 16;
 
-    /** Texture asset for character avatar */
+    /** Texture assets for characters/attacks */
     private TextureRegion avatarTexture;
-    /** Texture asset for character avatar */
     private TextureRegion scientistTexture;
     private TextureRegion slimeTexture;
     private TextureRegion robotTexture;
-    /** Texture asset for the bullet */
     private TextureRegion bulletTexture;
-    /** Texture asset for the slimeball */
     private TextureRegion slimeballTexture;
-    /** Texture asset for the mop cart background */
-    private Texture backgroundTexture;
 
-    /** Texture Assets for UI Icons */
+    /** Texture assets for UI Icons */
     private Texture mopTexture;
     private Texture sprayTexture;
     private Texture vacuumTexture;
     private Texture lidTexture;
+    private Texture mopTextureSmall;
+    private Texture sprayTextureSmall;
+    private Texture vacuumTextureSmall;
+    private Texture lidTextureSmall;
     private Texture heartTexture;
+
     /** Texture Asset for tiles */
     private Texture tileTexture;
+    /** Texture asset for the mop cart background */
+    private Texture backgroundTexture;
+
     /** Weapon Name -> Texture Dictionary*/
+    /*TODO maybe move info to weapons class */
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private String[] list_of_weapons = new String[4];
     private String[] mopcart = new String[2];
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
-
-    private long scientistContactTicks;
-    private long stunTicks;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -131,8 +135,6 @@ public class FloorController extends WorldController implements ContactListener 
         platformAssetState = AssetState.LOADING;
         manager.load(DUDE_FILE, Texture.class);
         assets.add(DUDE_FILE);
-        // manager.load(DUDE_WALKING_FILE, Texture.class); TODO
-        // assets.add(DUDE_WALKING_FILE);
         manager.load(SCIENTIST_FILE, Texture.class);
         assets.add(SCIENTIST_FILE);
         manager.load(SLIME_FILE, Texture.class);
@@ -158,7 +160,15 @@ public class FloorController extends WorldController implements ContactListener 
         manager.load(VACUUM_FILE, Texture.class);
         assets.add(VACUUM_FILE);
         manager.load(LID_FILE, Texture.class);
-        assets.add(MOP_FILE);
+        assets.add(LID_FILE);
+        manager.load(MOP_FILE_SMALL, Texture.class);
+        assets.add(MOP_FILE_SMALL);
+        manager.load(SPRAY_FILE_SMALL, Texture.class);
+        assets.add(SPRAY_FILE_SMALL);
+        manager.load(VACUUM_FILE_SMALL, Texture.class);
+        assets.add(VACUUM_FILE_SMALL);
+        manager.load(LID_FILE_SMALL, Texture.class);
+        assets.add(LID_FILE_SMALL);
         manager.load(HEART_FILE, Texture.class);
         assets.add(HEART_FILE);
         manager.load(TILE_FILE, Texture.class);
@@ -190,7 +200,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         avatarTexture = createTexture(manager,DUDE_FILE,false);
-        // avatarWalkingTexture = createTexture(manager,DUDE_WALKING_FILE,false); TODO
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         robotTexture = createTexture(manager,ROBOT_FILE,false);
         slimeTexture = createTexture(manager,SLIME_FILE, false);
@@ -203,6 +212,10 @@ public class FloorController extends WorldController implements ContactListener 
         sprayTexture = new Texture(SPRAY_FILE);
         vacuumTexture = new Texture(VACUUM_FILE);
         lidTexture = new Texture(LID_FILE);
+        mopTextureSmall = new Texture(MOP_FILE_SMALL);
+        sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
+        vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
+        lidTextureSmall = new Texture(LID_FILE_SMALL);
         heartTexture = new Texture(HEART_FILE);
         tileTexture = new Texture(TILE_FILE);
 
@@ -234,7 +247,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
 
-    /** disables setVelocity until knockback is finished */
+    // TODO reform weapon class and move to mop class
+    /** Disables setVelocity until knockback is finished */
     private static final int KNOCKBACK_TIMER = 15;
 
     // Since these appear only once, we do not care about the magic numbers.
@@ -270,15 +284,11 @@ public class FloorController extends WorldController implements ContactListener 
 
     // Other game objects
     /** The goal door position */
-    private static Vector2 GOAL_POS = new Vector2(29.0f,15.0f);
+    private static final Vector2 GOAL_POS = new Vector2(29.0f,15.0f);
     /** The mop cart  position */
-    private static Vector2 MopCart_POS = new Vector2(10.0f,14.0f);
-    /** The position of the spinning barrier */
-    private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
+    private static final Vector2 MOP_CART_POS = new Vector2(10.0f,14.0f);
     /** The initial position of the dude */
-    private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
-    /** The position of the rope bridge */
-    private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
+    private static final Vector2 JOE_POS = new Vector2(2.5f, 5.0f);
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -289,15 +299,12 @@ public class FloorController extends WorldController implements ContactListener 
     private EnemyModel[] enemies;
     /** List of all the input AI controllers */
     protected AIController[] controls;
-
+    /** Game sectioned off into tiles for AI purposes */
     private Board board;
 
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
 
-
-    private boolean atMopCart;
-    private boolean isLidHand;
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -313,12 +320,10 @@ public class FloorController extends WorldController implements ContactListener 
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         setDebug(false);
         setComplete(false);
-        setAtMopCart(false);
         setFailure(false);
-        setLid(true);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        scientistContactTicks=0;
+        //scientistContactTicks=0;
     }
 
     /**
@@ -338,7 +343,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         world = new World(gravity,false);
         world.setContactListener(this);
-        setAtMopCart(false);
         setComplete(false);
         setFailure(false);
 
@@ -365,10 +369,11 @@ public class FloorController extends WorldController implements ContactListener 
         goalDoor.setTexture(goalTile);
         goalDoor.setName("goal");
         addObject(goalDoor);
+
         // Add mopcart
         float mopwidth  = mopTile.getRegionWidth()/scale.x;
         float mopheight= mopTile.getRegionHeight()/scale.y;
-        mopCart = new BoxObstacle(MopCart_POS.x,MopCart_POS.y,mopwidth,mopheight);
+        mopCart = new BoxObstacle(MOP_CART_POS.x, MOP_CART_POS.y,mopwidth,mopheight);
         mopCart.setBodyType(BodyDef.BodyType.StaticBody);
         mopCart.setDensity(0.0f);
         mopCart.setFriction(0.0f);
@@ -381,6 +386,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
+
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -388,11 +394,19 @@ public class FloorController extends WorldController implements ContactListener 
         list_of_weapons[3] = "lid";
         mopcart[0] = "vacuum";
         mopcart[1] = "lid";
+
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
+
+        /** Load name -> small texture dictionary */
+        wep_to_small_texture.put("mop", mopTextureSmall);
+        wep_to_small_texture.put("spray", sprayTextureSmall);
+        wep_to_small_texture.put("vacuum", vacuumTextureSmall);
+        wep_to_small_texture.put("lid", lidTextureSmall);
+
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel());
         wep_to_model.put("spray", new SprayModel());
@@ -437,37 +451,33 @@ public class FloorController extends WorldController implements ContactListener 
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
-        avatar = new JoeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
+        avatar = new JoeModel(JOE_POS.x, JOE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         avatar.setName("joe");
-        //avatar.setWalkingTexture(avatarWalkingTexture); // TODO drawing stuff slows frame rate?
         addObject(avatar);
 
         for (int ii=0; ii<NUM_OF_SCIENTISTS; ii++){
-            EnemyModel mon =new ScientistModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+            EnemyModel mon =new ScientistModel((float) ((BOARD_WIDTH-2)*Math.random()+1), (float) ((BOARD_HEIGHT-2)*Math.random()+1),
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
-            mon.setName("scientist");
             addObject(mon);
             enemies[ii]=mon;
         }
         for (int ii=0; ii<NUM_OF_ROBOTS; ii++){
-            EnemyModel mon =new RobotModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+            EnemyModel mon =new RobotModel((float) ((BOARD_WIDTH-2)*Math.random()+1), (float) ((BOARD_HEIGHT-2)*Math.random()+1),
                     dwidth, dheight, NUM_OF_SCIENTISTS+ii);
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
-            mon.setName("robot");
             addObject(mon);
             enemies[NUM_OF_SCIENTISTS+ii]=mon;
         }
         for (int ii=0; ii<NUM_OF_SLIMES; ii++){
-            EnemyModel mon =new SlimeModel((float) ((BOARD_WIDTH-1)*Math.random()+1), (float) ((BOARD_HEIGHT-1)*Math.random()+1),
+            EnemyModel mon =new SlimeModel((float) ((BOARD_WIDTH-2)*Math.random()+1), (float) ((BOARD_HEIGHT-2)*Math.random()+1),
                     dwidth, dheight, NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+ii);
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
-            mon.setName("slime");
             addObject(mon);
             enemies[NUM_OF_SCIENTISTS+NUM_OF_ROBOTS+ii]=mon;
         }
@@ -507,138 +517,173 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         if(avatar.getHP()<=0) {
+            avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
+        } else {
+            // Process actions in object model
+            avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
+            avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
+            avatar.setSwapping(InputController.getInstance().didTertiary());
+
+            avatar.setLeft(InputController.getInstance().didLeftArrow());
+            avatar.setRight(InputController.getInstance().didRightArrow());
+            avatar.setUp(InputController.getInstance().didUpArrow());
+            avatar.setDown(InputController.getInstance().didDownArrow());
+
+            if (avatar.isAtMopCart()) {
+                joeAtMopCartUpdate();
+            } else {
+                joeNotAtMopCartUpdate();
+            }
+
+            avatar.setVelocity();
         }
 
-        // Process actions in object model
-        avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
-        avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
-        avatar.setSwapping(InputController.getInstance().didTertiary());
+        enemyUpdate();
 
-        avatar.setLeft(InputController.getInstance().didLeftArrow());
-        avatar.setRight(InputController.getInstance().didRightArrow());
-        avatar.setUp(InputController.getInstance().didUpArrow());
-        avatar.setDown(InputController.getInstance().didDownArrow());
+        SoundController.getInstance().update();
+    }
 
-        // Add a bullet if we fire
-        if ((avatar.isDown()||avatar.isUp()||avatar.isLeft()||avatar.isRight())
-                && avatar.getWep1().getDurability() > 0 && isLid()
-                && avatar.getWep1().getName() == "lid" && !isAtMopCart()) {
-            createBullet(avatar);
-            setLid(false);
+    /**
+     * Update function for Joe when he at the mop cart
+     */
+    private void joeAtMopCartUpdate() {
+        //recharge durability of weapons
+        avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+        avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+
+        //move mop cart index
+        if (avatar.isLeft()) {
+            System.out.println("Move mop index left");
+            if (mopcart_index == 1) { mopcart_index = 0; }
+            else if (mopcart_index == 0) { mopcart_index = 1; }
+        } else if (avatar.isRight()) {
+            System.out.println("Move mop index right");
+            if (mopcart_index == 0) { mopcart_index = 1; }
+            else if (mopcart_index == 1) { mopcart_index = 0; }
         }
-        if (isAtMopCart()) {
-            //recharge durability of weapons
-            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+        // swapping weapon
+        if (avatar.isSwapping()) {
+            //get weapon at index
+            String swapping_weapon_name = mopcart[mopcart_index];
+            System.out.print(swapping_weapon_name);
+            WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
-            //move mop cart index
-            if (avatar.isLeft()) {
-                System.out.println("Move mop index left");
-                if (mopcart_index == 1) { mopcart_index = 0; }
-                else if (mopcart_index == 0) { mopcart_index = 1; }
-            } else if (avatar.isRight()) {
-                System.out.println("Move mop index right");
-                if (mopcart_index == 0) { mopcart_index = 1; }
-                else if (mopcart_index == 1) { mopcart_index = 0; }
+            //set all new weapons
+            WeaponModel old_primary = avatar.getWep1();
+            WeaponModel old_secondary = avatar.getWep2();
+            avatar.setWep1(swapping_weapon);
+            avatar.setWep2(old_primary);
+            mopcart[mopcart_index] = old_secondary.name;
+            if (swapping_weapon_name == "lid") {
+                avatar.setHasLid(true);
+            }
+            if (old_secondary.name == "lid") {
+                avatar.setHasLid(false);
             }
         }
-        if (avatar.isSwapping() && isAtMopCart()) {
-            System.out.println("You are swapping weapons at the cart");
+    }
+
+    /**
+     * Update function for Joe when he is not using the mop cart
+     */
+    private void joeNotAtMopCartUpdate() {
+        //if you're swapping between primary and secondary weapon
+        if (avatar.isSwapping()) {
+            WeaponModel current_wep1 = avatar.getWep1();
+            WeaponModel current_wep2 = avatar.getWep2();
+            avatar.setWep1(current_wep2);
+            avatar.setWep2(current_wep1);
         }
-        if (avatar.isSwapping() && !isAtMopCart()) {
-            System.out.println("You are swapping NOT at the cart");
-        }
+        // attack
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
-                && avatar.isAttackUp() && !isAtMopCart()) {
+                && avatar.canAttack()) {
             attack(avatar.getWep1());
         }
-//        } else if (avatar.isAttacking2()) {
-//            attack(avatar.getWep2());
-//        }
-        avatar.setVelocity();
+    }
+
+    /**
+     * Update function for enemies
+     */
+    private void enemyUpdate() {
         for (EnemyModel s : enemies) {
-            //this.adjustForDrift(s);
-            //this.checkForDeath(s);
-            if (this.controls[s.getId()] != null && !s.isRemoved()) {
+            if (this.controls[s.getId()] != null) {
 
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
                     System.out.println("stunned");
                     s.incrStunTicks();
-                    if (s.getStunTicks()<=500) {action=CONTROL_NO_ACTION;}
+                    if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);}
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
-                if (action==CONTROL_NO_ACTION){
-                    s.setMovementY(0); s.setMovementX(0);
-                }
-                if (action == CONTROL_MOVE_DOWN) {
-                    //System.out.println("down");
-                    s.setMovementY(-s.getVelocity());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
-                }
-                if (action == CONTROL_MOVE_LEFT) {
-                    //System.out.println("left");
-                    s.setMovementX(-s.getVelocity());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
-                }
-                if (action == CONTROL_MOVE_UP) {
-                    //System.out.println("up");
-                    s.setMovementY(s.getVelocity());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
-                }
-                if (action == CONTROL_MOVE_RIGHT) {
-                    //System.out.println("right");
-                    s.setMovementX(s.getVelocity());
-                    s.resetAttackAniFrame();
-                    scientistContactTicks=0;
 
-                }
-                if (action==CONTROL_FIRE){
-                    s.setMovementX(0);
-                    s.setMovementY(0);
-                    s.coolDown(false);
-                    if (s instanceof ScientistModel || s instanceof RobotModel) {
-                        scientistContactTicks++;
-                        if (true) {
-                            s.incrAttackAniFrame();
-                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                            boolean case1 = Math.abs(horiGap)<=1 && horiGap>=0 && !s.isFacingRight();
-                            boolean case2 = Math.abs(horiGap)<=1 && horiGap<=0 && s.isFacingRight();
-                            boolean case3 = Math.abs(vertiGap)<=1 && vertiGap>=0 && !s.isFacingUp();
-                            boolean case4 = Math.abs(vertiGap)<=1 && vertiGap<=0 && s.isFacingUp();
-                            if((case1 || case2 || case3 || case4) && s.endOfAttack()){
-                                if (s.endOfAttack()) {
-                                    avatar.decrHP();
-                                    scientistContactTicks=0;
-                                }
-                            }
-                        }
-                    } else if (s instanceof SlimeModel) {
-                        //System.out.println("shoot1");
-                        createBullet((SlimeModel) s);
-                    }
-                }
-                else {
-                    s.coolDown(true);
-                }
-                if (s.getKnockbackTimer() == 0) {
-                    s.setVelocity();
-                } else {
-                    s.decrKnockbackTimer();
-                }
+                performAction(s, action);
             }
         }
-        SoundController.getInstance().update();
     }
 
     /**
-     * Add a new bullet to the world and send it in the right direction.
+     * Perform enemy s's action
+     * @param s enemy that is performing the action
+     * @param action action to be performed
+     */
+    private void performAction(EnemyModel s, int action) {
+        if (action == CONTROL_MOVE_DOWN) {
+            s.setMovementY(-s.getVelocity());
+            s.resetAttackAniFrame();
+        }
+        if (action == CONTROL_MOVE_LEFT) {
+            s.setMovementX(-s.getVelocity());
+            s.resetAttackAniFrame();
+        }
+        if (action == CONTROL_MOVE_UP) {
+            s.setMovementY(s.getVelocity());
+            s.resetAttackAniFrame();
+        }
+        if (action == CONTROL_MOVE_RIGHT) {
+            s.setMovementX(s.getVelocity());
+            s.resetAttackAniFrame();
+
+        }
+        if (s.canAttack()) {
+            if (action==CONTROL_FIRE){
+                enemyAttack(s);
+            }
+        } else {
+            s.decrAttackCooldown();
+        }
+
+
+        if (s.getKnockbackTimer() == 0) {
+            s.setVelocity();
+        } else {
+            s.decrKnockbackTimer();
+        }
+    }
+
+    /**
+     * Perform enemy attack
+     * @param s enemy that is attacking
+     */
+    private void enemyAttack(EnemyModel s) {
+        s.setMovementX(0);
+        s.setMovementY(0);
+        s.startAttackCooldown();
+        if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
+            s.incrAttackAniFrame();
+            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
+                avatar.decrHP();
+                s.resetAttackAniFrame();
+            }
+        } else if (s instanceof SlimeModel) {
+            //System.out.println("shoot1");
+            createBullet((SlimeModel) s);
+        }
+    }
+
+    /**
+     * Add a new garbage lid to the world and send it in the right direction.
      */
     private void createBullet(JoeModel player) {
           float offsetx = 0;
@@ -689,31 +734,7 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     /**
-     * Add a new bullet to the world and send it in the right direction.
-     */
-    private void createBullet(ScientistModel player) {
-
-        float offset = (player.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
-        float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
-        WheelObstacle bullet = new WheelObstacle(player.getX()+offset, player.getY(), radius);
-
-        bullet.setName("bullet");
-        bullet.setDensity(HEAVY_DENSITY);
-        bullet.setDrawScale(scale);
-        bullet.setTexture(bulletTexture);
-        bullet.setBullet(true);
-        bullet.setGravityScale(0);
-
-        // Compute position and velocity
-        float speed  = (player.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-        bullet.setVX(speed);
-        addQueuedObject(bullet);
-
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
-    }
-
-    /**
-     * Add a new bullet to the world and send it in the right direction.
+     * Add a new slimeball to the world and send it in the right direction.
      */
     private void createBullet(SlimeModel player) {
 
@@ -768,31 +789,44 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.markRemoved(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
-    public void removeBullet2(Obstacle bullet,EnemyModel enemy) {
+
+    /**
+     * Remove a garbage lid from the world and decrement the HP of the enemy the lid collided with.
+     * Only called when the lid collids with an enemy.
+     *
+     * @param lid the lid to be removed
+     * @param enemy the enemy that has been hit
+     */
+    public void removeLid(Obstacle lid,EnemyModel enemy) {
         float knockbackx = 10f;
-        float knockbackx2 = (bullet.getX() > enemy.getX() ? -knockbackx : knockbackx);
+        float knockbackx2 = (lid.getX() > enemy.getX() ? -knockbackx : knockbackx);
         knockbackForce.set(knockbackx2,0f);
-        bullet.markRemoved(true);
-        setLid(true);
+        lid.markRemoved(true);
+        avatar.setHasLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         enemy.decrHP();
         enemy.setKnockbackTimer(KNOCKBACK_TIMER);
         enemy.applyImpulse(knockbackForce);
         if (enemy.getHP() <= 0) {
-//            controls[enemy.getId()]=null;
+            controls[enemy.getId()]=null;
             enemy.markRemoved(true);
         }
     }
-    public void removeBullet3(Obstacle bullet) {
-        bullet.setVX(0.0f);
-        bullet.setVY(0.0f);
+
+    /**
+     * Drop the lid on the ground
+     * @param lid lid to be dropped
+     */
+    public void dropLid(Obstacle lid) {
+        lid.setVX(0.0f);
+        lid.setVY(0.0f);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
 
-    public void attack(WeaponModel wep) { /* TODO is it okay to import weaponmodel here */
+    public void attack(WeaponModel wep) {
         if (wep == null) {
             return;
-        } else if (wep instanceof MopModel) { // TODO same q for mop model
+        } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() != 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -811,7 +845,7 @@ public class FloorController extends WorldController implements ContactListener 
                         } else {
                             s.decrHP();
                         }
-                        knockbackForce.set(horiGap * -30f, vertiGap * -30f);
+                        knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
                         //knockbackForce.nor();
 
                         s.applyImpulse(knockbackForce);
@@ -827,55 +861,35 @@ public class FloorController extends WorldController implements ContactListener 
             if (spray.getDurability() != 0) {
                 spray.decrDurability();
                 for (EnemyModel s : enemies) {
-//                    for (Obstacle obj : objects) {
-//                        if (obj.isBullet()) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap) <= 3 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap) <= 3 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap) <= 3 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap) <= 3 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    boolean case1 = Math.abs(horiGap) <= 4 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap) <= 4 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap) <= 4 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap) <= 4 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
-//                            boolean inRangeB = Math.abs(board.screenToBoardX(obj.getX()) - board.screenToBoardX(s.getX())) <= 2
-//                                    && Math.abs(board.screenToBoardY(obj.getY()) - board.screenToBoardY(s.getY())) <= 2;
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1 ) {
+                            controls[s.getId()]=null;
                             s.markRemoved(true);
-                        } else {
+                        } else if (s instanceof RobotModel){
                             s.setStunned(true);
                             s.decrHP();
+                        } else {
+                            s.setStunned(true);
                         }
 
-//                            }
-//
-//                        }
                     }
                 }
             }
         } else if (wep instanceof LidModel) {
             LidModel lid = (LidModel) wep;
-            if (lid.getDurability() != 0 && isLid()) {
+            if (lid.getDurability() != 0 && avatar.getHasLid()) {
+                createBullet(avatar);
+                avatar.setHasLid(false);
                 lid.decrDurability();
-
-//                for (EnemyModel s : enemies) {
-//                    for (Obstacle obj : objects) {
-//                        if (obj.isBullet()) {
-//                            if (!s.isRemoved()) {
-//                                if (s.getHP() == 1) {
-//                                    s.markRemoved(true);
-//                                } else {
-//                                    s.decrHP();
-//
-//                                }
-//
-//
-//                            }
-//
-//                        }
-//                    }
-//                }
             }
-        }else if (wep instanceof VacuumModel) {
+        } else if (wep instanceof VacuumModel) {
                 VacuumModel vacuum = (VacuumModel) wep;
                 if (vacuum.getDurability() != 0){
                     System.out.println("vacuum");
@@ -883,10 +897,10 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 5 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
-                        boolean case2 = Math.abs(horiGap) <= 5 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
-                        boolean case3 = Math.abs(vertiGap) <= 5 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
-                        boolean case4 = Math.abs(vertiGap) <= 5 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
+                        boolean case1 = Math.abs(horiGap) <= 10 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
+                        boolean case2 = Math.abs(horiGap) <= 10 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
+                        boolean case3 = Math.abs(vertiGap) <= 10 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
+                        boolean case4 = Math.abs(vertiGap) <= 10 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
                         if ((case1)) {
                             knockbackForce.set(30f,0f);
                             s.applyImpulse(knockbackForce);
@@ -915,9 +929,8 @@ public class FloorController extends WorldController implements ContactListener 
 
                     }
                 }
-            }
-
         }
+    }
 
 
     /**
@@ -944,28 +957,29 @@ public class FloorController extends WorldController implements ContactListener 
             Obstacle bd2 = (Obstacle)body2.getUserData();
             for (EnemyModel s : enemies){
                 if (bd1.getName().equals("lid") && bd2 == s) {
-                    removeBullet2(bd1,s);
+                    removeLid(bd1,s);
 
                 }
                 if (bd2.getName().equals("lid") && bd1 == s) {
-                    removeBullet2(bd2,s);
+                    removeLid(bd2,s);
 
                 }
                 if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) ) {
-                    removeBullet3(bd1);
+                    dropLid(bd1);
                 }
 
                 if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) ) {
-                    removeBullet3(bd2);
+                    dropLid(bd2);
                 }
             }
+
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
                 removeBullet(bd2);
-                setLid(true);
+                avatar.setHasLid(true);
             }
             if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
                 removeBullet(bd2);
-                setLid(true);
+                avatar.setHasLid(true);
             }
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
@@ -989,7 +1003,7 @@ public class FloorController extends WorldController implements ContactListener 
             }
             if ((bd1 == avatar   && bd2 == mopCart) ||
                     (bd1 == mopCart && bd2 == avatar)) {
-                setAtMopCart(true);
+                avatar.setAtMopCart(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1019,15 +1033,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         if ((bd1 == avatar   && bd2 == mopCart) ||
                 (bd1 == mopCart && bd2 == avatar)) {
-            setAtMopCart(false);
+            avatar.setAtMopCart(false);
         }
 
         if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
-            if (sensorFixtures.size == 0) {
-//				avatar.setGrounded(false);
-            }
         }
     }
 
@@ -1035,37 +1046,23 @@ public class FloorController extends WorldController implements ContactListener 
     public void draw(float delta) {
         super.draw(delta);
         GameCanvas canvas = super.getCanvas();
-
+        //LEVEL SCROLLING CODE COPIED FROM WALKER
+        //might not be in the right place (?)
+//        Affine2 oTran = new Affine2();
+//        oTran.setToTranslation(object.getPosition());
+//        Affine2 wTran = new Affine2();
+//        Vector2 wPos = viewWindow.getPosition();
+//        wTran.setToTranslation(-wPos.x,-wPos.y);
+//        oTran.mul(wTran);
         canvas.begin();
 
         board.draw(canvas);
 
-
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-//        String hpDisplay = "HP: " + avatar.getHP();
-//        if (avatar.isAttacking2() && avatar.getWep2().getDurability() > 0 && avatar.getWep2().getName() == "spray"){
-//            canvas.draw(sprayTexture);
-//        }
-        String hpDisplay = "HP:";
-        String wep1Display;
-        if (avatar.getWep1() != null) {
-            wep1Display = "Weapon 1: ";
-        } else {
-            wep1Display = "";
-        }
-        String wep2Display;
-        if (avatar.getWep2() != null) {
-            wep2Display = "Weapon 2: ";
-        } else {
-            wep2Display = "";
-        }
 
         displayFont.setColor(Color.WHITE);
-//        canvas.drawText(hpDisplay, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET);
-//        canvas.drawText(wep1Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 40);
-//        canvas.drawText(wep2Display, displayFont, UI_OFFSET, canvas.getHeight()-UI_OFFSET - 60);
 
         /* Show Multiple HP and Mop Icons */
         int margin = 0;
@@ -1080,10 +1077,10 @@ public class FloorController extends WorldController implements ContactListener 
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
-        Texture wep2Texture = wep_to_texture.get(wep2FileName);
+        Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
         //draw retrieved textures
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
-        canvas.draw(wep2Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 200);
+        canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
         //draw weapon UI durability bars (currently temporary)
         int durability1 = avatar.getWep1().getDurability();
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
@@ -1095,7 +1092,7 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
             displayFont.setColor(Color.WHITE);
         }
         else if (durability1 <= 3) {
@@ -1104,34 +1101,26 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             displayFont.setColor(Color.WHITE);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
         else if (durability2 <= 3) {
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             displayFont.setColor(Color.RED);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
             displayFont.setColor(Color.WHITE);
         }
         else {
             canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
                     displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 210);
+                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
 
         displayFont.getData().setScale(1f);
 
-        //if you're swapping between primary and secondary weapon
-        if (avatar.isSwapping() && !atMopCart) {
-            WeaponModel current_wep1 = wep_to_model.get(wep1FileName);
-            WeaponModel current_wep2 = wep_to_model.get(wep2FileName);
-            avatar.setWep1(current_wep2);
-            avatar.setWep2(current_wep1);
-        }
-
-        if (atMopCart){
+        if (avatar.isAtMopCart()){
             //DRAW MOP CART TEXT AND BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
@@ -1158,21 +1147,6 @@ public class FloorController extends WorldController implements ContactListener 
             //DRAW MOPCART INDEX
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
             canvas.draw(heartTexture, current_xlocation, canvas.getHeight()/2 + 170);
-
-            //IF YOU SWAP
-            if (avatar.isSwapping()) {
-                //get weapon at index
-                String swapping_weapon_name = mopcart[mopcart_index];
-                System.out.print(swapping_weapon_name);
-                WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
-
-                //set all new weapons
-                WeaponModel old_primary = avatar.getWep1();
-                WeaponModel old_secondary = avatar.getWep2();
-                avatar.setWep1(swapping_weapon);
-                avatar.setWep2(old_primary);
-                mopcart[mopcart_index] = old_secondary.name;
-            }
         }
 
         //Draw Enemy Health
@@ -1192,26 +1166,4 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public void setAtMopCart(boolean value) {
-        if (value) {
-            System.out.println("Press O to Swap Weapons");
-        }
-        atMopCart = value;
-
-        //get player durability and change it
-    }
-
-    public boolean isAtMopCart( ) {
-        return atMopCart;
-    }
-    public void setLid(boolean value) {
-
-       isLidHand = value;
-
-        //get player durability and change it
-    }
-
-    public boolean isLid( ) {
-        return isLidHand;
-    }
 }

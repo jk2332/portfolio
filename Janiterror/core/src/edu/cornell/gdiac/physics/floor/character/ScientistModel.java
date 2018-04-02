@@ -9,11 +9,11 @@ package edu.cornell.gdiac.physics.floor.character;
 public class ScientistModel extends EnemyModel {
     // Physics constants
     /** The density of the scientist */
-    private static final float SCIENTIST_DENSITY = 0.1f;
+    private static final float SCIENTIST_DENSITY = 1.0f;
     /** The velocity of the scientist */
     private static final float SCIENTIST_VELOCITY = 2.5f;
 
-    private static final int SCIENTIST_ATTACK_RANGE = 1;
+    private static final int SCIENTIST_ATTACK_RANGE = 2;
 
     /** The amount of max HP a scientist has */
     private static final int SCIENTIST_MAX_HP = 5;

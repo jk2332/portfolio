@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package edu.cornell.gdiac.physics.floor;
 
 import edu.cornell.gdiac.physics.Board;
@@ -14,7 +9,7 @@ import java.util.ArrayDeque;
 import java.util.Random;
 
 public class AIController {
-    private static final int CHASE_DIST = 9;
+    private static final int CHASE_DIST = 6;
     //private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
@@ -25,16 +20,17 @@ public class AIController {
     private long ticks;
     private int wx = 0;
     private int wy = 0;
+    private int patrolState;
 
     public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
-        this.state = FSMState.CHASE;
+        this.state = FSMState.WANDER;
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
-        //this.selectTarget();
+        this.patrolState=0;
     }
 
     public int getAction() {
@@ -47,7 +43,7 @@ public class AIController {
 
         int action = this.move;
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
-            action = 16;
+            action = FloorController.CONTROL_FIRE;
         }
 
         return action;
@@ -67,7 +63,7 @@ public class AIController {
                     this.state = FSMState.WANDER;
                 } else {
                     this.selectTarget();
-                    if (this.target == null) {
+                    if (!target.isRemoved()) {
                         this.state = FSMState.WANDER;
                     } else {
                         tx = this.board.screenToBoardX(this.target.getX());
@@ -82,7 +78,7 @@ public class AIController {
                 break;
             case WANDER:
                 this.selectTarget();
-                if (this.target != null) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
@@ -102,7 +98,7 @@ public class AIController {
                 break;
             case CHASE:
                 dieroll = rand.nextInt(20);
-                if (this.target != null && this.target.isActive()) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
@@ -113,13 +109,11 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                dieroll = rand.nextInt(100);
-                if (this.target != null && this.target.isActive()) {
+                if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (!this.ship.canHitTargetFrom(sx,sy,tx,ty)) {
                         this.state =FSMState.CHASE;
-                        dieroll = rand.nextInt(2);
                     }
                 } else {
                     this.state = FSMState.WANDER;
@@ -127,7 +121,6 @@ public class AIController {
                 break;
             default:
                 assert false;
-                this.state = FSMState.WANDER;
         }
 
     }
@@ -151,6 +144,22 @@ public class AIController {
         return this.ship.canAttack() && this.canShootTargetFrom(sx, sy);
     }
 
+    // n=0 : left, n=1 : right, n=2 : up, n=3 : down
+    private void markGoalHelper(int n, int dist){
+        int sx = board.screenToBoardX(ship.getX());
+        int sy = board.screenToBoardY(ship.getY());
+
+        if (n==0 &&board.inBounds(sx-dist, sy)) {
+            board.setGoal(sx-dist, sy);
+        }
+        if (n==1&&board.inBounds(sx+dist, sy)) {
+            board.setGoal(sx+dist, sy);
+        }if (n==2&&board.inBounds(sx, sy+dist)) {
+            board.setGoal(sx, sy+dist);
+        }if (n==3&&board.inBounds(sx, sy-dist)) {
+            board.setGoal(sx, sy-dist);
+        }
+    }
 
     private void markGoalTiles() {
         this.board.clearMarks();
@@ -158,28 +167,28 @@ public class AIController {
         int tx;
         int ty;
         int sy;
+        int sx;
         switch(state) {
             case SPAWN:
-                System.out.println("SPAWN");
                 setGoal = false;
                 break;
             case WANDER:
-                System.out.println("WANDER");
-                Random random = new Random();
-                if (this.wx == -1) {
-                    this.wx = random.nextInt(this.board.getWidth() - 1) + 1;
-                    this.wy = random.nextInt(this.board.getHeight() - 1) + 1;
-                }
-
-                if (board.inBounds(wx, wy)) this.board.setGoal(this.wx, this.wy);
-                setGoal = true;
+                //System.out.println("WANDER");
+                if (this.patrolState==0) { markGoalHelper(2, 2); setGoal=true; patrolState++; break; }
+                if (this.patrolState==1) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==2) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==3) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==4) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==5) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==6) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
+                if (this.patrolState==7) { markGoalHelper(2, 2); setGoal=true; patrolState=0; break; }
                 break;
             case CHASE:
-                System.out.println("CHASE");
+                //System.out.println("CHASE");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums=0;
-                int rand = (int) (CHASE_DIST*Math.random());
+                int rand = (int) ((CHASE_DIST-2)*Math.random())+2;
                 if (board.inBounds(tx+rand, ty)) {
                     this.board.setGoal(tx+rand, ty); nums++;
                 }
@@ -188,7 +197,7 @@ public class AIController {
                 if (board.inBounds(tx, ty-rand)) {this.board.setGoal(tx, ty-rand); nums++;}
                 if (nums!=0) setGoal=true;
             case ATTACK:
-                System.out.println("ATTACK");
+                //System.out.println("ATTACK");
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 int nums2=0;
@@ -200,18 +209,18 @@ public class AIController {
                     if (!(i == 0) && board.inBounds(tx,ty + attackRange)) {
                         this.board.setGoal(tx, ty + attackRange); nums2++;
                     }
-                }/*
+                }
                 if (board.inBounds(tx+attackRange, ty)) {
                     this.board.setGoal(tx+attackRange, ty); nums2++;
                 }
                 if (board.inBounds(tx-attackRange, ty)) {this.board.setGoal(tx-attackRange, ty);  nums2++;}
                 if (board.inBounds(tx, ty+attackRange)) {this.board.setGoal(tx, ty+attackRange); nums2++;}
-                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}*/
+                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}
                 if (nums2!=0) setGoal=true;
         }
 
         if (!setGoal) {
-            int sx = this.board.screenToBoardX(this.ship.getX());
+            sx = this.board.screenToBoardX(this.ship.getX());
             sy = this.board.screenToBoardY(this.ship.getY());
             this.board.setGoal(sx, sy);
         }
@@ -219,8 +228,6 @@ public class AIController {
 
     private int getMoveAlongPathToGoalTile() {
         ArrayDeque<PathNode> queue = new ArrayDeque();
-        //System.out.println("ai positionx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
-        //System.out.println("ai boardx: "+this.board.screenToBoardX(this.ship.getX())+" /ai positiony: "+this.board.screenToBoardY(this.ship.getY()));
         PathNode curr = new PathNode(this.board.screenToBoardX(this.ship.getX()), this.board.screenToBoardY(this.ship.getY()), 0);
         queue.add(curr);
         if (board.isSafeAt(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);

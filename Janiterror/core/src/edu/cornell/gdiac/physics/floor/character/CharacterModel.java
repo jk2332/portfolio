@@ -24,18 +24,14 @@ public class CharacterModel extends CapsuleObstacle {
     private static final float CHARACTER_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float CHARACTER_SSHRINK = 0.6f;
-    // TODO urgent whats this
+    // TODO wtf are sensors
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
     private static final String SENSOR_NAME = "CharacterGroundSensor";
 
     /** The amount of friction a character will have */
-    /** The dude is a slippery one */
     private static final float CHARACTER_FRICTION = 0.0f;
-
-    /** Cooldown (in animation frames) for attacks */
-    private static final int ATTACK_COOLDOWN = 40;
 
     /*TODO wtf are sensors*/
     /** Ground sensor to represent our feet */
@@ -52,6 +48,8 @@ public class CharacterModel extends CapsuleObstacle {
     private boolean faceUp;
     /** How long until the can attack again */
     private int attackCooldown;
+    /** The maximum cooldown of the character */
+    private int maxAttackCooldown;
     /** The default velocity that the character moves at */
     private float velocity;
 
@@ -163,7 +161,15 @@ public class CharacterModel extends CapsuleObstacle {
      *
      * @return true if this character can attack
      */
-    public boolean canAttack() {return attackCooldown <=0;} //TODO URGENT was canShoot
+    public boolean canAttack() {return attackCooldown <=0;}
+
+    public void startAttackCooldown() {
+        attackCooldown = maxAttackCooldown;
+    }
+
+    public void decrAttackCooldown() {
+        attackCooldown --;
+    }
 
     /**
      * Creates a new character at the given position.
@@ -178,7 +184,7 @@ public class CharacterModel extends CapsuleObstacle {
      * @param height	The object width in physics units
      */
     public CharacterModel(float x, float y, float width, float height, String name,
-                          int hp, float density, float velocity) {
+                          int hp, float density, float velocity, int maxAttackCooldown) {
         super(x,y,width* CHARACTER_HSHRINK,height* CHARACTER_VSHRINK);
 
         setDensity(density);
@@ -188,6 +194,7 @@ public class CharacterModel extends CapsuleObstacle {
         faceUp = false;
         this.hp=hp;
         attackCooldown = 0;
+        this.maxAttackCooldown = maxAttackCooldown;
         setName(name);
         this.velocity=velocity;
     }
@@ -221,25 +228,11 @@ public class CharacterModel extends CapsuleObstacle {
      *
      * @param f     Impulse to be applied to the character
      */
-    public void applyImpulse(Vector2 f) { //TODO urgent changed from applyForce to applyImpulse
+    public void applyImpulse(Vector2 f) {
         if (!isActive()) {
             return;
         }
         body.applyLinearImpulse(f,getPosition(),true);
-    }
-
-    /**
-     * Starts attack cooldown if flag is false and decrements cooldown otherwise (TODO maybe change is kinda confusing)
-     *
-     * @param flag
-     */
-    public void coolDown(boolean flag) {
-        if (flag && this.attackCooldown > 0) {
-            --this.attackCooldown;
-        } else if (!flag) {
-            this.attackCooldown = ATTACK_COOLDOWN;
-        }
-
     }
 
     /**
