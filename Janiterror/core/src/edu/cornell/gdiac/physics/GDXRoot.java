@@ -15,6 +15,7 @@
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
@@ -44,6 +45,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
 
+	private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+
+
 	/**
 	 * Creates a new game from the configuration settings.
 	 *
@@ -53,7 +57,14 @@ public class GDXRoot extends Game implements ScreenListener {
 	public GDXRoot() {
 		// Start loading with the asset manager
 		manager = new AssetManager();
-		
+
+//		Array<String> assets = new Array<String>(1);
+//		assets.add(BACKGROUND_TRACK_FILE);
+//		manager.load(BACKGROUND_TRACK_FILE, Sound.class);
+//		SoundController sounds = SoundController.getInstance();
+//		sounds.allocate(manager, BACKGROUND_TRACK_FILE);
+//		sounds.play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.8f);
+
 		// Add font support to the asset manager
 		FileHandleResolver resolver = new InternalFileHandleResolver();
 		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
