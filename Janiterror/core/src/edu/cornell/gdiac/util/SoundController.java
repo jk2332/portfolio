@@ -112,6 +112,8 @@ public class SoundController {
 	/** The number of sounds we have played this animation frame */
 	private int current;
 
+	private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+
 	/** 
 	 * Creates a new SoundController with the default settings.
 	 */
@@ -301,7 +303,7 @@ public class SoundController {
 			if (!snd.loop && snd.lifespan > cooldown) {
 				// This is a workaround for the OS X sound bug
 				//snd.sound.stop(snd.id);
-				snd.sound.setVolume(snd.id, 0.0f); 
+				snd.sound.setVolume(snd.id, 0.0f);
 			} else {
 				return true;
 			}
@@ -335,7 +337,6 @@ public class SoundController {
 		if (!actives.containsKey(key)) {
 			return;
 		}
-		
 		ActiveSound snd = actives.get(key);
 		
 		// This is a workaround for the OS X sound bug
@@ -368,9 +369,12 @@ public class SoundController {
 			ActiveSound snd = actives.get(key);
 			snd.lifespan++;
 			if (snd.lifespan > timeLimit) {
-				collection.add(key);
-				snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
-				snd.sound.setVolume(snd.id, 0.0f); 
+				//RESET ALL SOUND FILES EXCEPT FOR BACKGROUND TRACK
+				if (key != BACKGROUND_TRACK_FILE) {
+					collection.add(key);
+					snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
+					snd.sound.setVolume(snd.id, 0.0f);
+				}
 			}
 		}
 		for(String key : collection) {

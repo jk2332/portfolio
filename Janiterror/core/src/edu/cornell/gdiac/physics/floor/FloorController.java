@@ -74,6 +74,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
     private static final String HEART_FILE  = "floor/sponge.png";
 
+    private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
@@ -201,6 +202,8 @@ public class FloorController extends WorldController implements ContactListener 
         manager.load(TILE_FILE, Texture.class);
         assets.add(TILE_FILE);
 
+        manager.load(BACKGROUND_TRACK_FILE, Sound.class);
+        assets.add(BACKGROUND_TRACK_FILE);
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
         manager.load(PEW_FILE, Sound.class);
@@ -248,10 +251,12 @@ public class FloorController extends WorldController implements ContactListener 
         tileTexture = new Texture(TILE_FILE);
 
         SoundController sounds = SoundController.getInstance();
+        sounds.allocate(manager, BACKGROUND_TRACK_FILE);
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
         super.loadContent(manager);
+
         platformAssetState = AssetState.COMPLETE;
     }
 
@@ -368,6 +373,9 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        //PLAY BACKGROUND MUSIC
+        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+
         Vector2 gravity = new Vector2(world.getGravity() );
 
         for(Obstacle obj : objects) {
@@ -670,6 +678,7 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         }
+        //RESETS ALL SOUNDS EXCEPT FOR BACKGROUND TRACK
         SoundController.getInstance().update();
     }
 
