@@ -29,7 +29,11 @@ import java.util.HashMap;
  */
 public class FloorController extends WorldController implements ContactListener {
     /** The texture files for characters/attacks */
-    private static final String DUDE_FILE  = "floor/joe.png";
+    private static final String JANITOR_FILE  = "floor/joe.png";
+    private static final String JANITOR_WALKR_FILE  = "floor/janitor-walk-R.png";
+    private static final String JANITOR_IDLE_FILE  = "floor/janitor-idle.png";
+    private static final String JANITOR_WALKU_FILE  = "floor/janitor-walk-U.png";
+    private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
     private static final String SCIENTIST_FILE  = "floor/scientist.png";
     private static final String SLIME_FILE  = "floor/slime.png";
     private static final String ROBOT_FILE = "floor/robot.png";
@@ -83,6 +87,10 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Texture assets for characters/attacks */
     private TextureRegion avatarTexture;
+    private TextureRegion avatarIdleTexture;
+    private TextureRegion avatarWalkRTexture;
+    private TextureRegion avatarWalkUTexture;
+    private TextureRegion avatarWalkDTexture;
     private TextureRegion scientistTexture;
     private TextureRegion slimeTexture;
     private TextureRegion robotTexture;
@@ -135,8 +143,16 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         platformAssetState = AssetState.LOADING;
-        manager.load(DUDE_FILE, Texture.class);
-        assets.add(DUDE_FILE);
+        manager.load(JANITOR_FILE, Texture.class);
+        assets.add(JANITOR_FILE);
+        manager.load(JANITOR_WALKR_FILE, Texture.class);
+        assets.add(JANITOR_WALKR_FILE);
+        manager.load(JANITOR_WALKU_FILE, Texture.class);
+        assets.add(JANITOR_WALKU_FILE);
+        manager.load(JANITOR_WALKD_FILE, Texture.class);
+        assets.add(JANITOR_WALKD_FILE);
+        manager.load(JANITOR_IDLE_FILE, Texture.class);
+        assets.add(JANITOR_IDLE_FILE);
         manager.load(SCIENTIST_FILE, Texture.class);
         assets.add(SCIENTIST_FILE);
         manager.load(SLIME_FILE, Texture.class);
@@ -203,7 +219,11 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         }
 
-        avatarTexture = createTexture(manager,DUDE_FILE,false);
+        avatarTexture = createTexture(manager,JANITOR_FILE,false);
+        avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
+        avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
+        avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
+        avatarIdleTexture = createTexture(manager,JANITOR_IDLE_FILE,false);
         scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
         robotTexture = createTexture(manager,ROBOT_FILE,false);
         slimeTexture = createTexture(manager,SLIME_FILE, false);
@@ -251,6 +271,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
+    private float stateTimer;
+    private boolean isRunningRight;
 
     // TODO reform weapon class and move to mop class
     /** Disables setVelocity until knockback is finished */
@@ -299,6 +321,10 @@ public class FloorController extends WorldController implements ContactListener 
     /** Reference to the character avatar */
     private JoeModel avatar;
     /** Reference to the goalDoor (for collision detection) */
+    private Animation <TextureRegion> joeRunR;
+    private Animation <TextureRegion> joeRunU;
+    private Animation <TextureRegion> joeRunD;
+    private Animation <TextureRegion> joeStand;
     private BoxObstacle goalDoor;
     /** Reference to the monsters */
     private EnemyModel[] enemies;
@@ -316,6 +342,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** For mop knockback force calculations*/
     private Vector2 knockbackForce = new Vector2();
 
+
+
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -323,6 +351,10 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public FloorController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        currentState = State.STANDING;
+        previousState = State.STANDING;
+        stateTimer = 0;
+        isRunningRight = true;
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -456,6 +488,29 @@ public class FloorController extends WorldController implements ContactListener 
         board.setTileTexture(tileTexture);
 
         // Create dude
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarWalkRTexture,i*64,0,64,64));
+        }
+        joeRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 23; i++){
+            frames.add (new TextureRegion(avatarIdleTexture,i*64,0,64,64));
+        }
+        joeStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarWalkUTexture,i*64,0,64,64));
+        }
+        joeRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarWalkDTexture,i*64,0,64,64));
+        }
+        joeRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
         avatar = new JoeModel(JOE_POS.x, JOE_POS.y, dwidth, dheight);
@@ -545,6 +600,7 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             avatar.setVelocity();
+            avatar.setTexture(getFrame(dt));
         }
 
         enemyUpdate();
@@ -1172,5 +1228,56 @@ public class FloorController extends WorldController implements ContactListener 
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
+
+    public enum State {STANDING, RUNNINGR,RUNNINGU,RUNNINGD}
+    public State currentState;
+    public State previousState;
+
+    public State getState(){
+        if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)){
+            return State.RUNNINGR;
+        }
+        else if (avatar.getMovementX()==0 && avatar.getMovementY()>0) {
+            return State.RUNNINGU;
+        }
+        else if (avatar.getMovementX()==0 && avatar.getMovementY()<0) {
+            return State.RUNNINGD;
+        }
+        else return State.STANDING;
+    }
+    public TextureRegion getFrame (float dt){
+        currentState = getState();
+        TextureRegion region;
+        switch (currentState){
+            case RUNNINGR:
+                region = joeRunR.getKeyFrame(stateTimer,true);
+                break;
+            case RUNNINGU:
+                region = joeRunU.getKeyFrame(stateTimer, true);
+                break;
+            case RUNNINGD:
+                region = joeRunD.getKeyFrame(stateTimer,true);
+                break;
+            case STANDING:
+                region = joeStand.getKeyFrame(stateTimer,true);
+                break;
+            default:
+                region = joeStand.getKeyFrame(stateTimer,true);
+                break;
+        }
+        if (((avatar.getMovementX() < 0 && !isRunningRight))&& !region.isFlipX()){
+            System.out.println(avatar.getMovementX());
+            region.flip(true,false);
+            isRunningRight = false;
+        }
+        else if (((avatar.getMovementX() > 0 && isRunningRight))&& region.isFlipX()){
+            region.flip(true,false);
+            System.out.print(region.isFlipX());
+            isRunningRight = true;
+        }
+        stateTimer = currentState == previousState ? stateTimer + dt : 0;
+        previousState = currentState;
+        return region;
+    }
 
 }
