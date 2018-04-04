@@ -11,7 +11,7 @@ public class LizardModel extends EnemyModel {
     /** The density of the lizard */
     private static final float LIZARD_DENSITY = 0.1f;
     /** The velocity of the lizard */
-    private static final float LIZARD_VELOCITY = 2.5f;
+    private static final float LIZARD_VELOCITY = 6.0f;
 
     private static final int LIZARD_ATTACK_RANGE = 1;
 

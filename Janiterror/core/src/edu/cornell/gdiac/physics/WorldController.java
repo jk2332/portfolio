@@ -87,6 +87,7 @@ public abstract class WorldController implements Screen {
 	private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
 	private static final String SCIENTIST_FILE  = "floor/scientist.png";
 	private static final String SLIME_FILE  = "floor/slime.png";
+	private static final String LIZARD_FILE  = "floor/lizard.png";
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
@@ -128,6 +129,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion avatarWalkDTexture;
 	protected TextureRegion scientistTexture;
 	protected TextureRegion slimeTexture;
+	protected TextureRegion lizardTexture;
 	protected TextureRegion robotTexture;
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
@@ -204,6 +206,8 @@ public abstract class WorldController implements Screen {
 		assets.add(SCIENTIST_FILE);
 		manager.load(SLIME_FILE, Texture.class);
 		assets.add(SLIME_FILE);
+		manager.load(LIZARD_FILE, Texture.class);
+		assets.add(LIZARD_FILE);
 		manager.load(ROBOT_FILE, Texture.class);
 		assets.add(ROBOT_FILE);
 		manager.load(BULLET_FILE, Texture.class);
@@ -291,6 +295,7 @@ public abstract class WorldController implements Screen {
 		scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
 		robotTexture = createTexture(manager,ROBOT_FILE,false);
 		slimeTexture = createTexture(manager,SLIME_FILE, false);
+		lizardTexture = createTexture(manager,LIZARD_FILE, false);
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);

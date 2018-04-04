@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-simple.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -52,12 +52,6 @@ public class FloorController extends WorldController implements ContactListener 
     /** Size of textures in tiles */
     private static final int CHARACTER_SCALE_X = 2;
     private static final int CHARACTER_SCALE_Y = 2;
-    private static final int TILE_SCALE_X = 1;
-    private static final int TILE_SCALE_Y = 1;
-    private static final int WALLH_SCALE_X = 1;
-    private static final int WALLH_SCALE_Y = 2;
-    private static final int WALLV_SCALE_X = 1;
-    private static final int WALLV_SCALE_Y = 1;
 
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
@@ -179,6 +173,7 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> scientistPos;
     ArrayList<Vector2> slimePos;
     ArrayList<Vector2> robotPos;
+    ArrayList<Vector2> lizardPos;
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
@@ -237,6 +232,7 @@ public class FloorController extends WorldController implements ContactListener 
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();
         robotPos = level.getRobotPos();
+        lizardPos = level.getLizardPos();
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
@@ -272,8 +268,8 @@ public class FloorController extends WorldController implements ContactListener 
         lidTimer = LID_RANGE;
         lidGround = false;
 
-        enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size()];
-        controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size()];
+        enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
+        controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
         board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
         populateLevel();
     }
@@ -391,7 +387,7 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(avatar);
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
-            EnemyModel mon =new RobotModel(board.boardToScreenX((int) scientistPos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) scientistPos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
+            EnemyModel mon =new RobotModel(board.boardToScreenX((int) scientistPos.get(ii).x) + 0.5f, board.boardToScreenX((int) scientistPos.get(ii).y) + 0.5f,
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
@@ -400,7 +396,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         for (int ii=0; ii<robotPos.size(); ii++) {
-            EnemyModel mon =new RobotModel(board.boardToScreenX((int) robotPos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) robotPos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
+            EnemyModel mon =new RobotModel(board.boardToScreenX((int) robotPos.get(ii).x) + 0.5f, board.boardToScreenX((int) robotPos.get(ii).y) + 0.5f,
                     dwidth, dheight, scientistPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
@@ -408,12 +404,20 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+ii]=mon;
         }
         for (int ii=0; ii<slimePos.size(); ii++){
-            EnemyModel mon =new SlimeModel(board.boardToScreenX((int) slimePos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) slimePos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
+            EnemyModel mon =new SlimeModel(board.boardToScreenX((int) slimePos.get(ii).x) + 0.5f, board.boardToScreenX((int) slimePos.get(ii).y) + 0.5f,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
+        }
+        for (int ii=0; ii<lizardPos.size(); ii++){
+            EnemyModel mon =new LizardModel(board.boardToScreenX((int) lizardPos.get(ii).x) + 0.5f, board.boardToScreenX((int) lizardPos.get(ii).y) + 0.5f,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii);
+            mon.setDrawScale(scale);
+            mon.setTexture(lizardTexture);
+            addObject(mon);
+            enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
         }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}

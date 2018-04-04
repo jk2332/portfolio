@@ -158,6 +158,10 @@ public class LevelEditorParser {
         return wallTLPos;
     }
 
+    public ArrayList<Vector2> getLizardPos() {
+        return lizardPos;
+    }
+
     public int getGoalDoorX() {
         return (int) goalDoorPos.x;
     }
