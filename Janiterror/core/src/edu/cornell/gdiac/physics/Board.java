@@ -23,10 +23,9 @@ public class Board {
     private TileState[] tiles;
     private float BOARD_WIDTH=32;
     private float BOARD_HEIGHT=18;
-    private int TILE_SCALE = 2;
 
     /** Texture+Mesh for tile. Only need one, since all have same geometry */
-    private Texture tileTexture;
+    private Texture[] tileTextures;
 
     public Board(int width, int height) {
         this.width = width;
@@ -99,11 +98,11 @@ public class Board {
      * @return the screen position coordinate for a board cell index.
      */
     public float boardToScreenX(int n) {
-        return (float) (n + 0.5f * TILE_SCALE) * (BOARD_WIDTH/width);
+        return (float) (n + 0.5f) * (BOARD_WIDTH/width);
     }
 
     public float boardToScreenY(int n) {
-        return (float) (n + 0.5f * TILE_SCALE) * (BOARD_HEIGHT/height);
+        return (float) (n + 0.5f) * (BOARD_HEIGHT/height);
     }
 
     public boolean isSafeAt(int x, int y) {
@@ -152,24 +151,12 @@ public class Board {
      *
      * @param canvas the drawing context
      */
-    public void draw(GameCanvas canvas) {
+    public void draw(GameCanvas canvas, int[][] tiles) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                drawTile(x, y, canvas);
+                drawTile(x, y, canvas, tileTextures[tiles[y][x]]);
             }
         }
-    }
-
-    // Drawing information
-    /**
-     * Returns the textured mesh for each tile.
-     *
-     * We only need one mesh, as all tiles look (mostly) the same.
-     *
-     * @return the textured mesh for each tile.
-     */
-    public Texture getTileTexture() {
-        return tileTexture;
     }
 
     /**
@@ -179,8 +166,8 @@ public class Board {
      *
      * @param mesh the textured mesh for each tile.
      */
-    public void setTileTexture(Texture t) {
-        tileTexture = t;
+    public void setTileTextures(Texture[] t) {
+        tileTextures = t;
     }
 
     /**
@@ -191,7 +178,7 @@ public class Board {
      * @param x The x index for the Tile cell
      * @param y The y index for the Tile cell
      */
-    private void drawTile(int x, int y, GameCanvas canvas) {
+    private void drawTile(int x, int y, GameCanvas canvas, Texture tileTexture) {
         TileState tile = getTileState(x, y);
 
         // Compute drawing coordinates
@@ -207,7 +194,7 @@ public class Board {
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
         canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                1024/width * x, 576/height * y, 0, 1.0f, 1.0f);
+                1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
     }
 
 

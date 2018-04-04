@@ -30,43 +30,10 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level-simple.tmx";
 
-    /** The texture files for characters/attacks */
-    private static final String WALL_LEFT_FILE = "floor/wall4.png";
-    private static final String WALL_RIGHT_FILE = "floor/wall2.png";
-    private static final String WALL_MID_FILE = "floor/wall3.png";
-    private static final String JANITOR_FILE  = "floor/joe.png";
-    private static final String JANITOR_WALKR_FILE  = "floor/janitor-walk-R.png";
-    private static final String JANITOR_IDLE_FILE  = "floor/janitor-idle.png";
-    private static final String JANITOR_WALKU_FILE  = "floor/janitor-walk-U.png";
-    private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
-    private static final String SCIENTIST_FILE  = "floor/scientist.png";
-    private static final String SLIME_FILE  = "floor/slime.png";
-    private static final String ROBOT_FILE = "floor/robot.png";
-    private static final String BULLET_FILE  = "floor/lid.png";
-    private static final String SLIMEBALL_FILE = "floor/slimeball.png";
-
-    /** The texture files for the UI icons */
-    private static final String MOP_FILE  = "floor/ui-mop.png";
-    private static final String SPRAY_FILE  = "floor/ui-spray.png";
-    private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
-    private static final String LID_FILE  = "floor/ui-lid.png";
-    private static final String MOP_FILE_SMALL  = "floor/ui-mop-small.png";
-    private static final String SPRAY_FILE_SMALL  = "floor/ui-spray-small.png";
-    private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
-    private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
-    private static final String HEART_FILE  = "floor/sponge.png";
-
+    /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
-
-    /*TODO check if these textures are necessary*/
-    private static final String SPRAY_TEMP_FILE  = "floor/spray.png";
-    private static final String BARRIER_FILE = "floor/barrier.png";
-    private static final String ROPE_FILE  = "floor/ropebridge.png";
-    private static final String BACKGROUND_FILE = "shared/loading.png";
-    private static final String TILE_FILE = "shared/basic-tile.png";
-
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
@@ -75,12 +42,22 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
 
     private static final int TILE_WIDTH = 32;
-    private static final int TILE_SCALE = 2;
+
 
     private static final int BOARD_WIDTH=1024/TILE_WIDTH;
     private static final int BOARD_HEIGHT=576/TILE_WIDTH;
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
+
+    /** Size of textures in tiles */
+    private static final int CHARACTER_SCALE_X = 2;
+    private static final int CHARACTER_SCALE_Y = 2;
+    private static final int TILE_SCALE_X = 1;
+    private static final int TILE_SCALE_Y = 1;
+    private static final int WALLH_SCALE_X = 1;
+    private static final int WALLH_SCALE_Y = 2;
+    private static final int WALLV_SCALE_X = 1;
+    private static final int WALLV_SCALE_Y = 1;
 
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
@@ -92,36 +69,6 @@ public class FloorController extends WorldController implements ContactListener 
     public static int CONTROL_MOVE_DOWN = 8;
     public static int CONTROL_FIRE = 16;
 
-    /** Texture assets for characters/attacks */
-    private TextureRegion wallRightTexture;
-    private TextureRegion wallLeftTexture;
-    private TextureRegion wallMidTexture;
-    private TextureRegion avatarTexture;
-    private TextureRegion avatarIdleTexture;
-    private TextureRegion avatarWalkRTexture;
-    private TextureRegion avatarWalkUTexture;
-    private TextureRegion avatarWalkDTexture;
-    private TextureRegion scientistTexture;
-    private TextureRegion slimeTexture;
-    private TextureRegion robotTexture;
-    private TextureRegion bulletTexture;
-    private TextureRegion slimeballTexture;
-
-    /** Texture assets for UI Icons */
-    private Texture mopTexture;
-    private Texture sprayTexture;
-    private Texture vacuumTexture;
-    private Texture lidTexture;
-    private Texture mopTextureSmall;
-    private Texture sprayTextureSmall;
-    private Texture vacuumTextureSmall;
-    private Texture lidTextureSmall;
-    private Texture heartTexture;
-
-    /** Texture Asset for tiles */
-    private Texture tileTexture;
-    /** Texture asset for the mop cart background */
-    private Texture backgroundTexture;
 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
@@ -153,60 +100,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         platformAssetState = AssetState.LOADING;
-        manager.load(WALL_LEFT_FILE, Texture.class);
-        assets.add(WALL_LEFT_FILE);
-        manager.load(WALL_RIGHT_FILE, Texture.class);
-        assets.add(WALL_RIGHT_FILE);
-        manager.load(WALL_MID_FILE, Texture.class);
-        assets.add(WALL_MID_FILE);
-        manager.load(JANITOR_FILE, Texture.class);
-        assets.add(JANITOR_FILE);
-        manager.load(JANITOR_WALKR_FILE, Texture.class);
-        assets.add(JANITOR_WALKR_FILE);
-        manager.load(JANITOR_WALKU_FILE, Texture.class);
-        assets.add(JANITOR_WALKU_FILE);
-        manager.load(JANITOR_WALKD_FILE, Texture.class);
-        assets.add(JANITOR_WALKD_FILE);
-        manager.load(JANITOR_IDLE_FILE, Texture.class);
-        assets.add(JANITOR_IDLE_FILE);
-        manager.load(SCIENTIST_FILE, Texture.class);
-        assets.add(SCIENTIST_FILE);
-        manager.load(SLIME_FILE, Texture.class);
-        assets.add(SLIME_FILE);
-        manager.load(ROBOT_FILE, Texture.class);
-        assets.add(ROBOT_FILE);
-        manager.load(BARRIER_FILE, Texture.class);
-        assets.add(BARRIER_FILE);
-        manager.load(BULLET_FILE, Texture.class);
-        assets.add(BULLET_FILE);
-        manager.load(SLIMEBALL_FILE, Texture.class);
-        assets.add(SLIMEBALL_FILE);
-        manager.load(SPRAY_TEMP_FILE, Texture.class);
-        assets.add(SPRAY_TEMP_FILE);
-        manager.load(ROPE_FILE, Texture.class);
-        assets.add(ROPE_FILE);
-
-        //UI Icons
-        manager.load(MOP_FILE, Texture.class);
-        assets.add(MOP_FILE);
-        manager.load(SPRAY_FILE, Texture.class);
-        assets.add(SPRAY_FILE);
-        manager.load(VACUUM_FILE, Texture.class);
-        assets.add(VACUUM_FILE);
-        manager.load(LID_FILE, Texture.class);
-        assets.add(LID_FILE);
-        manager.load(MOP_FILE_SMALL, Texture.class);
-        assets.add(MOP_FILE_SMALL);
-        manager.load(SPRAY_FILE_SMALL, Texture.class);
-        assets.add(SPRAY_FILE_SMALL);
-        manager.load(VACUUM_FILE_SMALL, Texture.class);
-        assets.add(VACUUM_FILE_SMALL);
-        manager.load(LID_FILE_SMALL, Texture.class);
-        assets.add(LID_FILE_SMALL);
-        manager.load(HEART_FILE, Texture.class);
-        assets.add(HEART_FILE);
-        manager.load(TILE_FILE, Texture.class);
-        assets.add(TILE_FILE);
 
         manager.load(BACKGROUND_TRACK_FILE, Sound.class);
         assets.add(BACKGROUND_TRACK_FILE);
@@ -234,38 +127,14 @@ public class FloorController extends WorldController implements ContactListener 
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
-        wallRightTexture = createTexture(manager,WALL_RIGHT_FILE,false);
-        wallLeftTexture = createTexture(manager,WALL_LEFT_FILE,false);
-        wallMidTexture = createTexture(manager,WALL_MID_FILE,false);
-        avatarTexture = createTexture(manager,JANITOR_FILE,false);
-        avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
-        avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
-        avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
-        avatarIdleTexture = createTexture(manager,JANITOR_IDLE_FILE,false);
-        scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
-        robotTexture = createTexture(manager,ROBOT_FILE,false);
-        slimeTexture = createTexture(manager,SLIME_FILE, false);
-        bulletTexture = createTexture(manager,BULLET_FILE,false);
-        slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
-        backgroundTexture = new Texture(BACKGROUND_FILE);
 
-        //UI Icons
-        mopTexture = new Texture(MOP_FILE);
-        sprayTexture = new Texture(SPRAY_FILE);
-        vacuumTexture = new Texture(VACUUM_FILE);
-        lidTexture = new Texture(LID_FILE);
-        mopTextureSmall = new Texture(MOP_FILE_SMALL);
-        sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
-        vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
-        lidTextureSmall = new Texture(LID_FILE_SMALL);
-        heartTexture = new Texture(HEART_FILE);
-        tileTexture = new Texture(TILE_FILE);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
+
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
     }
@@ -313,6 +182,11 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
+    ArrayList<Vector2> wallTLPos;
+    ArrayList<Vector2> wallTRPos;
+    ArrayList<Vector2> wallBLPos;
+    ArrayList<Vector2> wallBRPos;
+    int [][] tiles;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -366,8 +240,11 @@ public class FloorController extends WorldController implements ContactListener 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
-
-        //scientistContactTicks=0;
+        wallTLPos = level.getWallTLPos();
+        wallTRPos = level.getWallTRPos();
+        wallBLPos = level.getWallBLPos();
+        wallBRPos = level.getWallBRPos();
+        tiles = level.getTiles();
     }
 
     /**
@@ -408,7 +285,7 @@ public class FloorController extends WorldController implements ContactListener 
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
-        goalDoor = new BoxObstacle(board.boardToScreenX(level.getGoalDoorX()),board.boardToScreenY(level.getGoalDoorY()),dwidth,dheight);
+        goalDoor = new BoxObstacle(board.boardToScreenX(level.getGoalDoorX())+0.5f,board.boardToScreenY(level.getGoalDoorY())+0.5f,dwidth,dheight);
         goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
         goalDoor.setDensity(0.0f);
         goalDoor.setFriction(0.0f);
@@ -422,7 +299,7 @@ public class FloorController extends WorldController implements ContactListener 
         // Add mopcart
         float mopwidth  = mopTile.getRegionWidth()/scale.x;
         float mopheight= mopTile.getRegionHeight()/scale.y;
-        mopCart = new BoxObstacle(board.boardToScreenX(level.getMopCartX()), board.boardToScreenY(level.getMopCartY()),mopwidth,mopheight);
+        mopCart = new BoxObstacle(board.boardToScreenX(level.getMopCartX())+0.5f, board.boardToScreenY(level.getMopCartY())+0.5f,mopwidth,mopheight);
         mopCart.setBodyType(BodyDef.BodyType.StaticBody);
         mopCart.setDensity(0.0f);
         mopCart.setFriction(0.0f);
@@ -433,6 +310,20 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setName("mopCart");
         addObject(mopCart);
 
+        Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
+                broken2tileTexture, broken3tileTexture, grateTileTexture,
+                broken4tileTexture,underTileTexture,stairsTileTexture};
+
+        board.setTileTextures(tileTextures);
+
+        addUIInfo();
+
+        addCharacters();
+
+        addWalls();
+    }
+
+    private void addUIInfo() {
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
 
@@ -466,10 +357,9 @@ public class FloorController extends WorldController implements ContactListener 
         wep_in_use.put("spray", true);
         wep_in_use.put("vacuum", false);
         wep_in_use.put("lid", false);
+    }
 
-        board.setTileTexture(tileTexture);
-
-        // Create dude
+    private void addCharacters() {
         Array<TextureRegion> frames = new Array<TextureRegion>();
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarWalkRTexture,i*64,0,64,64));
@@ -492,25 +382,25 @@ public class FloorController extends WorldController implements ContactListener 
         }
         joeRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
-
-        dwidth  = avatarTexture.getRegionWidth()/scale.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y;
-        avatar = new JoeModel(board.boardToScreenX(level.getJoePosX()), board.boardToScreenY(level.getJoePosY()), dwidth, dheight);
+        float dwidth  = 64/scale.x;
+        float dheight = 64/scale.y;
+        avatar = new JoeModel(board.boardToScreenX(level.getJoePosX())+0.5f, board.boardToScreenY(level.getJoePosY())+0.5f, dwidth, dheight);
         avatar.setDrawScale(scale);
-        avatar.setTexture(avatarTexture);
+        avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
         addObject(avatar);
 
-        for (int ii=0; ii<scientistPos.size(); ii++){
-            EnemyModel mon =new ScientistModel(board.boardToScreenX((int) scientistPos.get(ii).x), board.boardToScreenX((int) scientistPos.get(ii).y),
+        for (int ii=0; ii<scientistPos.size(); ii++) {
+            EnemyModel mon =new RobotModel(board.boardToScreenX((int) scientistPos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) scientistPos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
             enemies[ii]=mon;
         }
-        for (int ii=0; ii<robotPos.size(); ii++){
-            EnemyModel mon =new RobotModel(board.boardToScreenX((int) robotPos.get(ii).x), board.boardToScreenX((int) robotPos.get(ii).y),
+
+        for (int ii=0; ii<robotPos.size(); ii++) {
+            EnemyModel mon =new RobotModel(board.boardToScreenX((int) robotPos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) robotPos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
                     dwidth, dheight, scientistPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
@@ -518,7 +408,7 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+ii]=mon;
         }
         for (int ii=0; ii<slimePos.size(); ii++){
-            EnemyModel mon =new SlimeModel(board.boardToScreenX((int) slimePos.get(ii).x), board.boardToScreenX((int) slimePos.get(ii).y),
+            EnemyModel mon =new SlimeModel(board.boardToScreenX((int) slimePos.get(ii).x) + 0.5f * CHARACTER_SCALE_X, board.boardToScreenX((int) slimePos.get(ii).y) + 0.5f * CHARACTER_SCALE_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
@@ -529,57 +419,93 @@ public class FloorController extends WorldController implements ContactListener 
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
 
+    }
+
+    private void addWalls() {
         String pname = "wall";
-        dwidth  = wallMidTexture.getRegionWidth()/scale.x;
-        dheight = wallMidTexture.getRegionHeight()/scale.y;
+        float dwidth  = wallMidTexture.getRegionWidth()/scale.x;
+        float dheight = wallMidTexture.getRegionHeight()/scale.y;
         float offset;
 
-        offset = -(TILE_WIDTH * TILE_SCALE*(1 - WALL_THICKNESS_SCALE))/2;
+        offset = -(TILE_WIDTH * 2*(1 - WALL_THICKNESS_SCALE))/2;
+        BoxObstacle obj;
+        float x;
+        float y;
         for (int ii = 0; ii < wallMidPos.size(); ii++) {
-            BoxObstacle obj;
-            float x = board.boardToScreenX((int) wallMidPos.get(ii).x);
-            float y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32;
+            x = board.boardToScreenX((int) wallMidPos.get(ii).x);
+            y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
             obj.setTexture(wallMidTexture, 0, offset);
             obj.setName(pname+ii);
-            addObject(obj);
+            addWallObject(obj);
         }
 
+        for (int ii = 0; ii < wallTRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallTRPos.get(ii).x);
+            y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+            obj.setTexture(wallTRTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallTLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallTLPos.get(ii).x);
+            y = board.boardToScreenY((int) wallTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+            obj.setTexture(wallTLTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallBRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallBRPos.get(ii).x);
+            y = board.boardToScreenY((int) wallBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+            obj.setTexture(wallBRTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallBLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallBLPos.get(ii).x);
+            y = board.boardToScreenY((int) wallBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+            obj.setTexture(wallBLTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        dwidth  = wallLeftTexture.getRegionWidth()/scale.x;
+        dheight = wallLeftTexture.getRegionHeight()/scale.y;
+
         for (int ii = 0; ii < wallLeftPos.size(); ii++) {
-            BoxObstacle obj;
-            float x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
-            float y = board.boardToScreenY((int) wallLeftPos.get(ii).y);
+            x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
+            y = board.boardToScreenY((int) wallLeftPos.get(ii).y);
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
             obj.setTexture(wallLeftTexture, offset, 0);
             obj.setName(pname+ii);
-            addObject(obj);
+            addWallObject(obj);
         }
 
         offset = -offset;
         for (int ii = 0; ii < wallRightPos.size(); ii++) {
-            BoxObstacle obj;
-            float x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
-            float y = board.boardToScreenY((int) wallRightPos.get(ii).y);
+            x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
+            y = board.boardToScreenY((int) wallRightPos.get(ii).y);
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallRightTexture, offset, 0);
             obj.setName(pname+ii);
-            addObject(obj);
+            obj.setTexture(wallRightTexture, offset, 0);
+            addWallObject(obj);
         }
+    }
+
+    private void addWallObject(BoxObstacle obj) {
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        addObject(obj);
     }
 
     /**
@@ -1186,7 +1112,7 @@ public class FloorController extends WorldController implements ContactListener 
 //        oTran.mul(wTran);
         canvas.begin();
 
-        board.draw(canvas);
+        board.draw(canvas, tiles);
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
