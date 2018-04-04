@@ -286,8 +286,17 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
+    /** The timer for animations*/
     private float stateTimer;
+    /** The boolean for whether joe is running right*/
     private boolean isRunningRight;
+    /** The "range" for the lid */
+    private static final float LID_RANGE = 0.5f;
+    /** The timer for lid range*/
+    private float lidTimer;
+    /** The boolean for whether lid is on ground*/
+    private boolean lidGround;
+
 
     // TODO reform weapon class and move to mop class
     /** Disables setVelocity until knockback is finished */
@@ -369,8 +378,10 @@ public class FloorController extends WorldController implements ContactListener 
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         currentState = State.STANDING;
         previousState = State.STANDING;
-        stateTimer = 0;
+        stateTimer = 0.0f;
+        lidTimer = LID_RANGE;
         isRunningRight = true;
+        lidGround = false;
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -408,6 +419,9 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);
+        stateTimer = 0.0f;
+        lidTimer = LID_RANGE;
+        lidGround = false;
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size()];
@@ -642,8 +656,9 @@ public class FloorController extends WorldController implements ContactListener 
 
             avatar.setVelocity();
             avatar.setTexture(getFrame(dt));
-        }
 
+        }
+        lidRange(dt);
         enemyUpdate();
 
         SoundController.getInstance().update();
@@ -925,6 +940,32 @@ public class FloorController extends WorldController implements ContactListener 
         lid.setVX(0.0f);
         lid.setVY(0.0f);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
+        lidGround = true;
+    }
+
+    public void lidRange (float dt){
+        for(Obstacle obj : objects) {
+            if (obj.getName() == "lid" && lidTimer <= 0 ){
+                dropLid(obj);
+                lidTimer = LID_RANGE;
+            }
+            else if (obj.getName() == "lid" && lidTimer >= 0 && !lidGround) {
+                lidTimer -= dt;
+            }
+        }
+
+//        if (lidTimer >= 0){
+//            lidTimer -= dt;
+//        }
+//        else{
+//            lidTimer = 2;
+//            for(Obstacle obj : objects) {
+//                if (obj.isBullet()){
+//                    dropLid(obj);
+//                }
+//            }
+//
+//        }
     }
 
     public void attack(WeaponModel wep) {
@@ -1080,10 +1121,15 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
                 removeBullet(bd2);
                 avatar.setHasLid(true);
+                lidGround = false;
+                lidTimer = LID_RANGE;
+
             }
             if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
                 removeBullet(bd2);
                 avatar.setHasLid(true);
+                lidGround = false;
+                lidTimer = LID_RANGE;
             }
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
