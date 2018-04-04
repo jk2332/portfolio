@@ -768,6 +768,11 @@ public abstract class SimpleObstacle extends Obstacle {
 		texture = value;
 		origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
 	}
+
+	public void setTexture(TextureRegion value, float offsetX, float offsetY) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f + offsetX, texture.getRegionHeight()/2.0f + offsetY);
+	}
 	
 	/**
 	 * Draws the physics object.

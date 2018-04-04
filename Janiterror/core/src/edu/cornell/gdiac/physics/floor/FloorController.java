@@ -74,10 +74,13 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private int WALL_THICKNESS = 32;
+    private static final int TILE_WIDTH = 32;
+    private static final int TILE_SCALE = 2;
 
-    private int BOARD_WIDTH=1024/WALL_THICKNESS;
-    private int BOARD_HEIGHT=576/WALL_THICKNESS;
+    private static final int BOARD_WIDTH=1024/TILE_WIDTH;
+    private static final int BOARD_HEIGHT=576/TILE_WIDTH;
+
+    private static final float WALL_THICKNESS_SCALE = 0.33f;
 
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
@@ -293,37 +296,6 @@ public class FloorController extends WorldController implements ContactListener 
     /** Disables setVelocity until knockback is finished */
     private static final int KNOCKBACK_TIMER = 15;
 
-    // Since these appear only once, we do not care about the magic numbers.
-    // In an actual game, this information would go in a data file.
-    // Wall vertices
-
-    /*private static final float[][] WALLS = {
-
-            {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-                    1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-                    31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
-            {1.0f, 0.0f, 1.0f,  1.0f, 31.0f,  1.0f,
-                    31.0f, 0.0f}
-
-    };
-
-    *//** The outlines of all of the platforms *//*
-    private static final float[][] PLATFORMS = {
-            *//**
-            { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
-             **//*
-    };*/
-
     LevelEditorParser level;
 
     ArrayList<Vector2> scientistPos;
@@ -447,8 +419,6 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setName("mopCart");
         addObject(mopCart);
 
-
-
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
 
@@ -482,49 +452,6 @@ public class FloorController extends WorldController implements ContactListener 
         wep_in_use.put("spray", true);
         wep_in_use.put("vacuum", false);
         wep_in_use.put("lid", false);
-
-        String pname = "wall";
-        dwidth  = avatarTexture.getRegionWidth()/scale.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y;
-
-        for (int ii = 0; ii < wallMidPos.size(); ii++) {
-            BoxObstacle obj;
-            obj = new BoxObstacle(board.boardToScreenX((int) wallMidPos.get(ii).x), board.boardToScreenY((int) wallMidPos.get(ii).y), dwidth, dheight);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallMidTexture);
-            obj.setName(pname+ii);
-            addObject(obj);
-        }
-
-        for (int ii = 0; ii < wallRightPos.size(); ii++) {
-            BoxObstacle obj;
-            obj = new BoxObstacle(board.boardToScreenX((int) wallRightPos.get(ii).x), board.boardToScreenY((int) wallRightPos.get(ii).y), dwidth, dheight);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallRightTexture);
-            obj.setName(pname+ii);
-            addObject(obj);
-        }
-
-        for (int ii = 0; ii < wallLeftPos.size(); ii++) {
-            BoxObstacle obj;
-            obj = new BoxObstacle(board.boardToScreenX((int) wallLeftPos.get(ii).x), board.boardToScreenY((int) wallLeftPos.get(ii).y), dwidth, dheight);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallLeftTexture);
-            obj.setName(pname+ii);
-            addObject(obj);
-        }
 
         board.setTileTexture(tileTexture);
 
@@ -586,6 +513,58 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
+        }
+
+        String pname = "wall";
+        dwidth  = wallMidTexture.getRegionWidth()/scale.x;
+        dheight = wallMidTexture.getRegionHeight()/scale.y;
+        float offset;
+
+        offset = -(TILE_WIDTH * TILE_SCALE*(1 - WALL_THICKNESS_SCALE))/2;
+        for (int ii = 0; ii < wallMidPos.size(); ii++) {
+            BoxObstacle obj;
+            float x = board.boardToScreenX((int) wallMidPos.get(ii).x);
+            float y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32;
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(BASIC_DENSITY);
+            obj.setFriction(BASIC_FRICTION);
+            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDrawScale(scale);
+            obj.setTexture(wallMidTexture, 0, offset);
+            obj.setName(pname+ii);
+            addObject(obj);
+        }
+
+        for (int ii = 0; ii < wallLeftPos.size(); ii++) {
+            BoxObstacle obj;
+            float x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
+            float y = board.boardToScreenY((int) wallLeftPos.get(ii).y);
+            obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(BASIC_DENSITY);
+            obj.setFriction(BASIC_FRICTION);
+            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDrawScale(scale);
+            obj.setTexture(wallLeftTexture, offset, 0);
+            obj.setName(pname+ii);
+            addObject(obj);
+        }
+
+        offset = -offset;
+        for (int ii = 0; ii < wallRightPos.size(); ii++) {
+            BoxObstacle obj;
+            float x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
+            float y = board.boardToScreenY((int) wallRightPos.get(ii).y);
+            obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(BASIC_DENSITY);
+            obj.setFriction(BASIC_FRICTION);
+            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDrawScale(scale);
+            obj.setTexture(wallRightTexture, offset, 0);
+            obj.setName(pname+ii);
+            addObject(obj);
         }
     }
 
@@ -1148,8 +1127,9 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     public void draw(float delta) {
-        super.draw(delta);
         GameCanvas canvas = super.getCanvas();
+
+        canvas.clear();
         //LEVEL SCROLLING CODE COPIED FROM WALKER
         //might not be in the right place (?)
 //        Affine2 oTran = new Affine2();
@@ -1263,6 +1243,8 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.getData().setScale(1.0f);
 
         canvas.end();
+
+        super.draw(delta);
     }
 
     /** Unused ContactListener method */

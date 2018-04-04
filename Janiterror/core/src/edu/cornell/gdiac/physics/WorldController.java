@@ -595,7 +595,6 @@ public abstract class WorldController implements Screen {
 	 * @param canvas The drawing context
 	 */
 	public void draw(float delta) {
-		canvas.clear();
 
 		if (debug) {
 			canvas.beginDebug();
