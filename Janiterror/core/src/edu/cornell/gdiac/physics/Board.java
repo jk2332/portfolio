@@ -23,6 +23,7 @@ public class Board {
     private TileState[] tiles;
     private float BOARD_WIDTH=32;
     private float BOARD_HEIGHT=18;
+    private int TILE_SCALE = 2;
 
     /** Texture+Mesh for tile. Only need one, since all have same geometry */
     private Texture tileTexture;
@@ -98,11 +99,11 @@ public class Board {
      * @return the screen position coordinate for a board cell index.
      */
     public float boardToScreenX(int n) {
-        return (float) (n + 0.5f) * (BOARD_WIDTH/width);
+        return (float) (n + 0.5f * TILE_SCALE) * (BOARD_WIDTH/width);
     }
 
     public float boardToScreenY(int n) {
-        return (float) (n + 0.5f) * (BOARD_HEIGHT/height);
+        return (float) (n + 0.5f * TILE_SCALE) * (BOARD_HEIGHT/height);
     }
 
     public boolean isSafeAt(int x, int y) {
