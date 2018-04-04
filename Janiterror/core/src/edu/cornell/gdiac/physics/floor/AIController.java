@@ -20,7 +20,8 @@ public class AIController {
     private long ticks;
     private int wx = 0;
     private int wy = 0;
-    private int patrolState;
+    private int patrolSeq;
+    private double patrolPath; //determine which patrol path to take
 
     public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
@@ -30,7 +31,8 @@ public class AIController {
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
-        this.patrolState=0;
+        this.patrolSeq=0;
+        patrolPath=Math.random();
     }
 
     public int getAction() {
@@ -148,15 +150,16 @@ public class AIController {
     private void markGoalHelper(int n, int dist){
         int sx = board.screenToBoardX(ship.getX());
         int sy = board.screenToBoardY(ship.getY());
-
-        if (n==0 &&board.inBounds(sx-dist, sy)) {
+        if (n==0 && board.inBounds(sx-dist, sy)) {
             board.setGoal(sx-dist, sy);
         }
-        if (n==1&&board.inBounds(sx+dist, sy)) {
+        if (n==1 && board.inBounds(sx+dist, sy)) {
             board.setGoal(sx+dist, sy);
-        }if (n==2&&board.inBounds(sx, sy+dist)) {
+        }
+        if (n==2 && board.inBounds(sx, sy+dist)) {
             board.setGoal(sx, sy+dist);
-        }if (n==3&&board.inBounds(sx, sy-dist)) {
+        }
+        if (n==3 && board.inBounds(sx, sy-dist)) {
             board.setGoal(sx, sy-dist);
         }
     }
@@ -174,14 +177,63 @@ public class AIController {
                 break;
             case WANDER:
                 //System.out.println("WANDER");
-                if (this.patrolState==0) { markGoalHelper(2, 2); setGoal=true; patrolState++; break; }
-                if (this.patrolState==1) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==2) { markGoalHelper(0, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==3) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==4) { markGoalHelper(3, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==5) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==6) { markGoalHelper(1, 4); setGoal=true; patrolState++; break; }
-                if (this.patrolState==7) { markGoalHelper(2, 2); setGoal=true; patrolState=0; break; }
+                if (patrolPath<=0.4d) {
+                    if (this.patrolSeq == 0 || this.patrolSeq==7) {
+                        markGoalHelper(2, 2);
+                        setGoal = true;
+                        if (this.patrolSeq==7) patrolSeq=0;
+                        else patrolSeq++;
+                        break;
+                    }
+                    if (this.patrolSeq == 1 || patrolSeq==2) {
+                        markGoalHelper(0, 4);
+                        setGoal = true;
+                        patrolSeq++;
+                        break;
+                    }
+                    if (this.patrolSeq == 3 || this.patrolSeq==4) {
+                        markGoalHelper(3, 4);
+                        setGoal = true;
+                        patrolSeq++;
+                        break;
+                    }
+                    if (this.patrolSeq == 5 || this.patrolSeq==6) {
+                        markGoalHelper(1, 4);
+                        setGoal = true;
+                        patrolSeq++;
+                        break;
+                    }
+                }
+                else if (patrolPath<=0.7d){
+                    if (this.patrolSeq<=4) {
+                        markGoalHelper(0, 6);
+                        setGoal=true;
+                        patrolSeq++;
+                        break;
+                    }
+                    if(this.patrolSeq>4){
+                        markGoalHelper(1, 6);
+                        setGoal=true;
+                        if (patrolSeq==9) patrolSeq=0;
+                        else patrolSeq++;
+                        break;
+                    }
+                }
+                else {
+                    if (this.patrolSeq<=4){
+                        markGoalHelper(2, 6);
+                        setGoal=true;
+                        patrolSeq++;
+                        break;
+                    }
+                    if (this.patrolSeq>4){
+                        markGoalHelper(3, 6);
+                        setGoal=true;
+                        if (patrolSeq==9) patrolSeq=0;
+                        else patrolSeq++;
+                        break;
+                    }
+                }
                 break;
             case CHASE:
                 //System.out.println("CHASE");
