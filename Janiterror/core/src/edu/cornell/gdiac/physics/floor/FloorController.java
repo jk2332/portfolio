@@ -41,17 +41,18 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
 
-    private static final int TILE_WIDTH = 32;
+    private static final int TILE_SIZE = 32;
 
+    private static final int BOARD_WIDTH=1024;
+    private static final int BOARD_HEIGHT=576;
 
-    private static final int BOARD_WIDTH=1024/TILE_WIDTH;
-    private static final int BOARD_HEIGHT=576/TILE_WIDTH;
+    private static final int NUM_OF_TILES_X = BOARD_WIDTH/TILE_SIZE;
+    private static final int NUM_OF_TILES_Y = BOARD_HEIGHT/TILE_SIZE;
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
 
-    /** Size of textures in tiles */
-    private static final int CHARACTER_SCALE_X = 2;
-    private static final int CHARACTER_SCALE_Y = 2;
+    private static final float OBJ_OFFSET_X = 1f;
+    private static final float OBJ_OFFSET_Y = 1f;
 
     /** Offset for the UI on the screen */
     private static final float UI_OFFSET   = 5.0f;
@@ -270,7 +271,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
-        board = new Board(BOARD_WIDTH, BOARD_HEIGHT);
+        board = new Board(NUM_OF_TILES_X, NUM_OF_TILES_Y);
         populateLevel();
     }
 
@@ -281,7 +282,7 @@ public class FloorController extends WorldController implements ContactListener 
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
-        goalDoor = new BoxObstacle(board.boardToScreenX(level.getGoalDoorX())+0.5f,board.boardToScreenY(level.getGoalDoorY())+0.5f,dwidth,dheight);
+        goalDoor = new BoxObstacle(level.getGoalDoorX()/32+OBJ_OFFSET_X,level.getGoalDoorY()/32+OBJ_OFFSET_Y,dwidth,dheight);
         goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
         goalDoor.setDensity(0.0f);
         goalDoor.setFriction(0.0f);
@@ -295,7 +296,7 @@ public class FloorController extends WorldController implements ContactListener 
         // Add mopcart
         float mopwidth  = mopTile.getRegionWidth()/scale.x;
         float mopheight= mopTile.getRegionHeight()/scale.y;
-        mopCart = new BoxObstacle(board.boardToScreenX(level.getMopCartX())+0.5f, board.boardToScreenY(level.getMopCartY())+0.5f,mopwidth,mopheight);
+        mopCart = new BoxObstacle(level.getMopCartX()/32+OBJ_OFFSET_X, level.getMopCartY()/32+OBJ_OFFSET_X,mopwidth,mopheight);
         mopCart.setBodyType(BodyDef.BodyType.StaticBody);
         mopCart.setDensity(0.0f);
         mopCart.setFriction(0.0f);
@@ -380,14 +381,14 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
-        avatar = new JoeModel(board.boardToScreenX(level.getJoePosX())+0.5f, board.boardToScreenY(level.getJoePosY())+0.5f, dwidth, dheight);
+        avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
         addObject(avatar);
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
-            EnemyModel mon =new RobotModel(board.boardToScreenX((int) scientistPos.get(ii).x) + 0.5f, board.boardToScreenX((int) scientistPos.get(ii).y) + 0.5f,
+            EnemyModel mon =new RobotModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
@@ -396,7 +397,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         for (int ii=0; ii<robotPos.size(); ii++) {
-            EnemyModel mon =new RobotModel(board.boardToScreenX((int) robotPos.get(ii).x) + 0.5f, board.boardToScreenX((int) robotPos.get(ii).y) + 0.5f,
+            EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
@@ -404,7 +405,7 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+ii]=mon;
         }
         for (int ii=0; ii<slimePos.size(); ii++){
-            EnemyModel mon =new SlimeModel(board.boardToScreenX((int) slimePos.get(ii).x) + 0.5f, board.boardToScreenX((int) slimePos.get(ii).y) + 0.5f,
+            EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
@@ -412,7 +413,7 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
         for (int ii=0; ii<lizardPos.size(); ii++){
-            EnemyModel mon =new LizardModel(board.boardToScreenX((int) lizardPos.get(ii).x) + 0.5f, board.boardToScreenX((int) lizardPos.get(ii).y) + 0.5f,
+            EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(lizardTexture);
@@ -431,7 +432,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dheight = wallMidTexture.getRegionHeight()/scale.y;
         float offset;
 
-        offset = -(TILE_WIDTH * 2*(1 - WALL_THICKNESS_SCALE))/2;
+        offset = -(TILE_SIZE * 2*(1 - WALL_THICKNESS_SCALE))/2;
         BoxObstacle obj;
         float x;
         float y;

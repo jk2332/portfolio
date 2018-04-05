@@ -6,16 +6,8 @@
 package edu.cornell.gdiac.physics;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import edu.cornell.gdiac.mesh.TexturedMesh;
-import edu.cornell.gdiac.mesh.MeshLoader.MeshParameter;
-import edu.cornell.gdiac.mesh.MeshLoader;
-import edu.cornell.gdiac.mesh.TexturedMesh;
 
 public class Board {
     private int width;

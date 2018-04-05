@@ -31,30 +31,38 @@ public class LevelEditorParser {
     public LevelEditorParser(String levelPath) {
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
         Array<Element> layers = level.getChildrenByName("layer");
+        Array<Element> objects = level.getChildrenByName("objectgroup");
 
+        int boardWidth = level.getIntAttribute("width") * level.getIntAttribute("tilewidth");
+        int boardHeight = level.getIntAttribute("height") * level.getIntAttribute("tileheight");
 
         tiles = layerToList(layers.get(0));
-        mopCartPos = layerToPos(layers.get(1));
-        goalDoorPos = layerToPos(layers.get(2));
-        int [][] characters = layerToList(layers.get(3));
-        for (int i = 0; i < characters.length; i++) {
-            for (int j = 0; j < characters[0].length; j++) {
-                if (characters[i][j] == 21) {
-                    scientistPos.add(new Vector2(j, i));
-                } else if (characters[i][j] == 19) {
-                    robotPos.add(new Vector2(j, i));
-                } else if (characters[i][j] == 11) {
-                    joePos = new Vector2(j, i);
-                } else if (characters[i][j] == 20) {
-                    slimePos.add(new Vector2(j, i));
-                } else if (characters[i][j] == 22) {
-                    lizardPos.add(new Vector2(j, i));
-                }
+
+        Element goalDoorElement = objects.get(1).getChild(0);
+        goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
+        Element mopCartElement = objects.get(0).getChild(0);
+        mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),boardHeight - mopCartElement.getFloatAttribute("y"));
+        Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
+        for (int i = 0; i < charactersElement.size; i++) {
+            Element character = charactersElement.get(i);
+            int gid = character.getIntAttribute("gid");
+            float x = character.getFloatAttribute("x");
+            float y = boardHeight - character.getFloatAttribute("y");
+            if (gid == 21) {
+                scientistPos.add(new Vector2(x, y));
+            } else if (gid == 19) {
+                robotPos.add(new Vector2(x, y));
+            } else if (gid == 11) {
+                joePos = new Vector2(x, y);
+            } else if (gid == 20) {
+                slimePos.add(new Vector2(x, y));
+            } else if (gid == 22) {
+                lizardPos.add(new Vector2(x, y));
             }
         }
 
-        int[][] horiWalls = layerToList(layers.get(5));
-        int[][] vertiWalls = layerToList(layers.get(4));
+        int[][] horiWalls = layerToList(layers.get(2));
+        int[][] vertiWalls = layerToList(layers.get(1));
 
         for (int i = 0; i < vertiWalls.length; i++) {
             for (int j = 0; j < vertiWalls[0].length; j++) {
@@ -100,18 +108,6 @@ public class LevelEditorParser {
             }
         }
         return grid2;
-    }
-
-    public Vector2 layerToPos(Element layer) {
-        int[][] grid = layerToList(layer);
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (grid[i][j] != 0) {
-                    return new Vector2(j, i);
-                }
-            }
-        }
-        return new Vector2();
     }
 
     public int[][] getTiles() {
@@ -162,27 +158,27 @@ public class LevelEditorParser {
         return lizardPos;
     }
 
-    public int getGoalDoorX() {
-        return (int) goalDoorPos.x;
+    public float getGoalDoorX() {
+        return goalDoorPos.x;
     }
 
-    public int getGoalDoorY() {
-        return (int) goalDoorPos.y;
+    public float getGoalDoorY() {
+        return goalDoorPos.y;
     }
 
-    public int getMopCartX() {
-        return (int) mopCartPos.x;
+    public float getMopCartX() {
+        return mopCartPos.x;
     }
 
-    public int getMopCartY() {
-        return (int) mopCartPos.y;
+    public float getMopCartY() {
+        return mopCartPos.y;
     }
 
-    public int getJoePosX() {
-        return (int) joePos.x;
+    public float getJoePosX() {
+        return joePos.x;
     }
 
-    public int getJoePosY() {
-        return (int) joePos.y;
+    public float getJoePosY() {
+        return joePos.y;
     }
 }
