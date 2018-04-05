@@ -481,7 +481,7 @@ public class FloorController extends WorldController implements ContactListener 
             addWallObject(obj);
         }
 
-        dwidth  = wallLeftTexture.getRegionWidth()/scale.x;
+        dwidth = wallLeftTexture.getRegionWidth()/scale.x;
         dheight = wallLeftTexture.getRegionHeight()/scale.y;
 
         for (int ii = 0; ii < wallLeftPos.size(); ii++) {
