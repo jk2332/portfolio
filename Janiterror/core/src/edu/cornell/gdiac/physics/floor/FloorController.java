@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level-advanced2.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -588,16 +588,15 @@ public class FloorController extends WorldController implements ContactListener 
             //recharge durability of weapons
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-            for(Obstacle obj : objects) {
-                if (obj.getName() == "lid") {
-                    obj.markRemoved(true);
-                    avatar.setHasLid(true);
-                    lidGround = false;
-                    lidTimer = LID_RANGE;
-                }
+        }
+        for(Obstacle obj : objects) {
+            if (obj.getName() == "lid") {
+                obj.markRemoved(true);
+                avatar.setHasLid(true);
+                lidGround = false;
+                lidTimer = LID_RANGE;
             }
         }
-
         //move mop cart index
         if (avatar.isLeft()) {
             System.out.println("Move mop index left");
