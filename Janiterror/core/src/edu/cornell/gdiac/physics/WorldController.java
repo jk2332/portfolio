@@ -64,30 +64,103 @@ public abstract class WorldController implements Screen {
 	
 	// Pathnames to shared assets
 	/** File to texture for walls and platforms */
-	private static String EARTH_FILE = "shared/earthtile.png";
+	private static final String WALL_LEFT_FILE = "shared/wall-basic-vertical.png";
+	private static final String WALL_RIGHT_FILE = "shared/wall-basic-vertical.png";
+	private static final String WALL_MID_FILE = "shared/wall-basic-horizontal.png";
+	private static final String WALL_TL_FILE = "shared/wall-basic-top-left-corner.png";
+	private static final String WALL_TR_FILE = "shared/wall-basic-top-right-corner.png";
+	private static final String WALL_BR_FILE = "shared/wall-basic-right-corner.png";
+	private static final String WALL_BL_FILE = "shared/wall-basic-left-corner.png";
+
 	/** File to texture for the win door */
-	private static String GOAL_FILE = "shared/goaldoor.png";
+	private static final String GOAL_FILE = "shared/goaldoor64.png";
 	/** File to texture for the mop cart */
-	private static String MOP_FILE = "shared/mop-cart.png";
+	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	/** Retro font for displaying messages */
-	private static String FONT_FILE = "shared/RetroGame.ttf";
-	private static int FONT_SIZE = 32;
-    //private float scale;
-    private static float ITEM_SCALE  = 0.75f;
+	private static final String FONT_FILE = "shared/RetroGame.ttf";
+	private static final int FONT_SIZE = 32;
+	/** The texture files for characters/attacks */
+	private static final String JANITOR_WALKR_FILE  = "floor/janitor-walk-R.png";
+	private static final String JANITOR_IDLE_FILE  = "floor/janitor-idle.png";
+	private static final String JANITOR_WALKU_FILE  = "floor/janitor-walk-U.png";
+	private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
+	private static final String SCIENTIST_FILE  = "floor/scientist.png";
+	private static final String SLIME_FILE  = "floor/slime.png";
+	private static final String LIZARD_FILE  = "floor/lizard.png";
+	private static final String ROBOT_FILE = "floor/robot.png";
+	private static final String BULLET_FILE  = "floor/lid.png";
+	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
 
+	/** The texture files for the UI icons */
+	private static final String MOP_FILE  = "floor/ui-mop.png";
+	private static final String SPRAY_FILE  = "floor/ui-spray.png";
+	private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
+	private static final String LID_FILE  = "floor/ui-lid.png";
+	private static final String MOP_FILE_SMALL  = "floor/ui-mop-small.png";
+	private static final String SPRAY_FILE_SMALL  = "floor/ui-spray-small.png";
+	private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
+	private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
+	private static final String HEART_FILE  = "floor/sponge.png";
 
-	/** The texture for walls and platforms */
-	protected TextureRegion earthTile;
+	private static final String BACKGROUND_FILE = "shared/loading.png";
+	private static final String TILE_FILE = "shared/basic-tile-32.png";
+	private static final String BROKEN1_TILE_FILE = "shared/broken-tile-1-32.png";
+	private static final String BROKEN2_TILE_FILE = "shared/broken-tile-2-32.png";
+	private static final String BROKEN3_TILE_FILE = "shared/broken-tile-3-32.png";
+	private static final String BROKEN4_TILE_FILE = "shared/broken-tile-4-32.png";
+	private static final String GRATE_TILE_FILE = "shared/grate-tile-32.png";
+	private static final String STAIRS_TILE_FILE = "shared/stairs-down.png";
+	private static final String UNDER_TILE_FILE = "shared/undertile-32.png";
+
+	private static final String PLAY_BTN_FILE = "shared/play.png";
+
+	/** Texture assets for characters/attacks */
+	protected TextureRegion wallRightTexture;
+	protected TextureRegion wallLeftTexture;
+	protected TextureRegion wallMidTexture;
+	protected TextureRegion wallTLTexture;
+	protected TextureRegion wallTRTexture;
+	protected TextureRegion wallBLTexture;
+	protected TextureRegion wallBRTexture;
+	protected TextureRegion avatarIdleTexture;
+	protected TextureRegion avatarWalkRTexture;
+	protected TextureRegion avatarWalkUTexture;
+	protected TextureRegion avatarWalkDTexture;
+	protected TextureRegion scientistTexture;
+	protected TextureRegion slimeTexture;
+	protected TextureRegion lizardTexture;
+	protected TextureRegion robotTexture;
+	protected TextureRegion bulletTexture;
+	protected TextureRegion slimeballTexture;
+
+	/** Texture assets for UI Icons */
+	protected Texture mopTexture;
+	protected Texture sprayTexture;
+	protected Texture vacuumTexture;
+	protected Texture lidTexture;
+	protected Texture mopTextureSmall;
+	protected Texture sprayTextureSmall;
+	protected Texture vacuumTextureSmall;
+	protected Texture lidTextureSmall;
+	protected Texture heartTexture;
+
+	/** Texture Asset for tiles */
+	protected Texture tileTexture;
+	protected Texture broken1TileTexture;
+	protected Texture broken2tileTexture;
+	protected Texture broken3tileTexture;
+	protected Texture broken4tileTexture;
+	protected Texture grateTileTexture;
+	protected Texture stairsTileTexture;
+	protected Texture underTileTexture;
+	/** Texture asset for the mop cart background */
+	protected Texture backgroundTexture;
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion mopTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
-    private Texture itemSwap;
-    private static final String PLAY_BTN_FILE = "shared/play.png";
-    // private Texture background;
-    // private static final String BACKGROUND_FILE = "shared/loading.png";
 
 	/**
 	 * Preloads the assets for this controller.
@@ -106,12 +179,81 @@ public abstract class WorldController implements Screen {
 		
 		worldAssetState = AssetState.LOADING;
 		// Load the shared tiles.
-		manager.load(EARTH_FILE,Texture.class);
-		assets.add(EARTH_FILE);
+		manager.load(WALL_LEFT_FILE, Texture.class);
+		assets.add(WALL_LEFT_FILE);
+		manager.load(WALL_RIGHT_FILE, Texture.class);
+		assets.add(WALL_RIGHT_FILE);
+		manager.load(WALL_MID_FILE, Texture.class);
+		assets.add(WALL_MID_FILE);
+		manager.load(WALL_TL_FILE, Texture.class);
+		assets.add(WALL_TL_FILE);
+		manager.load(WALL_TR_FILE, Texture.class);
+		assets.add(WALL_TR_FILE);
+		manager.load(WALL_BL_FILE, Texture.class);
+		assets.add(WALL_BL_FILE);
+		manager.load(WALL_BR_FILE, Texture.class);
+		assets.add(WALL_BR_FILE);
+		manager.load(JANITOR_WALKR_FILE, Texture.class);
+		assets.add(JANITOR_WALKR_FILE);
+		manager.load(JANITOR_WALKU_FILE, Texture.class);
+		assets.add(JANITOR_WALKU_FILE);
+		manager.load(JANITOR_WALKD_FILE, Texture.class);
+		assets.add(JANITOR_WALKD_FILE);
+		manager.load(JANITOR_IDLE_FILE, Texture.class);
+		assets.add(JANITOR_IDLE_FILE);
+		manager.load(SCIENTIST_FILE, Texture.class);
+		assets.add(SCIENTIST_FILE);
+		manager.load(SLIME_FILE, Texture.class);
+		assets.add(SLIME_FILE);
+		manager.load(LIZARD_FILE, Texture.class);
+		assets.add(LIZARD_FILE);
+		manager.load(ROBOT_FILE, Texture.class);
+		assets.add(ROBOT_FILE);
+		manager.load(BULLET_FILE, Texture.class);
+		assets.add(BULLET_FILE);
+		manager.load(SLIMEBALL_FILE, Texture.class);
+		assets.add(SLIMEBALL_FILE);
+
+		//UI Icons
+		manager.load(MOP_FILE, Texture.class);
+		assets.add(MOP_FILE);
+		manager.load(SPRAY_FILE, Texture.class);
+		assets.add(SPRAY_FILE);
+		manager.load(VACUUM_FILE, Texture.class);
+		assets.add(VACUUM_FILE);
+		manager.load(LID_FILE, Texture.class);
+		assets.add(LID_FILE);
+		manager.load(MOP_FILE_SMALL, Texture.class);
+		assets.add(MOP_FILE_SMALL);
+		manager.load(SPRAY_FILE_SMALL, Texture.class);
+		assets.add(SPRAY_FILE_SMALL);
+		manager.load(VACUUM_FILE_SMALL, Texture.class);
+		assets.add(VACUUM_FILE_SMALL);
+		manager.load(LID_FILE_SMALL, Texture.class);
+		assets.add(LID_FILE_SMALL);
+		manager.load(HEART_FILE, Texture.class);
+		assets.add(HEART_FILE);
+		manager.load(TILE_FILE, Texture.class);
+		assets.add(TILE_FILE);
+		manager.load(BROKEN1_TILE_FILE, Texture.class);
+		assets.add(BROKEN1_TILE_FILE);
+		manager.load(BROKEN2_TILE_FILE, Texture.class);
+		assets.add(BROKEN2_TILE_FILE);
+		manager.load(BROKEN3_TILE_FILE, Texture.class);
+		assets.add(BROKEN3_TILE_FILE);
+		manager.load(BROKEN4_TILE_FILE, Texture.class);
+		assets.add(BROKEN4_TILE_FILE);
+		manager.load(GRATE_TILE_FILE, Texture.class);
+		assets.add(GRATE_TILE_FILE);
+		manager.load(UNDER_TILE_FILE, Texture.class);
+		assets.add(UNDER_TILE_FILE);
+		manager.load(STAIRS_TILE_FILE, Texture.class);
+		assets.add(STAIRS_TILE_FILE);
+
 		manager.load(GOAL_FILE,Texture.class);
 		assets.add(GOAL_FILE);
-		manager.load(MOP_FILE,Texture.class);
-		assets.add(MOP_FILE);
+		manager.load(MOP_CART_FILE,Texture.class);
+		assets.add(MOP_CART_FILE);
 
 
 		// Load the font
@@ -138,9 +280,47 @@ public abstract class WorldController implements Screen {
 		}
 		
 		// Allocate the tiles
-		earthTile = createTexture(manager,EARTH_FILE,true);
+		wallRightTexture = createTexture(manager,WALL_RIGHT_FILE,false);
+		wallLeftTexture = createTexture(manager,WALL_LEFT_FILE,false);
+		wallMidTexture = createTexture(manager,WALL_MID_FILE,false);
+		wallTRTexture = createTexture(manager,WALL_TR_FILE,false);
+		wallTLTexture = createTexture(manager,WALL_TL_FILE,false);
+		wallBRTexture = createTexture(manager,WALL_BR_FILE,false);
+		wallBLTexture = createTexture(manager,WALL_BL_FILE,false);
+		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
+		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
+		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
+		avatarIdleTexture = createTexture(manager,JANITOR_IDLE_FILE,false);
+		scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
+		robotTexture = createTexture(manager,ROBOT_FILE,false);
+		slimeTexture = createTexture(manager,SLIME_FILE, false);
+		lizardTexture = createTexture(manager,LIZARD_FILE, false);
+		bulletTexture = createTexture(manager,BULLET_FILE,false);
+		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
+		backgroundTexture = new Texture(BACKGROUND_FILE);
+
+		//UI Icons
+		mopTexture = new Texture(MOP_FILE);
+		sprayTexture = new Texture(SPRAY_FILE);
+		vacuumTexture = new Texture(VACUUM_FILE);
+		lidTexture = new Texture(LID_FILE);
+		mopTextureSmall = new Texture(MOP_FILE_SMALL);
+		sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
+		vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
+		lidTextureSmall = new Texture(LID_FILE_SMALL);
+		heartTexture = new Texture(HEART_FILE);
+
+		tileTexture = new Texture(TILE_FILE);
+		broken1TileTexture = new Texture(BROKEN1_TILE_FILE);
+		broken2tileTexture = new Texture(BROKEN2_TILE_FILE);
+		broken3tileTexture = new Texture(BROKEN3_TILE_FILE);
+		broken4tileTexture = new Texture(BROKEN4_TILE_FILE);
+		grateTileTexture = new Texture(GRATE_TILE_FILE);
+		underTileTexture = new Texture(STAIRS_TILE_FILE);
+		stairsTileTexture = new Texture(UNDER_TILE_FILE);
+
 		goalTile  = createTexture(manager,GOAL_FILE,true);
-		mopTile = createTexture(manager,MOP_FILE, true);
+		mopTile = createTexture(manager,MOP_CART_FILE, true);
 		
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
@@ -595,7 +775,6 @@ public abstract class WorldController implements Screen {
 	 * @param canvas The drawing context
 	 */
 	public void draw(float delta) {
-		canvas.clear();
 
 		if (debug) {
 			canvas.beginDebug();
