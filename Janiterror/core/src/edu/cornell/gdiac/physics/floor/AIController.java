@@ -297,6 +297,7 @@ public class AIController {
         if (n0.x==n1.x || n1.y==n0.y){
             return 10;
         }
+        System.out.println("here");
         return 14;
     }
 
@@ -311,12 +312,12 @@ public class AIController {
              */
             @Override
             public int compare(PathNode o1, PathNode o2) {
-                if (o1.f<o2.f) return -1;
-                if (o2.f<o1.f) return 1;
+                if (o1.f < o2.f) return -1;
+                if (o2.f < o1.f) return 1;
                 return 0;
             }
         };
-        PriorityQueue<PathNode> list = new PriorityQueue<PathNode>(10, comparator);
+        PriorityQueue<PathNode> list = new PriorityQueue<PathNode>(50, comparator);
         list.add(curr);
 
         while (!list.isEmpty()){
@@ -340,7 +341,7 @@ public class AIController {
                     int tentativeG = curr.g + distanceBetween(curr, next);
 
                     if (this.board.isSafeAt(next.x, next.y) && !this.board.isVisited(next.x, next.y) &&
-                            tentativeG < next.g) {
+                            (next.g==null || tentativeG < next.g)) {          //fix this
                         //System.out.println("here");
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
@@ -385,10 +386,8 @@ public class AIController {
         WANDER,
         CHASE,
         ATTACK;
-
-        private FSMState() {
-        }
     }
+
     private static enum PatrolPath{
         SQUARE,
         VERTICAL,
@@ -398,7 +397,7 @@ public class AIController {
     private class PathNode {
         public int x;
         public int y;
-        public int g;
+        public Integer g;
         public int f;
         public int act;
 
@@ -407,7 +406,7 @@ public class AIController {
             this.y = y;
             this.act = act;
             this.f = Integer.MAX_VALUE;
-            this.g = Integer.MAX_VALUE;
+            this.g = null;
         }
     }
 }
