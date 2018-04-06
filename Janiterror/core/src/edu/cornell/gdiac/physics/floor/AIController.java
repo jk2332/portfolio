@@ -3,13 +3,14 @@ package edu.cornell.gdiac.physics.floor;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.character.EnemyModel;
 import edu.cornell.gdiac.physics.floor.character.JoeModel;
+import javafx.scene.layout.Priority;
+import javafx.scene.shape.Path;
 
 import java.lang.reflect.Array;
-import java.util.ArrayDeque;
-import java.util.Random;
+import java.util.*;
 
 public class AIController {
-    private static final int CHASE_DIST = 6;
+    private static final int CHASE_DIST = 9;
     //private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
@@ -21,29 +22,32 @@ public class AIController {
     private int wx = 0;
     private int wy = 0;
     private int patrolSeq;
-    private double patrolPath; //determine which patrol path to take
+    private PatrolPath patrolPath;
+
 
     public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
-        this.state = FSMState.WANDER;
+        this.state = FSMState.SPAWN;
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
-        this.patrolSeq=0;
-        patrolPath=Math.random();
+        double tmp = Math.random();
+        patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
+        patrolSeq=0;
     }
 
     public int getAction() {
         ++this.ticks;
-        if (((long)this.ship.getId() + this.ticks) % 10L == 0L) {
+        if (((long)this.ship.getId() + this.ticks) % 20L == 0L) {
             this.changeStateIfApplicable();
-            this.markGoalTiles(); //System.out.println("id: "+ship.getId());
+            this.markGoalTiles();
             this.move = this.getMoveAlongPathToGoalTile();
         }
 
         int action = this.move;
+        System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -64,8 +68,7 @@ public class AIController {
                 if (dieroll != 0) {
                     this.state = FSMState.WANDER;
                 } else {
-                    this.selectTarget();
-                    if (!target.isRemoved()) {
+                    if (target.isRemoved()) {
                         this.state = FSMState.WANDER;
                     } else {
                         tx = this.board.screenToBoardX(this.target.getX());
@@ -79,7 +82,6 @@ public class AIController {
                 }
                 break;
             case WANDER:
-                this.selectTarget();
                 if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
@@ -99,7 +101,6 @@ public class AIController {
                 }
                 break;
             case CHASE:
-                dieroll = rand.nextInt(20);
                 if (!target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
@@ -127,11 +128,8 @@ public class AIController {
 
     }
 
-    private void selectTarget() {
-    }
-
     private boolean canShootTargetFrom(int x, int y) {
-        if (!this.board.inBounds(x, y)) {
+        if (!this.board.isSafeAt(x, y)) {
             return false;
         }
 
@@ -147,21 +145,24 @@ public class AIController {
     }
 
     // n=0 : left, n=1 : right, n=2 : up, n=3 : down
-    private void markGoalHelper(int n, int dist){
-        int sx = board.screenToBoardX(ship.getX());
-        int sy = board.screenToBoardY(ship.getY());
-        if (n==0 && board.inBounds(sx-dist, sy)) {
-            board.setGoal(sx-dist, sy);
+    private boolean markGoalHelper(int sx, int sy, int n, int dist){
+        if (n==0 && board.isSafeAt(sx-dist, sy)) {
+          board.setGoal(sx-dist, sy);
+          return true;
         }
-        if (n==1 && board.inBounds(sx+dist, sy)) {
-            board.setGoal(sx+dist, sy);
+        if (n==1 && board.isSafeAt(sx+dist, sy)) {
+           board.setGoal(sx+dist, sy);
+            return true;
         }
-        if (n==2 && board.inBounds(sx, sy+dist)) {
+        if (n==2 && board.isSafeAt(sx, sy+dist)) {
             board.setGoal(sx, sy+dist);
+            return true;
         }
-        if (n==3 && board.inBounds(sx, sy-dist)) {
+        if (n==3 && board.isSafeAt(sx, sy-dist)) {
             board.setGoal(sx, sy-dist);
+            return true;
         }
+        return false;
     }
 
     private void markGoalTiles() {
@@ -171,124 +172,160 @@ public class AIController {
         int ty;
         int sy;
         int sx;
+        boolean b;
+        int attackRange = ship.getAttackRange();
         switch(state) {
             case SPAWN:
                 setGoal = false;
                 break;
             case WANDER:
+                sx = this.board.screenToBoardX(ship.getX());
+                sy = this.board.screenToBoardY(ship.getY());
                 //System.out.println("WANDER");
-                if (patrolPath<=0.4d) {
-                    if (this.patrolSeq == 0 || this.patrolSeq==7) {
-                        markGoalHelper(2, 2);
-                        setGoal = true;
-                        if (this.patrolSeq==7) patrolSeq=0;
-                        else patrolSeq++;
-                        break;
-                    }
-                    if (this.patrolSeq == 1 || patrolSeq==2) {
-                        markGoalHelper(0, 4);
-                        setGoal = true;
-                        patrolSeq++;
-                        break;
-                    }
-                    if (this.patrolSeq == 3 || this.patrolSeq==4) {
-                        markGoalHelper(3, 4);
-                        setGoal = true;
-                        patrolSeq++;
-                        break;
-                    }
-                    if (this.patrolSeq == 5 || this.patrolSeq==6) {
-                        markGoalHelper(1, 4);
-                        setGoal = true;
-                        patrolSeq++;
-                        break;
-                    }
-                }
-                else if (patrolPath<=0.7d){
+                if (patrolPath == PatrolPath.HORIZONTAL){
                     if (this.patrolSeq<=4) {
-                        markGoalHelper(0, 6);
-                        setGoal=true;
+                        b = markGoalHelper(sx, sy, 0, 1);
                         patrolSeq++;
-                        break;
+                        if (b) setGoal=true; break;
                     }
-                    if(this.patrolSeq>4){
-                        markGoalHelper(1, 6);
-                        setGoal=true;
+                    else {
+                        b = markGoalHelper(sx, sy, 1, 1);
                         if (patrolSeq==9) patrolSeq=0;
                         else patrolSeq++;
-                        break;
+                        if (b) setGoal=true; break;
+                    }
+                }
+                else if (patrolPath == PatrolPath.VERTICAL) {
+                    if (this.patrolSeq<=4){
+                        b = markGoalHelper(sx, sy, 2, 1);
+                        patrolSeq++;
+                        if (b) setGoal=true; break;
+                    }
+                    else {
+                        b = markGoalHelper(sx, sy, 3, 1);
+                        if (patrolSeq==9) patrolSeq=0;
+                        else patrolSeq++;
+                        if (b) setGoal=true; break;
                     }
                 }
                 else {
-                    if (this.patrolSeq<=4){
-                        markGoalHelper(2, 6);
-                        setGoal=true;
-                        patrolSeq++;
-                        break;
-                    }
-                    if (this.patrolSeq>4){
-                        markGoalHelper(3, 6);
-                        setGoal=true;
-                        if (patrolSeq==9) patrolSeq=0;
+                    if (this.patrolSeq < 2 || (patrolSeq>=14 && patrolSeq<=15)){
+                        b = markGoalHelper(sx, sy, 2, 1);
+                        if (patrolSeq==15) patrolSeq=0;
                         else patrolSeq++;
-                        break;
+                        if (b) setGoal=true; break;
+                    }
+                    else if (patrolSeq <=5) {
+                        b = markGoalHelper(sx, sy, 0, 1);
+                        patrolSeq++;
+                        if (b) setGoal=true; break;
+                    }
+                    else if (patrolSeq <=9){
+                        b = markGoalHelper(sx, sy, 3, 1);
+                        patrolSeq++;
+                        if (b) setGoal=true; break;
+                    }
+                    else if (patrolSeq <=13) {
+                        b = markGoalHelper(sx, sy, 1, 1);
+                        patrolSeq++;
+                        if (b) setGoal=true; break;
                     }
                 }
                 break;
             case CHASE:
-                //System.out.println("CHASE");
+                sx = this.board.screenToBoardX(ship.getX());
+                sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                int nums=0;
-                int rand = (int) ((CHASE_DIST-2)*Math.random())+2;
-                if (board.inBounds(tx+rand, ty)) {
-                    this.board.setGoal(tx+rand, ty); nums++;
+                int manLeft = manhattan(sx, sy, tx-attackRange, ty);
+                int manRight = manhattan(sx, sy, tx+attackRange, ty);
+                int manUp =  manhattan(sx, sy, tx, ty+attackRange);
+                int manDown =  manhattan(sx, sy, tx, ty-attackRange);
+                int fin=-1; int temp=Integer.MAX_VALUE;
+                if (board.isSafeAt(tx-attackRange-1, ty)){
+                    fin = 0; temp=manLeft;
                 }
-                if (board.inBounds(tx-rand, ty)) {this.board.setGoal(tx-rand, ty);  nums++;}
-                if (board.inBounds(tx, ty+rand)) {this.board.setGoal(tx, ty+rand); nums++;}
-                if (board.inBounds(tx, ty-rand)) {this.board.setGoal(tx, ty-rand); nums++;}
-                if (nums!=0) setGoal=true;
+                if (board.isSafeAt(tx+attackRange+1, ty) && manRight<temp) {
+                    fin=1; temp=manRight;
+                }
+                if (board.isSafeAt(tx, ty+attackRange+1) && manUp<temp) {
+                    fin=2; temp=manUp;
+                }
+                if (board.isSafeAt(tx, ty-attackRange-1) && manDown<temp) {
+                    fin=3;
+                }
+                b = markGoalHelper(tx, ty, fin, attackRange);
+                if (b) setGoal=true;
+                break;
             case ATTACK:
-                //System.out.println("ATTACK");
+                sx = this.board.screenToBoardX(ship.getX());
+                sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                int nums2=0;
-                int attackRange = this.ship.getAttackRange();
-                for (int i = -attackRange; i <= attackRange; i++) {
-                    if (!(i == 0) && board.inBounds(tx + attackRange,ty)) {
-                        this.board.setGoal(tx + attackRange, ty); nums2++;
-                    }
-                    if (!(i == 0) && board.inBounds(tx,ty + attackRange)) {
-                        this.board.setGoal(tx, ty + attackRange); nums2++;
-                    }
+                int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
+                int manhRight = manhattan(sx, sy, tx+attackRange, ty);
+                int manhUp =  manhattan(sx, sy, tx, ty+attackRange);
+                int manhDown =  manhattan(sx, sy, tx, ty-attackRange);
+                int min = -1; int tmp= Integer.MAX_VALUE;
+                if (board.isSafeAt(tx-attackRange, ty)){
+                    min=0; tmp=manhLeft;
                 }
-                if (board.inBounds(tx+attackRange, ty)) {
-                    this.board.setGoal(tx+attackRange, ty); nums2++;
+                if (board.isSafeAt(tx+attackRange, ty) && manhRight<tmp) {
+                    min=1; tmp=manhRight;
                 }
-                if (board.inBounds(tx-attackRange, ty)) {this.board.setGoal(tx-attackRange, ty);  nums2++;}
-                if (board.inBounds(tx, ty+attackRange)) {this.board.setGoal(tx, ty+attackRange); nums2++;}
-                if (board.inBounds(tx, ty-attackRange)) {this.board.setGoal(tx, ty-attackRange); nums2++;}
-                if (nums2!=0) setGoal=true;
+                if (board.isSafeAt(tx, ty+attackRange) && manhUp<tmp) {
+                    min=2; tmp=manhUp;
+                }
+                if (board.isSafeAt(tx, ty-attackRange) && manhDown<tmp) {
+                    min=3;
+                }
+                b = markGoalHelper(tx, ty, min, attackRange);
+                if (b) setGoal=true;
+                break;
         }
-
         if (!setGoal) {
             sx = this.board.screenToBoardX(this.ship.getX());
             sy = this.board.screenToBoardY(this.ship.getY());
-            this.board.setGoal(sx, sy);
+            board.setGoal(sx, sy);
         }
     }
 
-    private int getMoveAlongPathToGoalTile() {
-        ArrayDeque<PathNode> queue = new ArrayDeque();
-        PathNode curr = new PathNode(this.board.screenToBoardX(this.ship.getX()), this.board.screenToBoardY(this.ship.getY()), 0);
-        queue.add(curr);
-        if (board.isSafeAt(curr.x, curr.y)) this.board.setVisited(curr.x, curr.y);
+    private int heuristicCostEstimate(PathNode curr){
+        return 10*manhattan(curr.x, curr.y, board.getGoal().x, board.getGoal().y);
+    }
+    private int distanceBetween(PathNode n0, PathNode n1){
+        if (n0.x==n1.x || n1.y==n0.y){
+            return 10;
+        }
+        return 14;
+    }
 
-        while(queue.size() != 0) {
-            curr = (PathNode)queue.pollFirst();
-            if (this.board.isGoal(curr.x, curr.y)) {
+    private int getMoveAlongPathToGoalTile() {
+        if (board.getGoal().x < 0 || board.getGoal().y < 0) return 0;
+        PathNode curr = new PathNode(board.screenToBoardX(ship.getX()), board.screenToBoardY(ship.getY()), 0);
+        curr.g =0;
+        curr.f =  heuristicCostEstimate(curr);
+        final Comparator<PathNode> comparator = new Comparator<PathNode>() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public int compare(PathNode o1, PathNode o2) {
+                if (o1.f<o2.f) return -1;
+                if (o2.f<o1.f) return 1;
+                return 0;
+            }
+        };
+        PriorityQueue<PathNode> list = new PriorityQueue<PathNode>(10, comparator);
+        list.add(curr);
+
+        while (!list.isEmpty()){
+            curr = list.poll();
+            if (board.isGoal(curr.x, curr.y)) {
+                //System.out.println("reached goal tile");
                 return curr.act;
             }
+            board.setVisited(curr.x, curr.y);
 
             boolean horiz = this.choosePriority(curr);
 
@@ -300,23 +337,26 @@ public class AIController {
                     } else {
                         next.y += jj == 0 ? -1 : 1;
                     }
+                    int tentativeG = curr.g + distanceBetween(curr, next);
 
-                    if (!this.board.isVisited(next.x, next.y) && this.board.isSafeAt(next.x, next.y)) {
+                    if (this.board.isSafeAt(next.x, next.y) && !this.board.isVisited(next.x, next.y) &&
+                            tentativeG < next.g) {
+                        //System.out.println("here");
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
                             dir = jj == 0 ? FloorController.CONTROL_MOVE_LEFT : FloorController.CONTROL_MOVE_RIGHT;
                         } else {
                             dir = jj == 0 ? FloorController.CONTROL_MOVE_DOWN : FloorController.CONTROL_MOVE_UP;
                         }
-
+                        next.g = tentativeG;
+                        next.f = next.g + heuristicCostEstimate(next);
                         next.act = curr.act == 0 ? dir : curr.act;
                         this.board.setVisited(next.x, next.y);
-                        queue.add(next);
+                        list.add(next);
                     }
                 }
             }
         }
-
         return 0;
     }
 
@@ -349,16 +389,25 @@ public class AIController {
         private FSMState() {
         }
     }
+    private static enum PatrolPath{
+        SQUARE,
+        VERTICAL,
+        HORIZONTAL;
+    }
 
-    private static class PathNode {
+    private class PathNode {
         public int x;
         public int y;
+        public int g;
+        public int f;
         public int act;
 
         public PathNode(int x, int y, int act) {
             this.x = x;
             this.y = y;
             this.act = act;
+            this.f = Integer.MAX_VALUE;
+            this.g = Integer.MAX_VALUE;
         }
     }
 }

@@ -23,6 +23,8 @@ public class Board {
     private TileState[] tiles;
     private float BOARD_WIDTH=32;
     private float BOARD_HEIGHT=18;
+    private int goalX;
+    private int goalY;
 
     /** Texture+Mesh for tile. Only need one, since all have same geometry */
     private Texture tileTexture;
@@ -32,29 +34,34 @@ public class Board {
         this.height = height;
         this.tiles = new Board.TileState[width * height];
 
-        for (int ii=1; ii<width-1; ii++){
-            for (int jj=1; jj<height-1; jj++){
-                tiles[jj*width+ii]=new TileState(ii, jj, width, height);
+        for (int ii=0; ii<width; ii++){
+            for (int jj=0; jj<height; jj++){
+                tiles[jj*width+ii]=new TileState(ii, jj);
             }
         }
         this.resetTiles();
     }
     public void resetTiles() {
-        for(int x = 1; x < this.width-1; ++x) {
-            for(int y = 1; y < this.height-1; ++y) {
+        goalX = -1; goalY = -1;
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState tile = this.getTileState(x, y);
-                tile.goal = false;
                 tile.visited = false;
             }
         }
     }
 
+
     public void setGoal(int x, int y) {
-        if (!this.inBounds(x, y)) {
+        if (!this.isSafeAt(x, y)) {
             Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
         } else {
-            this.getTileState(x, y).goal = true;
+            goalX = x; goalY = y;
         }
+    }
+
+    public TileState[] getTiles(){
+        return tiles;
     }
 
     public boolean isVisited(int x, int y) {
@@ -70,7 +77,7 @@ public class Board {
     }
 
     public boolean isGoal(int x, int y) {
-        return !this.inBounds(x, y) ? false : this.getTileState(x, y).goal;
+        return !this.isSafeAt(x, y) ? false : (goalX==x && goalY==y);
     }
 
     public int getWidth() {return width;}
@@ -106,40 +113,43 @@ public class Board {
     }
 
     public boolean isSafeAt(int x, int y) {
-        return inBounds(x, y) && !this.getTileState(x, y).falling;
+        return inBounds(x, y) && !this.getTileState(x, y).blocked;
+    }
+
+    public TileState getGoal(){
+        return new TileState(goalX, goalY);
     }
 
     public void clearMarks() {
-        for(int x = 1; x < this.width-1; ++x) {
-            for(int y = 1; y < this.height-1; ++y) {
+        goalX = -1; goalY =-1;
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState state = this.getTileState(x, y);
                 state.visited = false;
-                state.goal = false;
             }
         }
     }
 
     public boolean inBounds(int x, int y) {
-        return x >= 1 && y >= 1 && x < this.width-1 && y < this.height-1;
+        return x >= 0 && y >= 0 && x < this.width && y < this.height;
     }
 
     private TileState getTileState(int x, int y) {
         return !this.inBounds(x, y) ? null : this.tiles[width*y+x];
     }
 
-    private static class TileState {
-        public boolean goal;
+    public class TileState {
         public boolean visited;
-        public boolean falling;
-        public int tilex;
-        public int tiley;
+        public boolean blocked;
+        public int x;
+        public int y;
 
-        private TileState(int x, int y, int width, int height) {
-            tilex=x;
-            tiley=y;
-            this.goal = false;
-            //this.visited = false;
-            //if (x==0 || y==0 || x==width-1 || y==height-1) {falling=true; visited=true;} else {falling=false; visited=false;}
+        private TileState(int x, int y) {
+            this.x=x;
+            this.y=y;
+            this.visited = false;
+            this.blocked=false;
+            if (x==0 || y==0 || x==Board.this.width-1 || y==Board.this.height-1) {blocked=true; visited=true;}
         }
     }
 
@@ -157,6 +167,10 @@ public class Board {
                 drawTile(x, y, canvas);
             }
         }
+    }
+
+    public void setBlocked(int i, int j){
+        getTileState(i, j).blocked=true;
     }
 
     // Drawing information
@@ -197,16 +211,17 @@ public class Board {
         float sx = boardToScreenX(x);
         float sy = boardToScreenY(y);
 
-        /*tileMesh.setColor(BASIC_COLOR);
-        if (tile.power) {
-            tileMesh.setColor(POWER_COLOR);
-        }*/
-
+        //if (tile.x==goalX && tile.y==goalY) {
+        //    canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+        //            1024/width * x, 576/height * y, 0, 1.0f, 1.0f);
+        //}
 
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
-        canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                1024/width * x, 576/height * y, 0, 1.0f, 1.0f);
+        //else {
+            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    1024/width * x, 576/height * y, 0, 1.0f, 1.0f);
+        //}
     }
 
 
