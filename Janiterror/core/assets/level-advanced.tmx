@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="48" height="32" tilewidth="32" tileheight="32" infinite="0" nextobjectid="27">
- <tileset firstgid="1" source="Janiterror/Janiterror/core/assets/tiles.tsx"/>
- <tileset firstgid="9" source="Janiterror/Janiterror/core/assets/wallsh.tsx"/>
- <tileset firstgid="15" source="Janiterror/Janiterror/core/assets/wallv.tsx"/>
- <tileset firstgid="16" source="Janiterror/Janiterror/core/assets/slime.tsx"/>
- <tileset firstgid="17" source="Janiterror/Janiterror/core/assets/scientist.tsx"/>
- <tileset firstgid="18" source="Janiterror/Janiterror/core/assets/joe.tsx"/>
- <tileset firstgid="19" source="Janiterror/Janiterror/core/assets/mop-cart.tsx"/>
- <tileset firstgid="20" source="Janiterror/Janiterror/core/assets/goaldoor.tsx"/>
- <tileset firstgid="21" source="Janiterror/Janiterror/core/assets/lizard.tsx"/>
+ <tileset firstgid="1" source="tiles.tsx"/>
+ <tileset firstgid="9" source="wallsh.tsx"/>
+ <tileset firstgid="15" source="wallv.tsx"/>
+ <tileset firstgid="16" source="slime.tsx"/>
+ <tileset firstgid="17" source="scientist.tsx"/>
+ <tileset firstgid="18" source="joe.tsx"/>
+ <tileset firstgid="19" source="mop-cart.tsx"/>
+ <tileset firstgid="20" source="goaldoor.tsx"/>
+ <tileset firstgid="21" source="lizard.tsx"/>
  <layer name="tiles" width="48" height="32">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,

@@ -40,6 +40,9 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String PEW_FILE = "floor/pew.mp3";
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
+    /** The sound file for a reload */
+    private static final String RELOAD_FILE = "floor/reload.mp3";
+
 
     private static final int TILE_SIZE = 32;
 
@@ -75,6 +78,7 @@ public class FloorController extends WorldController implements ContactListener 
     private String[] mopcart = new String[2];
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
+    private boolean mop_cart_reloaded_before = false;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -104,6 +108,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(PEW_FILE);
         manager.load(POP_FILE, Sound.class);
         assets.add(POP_FILE);
+        manager.load(RELOAD_FILE, Sound.class);
+        assets.add(RELOAD_FILE);
 
         super.preLoadContent(manager);
     }
@@ -129,6 +135,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
+        sounds.allocate(manager, RELOAD_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -321,9 +328,9 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     private void addUIInfo() {
+        /** Pixel Locations of Weapon Icons in Mop Cart*/
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
-
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -331,19 +338,16 @@ public class FloorController extends WorldController implements ContactListener 
         list_of_weapons[3] = "lid";
         mopcart[0] = "vacuum";
         mopcart[1] = "lid";
-
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
-
         /** Load name -> small texture dictionary */
         wep_to_small_texture.put("mop", mopTextureSmall);
         wep_to_small_texture.put("spray", sprayTextureSmall);
         wep_to_small_texture.put("vacuum", vacuumTextureSmall);
         wep_to_small_texture.put("lid", lidTextureSmall);
-
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel());
         wep_to_model.put("spray", new SprayModel());
@@ -578,17 +582,22 @@ public class FloorController extends WorldController implements ContactListener 
      * Update function for Joe when he at the mop cart
      */
     private void joeAtMopCartUpdate() {
-        //recharge durability of weapons
-        avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-        avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-        for(Obstacle obj : objects) {
-            if (obj.getName() == "lid") {
-                obj.markRemoved(true);
-                avatar.setHasLid(true);
-                lidGround = false;
-                lidTimer = LID_RANGE;
+        if (!mop_cart_reloaded_before) {
+            SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+            mop_cart_reloaded_before = true;
+            //recharge durability of weapons
+            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+            for(Obstacle obj : objects) {
+                if (obj.getName() == "lid") {
+                    obj.markRemoved(true);
+                    avatar.setHasLid(true);
+                    lidGround = false;
+                    lidTimer = LID_RANGE;
+                }
             }
         }
+
         //move mop cart index
         if (avatar.isLeft()) {
             System.out.println("Move mop index left");
@@ -1185,7 +1194,6 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
                     displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
-
         displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
