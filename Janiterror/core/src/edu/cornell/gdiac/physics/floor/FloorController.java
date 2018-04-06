@@ -581,7 +581,14 @@ public class FloorController extends WorldController implements ContactListener 
         //recharge durability of weapons
         avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
         avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-
+        for(Obstacle obj : objects) {
+            if (obj.getName() == "lid") {
+                obj.markRemoved(true);
+                avatar.setHasLid(true);
+                lidGround = false;
+                lidTimer = LID_RANGE;
+            }
+        }
         //move mop cart index
         if (avatar.isLeft()) {
             System.out.println("Move mop index left");
