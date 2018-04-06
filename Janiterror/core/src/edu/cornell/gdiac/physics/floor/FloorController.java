@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-advanced2.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -262,6 +262,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        mop_cart_reloaded_before = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
