@@ -271,14 +271,13 @@ public class AIController {
                 sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
+                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty)) break;
+
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
                 int manUp =  manhattan(sx, sy, tx, ty+attackRange);
                 int manDown =  manhattan(sx, sy, tx, ty-attackRange);
-                //System.out.println("left: "+hasNoWallBetw(tx-attackRange, ty, tx, ty));
-                //System.out.println("rigt: "+hasNoWallBetw(tx+attackRange, ty, tx, ty));
-                //System.out.println("down: "+hasNoWallBetw(tx, ty-attackRange, tx, ty));
-                //System.out.println("up: "+hasNoWallBetw(tx, ty+attackRange, tx, ty));
+
                 if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx-attackRange, ty, tx, ty)){
                     fin = 0; temp=manLeft;
                 }
@@ -300,10 +299,13 @@ public class AIController {
                 sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
+                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty)) break;
+
                 int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manhRight = manhattan(sx, sy, tx+attackRange, ty);
                 int manhUp =  manhattan(sx, sy, tx, ty+attackRange);
                 int manhDown =  manhattan(sx, sy, tx, ty-attackRange);
+
                 if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx, ty, tx-attackRange, ty)){
                     fin=0; temp=manhLeft;
                 }

@@ -256,13 +256,13 @@ public class FloorController extends WorldController implements ContactListener 
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-        //slimePos = level.getSlimePos();
+        slimePos = level.getSlimePos();
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
         //robotPos = new ArrayList<Vector2>();
         //lizardPos = new ArrayList<Vector2>();
         //scientistPos=new ArrayList<Vector2>();
-        slimePos = new ArrayList<Vector2>();
+        //slimePos = new ArrayList<Vector2>();
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
