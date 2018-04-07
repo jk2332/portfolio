@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-advanced.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -46,10 +46,6 @@ public class FloorController extends WorldController implements ContactListener 
 
     private static final int TILE_SIZE = 32;
 
-    private int WALL_THICKNESS = 32;
-    private int NUM_OF_SCIENTISTS = 1;
-    private int NUM_OF_SLIMES = 0;
-    private int NUM_OF_ROBOTS = 1;
     private static final int BOARD_WIDTH=1024;
     private static final int BOARD_HEIGHT=576;
 
@@ -844,6 +840,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setGravityScale(0);
         bullet.setVX(speedX);
         bullet.setVY(speedY);
+        bullet.setFixtureGroupIndex((short) -1);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -1136,10 +1133,10 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setAtMopCart(false);
         }
 
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+        /*if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                 (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
-        }
+        }*/
     }
 
 

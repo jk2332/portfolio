@@ -22,13 +22,6 @@ public class CharacterModel extends CapsuleObstacle {
     private static final float CHARACTER_VSHRINK = 0.95f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
     private static final float CHARACTER_HSHRINK = 0.7f;
-    /** The amount to shrink the sensor fixture (horizontally) relative to the image */
-    private static final float CHARACTER_SSHRINK = 0.6f;
-    // TODO wtf are sensors
-    /** Height of the sensor attached to the player's feet */
-    private static final float SENSOR_HEIGHT = 0.05f;
-    /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "CharacterGroundSensor";
 
     /** The amount of friction a character will have */
     private static final float CHARACTER_FRICTION = 0.0f;
@@ -146,17 +139,6 @@ public class CharacterModel extends CapsuleObstacle {
     }
 
     /**
-     * Returns the name of the ground sensor
-     *
-     * This is used by ContactListener
-     *
-     * @return the name of the ground sensor
-     */
-    public String getSensorName() {
-        return SENSOR_NAME;
-    }
-
-    /**
      * Returns true if this character can attack
      *
      * @return true if this character can attack
@@ -254,7 +236,6 @@ public class CharacterModel extends CapsuleObstacle {
      */
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
     /**
@@ -271,26 +252,6 @@ public class CharacterModel extends CapsuleObstacle {
         if (!super.activatePhysics(world)) {
             return false;
         }
-
-        // Ground Sensor
-        // -------------
-        // We only allow the dude to jump when he's on the ground.
-        // Double jumping is not allowed.
-        //
-        // To determine whether or not the dude is on the ground,
-        // we create a thin sensor under his feet, which reports
-        // collisions with the world but has no collision response.
-
-        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = getDensity();
-        sensorDef.isSensor = true;
-        sensorShape = new PolygonShape();
-        sensorShape.setAsBox(CHARACTER_SSHRINK *getWidth()/2.0f, SENSOR_HEIGHT, sensorCenter, 0.0f);
-        sensorDef.shape = sensorShape;
-
-        sensorFixture = body.createFixture(sensorDef);
-        sensorFixture.setUserData(SENSOR_NAME);
 
         return true;
     }
