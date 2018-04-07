@@ -172,6 +172,8 @@ public class FloorController extends WorldController implements ContactListener 
     private float attackTimer;
     /** The boolean for whether joe is running right*/
     private boolean isRunningRight;
+    /** The boolean for whether joe is attacking right*/
+    private boolean isAttackingRight;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -244,6 +246,7 @@ public class FloorController extends WorldController implements ContactListener 
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         isRunningRight = true;
+        isAttackingRight = true;
         lidGround = false;
         setDebug(false);
         setComplete(false);
@@ -1368,14 +1371,20 @@ public class FloorController extends WorldController implements ContactListener 
             region.flip(true,false);
             isRunningRight = true;
         }
+
         if ((currentState == State.MOPR) || (currentState == State.MOPD)||(currentState == State.MOPU)){
+            if (((avatar.isLeft()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() >= 0))||
+                    ((avatar.isRight()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() <= 0))){
+                region.flip(true,false);
+                isAttackingRight = false;
+            }
             if ((previousState == currentState) &&attackTimer > 0) {
                 attackTimer -= dt;
             }else if((previousState == currentState) && attackTimer <= 0) {
                 attackTimer = 0;
+                isAttackingRight = true;
             }
         }
-        System.out.println(attackTimer);
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
         previousState = currentState;
         return region;
