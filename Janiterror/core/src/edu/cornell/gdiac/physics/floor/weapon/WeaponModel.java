@@ -1,11 +1,16 @@
 package edu.cornell.gdiac.physics.floor.weapon;
 
-abstract public class WeaponModel {
+public class WeaponModel {
     public String name;
     public int maxDurability;
     public int durability;
-    public int cooldown;
-    public float range;
+    //public int cooldown;
+    public int range;
+
+    public WeaponModel(int maxDurability, int range) {
+        this.maxDurability = maxDurability;
+        this.range = range;
+    }
 
     public void resetDurability() {
         durability = maxDurability;
@@ -26,11 +31,9 @@ abstract public class WeaponModel {
         durability -= 1;
     }
 
-    public int getCooldown() {
-        return cooldown;
-    }
+    //public int getCooldown() {return cooldown;}
 
-    public float getRange() {
+    public int getRange() {
         return range;
     }
 }

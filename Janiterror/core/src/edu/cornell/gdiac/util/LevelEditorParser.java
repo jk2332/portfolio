@@ -28,6 +28,47 @@ public class LevelEditorParser {
     private Vector2 goalDoorPos;
     private Vector2 mopCartPos;
 
+    private int robotAttackRange;
+    private float robotDensity;
+    private int robotHP;
+    private float robotVel;
+
+    private int slimeAttackRange;
+    private float slimeDensity;
+    private int slimeHP;
+    private float slimeVel;
+    private float slimeballSpeed;
+
+    private int scientistAttackRange;
+    private float scientistDensity;
+    private int scientistHP;
+    private float scientistVel;
+
+    private int lizardAttackRange;
+    private float lizardDensity;
+    private int lizardHP;
+    private float lizardVel;
+
+    private float joeDensity;
+    private int joeHP;
+    private float joeVel;
+
+    private int lidAttackRange;
+    private int lidDurability;
+
+    private int mopAttackRange;
+    private int mopDurability;
+
+    private int sprayAttackRange;
+    private int sprayDurability;
+
+    private int vacuumAttackRange;
+    private int vacuumDurability;
+
+    private int mopKnockbackTimer;
+    private int sprayStunTimer;
+
+
     public LevelEditorParser(String levelPath) {
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
         Array<Element> layers = level.getChildrenByName("layer");
@@ -49,14 +90,114 @@ public class LevelEditorParser {
             float x = character.getFloatAttribute("x");
             float y = boardHeight - character.getFloatAttribute("y");
             if (gid == 21) {
+                if (scientistPos.size() == 0) {
+                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                    for (int j = 0; j < ps.size; j++) {
+                        Element p = ps.get(j);
+                        String name = p.get("name");
+                        if (name.equals("Attack Range")) {
+                            scientistAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Density")) {
+                            scientistDensity = p.getFloatAttribute("value");
+                        } else if (name.equals("HP")) {
+                            scientistHP = p.getIntAttribute("value");
+                        } else if (name.equals("Velocity")) {
+                            scientistVel = p.getFloatAttribute("value");
+                        }
+                    }
+                }
                 scientistPos.add(new Vector2(x, y));
             } else if (gid == 19) {
+                if (robotPos.size() == 0) {
+                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                    for (int j = 0; j < ps.size; j++) {
+                        Element p = ps.get(j);
+                        String name = p.get("name");
+                        if (name.equals("Attack Range")) {
+                            robotAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Density")) {
+                            robotDensity = p.getFloatAttribute("value");
+                        } else if (name.equals("HP")) {
+                            robotHP = p.getIntAttribute("value");
+                        } else if (name.equals("Velocity")) {
+                            robotVel = p.getFloatAttribute("value");
+                        }
+                    }
+                }
                 robotPos.add(new Vector2(x, y));
             } else if (gid == 11) {
+                if (joePos == null) {
+                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                    for (int j = 0; j < ps.size; j++) {
+                        Element p = ps.get(j);
+                        String name = p.get("name");
+                        if (name.equals("Density")) {
+                            joeDensity = p.getFloatAttribute("value");
+                        } else if (name.equals("HP")) {
+                            joeHP = p.getIntAttribute("value");
+                        } else if (name.equals("Velocity")) {
+                            joeVel = p.getFloatAttribute("value");
+                        } else if (name.equals("Lid Attack Range")) {
+                            lidAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Lid Durability")) {
+                            lidDurability = p.getIntAttribute("value");
+                        } else if (name.equals("Mop Attack Range")) {
+                            mopAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Mop Durability")) {
+                            mopDurability = p.getIntAttribute("value");
+                        } else if (name.equals("Spray Attack Range")) {
+                            sprayAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Spray Durability")) {
+                            sprayDurability = p.getIntAttribute("value");
+                        } else if (name.equals("Vacuum Attack Range")) {
+                            vacuumAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Vacuum Durability")) {
+                            vacuumDurability = p.getIntAttribute("value");
+                        } else if (name.equals("Mop Knockback Timer")) {
+                            mopKnockbackTimer = p.getIntAttribute("value");
+                        } else if (name.equals("Spray Stun Timer")) {
+                            sprayStunTimer = p.getIntAttribute("value");
+                        }
+                    }
+                }
                 joePos = new Vector2(x, y);
             } else if (gid == 20) {
+                if (slimePos.size() == 0) {
+                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                    for (int j = 0; j < ps.size; j++) {
+                        Element p = ps.get(j);
+                        String name = p.get("name");
+                        if (name.equals("Attack Range")) {
+                            slimeAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Density")) {
+                            slimeDensity = p.getFloatAttribute("value");
+                        } else if (name.equals("HP")) {
+                            slimeHP = p.getIntAttribute("value");
+                        } else if (name.equals("Velocity")) {
+                            slimeVel = p.getFloatAttribute("value");
+                        } else if (name.equals("Slimeball Speed")) {
+                            slimeballSpeed = p.getFloatAttribute("value");
+                        }
+                    }
+                }
                 slimePos.add(new Vector2(x, y));
             } else if (gid == 22) {
+                if (lizardPos.size() == 0) {
+                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                    for (int j = 0; j < ps.size; j++) {
+                        Element p = ps.get(j);
+                        String name = p.get("name");
+                        if (name.equals("Attack Range")) {
+                            lizardAttackRange = p.getIntAttribute("value");
+                        } else if (name.equals("Density")) {
+                            lizardDensity = p.getFloatAttribute("value");
+                        } else if (name.equals("HP")) {
+                            lizardHP = p.getIntAttribute("value");
+                        } else if (name.equals("Velocity")) {
+                            lizardVel = p.getFloatAttribute("value");
+                        }
+                    }
+                }
                 lizardPos.add(new Vector2(x, y));
             }
         }
@@ -91,7 +232,7 @@ public class LevelEditorParser {
         }
     }
 
-    public int[][] layerToList(Element layer) {
+    private int[][] layerToList(Element layer) {
         String csv = layer.get("data");
         int w = layer.getIntAttribute("width");
         int h = layer.getIntAttribute("height");
@@ -180,5 +321,125 @@ public class LevelEditorParser {
 
     public float getJoePosY() {
         return joePos.y;
+    }
+
+    public int getJoeHP() {
+        return joeHP;
+    }
+
+    public float getJoeVel() {
+        return joeVel;
+    }
+
+    public float getJoeDensity() {
+        return joeDensity;
+    }
+
+    public float getLizardDensity() {
+        return lizardDensity;
+    }
+
+    public int getLizardAttackRange() {
+        return lizardAttackRange;
+    }
+
+    public float getLizardVel() {
+        return lizardVel;
+    }
+
+    public int getLizardHP() {
+        return lizardHP;
+    }
+
+    public float getRobotDensity() {
+        return robotDensity;
+    }
+
+    public float getRobotVel() {
+        return robotVel;
+    }
+
+    public int getRobotAttackRange() {
+        return robotAttackRange;
+    }
+
+    public int getRobotHP() {
+        return robotHP;
+    }
+
+    public float getScientistDensity() {
+        return scientistDensity;
+    }
+
+    public float getScientistVel() {
+        return scientistVel;
+    }
+
+    public int getScientistAttackRange() {
+        return scientistAttackRange;
+    }
+
+    public int getScientistHP() {
+        return scientistHP;
+    }
+
+    public float getSlimeballSpeed() {
+        return slimeballSpeed;
+    }
+
+    public int getSlimeAttackRange() {
+        return slimeAttackRange;
+    }
+
+    public float getSlimeDensity() {
+        return slimeDensity;
+    }
+
+    public float getSlimeVel() {
+        return slimeVel;
+    }
+
+    public int getSlimeHP() {
+        return slimeHP;
+    }
+
+    public int getSprayAttackRange() {
+        return sprayAttackRange;
+    }
+
+    public int getSprayDurability() {
+        return sprayDurability;
+    }
+
+    public int getLidAttackRange() {
+        return lidAttackRange;
+    }
+
+    public int getLidDurability() {
+        return lidDurability;
+    }
+
+    public int getMopAttackRange() {
+        return mopAttackRange;
+    }
+
+    public int getMopDurability() {
+        return mopDurability;
+    }
+
+    public int getVacuumAttackRange() {
+        return vacuumAttackRange;
+    }
+
+    public int getVacuumDurability() {
+        return vacuumDurability;
+    }
+
+    public int getMopKnockbackTimer() {
+        return mopKnockbackTimer;
+    }
+
+    public int getSprayStunTimer() {
+        return sprayStunTimer;
     }
 }

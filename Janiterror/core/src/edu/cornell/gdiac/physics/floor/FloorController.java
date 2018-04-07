@@ -149,8 +149,6 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  BULLET_OFFSET = 2.0f;
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
-    /** The speed of the slimeball after firing */
-    private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The timer for animations*/
@@ -345,10 +343,10 @@ public class FloorController extends WorldController implements ContactListener 
         wep_to_small_texture.put("lid", lidTextureSmall);
 
         /** Load name -> model dictionary */
-        wep_to_model.put("mop", new MopModel());
-        wep_to_model.put("spray", new SprayModel());
-        wep_to_model.put("vacuum", new VacuumModel());
-        wep_to_model.put("lid", new LidModel());
+        wep_to_model.put("mop", new MopModel(level.getMopDurability(), level.getMopAttackRange(), level.getMopKnockbackTimer()));
+        wep_to_model.put("spray", new SprayModel(level.getSprayDurability(), level.getSprayAttackRange(), level.getSprayStunTimer()));
+        wep_to_model.put("vacuum", new VacuumModel(level.getVacuumDurability(), level.getVacuumAttackRange()));
+        wep_to_model.put("lid", new LidModel(level.getLidDurability(), level.getLidAttackRange()));
         /** Load name -> in use dictionary */
         wep_in_use.put("mop", true);
         wep_in_use.put("spray", true);
@@ -381,15 +379,18 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
-        avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight);
+        avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
+                level.getJoeHP(), level.getJoeDensity(), level.getJoeVel());
+        avatar.setWep1(wep_to_model.get("mop"));
+        avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
         addObject(avatar);
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
-            EnemyModel mon =new RobotModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii);
+            EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
+                    dwidth, dheight, ii, level.getScientistHP(), level.getScientistDensity(), level.getScientistVel(), level.getScientistAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
             addObject(mon);
@@ -398,7 +399,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+ii);
+                    dwidth, dheight, scientistPos.size()+ii, level.getRobotHP(), level.getRobotDensity(), level.getRobotVel(), level.getRobotAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
             addObject(mon);
@@ -406,7 +407,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, level.getSlimeHP(), level.getSlimeDensity(), level.getSlimeVel(), level.getSlimeAttackRange(), level.getSlimeballSpeed());
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
             addObject(mon);
@@ -414,7 +415,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, level.getLizardHP(), level.getLizardDensity(), level.getLizardVel(), level.getLizardAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(lizardTexture);
             addObject(mon);
@@ -650,7 +651,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (s.getStunned()) {
                     System.out.println("stunned");
                     s.incrStunTicks();
-                    if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);}
+                    if (s.getStunTicks()<=level.getSprayStunTimer()) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
 
@@ -783,20 +784,21 @@ public class FloorController extends WorldController implements ContactListener 
         float speedY = 0;
         float offsetX = 0;
         float offsetY = 0;
+        float slimeballSpeed = player.getSlimeballSpeed();
 
         if (dirX > 0) {
-            speedX = SLIMEBALL_SPEED;
+            speedX = slimeballSpeed;
             offsetX = BULLET_OFFSET;
         } else if (dirX < 0) {
-            speedX = -SLIMEBALL_SPEED;
+            speedX = -slimeballSpeed;
             offsetX = -BULLET_OFFSET;
         }
 
         if (dirY > 0) {
-            speedY = SLIMEBALL_SPEED;
+            speedY = slimeballSpeed;
             offsetY = BULLET_OFFSET;
         } else if (dirY < 0) {
-            speedY = -SLIMEBALL_SPEED;
+            speedY = -slimeballSpeed;
             offsetY = -BULLET_OFFSET;
         }
 
@@ -841,7 +843,7 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setHasLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         enemy.decrHP();
-        enemy.setKnockbackTimer(KNOCKBACK_TIMER);
+        enemy.setKnockbackTimer(KNOCKBACK_TIMER); // TODO change to different knockback timer for vacuum
         enemy.applyImpulse(knockbackForce);
         if (enemy.getHP() <= 0) {
             controls[enemy.getId()]=null;
@@ -895,10 +897,10 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap)<=2 && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap)<=2 && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap)<=2 && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap)<=2 && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    boolean case1 = Math.abs(horiGap)<=mop.getRange() && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1; //TODO (add 1 to level editor?)
+                    boolean case2 = Math.abs(horiGap)<=mop.getRange() && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap)<=mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap)<=mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                     if ((case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
@@ -911,7 +913,7 @@ public class FloorController extends WorldController implements ContactListener 
                         //knockbackForce.nor();
 
                         s.applyImpulse(knockbackForce);
-                        s.setKnockbackTimer(KNOCKBACK_TIMER);
+                        s.setKnockbackTimer(mop.getKnockbackTimer());
                         //System.out.println(knockbackForce);
                         mop.decrDurability();
                     }
@@ -925,10 +927,10 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap) <= 4 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap) <= 4 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap) <= 4 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap) <= 4 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    boolean case1 = Math.abs(horiGap) <= spray.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap) <= spray.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap) <= spray.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1 ) {
@@ -959,10 +961,10 @@ public class FloorController extends WorldController implements ContactListener 
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= 10 && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
-                        boolean case2 = Math.abs(horiGap) <= 10 && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
-                        boolean case3 = Math.abs(vertiGap) <= 10 && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
-                        boolean case4 = Math.abs(vertiGap) <= 10 && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
+                        boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
+                        boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
+                        boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
+                        boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
                         if ((case1)) {
                             knockbackForce.set(30f,0f);
                             s.applyImpulse(knockbackForce);
