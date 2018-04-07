@@ -130,10 +130,20 @@ public class Board {
         return !this.inBounds(x, y) ? null : this.tiles[width*y+x];
     }
 
+    public void setHazard (int x, int y) {
+        if (this.isSafeAt(x, y)) getTileState(x, y).isHazard=true;
+    }
+
+    public boolean isHazard(int x, int y){
+        if (!isSafeAt(x, y)) return false;
+        return getTileState(x, y).isHazard;
+    }
+
     public class TileState {
         public boolean goal;
         public boolean visited;
         public boolean blocked;
+        public boolean isHazard;
         public int x;
         public int y;
 
@@ -143,6 +153,7 @@ public class Board {
             this.goal = false;
             this.visited = false;
             this.blocked=false;
+            this.isHazard=false;
         }
     }
 
