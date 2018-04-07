@@ -643,13 +643,12 @@ public class FloorController extends WorldController implements ContactListener 
      * @param delta Number of seconds since last animation frame
      */
     public void update(float dt) {
-
         if(avatar.getHP()<=0) {
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getPosition().x), board.screenToBoardY(avatar.getPosition().y))){
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()))){
             avatar.decrHP();
         }
         else {
