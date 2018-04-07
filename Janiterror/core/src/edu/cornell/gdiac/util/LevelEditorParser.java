@@ -68,6 +68,10 @@ public class LevelEditorParser {
     private int mopKnockbackTimer;
     private int sprayStunTimer;
 
+    private int wallvgid;
+    private int wallhgid;
+    private int tilegid;
+
 
     public LevelEditorParser(String levelPath) {
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
@@ -77,6 +81,16 @@ public class LevelEditorParser {
         int boardWidth = level.getIntAttribute("width") * level.getIntAttribute("tilewidth");
         int boardHeight = level.getIntAttribute("height") * level.getIntAttribute("tileheight");
 
+        Array<Element> tilesets = level.getChildrenByName("tileset");
+        for (Element ts : tilesets) {
+            if (ts.get("source").equals("wallsh.tsx")) {
+                wallhgid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("wallv.tsx")) {
+                wallvgid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("tiles.tsx")) {
+                tilegid = ts.getIntAttribute("firstgid");
+            }
+        }
         tiles = layerToList(layers.get(0));
 
         Element goalDoorElement = objects.get(1).getChild(0);
@@ -86,10 +100,10 @@ public class LevelEditorParser {
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
         for (int i = 0; i < charactersElement.size; i++) {
             Element character = charactersElement.get(i);
-            int gid = character.getIntAttribute("gid");
+            String type = character.get("type");
             float x = character.getFloatAttribute("x");
             float y = boardHeight - character.getFloatAttribute("y");
-            if (gid == 21) {
+            if (type.equals("scientist")) {
                 if (scientistPos.size() == 0) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -107,7 +121,7 @@ public class LevelEditorParser {
                     }
                 }
                 scientistPos.add(new Vector2(x, y));
-            } else if (gid == 19) {
+            } else if (type.equals("robot")) {
                 if (robotPos.size() == 0) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -125,7 +139,7 @@ public class LevelEditorParser {
                     }
                 }
                 robotPos.add(new Vector2(x, y));
-            } else if (gid == 11) {
+            } else if (type.equals("joe")) {
                 if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -161,7 +175,7 @@ public class LevelEditorParser {
                     }
                 }
                 joePos = new Vector2(x, y);
-            } else if (gid == 20) {
+            } else if (type.equals("slime")) {
                 if (slimePos.size() == 0) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -181,7 +195,7 @@ public class LevelEditorParser {
                     }
                 }
                 slimePos.add(new Vector2(x, y));
-            } else if (gid == 22) {
+            } else if (type.equals("lizard")) {
                 if (lizardPos.size() == 0) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -207,7 +221,7 @@ public class LevelEditorParser {
 
         for (int i = 0; i < vertiWalls.length; i++) {
             for (int j = 0; j < vertiWalls[0].length; j++) {
-                if (vertiWalls[i][j] == 18) {
+                if (vertiWalls[i][j] == wallvgid) {
                     wallRightPos.add(new Vector2(j, i));
                 } else if (vertiWalls[i][j] == 10000) { //TODO change later
                     wallLeftPos.add(new Vector2(j, i));
@@ -217,15 +231,15 @@ public class LevelEditorParser {
 
         for (int i = 0; i < horiWalls.length; i++) {
             for (int j = 0; j < horiWalls[0].length; j++) {
-                if (horiWalls[i][j] == 13) {
+                if (horiWalls[i][j] == wallhgid + 1) {
                     wallMidPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == 12) {
+                } else if (horiWalls[i][j] == wallhgid) {
                     wallTLPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == 14) {
+                } else if (horiWalls[i][j] == wallhgid + 2) {
                     wallTRPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == 15) {
+                } else if (horiWalls[i][j] == wallhgid + 3) {
                     wallBLPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == 17) {
+                } else if (horiWalls[i][j] == wallhgid + 5) {
                     wallBRPos.add(new Vector2(j, i ));
                 }
             }
