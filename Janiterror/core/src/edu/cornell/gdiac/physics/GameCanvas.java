@@ -335,7 +335,7 @@ public class GameCanvas {
 		global.setAsAffine(affine);
     	global.mulLeft(camera.combined);
 		spriteBatch.setProjectionMatrix(global);
-		
+
 		setBlendState(BlendState.NO_PREMULT);
 		spriteBatch.begin();
     	active = DrawPass.STANDARD;
@@ -426,6 +426,15 @@ public class GameCanvas {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
+
+		//WALKER CODE
+//		Affine2 oTran = new Affine2();
+//		oTran.setToTranslation(getWidth(), getHeight());
+//		Affine2 wTran = new Affine2();
+//		Vector3 wPos = camera.position;
+//		wTran.setToTranslation(-wPos.x,-wPos.y);
+//		oTran.mul(wTran);
+//		spriteBatch.draw(image, width, height, oTran);
 		
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(tint);
@@ -518,6 +527,17 @@ public class GameCanvas {
 	 * @param transform  The image transform
 	 */	
 	public void draw(Texture image, Color tint, float ox, float oy, Affine2 transform) {
+
+		System.out.println("changing persepective");
+
+		//LEVEL SCROLLING CODE COPIED FROM WALKER
+//		Affine2 oTran = new Affine2();
+//		oTran.setToTranslation(getWidth(), getHeight());
+//		Affine2 wTran = new Affine2();
+//		Vector3 wPos = camera.position;
+//		wTran.setToTranslation(-wPos.x,-wPos.y);
+//		oTran.mul(wTran);
+
 		if (active != DrawPass.STANDARD) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
@@ -525,6 +545,7 @@ public class GameCanvas {
 		
 		// Call the master drawing method (we have to for transforms)
 		holder.setRegion(image);
+//		draw(holder,tint,ox,oy,oTran);
 		draw(holder,tint,ox,oy,transform);
 	}
 	

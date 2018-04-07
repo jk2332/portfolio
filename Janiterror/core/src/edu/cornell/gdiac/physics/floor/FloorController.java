@@ -31,6 +31,7 @@ import java.util.HashMap;
  */
 public class FloorController extends WorldController implements ContactListener {
     private static final String LEVEL = "level-editor.tmx";
+//    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -898,24 +899,26 @@ public class FloorController extends WorldController implements ContactListener 
 
     /**
      * Remove a garbage lid from the world and decrement the HP of the enemy the lid collided with.
-     * Only called when the lid collids with an enemy.
+     * Only called when the lid collides with an enemy.
      *
      * @param lid the lid to be removed
      * @param enemy the enemy that has been hit
      */
     public void removeLid(Obstacle lid,EnemyModel enemy) {
-        float knockbackx = 10f;
-        float knockbackx2 = (lid.getX() > enemy.getX() ? -knockbackx : knockbackx);
-        knockbackForce.set(knockbackx2,0f);
-        lid.markRemoved(true);
-        avatar.setHasLid(true);
-        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
-        enemy.decrHP();
-        enemy.setKnockbackTimer(KNOCKBACK_TIMER);
-        enemy.applyImpulse(knockbackForce);
-        if (enemy.getHP() <= 0) {
-            controls[enemy.getId()]=null;
-            enemy.markRemoved(true);
+        if (avatar.getHasLid() == false) {
+            float knockbackx = 10f;
+            float knockbackx2 = (lid.getX() > enemy.getX() ? -knockbackx : knockbackx);
+            knockbackForce.set(knockbackx2,0f);
+            lid.markRemoved(true);
+            avatar.setHasLid(true);
+            SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
+            enemy.decrHP();
+            enemy.setKnockbackTimer(KNOCKBACK_TIMER);
+            enemy.applyImpulse(knockbackForce);
+            if (enemy.getHP() <= 0) {
+                controls[enemy.getId()]=null;
+                enemy.markRemoved(true);
+            }
         }
     }
 
@@ -1090,11 +1093,9 @@ public class FloorController extends WorldController implements ContactListener 
             for (EnemyModel s : enemies){
                 if (bd1.getName().equals("lid") && bd2 == s) {
                     removeLid(bd1,s);
-
                 }
                 if (bd2.getName().equals("lid") && bd1 == s) {
                     removeLid(bd2,s);
-
                 }
                 if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) ) {
                     dropLid(bd1);
@@ -1211,14 +1212,7 @@ public class FloorController extends WorldController implements ContactListener 
         GameCanvas canvas = super.getCanvas();
 
         canvas.clear();
-        //LEVEL SCROLLING CODE COPIED FROM WALKER
-        //might not be in the right place (?)
-//        Affine2 oTran = new Affine2();
-//        oTran.setToTranslation(object.getPosition());
-//        Affine2 wTran = new Affine2();
-//        Vector2 wPos = viewWindow.getPosition();
-//        wTran.setToTranslation(-wPos.x,-wPos.y);
-//        oTran.mul(wTran);
+
         canvas.begin();
 
         board.draw(canvas, tiles);
