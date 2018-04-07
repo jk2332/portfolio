@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level-editor2.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
@@ -189,6 +189,7 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> slimePos;
     ArrayList<Vector2> robotPos;
     ArrayList<Vector2> lizardPos;
+    ArrayList<Vector2> hazardPos;
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
@@ -265,6 +266,9 @@ public class FloorController extends WorldController implements ContactListener 
         wallTRPos = level.getWallTRPos();
         wallBLPos = level.getWallBLPos();
         wallBRPos = level.getWallBRPos();
+
+        hazardPos = level.getHazardPos();
+
         tiles = level.getTiles();
     }
 
@@ -469,6 +473,28 @@ public class FloorController extends WorldController implements ContactListener 
 
     }
 
+//    private void addHazardTiles() {
+//        String pname = "hazard";
+//        float dwidth  = hazardTexture.getRegionWidth()/scale.x;
+//        float dheight = hazardTexture.getRegionHeight()/scale.y;
+//
+//        offset = -(TILE_SIZE * 2*(1 - WALL_THICKNESS_SCALE))/2;
+//        BoxObstacle obj;
+//        float x;
+//        float y;
+//        for (int ii = 0; ii < wallMidPos.size(); ii++) {
+//            x = board.boardToScreenX((int) wallMidPos.get(ii).x);
+//            y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+//            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y);
+//            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y+1);
+//
+//            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
+//            obj.setTexture(wallMidTexture, 0, offset);
+//            obj.setName(pname+ii);
+//            addWallObject(obj);
+//        }
+//    }
+
     private void addWalls() {
         String pname = "wall";
         float dwidth  = wallMidTexture.getRegionWidth()/scale.x;
@@ -604,6 +630,7 @@ public class FloorController extends WorldController implements ContactListener 
      * @param delta Number of seconds since last animation frame
      */
     public void update(float dt) {
+
         if(avatar.getHP()<=0) {
             avatar.setAlive(false);
             avatar.markRemoved(true);

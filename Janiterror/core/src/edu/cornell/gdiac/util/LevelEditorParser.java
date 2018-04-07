@@ -13,6 +13,9 @@ import java.util.ArrayList;
 public class LevelEditorParser {
 
     private int [][] tiles;
+
+    private ArrayList<Vector2> hazardPos = new ArrayList<Vector2>();
+
     private ArrayList<Vector2> wallMidPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallRightPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallLeftPos = new ArrayList<Vector2>();
@@ -267,6 +270,10 @@ public class LevelEditorParser {
 
     public int[][] getTiles() {
         return tiles;
+    }
+
+    public ArrayList<Vector2> getHazardPos() {
+        return hazardPos;
     }
 
     public ArrayList<Vector2> getScientistPos() {
