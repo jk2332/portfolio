@@ -286,7 +286,7 @@ public class AIController {
         if (!setGoal) {
             sx = this.board.screenToBoardX(this.ship.getX());
             sy = this.board.screenToBoardY(this.ship.getY());
-            board.setGoal(sx, sy);
+            if (board.isSafeAt(sx, sy)) board.setGoal(sx, sy);
         }
     }
 
