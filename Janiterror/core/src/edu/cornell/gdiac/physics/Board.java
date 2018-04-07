@@ -109,7 +109,7 @@ public class Board {
     }
 
     public void setBlocked(int x, int y){
-        getTileState(x, y).blocked=true;
+        if (getTileState(x, y)!=null) getTileState(x,y).blocked=true;
     }
 
     public void clearMarks() {
@@ -143,7 +143,9 @@ public class Board {
             this.goal = false;
             this.visited = false;
             this.blocked=false;
-            if (x==0 || y==0 || x==Board.this.width-1 || y==Board.this.height-1) {blocked=true; visited=true;}
+            if (x==0 || y==0 || x==Board.this.width-1 || y==Board.this.height-1) {
+                blocked=true; visited=true;
+            }
         }
     }
 
@@ -197,8 +199,18 @@ public class Board {
 
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
-        canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+        if (x==goalX && y==goalY){
+            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+        }
+        else if (getTileState(x,y).blocked){
+            canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+        }
+        else {
+            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+        }
     }
 
 

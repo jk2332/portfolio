@@ -448,6 +448,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallMidPos.size(); ii++) {
             x = board.boardToScreenX((int) wallMidPos.get(ii).x);
             y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y);
+            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallMidTexture, 0, offset);
             obj.setName(pname+ii);
@@ -457,6 +460,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTRPos.get(ii).x);
             y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y);
+            board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y+1);
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallTRTexture, 0, offset);
             obj.setName(pname+ii);
@@ -466,6 +471,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTLPos.get(ii).x);
             y = board.boardToScreenY((int) wallTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y);
+            board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallTLTexture, 0, offset);
             obj.setName(pname+ii);
@@ -475,6 +483,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBRPos.get(ii).x);
             y = board.boardToScreenY((int) wallBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
+            board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallBRTexture, 0, offset);
             obj.setName(pname+ii);
@@ -484,6 +495,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBLPos.get(ii).x);
             y = board.boardToScreenY((int) wallBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
+            board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallBLTexture, 0, offset);
             obj.setName(pname+ii);
@@ -496,6 +510,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallLeftPos.size(); ii++) {
             x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
             y = board.boardToScreenY((int) wallLeftPos.get(ii).y);
+            board.setBlocked((int) wallLeftPos.get(ii).x, (int) wallLeftPos.get(ii).y);
+
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
             obj.setTexture(wallLeftTexture, offset, 0);
             obj.setName(pname+ii);
@@ -506,6 +522,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallRightPos.size(); ii++) {
             x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
             y = board.boardToScreenY((int) wallRightPos.get(ii).y);
+            board.setBlocked((int) wallRightPos.get(ii).x, (int) wallRightPos.get(ii).y);
+
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
             obj.setName(pname+ii);
             obj.setTexture(wallRightTexture, offset, 0);
