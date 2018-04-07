@@ -40,9 +40,16 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String PEW_FILE = "floor/pew.mp3";
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "floor/plop.mp3";
+    /** The sound file for a reload */
+    private static final String RELOAD_FILE = "floor/reload.mp3";
+
 
     private static final int TILE_SIZE = 32;
 
+    private int WALL_THICKNESS = 32;
+    private int NUM_OF_SCIENTISTS = 1;
+    private int NUM_OF_SLIMES = 0;
+    private int NUM_OF_ROBOTS = 1;
     private static final int BOARD_WIDTH=1024;
     private static final int BOARD_HEIGHT=576;
 
@@ -75,6 +82,7 @@ public class FloorController extends WorldController implements ContactListener 
     private String[] mopcart = new String[2];
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
+    private boolean mop_cart_reloaded_before = false;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -104,6 +112,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(PEW_FILE);
         manager.load(POP_FILE, Sound.class);
         assets.add(POP_FILE);
+        manager.load(RELOAD_FILE, Sound.class);
+        assets.add(RELOAD_FILE);
 
         super.preLoadContent(manager);
     }
@@ -129,6 +139,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
+        sounds.allocate(manager, RELOAD_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -249,6 +260,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        mop_cart_reloaded_before = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -319,9 +331,9 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     private void addUIInfo() {
+        /** Pixel Locations of Weapon Icons in Mop Cart*/
         mopcart_index_xlocation[0] = 890;
         mopcart_index_xlocation[1] = 960;
-
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -329,19 +341,16 @@ public class FloorController extends WorldController implements ContactListener 
         list_of_weapons[3] = "lid";
         mopcart[0] = "vacuum";
         mopcart[1] = "lid";
-
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
-
         /** Load name -> small texture dictionary */
         wep_to_small_texture.put("mop", mopTextureSmall);
         wep_to_small_texture.put("spray", sprayTextureSmall);
         wep_to_small_texture.put("vacuum", vacuumTextureSmall);
         wep_to_small_texture.put("lid", lidTextureSmall);
-
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel(level.getMopDurability(), level.getMopAttackRange(), level.getMopKnockbackTimer()));
         wep_to_model.put("spray", new SprayModel(level.getSprayDurability(), level.getSprayAttackRange(), level.getSprayStunTimer()));
@@ -440,6 +449,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallMidPos.size(); ii++) {
             x = board.boardToScreenX((int) wallMidPos.get(ii).x);
             y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y);
+            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallMidTexture, 0, offset);
             obj.setName(pname+ii);
@@ -449,6 +461,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTRPos.get(ii).x);
             y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y);
+            board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y+1);
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallTRTexture, 0, offset);
             obj.setName(pname+ii);
@@ -458,6 +472,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTLPos.get(ii).x);
             y = board.boardToScreenY((int) wallTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y);
+            board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallTLTexture, 0, offset);
             obj.setName(pname+ii);
@@ -467,6 +484,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBRPos.get(ii).x);
             y = board.boardToScreenY((int) wallBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
+            board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallBRTexture, 0, offset);
             obj.setName(pname+ii);
@@ -476,6 +496,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBLPos.get(ii).x);
             y = board.boardToScreenY((int) wallBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
+            board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y+1);
+
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
             obj.setTexture(wallBLTexture, 0, offset);
             obj.setName(pname+ii);
@@ -488,6 +511,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallLeftPos.size(); ii++) {
             x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
             y = board.boardToScreenY((int) wallLeftPos.get(ii).y);
+            board.setBlocked((int) wallLeftPos.get(ii).x, (int) wallLeftPos.get(ii).y);
+
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
             obj.setTexture(wallLeftTexture, offset, 0);
             obj.setName(pname+ii);
@@ -498,6 +523,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallRightPos.size(); ii++) {
             x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
             y = board.boardToScreenY((int) wallRightPos.get(ii).y);
+            board.setBlocked((int) wallRightPos.get(ii).x, (int) wallRightPos.get(ii).y);
+
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
             obj.setName(pname+ii);
             obj.setTexture(wallRightTexture, offset, 0);
@@ -579,9 +606,13 @@ public class FloorController extends WorldController implements ContactListener 
      * Update function for Joe when he at the mop cart
      */
     private void joeAtMopCartUpdate() {
-        //recharge durability of weapons
-        avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-        avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+        if (!mop_cart_reloaded_before) {
+            SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+            mop_cart_reloaded_before = true;
+            //recharge durability of weapons
+            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+        }
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
                 obj.markRemoved(true);
@@ -1187,7 +1218,6 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
                     displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
         }
-
         displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){

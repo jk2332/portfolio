@@ -33,7 +33,7 @@ public class JoeModel extends CharacterModel {
     private boolean isUp;
     private boolean isDown;
     private boolean alive;
-    
+
     /** The current weapons Joe is holding */
     WeaponModel wep1;
     WeaponModel wep2;
