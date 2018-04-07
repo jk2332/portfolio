@@ -227,6 +227,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** For mop knockback force calculations*/
     private Vector2 knockbackForce = new Vector2();
 
+    /** Saved lid velocity before colliding with slimeball */
+    private Vector2 lidVel = new Vector2();
+
 
 
     /**
@@ -822,9 +825,14 @@ public class FloorController extends WorldController implements ContactListener 
             speedy = -BULLET_SPEED;
         if (Math.abs(offsetx)>0) {
             bullet.setVX(speedx);
+            lidVel.x = speedx;
+            lidVel.y = 0;
         }
-        else
+        else {
             bullet.setVY(speedy);
+            lidVel.x = 0;
+            lidVel.y = speedy;
+        }
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
@@ -1125,6 +1133,14 @@ public class FloorController extends WorldController implements ContactListener 
                 removeBullet(bd2);
             }
 
+            if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
+                removeBullet(bd2);
+            }
+
+            if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
+                removeBullet(bd1);
+            }
+
             // Check for win condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
                     (bd1 == goalDoor && bd2 == avatar)) {
@@ -1157,12 +1173,31 @@ public class FloorController extends WorldController implements ContactListener 
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        Object bd1 = body1.getUserData();
-        Object bd2 = body2.getUserData();
+        Obstacle bd1 = (Obstacle) body1.getUserData();
+        Obstacle bd2 = (Obstacle) body2.getUserData();
 
         if ((bd1 == avatar   && bd2 == mopCart) ||
                 (bd1 == mopCart && bd2 == avatar)) {
             avatar.setAtMopCart(false);
+        }
+
+        if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
+            bd1.setVX(lidVel.x);
+            bd1.setVY(lidVel.y);
+            System.out.println("set lidvel");
+            System.out.println(bd1.getVX());
+            System.out.println(bd1.getVY());
+            System.out.println("");
+
+        }
+
+        if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
+            bd2.setVX(lidVel.x);
+            bd2.setVY(lidVel.y);
+            System.out.println("set lidvel");
+            System.out.println(bd2.getVX());
+            System.out.println(bd2.getVY());
+            System.out.println("");
         }
 
         /*if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
