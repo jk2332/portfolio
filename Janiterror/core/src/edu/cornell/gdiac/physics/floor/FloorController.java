@@ -259,6 +259,10 @@ public class FloorController extends WorldController implements ContactListener 
         slimePos = level.getSlimePos();
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
+        //robotPos = new ArrayList<Vector2>();
+        //lizardPos = new ArrayList<Vector2>();
+        //scientistPos=new ArrayList<Vector2>();
+        //slimePos = new ArrayList<Vector2>();
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
@@ -344,10 +348,10 @@ public class FloorController extends WorldController implements ContactListener 
         board.setTileTextures(tileTextures);
 
         addUIInfo();
-
+        addWalls();
         addCharacters();
 
-        addWalls();
+        setHazardTiles();
     }
 
     private void addUIInfo() {
@@ -439,6 +443,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, ii, level.getScientistHP(), level.getScientistDensity(), level.getScientistVel(), level.getScientistAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
+            mon.setName("scientist");
             addObject(mon);
             enemies[ii]=mon;
         }
@@ -448,6 +453,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+ii, level.getRobotHP(), level.getRobotDensity(), level.getRobotVel(), level.getRobotAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
+            mon.setName("robot");
             addObject(mon);
             enemies[scientistPos.size()+ii]=mon;
         }
@@ -456,6 +462,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii, level.getSlimeHP(), level.getSlimeDensity(), level.getSlimeVel(), level.getSlimeAttackRange(), level.getSlimeballSpeed());
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
+            mon.setName("slime");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
@@ -464,13 +471,19 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, level.getLizardHP(), level.getLizardDensity(), level.getLizardVel(), level.getLizardAttackRange());
             mon.setDrawScale(scale);
             mon.setTexture(lizardTexture);
+            mon.setName("lizard");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
         }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
+    }
 
+    private void setHazardTiles(){
+        for (int ii=0; ii < hazardPos.size(); ii++){
+            board.setHazard((int) hazardPos.get(ii).x, (int) hazardPos.get(ii).y);
+        }
     }
 
 //    private void addHazardTiles() {
@@ -630,12 +643,15 @@ public class FloorController extends WorldController implements ContactListener 
      * @param delta Number of seconds since last animation frame
      */
     public void update(float dt) {
-
         if(avatar.getHP()<=0) {
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
-        } else {
+        }
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()))){
+            avatar.decrHP();
+        }
+        else {
             // Process actions in object model
             avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
             avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
@@ -654,7 +670,6 @@ public class FloorController extends WorldController implements ContactListener 
 
             avatar.setVelocity();
             avatar.setTexture(getFrame(dt));
-
         }
         lidRange(dt);
         enemyUpdate();
@@ -759,18 +774,22 @@ public class FloorController extends WorldController implements ContactListener 
     private void performAction(EnemyModel s, int action) {
         if (action == CONTROL_MOVE_DOWN) {
             s.setMovementY(-s.getVelocity());
+            s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_LEFT) {
             s.setMovementX(-s.getVelocity());
+            s.setMovementY(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_UP) {
             s.setMovementY(s.getVelocity());
+            s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_RIGHT) {
             s.setMovementX(s.getVelocity());
+            s.setMovementY(0);
             s.resetAttackAniFrame();
 
         }
