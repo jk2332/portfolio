@@ -59,6 +59,7 @@ public class EnemyModel extends CharacterModel {
         this.maxAniFrame=maxAniFrame;
         this.knockbackTimer = 0;
         this.id = id;
+        fixture.filter.groupIndex = -1;
     }
 
     // TODO figure out what these functions do

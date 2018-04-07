@@ -17,16 +17,8 @@ package edu.cornell.gdiac.physics.floor.character;
  * no other subclasses that we might loop through.
  */
 public class SlimeModel extends EnemyModel {
-    // Physics constants
-    /** The density of the character */
-    private static final float SLIME_DENSITY = 1f;
-    /** The factor to multiply by the input */
-    private static final float SLIME_VELOCITY = 1.5f;
 
-    /** The amount of max HP a scientist has */
-    private static final int SLIME_MAX_HP = 5;
-
-    private static final int SLIME_ATTACK_RANGE = 8;
+    float slimeballSpeed;
 
 
     /**
@@ -41,12 +33,17 @@ public class SlimeModel extends EnemyModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public SlimeModel(float x, float y, float width, float height, int id) {
-        super(x,y,width, height, "slime", SLIME_MAX_HP, SLIME_DENSITY, SLIME_VELOCITY, SLIME_ATTACK_RANGE, id,3);
+    public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed) {
+        super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3);
+        this.slimeballSpeed = slimeballSpeed;
     }
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
-        return tx == x && Math.abs(ty - y) <= SLIME_ATTACK_RANGE || ty == y && Math.abs(tx - x) <= SLIME_ATTACK_RANGE;
+        return tx == x && Math.abs(ty - y) <= getAttackRange() || ty == y && Math.abs(tx - x) <= getAttackRange();
+    }
+
+    public float getSlimeballSpeed() {
+        return slimeballSpeed;
     }
 
 }

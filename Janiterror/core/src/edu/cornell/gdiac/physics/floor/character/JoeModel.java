@@ -34,15 +34,6 @@ public class JoeModel extends CharacterModel {
     private boolean isDown;
     private boolean alive;
 
-    /** Mop */
-    MopModel mop;
-    /** Spray */
-    SprayModel spray;
-    /** Lid */
-    LidModel lid;
-    /** Vacuum */
-    VacuumModel vacuum;
-
     /** The current weapons Joe is holding */
     WeaponModel wep1;
     WeaponModel wep2;
@@ -234,20 +225,14 @@ public class JoeModel extends CharacterModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public JoeModel(float x, float y, float width, float height) {
-        super(x,y,width,height,"joe", JOE_MAX_HP,JOE_DENSITY,JOE_VELOCITY,JOE_MAX_ATTACK_COOLDOWN);
+    public JoeModel(float x, float y, float width, float height, int hp, float density, float velocity) {
+        super(x,y,width,height,"joe", hp,density,velocity,JOE_MAX_ATTACK_COOLDOWN);
 
         isSwapping = false;
         isUp = false;
         isDown = false;
         isRight = false;
         isLeft = false;
-        mop = new MopModel();
-        spray = new SprayModel();
-        lid = new LidModel();
-        vacuum = new VacuumModel();
-        wep1 = mop;
-        wep2 = spray;
         attackCooldown = 0;
         atMopCart = false;
         hasLid = false;

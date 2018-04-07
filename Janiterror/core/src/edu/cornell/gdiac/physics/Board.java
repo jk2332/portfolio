@@ -50,7 +50,7 @@ public class Board {
 
     public void setGoal(int x, int y) {
         if (!this.isSafeAt(x, y)) {
-            Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
+            //Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
         } else {
             goalX=x; goalY=y;
         }
@@ -62,7 +62,7 @@ public class Board {
 
     public void setVisited(int x, int y) {
         if (!this.isSafeAt(x, y)) {
-            Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
+            //Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
         } else {
             this.getTileState(x, y).visited = true;
         }

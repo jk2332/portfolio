@@ -10,16 +10,6 @@ import edu.cornell.gdiac.physics.GameCanvas;
  * Model class for the robot enemy in the game.
  */
 public class RobotModel extends EnemyModel {
-    // Physics constants
-    /** The density of the robot */
-    private static final float ROBOT_DENSITY = 30f;
-    /** The velocity of the robot */
-    private static final float ROBOT_VELOCITY = 2.5f;
-
-    private static final int ROBOT_ATTACK_RANGE = 2;
-
-    /** The amount of max HP a robot has */
-    private static final int ROBOT_MAX_HP = 5;
 
 
     /**
@@ -34,8 +24,8 @@ public class RobotModel extends EnemyModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public RobotModel(float x, float y, float width, float height, int id) {
-        super(x,y,width, height, "robot", ROBOT_MAX_HP, ROBOT_DENSITY, ROBOT_VELOCITY, ROBOT_ATTACK_RANGE, id, 3);
+    public RobotModel(float x, float y, float width, float height, int id, int hp,float density, float velocity, int attackRange) {
+        super(x,y,width, height, "robot", hp, density, velocity, attackRange, id, 3);
     }
 
 }
