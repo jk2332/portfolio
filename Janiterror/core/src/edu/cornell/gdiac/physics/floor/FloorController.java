@@ -241,10 +241,14 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
-        scientistPos = level.getScientistPos();
-        slimePos = level.getSlimePos();
-        robotPos = level.getRobotPos();
+        //scientistPos = level.getScientistPos();
+        //slimePos = level.getSlimePos();
+        //robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
+        robotPos = new ArrayList<Vector2>();
+        //lizardPos = new ArrayList<Vector2>();
+        scientistPos=new ArrayList<Vector2>();
+        slimePos = new ArrayList<Vector2>();
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
@@ -327,9 +331,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         addUIInfo();
 
-        addCharacters();
-
         addWalls();
+        addCharacters();
     }
 
     private void addUIInfo() {
@@ -401,6 +404,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, ii);
             mon.setDrawScale(scale);
             mon.setTexture(scientistTexture);
+            mon.setName("scientist");
             addObject(mon);
             enemies[ii]=mon;
         }
@@ -410,6 +414,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(robotTexture);
+            mon.setName("robot");
             addObject(mon);
             enemies[scientistPos.size()+ii]=mon;
         }
@@ -418,6 +423,7 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(slimeTexture);
+            mon.setName("slime");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
@@ -426,13 +432,13 @@ public class FloorController extends WorldController implements ContactListener 
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii);
             mon.setDrawScale(scale);
             mon.setTexture(lizardTexture);
+            mon.setName("lizard");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
         }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
-
     }
 
     private void addWalls() {
@@ -698,18 +704,22 @@ public class FloorController extends WorldController implements ContactListener 
     private void performAction(EnemyModel s, int action) {
         if (action == CONTROL_MOVE_DOWN) {
             s.setMovementY(-s.getVelocity());
+            s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_LEFT) {
             s.setMovementX(-s.getVelocity());
+            s.setMovementY(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_UP) {
             s.setMovementY(s.getVelocity());
+            s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_RIGHT) {
             s.setMovementX(s.getVelocity());
+            s.setMovementY(0);
             s.resetAttackAniFrame();
 
         }
