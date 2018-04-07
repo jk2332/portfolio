@@ -1148,15 +1148,19 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
-                removeBullet(bd1);
-                avatar.decrHP();
+                if (!bd1.isRemoved()) {
+                    avatar.decrHP();
+                    removeBullet(bd1);
+                }
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
                 removeBullet(bd1);
             }
 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
-                removeBullet(bd2);
-                avatar.decrHP();
+                if (!bd2.isRemoved()) {
+                    removeBullet(bd2);
+                    avatar.decrHP();
+                }
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
             }
