@@ -80,10 +80,13 @@ public abstract class WorldController implements Screen {
 	private static final String FONT_FILE = "shared/RetroGame.ttf";
 	private static final int FONT_SIZE = 32;
 	/** The texture files for characters/attacks */
-	private static final String JANITOR_WALKR_FILE  = "floor/janitor-walk-R.png";
 	private static final String JANITOR_IDLE_FILE  = "floor/janitor-idle.png";
+	private static final String JANITOR_WALKR_FILE  = "floor/janitor-walk-R.png";
 	private static final String JANITOR_WALKU_FILE  = "floor/janitor-walk-U.png";
 	private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
+	private static final String JANITOR_MOPR_FILE  = "floor/janitor-attack-R-mop.png";
+	private static final String JANITOR_MOPU_FILE  = "floor/janitor-attack-U-mop.png";
+	private static final String JANITOR_MOPD_FILE  = "floor/janitor-attack-D-mop.png";
 	private static final String SCIENTIST_FILE  = "floor/scientist.png";
 	private static final String SLIME_FILE  = "floor/slime.png";
 	private static final String LIZARD_FILE  = "floor/lizard.png";
@@ -126,6 +129,9 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion avatarWalkRTexture;
 	protected TextureRegion avatarWalkUTexture;
 	protected TextureRegion avatarWalkDTexture;
+	protected TextureRegion avatarMopRTexture;
+	protected TextureRegion avatarMopUTexture;
+	protected TextureRegion avatarMopDTexture;
 	protected TextureRegion scientistTexture;
 	protected TextureRegion slimeTexture;
 	protected TextureRegion lizardTexture;
@@ -193,14 +199,20 @@ public abstract class WorldController implements Screen {
 		assets.add(WALL_BL_FILE);
 		manager.load(WALL_BR_FILE, Texture.class);
 		assets.add(WALL_BR_FILE);
+		manager.load(JANITOR_IDLE_FILE, Texture.class);
+		assets.add(JANITOR_IDLE_FILE);
 		manager.load(JANITOR_WALKR_FILE, Texture.class);
 		assets.add(JANITOR_WALKR_FILE);
 		manager.load(JANITOR_WALKU_FILE, Texture.class);
 		assets.add(JANITOR_WALKU_FILE);
 		manager.load(JANITOR_WALKD_FILE, Texture.class);
 		assets.add(JANITOR_WALKD_FILE);
-		manager.load(JANITOR_IDLE_FILE, Texture.class);
-		assets.add(JANITOR_IDLE_FILE);
+		manager.load(JANITOR_MOPR_FILE, Texture.class);
+		assets.add(JANITOR_MOPR_FILE);
+		manager.load(JANITOR_MOPU_FILE, Texture.class);
+		assets.add(JANITOR_MOPU_FILE);
+		manager.load(JANITOR_MOPD_FILE, Texture.class);
+		assets.add(JANITOR_MOPD_FILE);
 		manager.load(SCIENTIST_FILE, Texture.class);
 		assets.add(SCIENTIST_FILE);
 		manager.load(SLIME_FILE, Texture.class);
@@ -291,6 +303,9 @@ public abstract class WorldController implements Screen {
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
 		avatarIdleTexture = createTexture(manager,JANITOR_IDLE_FILE,false);
+		avatarMopRTexture = createTexture(manager,JANITOR_MOPR_FILE,false);
+		avatarMopUTexture = createTexture(manager,JANITOR_MOPU_FILE,false);
+		avatarMopDTexture = createTexture(manager,JANITOR_MOPD_FILE,false);
 		scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
 		robotTexture = createTexture(manager,ROBOT_FILE,false);
 		slimeTexture = createTexture(manager,SLIME_FILE, false);

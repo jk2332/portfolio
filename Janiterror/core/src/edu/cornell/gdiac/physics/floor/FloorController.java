@@ -156,12 +156,20 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  BULLET_OFFSET = 2.0f;
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
+    /** The speed of the slimeball after firing */
+    private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
+    /** Attack total time frames*timerperframe */
+    private static final float ATTACK_DURATION = 0.8f;
     /** The timer for animations*/
     private float stateTimer;
+    /** The cooldown for attack animations*/
+    private float attackTimer;
     /** The boolean for whether joe is running right*/
     private boolean isRunningRight;
+    /** The boolean for whether joe is attacking right*/
+    private boolean isAttackingRight;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -192,11 +200,16 @@ public class FloorController extends WorldController implements ContactListener 
     // Physics objects for the game
     /** Reference to the character avatar */
     private JoeModel avatar;
-    /** Reference to the goalDoor (for collision detection) */
+    /** All the character Animations */
+    private Animation <TextureRegion> joeStand;
     private Animation <TextureRegion> joeRunR;
     private Animation <TextureRegion> joeRunU;
     private Animation <TextureRegion> joeRunD;
-    private Animation <TextureRegion> joeStand;
+    private Animation <TextureRegion> joeMopR;
+    private Animation <TextureRegion> joeMopU;
+    private Animation <TextureRegion> joeMopD;
+
+    /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
     /** Reference to the monsters */
     private EnemyModel[] enemies;
@@ -226,8 +239,10 @@ public class FloorController extends WorldController implements ContactListener 
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0.0f;
+        attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         isRunningRight = true;
+        isAttackingRight = true;
         lidGround = false;
         setDebug(false);
         setComplete(false);
@@ -272,6 +287,7 @@ public class FloorController extends WorldController implements ContactListener 
         setComplete(false);
         setFailure(false);
         stateTimer = 0.0f;
+        attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
 
@@ -382,6 +398,23 @@ public class FloorController extends WorldController implements ContactListener 
         }
         joeRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarMopRTexture,i*128,0,128,64));
+        }
+        joeMopR = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,128));
+        }
+        joeMopU = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,128));
+        }
+        joeMopD = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+
+
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
@@ -811,21 +844,20 @@ public class FloorController extends WorldController implements ContactListener 
         float speedY = 0;
         float offsetX = 0;
         float offsetY = 0;
-        float slimeballSpeed = player.getSlimeballSpeed();
 
         if (dirX > 0) {
-            speedX = slimeballSpeed;
+            speedX = SLIMEBALL_SPEED;
             offsetX = BULLET_OFFSET;
         } else if (dirX < 0) {
-            speedX = -slimeballSpeed;
+            speedX = -SLIMEBALL_SPEED;
             offsetX = -BULLET_OFFSET;
         }
 
         if (dirY > 0) {
-            speedY = slimeballSpeed;
+            speedY = SLIMEBALL_SPEED;
             offsetY = BULLET_OFFSET;
         } else if (dirY < 0) {
-            speedY = -slimeballSpeed;
+            speedY = -SLIMEBALL_SPEED;
             offsetY = -BULLET_OFFSET;
         }
 
@@ -871,7 +903,7 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setHasLid(true);
         SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
         enemy.decrHP();
-        enemy.setKnockbackTimer(KNOCKBACK_TIMER); // TODO change to different knockback timer for vacuum
+        enemy.setKnockbackTimer(KNOCKBACK_TIMER);
         enemy.applyImpulse(knockbackForce);
         if (enemy.getHP() <= 0) {
             controls[enemy.getId()]=null;
@@ -925,10 +957,10 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap)<=mop.getRange() && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1; //TODO (add 1 to level editor?)
-                    boolean case2 = Math.abs(horiGap)<=mop.getRange() && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap)<=mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap)<=mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    boolean case1 = Math.abs(horiGap)<= mop.getRange() && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                    boolean case2 = Math.abs(horiGap)<= mop.getRange() && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                    boolean case3 = Math.abs(vertiGap)<= mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                    boolean case4 = Math.abs(vertiGap)<= mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                     if ((case1 || case2 || case3 || case4)) {
                         if (s.getHP() == 1) {
@@ -941,7 +973,7 @@ public class FloorController extends WorldController implements ContactListener 
                         //knockbackForce.nor();
 
                         s.applyImpulse(knockbackForce);
-                        s.setKnockbackTimer(mop.getKnockbackTimer());
+                        s.setKnockbackTimer(KNOCKBACK_TIMER);
                         //System.out.println(knockbackForce);
                         mop.decrDurability();
                     }
@@ -1265,22 +1297,40 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public enum State {STANDING, RUNNINGR,RUNNINGU,RUNNINGD}
+    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPU, MOPD }
     public State currentState;
     public State previousState;
 
     public State getState(){
-        if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)){
+
+       if ((avatar.isRight()||avatar.isLeft())&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"  ){
+           attackTimer = ATTACK_DURATION;
+            return State.MOPR;
+        }
+        else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
+           attackTimer = ATTACK_DURATION;
+            return State.MOPU;
+        }
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
+           attackTimer = ATTACK_DURATION;
+            return State.MOPD;
+        }
+        else if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0 && attackTimer == 0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)&& attackTimer == 0){
             return State.RUNNINGR;
         }
-        else if (avatar.getMovementX()==0 && avatar.getMovementY()>0) {
+        else if (avatar.getMovementX()==0 && avatar.getMovementY()>0&& attackTimer == 0) {
             return State.RUNNINGU;
         }
-        else if (avatar.getMovementX()==0 && avatar.getMovementY()<0) {
+        else if (avatar.getMovementX()==0 && avatar.getMovementY()<0&& attackTimer == 0) {
             return State.RUNNINGD;
         }
-        else return State.STANDING;
+        else if (avatar.getMovementX()==0 && avatar.getMovementY()== 0 && attackTimer == 0) {
+           return State.STANDING;
+       }
+       else
+       return previousState;
     }
+
     public TextureRegion getFrame (float dt){
         currentState = getState();
         TextureRegion region;
@@ -1297,19 +1347,40 @@ public class FloorController extends WorldController implements ContactListener 
             case STANDING:
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
+            case MOPR:
+                region = joeMopR.getKeyFrame(stateTimer,false);
+                break;
+            case MOPU:
+                region = joeMopU.getKeyFrame(stateTimer,false);
+                break;
+            case MOPD:
+                region = joeMopD.getKeyFrame(stateTimer,false);
+                break;
             default:
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
         }
         if (((avatar.getMovementX() < 0 && !isRunningRight))&& !region.isFlipX()){
-            System.out.println(avatar.getMovementX());
             region.flip(true,false);
             isRunningRight = false;
         }
         else if (((avatar.getMovementX() > 0 && isRunningRight))&& region.isFlipX()){
             region.flip(true,false);
-            System.out.print(region.isFlipX());
             isRunningRight = true;
+        }
+
+        if ((currentState == State.MOPR) || (currentState == State.MOPD)||(currentState == State.MOPU)){
+            if (((avatar.isLeft()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() >= 0))||
+                    ((avatar.isRight()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() <= 0))){
+                region.flip(true,false);
+                isAttackingRight = false;
+            }
+            if ((previousState == currentState) &&attackTimer > 0) {
+                attackTimer -= dt;
+            }else if((previousState == currentState) && attackTimer <= 0) {
+                attackTimer = 0;
+                isAttackingRight = true;
+            }
         }
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
         previousState = currentState;
