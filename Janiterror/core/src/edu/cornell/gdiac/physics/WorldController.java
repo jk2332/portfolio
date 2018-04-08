@@ -85,6 +85,7 @@ public abstract class WorldController implements Screen {
 	private static final String JANITOR_WALKU_FILE  = "floor/janitor-walk-U.png";
 	private static final String JANITOR_WALKD_FILE  = "floor/janitor-walk-D.png";
 	private static final String JANITOR_MOPR_FILE  = "floor/janitor-attack-R-mop.png";
+	private static final String JANITOR_MOPL_FILE  = "floor/janitor-attack-L-mop.png";
 	private static final String JANITOR_MOPU_FILE  = "floor/janitor-attack-U-mop.png";
 	private static final String JANITOR_MOPD_FILE  = "floor/janitor-attack-D-mop.png";
 	private static final String SCIENTIST_FILE  = "floor/scientist.png";
@@ -131,6 +132,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion avatarWalkUTexture;
 	protected TextureRegion avatarWalkDTexture;
 	protected TextureRegion avatarMopRTexture;
+	protected TextureRegion avatarMopLTexture;
 	protected TextureRegion avatarMopUTexture;
 	protected TextureRegion avatarMopDTexture;
 	protected TextureRegion scientistTexture;
@@ -211,6 +213,8 @@ public abstract class WorldController implements Screen {
 		assets.add(JANITOR_WALKD_FILE);
 		manager.load(JANITOR_MOPR_FILE, Texture.class);
 		assets.add(JANITOR_MOPR_FILE);
+		manager.load(JANITOR_MOPL_FILE, Texture.class);
+		assets.add(JANITOR_MOPL_FILE);
 		manager.load(JANITOR_MOPU_FILE, Texture.class);
 		assets.add(JANITOR_MOPU_FILE);
 		manager.load(JANITOR_MOPD_FILE, Texture.class);
@@ -308,6 +312,7 @@ public abstract class WorldController implements Screen {
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
 		avatarIdleTexture = createTexture(manager,JANITOR_IDLE_FILE,false);
 		avatarMopRTexture = createTexture(manager,JANITOR_MOPR_FILE,false);
+		avatarMopLTexture = createTexture(manager,JANITOR_MOPL_FILE,false);
 		avatarMopUTexture = createTexture(manager,JANITOR_MOPU_FILE,false);
 		avatarMopDTexture = createTexture(manager,JANITOR_MOPD_FILE,false);
 		scientistTexture = createTexture(manager,SCIENTIST_FILE,false);

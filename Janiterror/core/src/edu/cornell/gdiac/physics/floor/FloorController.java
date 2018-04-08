@@ -169,8 +169,12 @@ public class FloorController extends WorldController implements ContactListener 
     private float attackTimer;
     /** The boolean for whether joe is running right*/
     private boolean isRunningRight;
+    /** The boolean for whether joe is attacking at the moment*/
+    private boolean isAttackAni;
+    /** The boolean for whether joe is attacking at the moment*/
+    private int isAttackAniInt;
     /** The boolean for whether joe is attacking right*/
-    private boolean isAttackingRight;
+    private boolean attackedRight;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -211,6 +215,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> joeRunU;
     private Animation <TextureRegion> joeRunD;
     private Animation <TextureRegion> joeMopR;
+    private Animation <TextureRegion> joeMopL;
     private Animation <TextureRegion> joeMopU;
     private Animation <TextureRegion> joeMopD;
 
@@ -252,7 +257,8 @@ public class FloorController extends WorldController implements ContactListener 
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         isRunningRight = true;
-        isAttackingRight = true;
+        attackedRight = true;
+        isAttackAni = false;
         lidGround = false;
         setDebug(false);
         setComplete(false);
@@ -421,17 +427,22 @@ public class FloorController extends WorldController implements ContactListener 
         joeRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(avatarMopRTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(avatarMopRTexture,i*192,0,192,64));
         }
         joeMopR = new Animation<TextureRegion>(0.2f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(avatarMopLTexture,i*192,0,192,64));
+        }
+        joeMopL = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,192));
         }
         joeMopU = new Animation<TextureRegion>(0.2f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,192));
         }
         joeMopD = new Animation<TextureRegion>(0.2f, frames);
         frames.clear();
@@ -630,7 +641,7 @@ public class FloorController extends WorldController implements ContactListener 
      * to switch to a new game mode.  If not, the update proceeds
      * normally.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      *
      * @return whether to process the update loop
      */
@@ -650,7 +661,7 @@ public class FloorController extends WorldController implements ContactListener 
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
         ticks ++;
@@ -680,8 +691,14 @@ public class FloorController extends WorldController implements ContactListener 
             } else {
                 joeNotAtMopCartUpdate();
             }
-
-            avatar.setVelocity();
+            if (attackTimer == 0) {
+                avatar.setVelocity();
+        }
+            else {
+                avatar.setMovementX(0.0f);
+                avatar.setMovementY(0.0f);
+                avatar.setVelocity();
+            }
             avatar.setTexture(getFrame(dt));
         }
         lidRange(dt);
@@ -1393,15 +1410,23 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPU, MOPD }
+    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPL, MOPU, MOPD }
     public State currentState;
     public State previousState;
 
     public State getState(){
 
-       if ((avatar.isRight()||avatar.isLeft())&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"  ){
+        if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
            attackTimer = ATTACK_DURATION;
             return State.MOPR;
+        }
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop" ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight())){
+            attackTimer = ATTACK_DURATION;
+            return State.MOPL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
            attackTimer = ATTACK_DURATION;
@@ -1444,7 +1469,10 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
             case MOPR:
-                region = joeMopR.getKeyFrame(stateTimer,false);
+                region = joeMopR.getKeyFrame(stateTimer,true);
+                break;
+            case MOPL:
+                region = joeMopL.getKeyFrame(stateTimer,true);
                 break;
             case MOPU:
                 region = joeMopU.getKeyFrame(stateTimer,false);
@@ -1456,26 +1484,88 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
         }
-        if (((avatar.getMovementX() < 0 && !isRunningRight))&& !region.isFlipX()){
-            region.flip(true,false);
-            isRunningRight = false;
-        }
-        else if (((avatar.getMovementX() > 0 && isRunningRight))&& region.isFlipX()){
-            region.flip(true,false);
-            isRunningRight = true;
-        }
+//        if (((avatar.getMovementX() < 0 && !isRunningRight))&& !region.isFlipX()){
+//            System.out.println(region.isFlipX());
+//            region.flip(true,false);
+//            isRunningRight = false;
+//            System.out.println(region.isFlipX());
+//        }
+//        else if (((avatar.getMovementX() > 0 && isRunningRight))&& region.isFlipX()){
+//            System.out.println(region.isFlipX());
+//            region.flip(true,false);
+//            isRunningRight = true;
+//            System.out.println(region.isFlipX());
+//        }
 
-        if ((currentState == State.MOPR) || (currentState == State.MOPD)||(currentState == State.MOPU)){
-            if (((avatar.isLeft()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() >= 0))||
-                    ((avatar.isRight()||!isAttackingRight)&&!region.isFlipX()&&(avatar.getMovementX() <= 0))){
-                region.flip(true,false);
-                isAttackingRight = false;
-            }
+        if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)){
+
+//            if ((avatar.isLeft()|| (isAttackAniInt == 1))&& !region.isFlipX()&& avatar.getMovementX() == 0){
+//                region.flip(true,false);
+//                isAttackAniInt = 1;
+//            }
+//            else if ((avatar.isRight()||(isAttackAniInt == 2))&& region.isFlipX()&& avatar.getMovementX() == 0){
+//                region.flip(true,false);
+//                isAttackAniInt = 2;
+//            }
+//            else if ((avatar.isLeft()|| (isAttackAniInt == 3))&& !region.isFlipX()&& avatar.getMovementX() > 0){
+//                region.flip(true,false);
+//                isAttackAniInt = 3;
+//            }
+//            else if ((avatar.isRight()|| (isAttackAniInt == 4))&& !region.isFlipX()&& avatar.getMovementX() < 0){
+//                region.flip(true,false);
+//                isAttackAniInt = 4;
+//            }
+//            if (avatar.isLeft()) {
+//                isAttackAni = true;
+//                attackedRight = false;
+//                region.flip(true, false);
+//            }
+//            if (avatar.isRight()) {
+//                isAttackAni = true;
+//                attackedRight = true;
+//            }
+//            if (!attackedRight && isAttackAni) {
+//                region.flip(true, false);
+//            }
+
+//
+//            if ((avatar.isLeft()||isAttackAni)&& !region.isFlipX()) {
+//                if (!isAttackingRight) {
+//                    region.flip(true, false);
+//                    isAttackAni = true;
+//                }
+//                else
+//            }
+//            else  ((avatar.isRight()||isAttackAni)&& !region.isFlipX()){
+//                isAttackingRight = false;
+//                region.flip(true,false);
+//                isAttackAni = true;
+//            }
+
+
+
+//            if (((avatar.isLeft()||isAttackAni)&& !region.isFlipX())||
+//                    ((avatar.isRight()||isAttackAni)&& !region.isFlipX())){
+//                System.out.println("flip");
+//                region.flip(true,false);
+//                isAttackAni = true;
+//            }
+//            if ((avatar.isLeft()&& !region.isFlipX())||(isAttackAni&& region.isFlipX())){
+//                System.out.println("flipping");
+//                region.flip(true,false);
+//                isAttackAni = true;
+//            }
+//            else if ((avatar.isRight()&& region.isFlipX())||(isAttackAni&& !region.isFlipX())){
+//                System.out.println("flipping");
+//                region.flip(true,false);
+//                isAttackAni = true;
+//            }
+
             if ((previousState == currentState) &&attackTimer > 0) {
                 attackTimer -= dt;
             }else if((previousState == currentState) && attackTimer <= 0) {
                 attackTimer = 0;
-                isAttackingRight = true;
+                isAttackAniInt = 0;
             }
         }
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
