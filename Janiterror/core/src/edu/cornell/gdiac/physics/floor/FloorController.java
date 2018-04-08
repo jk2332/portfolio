@@ -1409,42 +1409,52 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
-        if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
-            //need to check if mop has durability
+        if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
+                && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
            attackTimer = ATTACK_DURATION;
             return State.MOPR;
         }
-        else if ((avatar.isLeft()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop" ) ||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight())){
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
+                        && avatar.getWep1().durability > 0 ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
             attackTimer = ATTACK_DURATION;
             return State.MOPL;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
+        else if (avatar.isUp() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
+                && avatar.getWep1().durability > 0){
            attackTimer = ATTACK_DURATION;
             return State.MOPU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
+                && avatar.getWep1().durability > 0){
            attackTimer = ATTACK_DURATION;
             return State.MOPD;
         }
-        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")&& avatar.getMovementX() < 0)||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
+                        && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
+                        && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight()
+                        && avatar.getWep1().durability > 0 && avatar.getHasLid())){
             attackTimer = ATTACK_DURATION;
             return State.LIDR;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"){
-            //&& avatar.getHasLid() == true //because you can only do throw animation if you have the lid
-            System.out.println("upthrow");
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
+                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION;
             return State.LIDU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"){
-            //&& avatar.getHasLid() == true //because you can only do throw animation if you have the lid
-            System.out.println("downthrow");
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
+                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION;
             return State.LIDD;
         }
