@@ -167,19 +167,19 @@ public class AIController {
 
     // n=0 : left, n=1 : right, n=2 : up, n=3 : down
     private boolean markGoalHelper(int sx, int sy, int n, int dist){
-        if (n==0 && board.isSafeAt(sx-dist, sy)) {
+        if (n==0 && board.isSafeAt(sx-dist, sy) && !board.isHazard(sx-dist, sy)) {
           board.setGoal(sx-dist, sy);
           return true;
         }
-        if (n==1 && board.isSafeAt(sx+dist, sy)) {
+        if (n==1 && board.isSafeAt(sx+dist, sy) && !board.isHazard(sx+dist, sy)) {
            board.setGoal(sx+dist, sy);
             return true;
         }
-        if (n==2 && board.isSafeAt(sx, sy+dist)) {
+        if (n==2 && board.isSafeAt(sx, sy+dist) && !board.isHazard(sx, sy+dist)) {
             board.setGoal(sx, sy+dist);
             return true;
         }
-        if (n==3 && board.isSafeAt(sx, sy-dist)) {
+        if (n==3 && board.isSafeAt(sx, sy-dist) && !board.isHazard(sx, sy-dist)) {
             board.setGoal(sx, sy-dist);
             return true;
         }
@@ -267,16 +267,20 @@ public class AIController {
                 int manUp =  manhattan(sx, sy, tx, ty+attackRange);
                 int manDown =  manhattan(sx, sy, tx, ty-attackRange);
 
-                if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx-attackRange, ty, tx, ty)){
+                if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx-attackRange, ty, tx, ty) &&
+                        !board.isHazard(tx-attackRange, ty)){
                     fin = 0; temp=manLeft;
                 }
-                if (board.isSafeAt(tx+attackRange, ty) && manRight<temp && hasNoWallBetw(tx+attackRange, ty, tx, ty)) {
+                if (board.isSafeAt(tx+attackRange, ty) && manRight<temp && hasNoWallBetw(tx+attackRange, ty, tx, ty)
+                        && !board.isHazard(tx+attackRange, ty)) {
                     fin=1; temp=manRight;
                 }
-                if (board.isSafeAt(tx , ty+attackRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)) {
+                if (board.isSafeAt(tx , ty+attackRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
+                        && !board.isHazard(tx, ty+attackRange)) {
                     fin=2; temp=manUp;
                 }
-                if (board.isSafeAt(tx , ty-attackRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)) {
+                if (board.isSafeAt(tx , ty-attackRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
+                        && !board.isHazard(tx, ty-attackRange)) {
                     fin=3;
                 }
                 if (fin < 0) break;
@@ -295,16 +299,20 @@ public class AIController {
                 int manhUp =  manhattan(sx, sy, tx, ty+attackRange);
                 int manhDown =  manhattan(sx, sy, tx, ty-attackRange);
 
-                if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx, ty, tx-attackRange, ty)){
+                if (board.isSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx, ty, tx-attackRange, ty) &&
+                        !board.isHazard(tx-attackRange, ty)){
                     fin=0; temp=manhLeft;
                 }
-                if (board.isSafeAt(tx+attackRange, ty) && manhRight<temp && hasNoWallBetw(tx, ty, tx+attackRange, ty)) {
+                if (board.isSafeAt(tx+attackRange, ty) && manhRight<temp && hasNoWallBetw(tx, ty, tx+attackRange, ty)
+                        && !board.isHazard(tx-attackRange, ty)) {
                     fin=1; temp=manhRight;
                 }
-                if (board.isSafeAt(tx, ty+attackRange) && manhUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)) {
+                if (board.isSafeAt(tx, ty+attackRange) && manhUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
+                        && !board.isHazard(tx-attackRange, ty)) {
                     fin=2; temp=manhUp;
                 }
-                if (board.isSafeAt(tx, ty-attackRange) && manhDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)) {
+                if (board.isSafeAt(tx, ty-attackRange) && manhDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
+                        && !board.isHazard(tx-attackRange, ty)) {
                     fin=3;
                 }
                 if (fin < 0) break;
@@ -315,7 +323,7 @@ public class AIController {
         if (!setGoal) {
             sx = this.board.screenToBoardX(this.ship.getX());
             sy = this.board.screenToBoardY(this.ship.getY());
-            if (board.isSafeAt(sx, sy)) board.setGoal(sx, sy);
+            board.setGoal(sx, sy);
         }
     }
 
@@ -375,7 +383,7 @@ public class AIController {
                     int tentativeG = curr.g + distanceBetween(curr, next);
 
                     if (this.board.isSafeAt(next.x, next.y) && !this.board.isVisited(next.x, next.y) &&
-                            (next.g==null || tentativeG < next.g)) {          //fix this
+                            (next.g==null || tentativeG < next.g) && !board.isHazard(next.x, next.y)) {          //fix this
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
                             dir = jj == 0 ? FloorController.CONTROL_MOVE_LEFT : FloorController.CONTROL_MOVE_RIGHT;
