@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor2.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
@@ -529,7 +529,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTRPos.get(ii).x);
             y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -580,6 +579,7 @@ public class FloorController extends WorldController implements ContactListener 
         dwidth = wallLeftTexture.getRegionWidth()/scale.x;
         dheight = wallLeftTexture.getRegionHeight()/scale.y;
 
+        offset = -(TILE_SIZE * (1 - WALL_THICKNESS_SCALE))/2;
         for (int ii = 0; ii < wallLeftPos.size(); ii++) {
             x = board.boardToScreenX((int) wallLeftPos.get(ii).x) + offset/32;
             y = board.boardToScreenY((int) wallLeftPos.get(ii).y);

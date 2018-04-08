@@ -88,7 +88,7 @@ public class LevelEditorParser {
         for (Element ts : tilesets) {
             if (ts.get("source").equals("wallsh.tsx")) {
                 wallhgid = ts.getIntAttribute("firstgid");
-            } else if (ts.get("source").equals("wallv.tsx")) {
+            } else if (ts.get("source").equals("wallsv.tsx")) {
                 wallvgid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("tiles.tsx")) {
                 tilegid = ts.getIntAttribute("firstgid");
@@ -219,15 +219,15 @@ public class LevelEditorParser {
             }
         }
 
-        int[][] horiWalls = layerToList(layers.get(2));
-        int[][] vertiWalls = layerToList(layers.get(1));
+        int[][] horiWalls = layerToList(layers.get(1));
+        int[][] vertiWalls = layerToList(layers.get(2));
 
         for (int i = 0; i < vertiWalls.length; i++) {
             for (int j = 0; j < vertiWalls[0].length; j++) {
                 if (vertiWalls[i][j] == wallvgid) {
-                    wallRightPos.add(new Vector2(j, i));
-                } else if (vertiWalls[i][j] == 10000) { //TODO change later
                     wallLeftPos.add(new Vector2(j, i));
+                } else if (vertiWalls[i][j] == wallvgid + 1) { //TODO change later
+                    wallRightPos.add(new Vector2(j, i));
                 }
             }
         }

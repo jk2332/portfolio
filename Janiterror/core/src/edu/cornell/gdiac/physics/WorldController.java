@@ -64,13 +64,13 @@ public abstract class WorldController implements Screen {
 	
 	// Pathnames to shared assets
 	/** File to texture for walls and platforms */
-	private static final String WALL_LEFT_FILE = "shared/wall-basic-vertical.png";
-	private static final String WALL_RIGHT_FILE = "shared/wall-basic-vertical.png";
-	private static final String WALL_MID_FILE = "shared/wall-basic-horizontal.png";
-	private static final String WALL_TL_FILE = "shared/wall-basic-top-left-corner.png";
-	private static final String WALL_TR_FILE = "shared/wall-basic-top-right-corner.png";
-	private static final String WALL_BR_FILE = "shared/wall-basic-right-corner.png";
-	private static final String WALL_BL_FILE = "shared/wall-basic-left-corner.png";
+	private static final String WALL_LEFT_FILE = "shared/vertical-left.png";
+	private static final String WALL_RIGHT_FILE = "shared/vertical-right.png";
+	private static final String WALL_MID_FILE = "shared/horizontal-wall.png";
+	private static final String WALL_TL_FILE = "shared/corner-top-left.png";
+	private static final String WALL_TR_FILE = "shared/corner-top-right.png";
+	private static final String WALL_BR_FILE = "shared/corner-bottom-right.png";
+	private static final String WALL_BL_FILE = "shared/corner-bottom-left.png";
 
 	/** File to texture for the win door */
 	private static final String GOAL_FILE = "shared/goaldoor64.png";
