@@ -3,6 +3,7 @@ package edu.cornell.gdiac.physics.floor;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.character.EnemyModel;
 import edu.cornell.gdiac.physics.floor.character.JoeModel;
+import edu.cornell.gdiac.util.LevelEditorParser;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.Path;
 
@@ -50,7 +51,7 @@ public class AIController {
         }
 
         int action = this.move;
-//        System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
+        System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -330,17 +331,8 @@ public class AIController {
     }
 
     //need to work on this / should look at corners for walls?
-    private boolean isNearWall(int x, int y){
-        int sx = board.screenToBoardX(ship.getX());
-        int sy = board.screenToBoardY(ship.getY());
-        for (int ii=-1; ii<2; ii++){
-            for (int jj=-1; jj<2; jj++){
-                if (board.isBlocked(sx+ii, sy+jj)){
-                    if ((y==sy && Math.abs(sx+ii-x)<=1) || (x==sx && Math.abs(sy+jj-y)<=1)) return true;
-                }
-            }
-        }
-        return false;
+    private boolean isAtCorner(int x, int y){
+        return true;
     }
 
     private int getMoveAlongPathToGoalTile() {
@@ -383,7 +375,7 @@ public class AIController {
                     int tentativeG = curr.g + distanceBetween(curr, next);
 
                     if (this.board.isSafeAt(next.x, next.y) && !this.board.isVisited(next.x, next.y) &&
-                            (next.g==null || tentativeG < next.g) && !isNearWall(next.x, next.y)) {          //fix this
+                            (next.g==null || tentativeG < next.g)) {          //fix this
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
                             dir = jj == 0 ? FloorController.CONTROL_MOVE_LEFT : FloorController.CONTROL_MOVE_RIGHT;

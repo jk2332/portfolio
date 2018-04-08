@@ -259,10 +259,13 @@ public class FloorController extends WorldController implements ContactListener 
         slimePos = level.getSlimePos();
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
+
         //robotPos = new ArrayList<Vector2>();
         //lizardPos = new ArrayList<Vector2>();
         //scientistPos=new ArrayList<Vector2>();
+        //scientistPos=level.getLizardPos();
         //slimePos = new ArrayList<Vector2>();
+
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
         wallMidPos = level.getWallMidPos();
@@ -272,6 +275,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallBRPos = level.getWallBRPos();
 
         hazardPos = level.getHazardPos();
+        System.out.println(hazardPos.size());
 
         tiles = level.getTiles();
     }
@@ -649,6 +653,7 @@ public class FloorController extends WorldController implements ContactListener 
             setFailure(true);
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()))){
+            System.out.println("here");
             avatar.decrHP();
         }
         else {
