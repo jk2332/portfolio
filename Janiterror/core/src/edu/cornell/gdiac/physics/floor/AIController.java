@@ -76,18 +76,6 @@ public class AIController {
         return true;
     }
 
-    private boolean hasNoWallBetw2(int x, int y, int tx, int ty, int n){
-        // TODO: look at other libraries
-        int num=0;
-        for (int ii=Math.min(x, tx); ii<=Math.max(x, tx); ii++){
-            for (int jj=Math.min(y, ty); jj<Math.max(y, ty); jj++){
-                if (board.isBlocked(ii, jj)) num++;
-            }
-        }
-        if (num<=n) return true;
-        return false;
-    }
-
     private void changeStateIfApplicable() {
         Random rand = new Random();
         int sx = this.board.screenToBoardX(this.ship.getX());
@@ -341,6 +329,20 @@ public class AIController {
         return 14;
     }
 
+    //need to work on this / should look at corners for walls?
+    private boolean isNearWall(int x, int y){
+        int sx = board.screenToBoardX(ship.getX());
+        int sy = board.screenToBoardY(ship.getY());
+        for (int ii=-1; ii<2; ii++){
+            for (int jj=-1; jj<2; jj++){
+                if (board.isBlocked(sx+ii, sy+jj)){
+                    if ((y==sy && Math.abs(sx+ii-x)<=1) || (x==sx && Math.abs(sy+jj-y)<=1)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private int getMoveAlongPathToGoalTile() {
         if (board.getGoal().x < 0 || board.getGoal().y < 0) return 0;
         PathNode curr = new PathNode(board.screenToBoardX(ship.getX()), board.screenToBoardY(ship.getY()), 0);
@@ -381,8 +383,7 @@ public class AIController {
                     int tentativeG = curr.g + distanceBetween(curr, next);
 
                     if (this.board.isSafeAt(next.x, next.y) && !this.board.isVisited(next.x, next.y) &&
-                            (next.g==null || tentativeG < next.g)) {          //fix this
-                        //System.out.println("here");
+                            (next.g==null || tentativeG < next.g) && !isNearWall(next.x, next.y)) {          //fix this
                         int dir;
                         if (ii == 0 && horiz || ii == 1 && !horiz) {
                             dir = jj == 0 ? FloorController.CONTROL_MOVE_LEFT : FloorController.CONTROL_MOVE_RIGHT;
