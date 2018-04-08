@@ -20,7 +20,7 @@ public class JoeModel extends CharacterModel {
     private static final int JOE_MAX_ATTACK_COOLDOWN = 20;
 
     /** Joe's max HP */
-    private static final int JOE_MAX_HP = 15;
+    private static final int MAX_HP = 15;
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
@@ -82,6 +82,13 @@ public class JoeModel extends CharacterModel {
     public void setWep2(WeaponModel new_weapon) {
         this.wep2 = new_weapon;
     }
+
+    /**
+     * Returns max HP of Joe
+     *
+     * @return max HP of Joe
+     */
+    public int getMaxHP() { return MAX_HP ; }
 
     /**
      * Returns true if Joe is actively swapping.

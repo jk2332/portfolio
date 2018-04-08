@@ -694,12 +694,16 @@ public class FloorController extends WorldController implements ContactListener 
      * Update function for Joe when he at the mop cart
      */
     private void joeAtMopCartUpdate() {
-        if (!mop_cart_reloaded_before) {
+        if (!mop_cart_reloaded_before
+                && (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
+                || avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
             SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
             mop_cart_reloaded_before = true;
             //recharge durability of weapons
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+            //recharge to max health
+            avatar.setHP(avatar.getMaxHP());
         }
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
@@ -775,8 +779,8 @@ public class FloorController extends WorldController implements ContactListener 
                 performAction(s, action);
             }
 
-            if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY())) &&
-                    ticks % 30==0L){ //adjust this later
+            if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
+                    && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                 System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
                 if (s.getHP() <= 0) {
@@ -1408,6 +1412,7 @@ public class FloorController extends WorldController implements ContactListener 
         if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
+            //need to check if mop has durability
            attackTimer = ATTACK_DURATION;
             return State.MOPR;
         }
