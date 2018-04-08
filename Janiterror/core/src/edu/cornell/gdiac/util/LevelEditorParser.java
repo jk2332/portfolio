@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class LevelEditorParser {
 
     private int [][] tiles;
+    private int [][] hazardTiles;
 
     private ArrayList<Vector2> hazardPos = new ArrayList<Vector2>();
 
@@ -74,10 +75,12 @@ public class LevelEditorParser {
     private int wallvgid;
     private int wallhgid;
     private int tilegid;
+    private int hazardgid;
 
 
     public LevelEditorParser(String levelPath) {
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
+
         Array<Element> layers = level.getChildrenByName("layer");
         Array<Element> objects = level.getChildrenByName("objectgroup");
 
@@ -92,9 +95,12 @@ public class LevelEditorParser {
                 wallvgid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("tiles.tsx")) {
                 tilegid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("hazard.tsx")) {
+                hazardgid = ts.getIntAttribute("firstgid");
             }
         }
         tiles = layerToList(layers.get(0));
+        hazardTiles = layerToList(layers.get(3));
 
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
@@ -231,7 +237,6 @@ public class LevelEditorParser {
                 }
             }
         }
-
         for (int i = 0; i < horiWalls.length; i++) {
             for (int j = 0; j < horiWalls[0].length; j++) {
                 if (horiWalls[i][j] == wallhgid + 1) {
@@ -244,6 +249,15 @@ public class LevelEditorParser {
                     wallBLPos.add(new Vector2(j, i ));
                 } else if (horiWalls[i][j] == wallhgid + 5) {
                     wallBRPos.add(new Vector2(j, i ));
+                }
+            }
+        }
+        for (int i = 0; i < hazardTiles.length; i++) {
+            for (int j = 0; j < hazardTiles[0].length; j++) {
+                if (hazardTiles[i][j] == hazardgid) {
+                    //if this tile is a hazard tile
+                    //why add it backwards?
+                    hazardPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -268,9 +282,9 @@ public class LevelEditorParser {
         return grid2;
     }
 
-    public int[][] getTiles() {
-        return tiles;
-    }
+    public int[][] getTiles() { return tiles; }
+
+    public int[][] getHazardTiles() { return hazardTiles; }
 
     public ArrayList<Vector2> getHazardPos() {
         return hazardPos;

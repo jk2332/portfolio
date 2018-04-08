@@ -189,7 +189,6 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> slimePos;
     ArrayList<Vector2> robotPos;
     ArrayList<Vector2> lizardPos;
-    ArrayList<Vector2> hazardPos;
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
@@ -197,6 +196,10 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallTRPos;
     ArrayList<Vector2> wallBLPos;
     ArrayList<Vector2> wallBRPos;
+
+    ArrayList<Vector2> hazardPos;
+    int [][] hazardTiles;
+
     int [][] tiles;
 
     // Physics objects for the game
@@ -275,7 +278,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallBRPos = level.getWallBRPos();
 
         hazardPos = level.getHazardPos();
-        System.out.println(hazardPos.size());
+        hazardTiles = level.getHazardTiles();
 
         tiles = level.getTiles();
     }
@@ -347,7 +350,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
-                broken4tileTexture,underTileTexture,stairsTileTexture};
+                broken4tileTexture,underTileTexture,stairsTileTexture, hazardTileTexture};
 
         board.setTileTextures(tileTextures);
 
@@ -355,7 +358,7 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-        setHazardTiles();
+//        setHazardTiles();
     }
 
     private void addUIInfo() {
@@ -653,7 +656,7 @@ public class FloorController extends WorldController implements ContactListener 
             setFailure(true);
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()))){
-            System.out.println("here");
+            System.out.println("You're on a hazard tile");
             avatar.decrHP();
         }
         else {
@@ -703,11 +706,9 @@ public class FloorController extends WorldController implements ContactListener 
         }
         //move mop cart index
         if (avatar.isLeft()) {
-            System.out.println("Move mop index left");
             if (mopcart_index == 1) { mopcart_index = 0; }
             else if (mopcart_index == 0) { mopcart_index = 1; }
         } else if (avatar.isRight()) {
-            System.out.println("Move mop index right");
             if (mopcart_index == 0) { mopcart_index = 1; }
             else if (mopcart_index == 1) { mopcart_index = 0; }
         }
@@ -1271,6 +1272,12 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.begin();
 
         board.draw(canvas, tiles);
+//        for (int i = 0; i < hazardTiles.length; i++) {
+//            for (int j = 0; j < hazardTiles[0].length; j++) {
+//                System.out.println(hazardTiles[i][j]);
+//            }
+//        }
+//        board.draw(canvas, hazardTiles);
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
