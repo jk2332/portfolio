@@ -167,14 +167,6 @@ public class FloorController extends WorldController implements ContactListener 
     private float stateTimer;
     /** The cooldown for attack animations*/
     private float attackTimer;
-    /** The boolean for whether joe is running right*/
-    private boolean isRunningRight;
-    /** The boolean for whether joe is attacking at the moment*/
-    private boolean isAttackAni;
-    /** The boolean for whether joe is attacking at the moment*/
-    private int isAttackAniInt;
-    /** The boolean for whether joe is attacking right*/
-    private boolean attackedRight;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -256,9 +248,6 @@ public class FloorController extends WorldController implements ContactListener 
         stateTimer = 0.0f;
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
-        isRunningRight = true;
-        attackedRight = true;
-        isAttackAni = false;
         lidGround = false;
         setDebug(false);
         setComplete(false);
@@ -1484,88 +1473,13 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
         }
-//        if (((avatar.getMovementX() < 0 && !isRunningRight))&& !region.isFlipX()){
-//            System.out.println(region.isFlipX());
-//            region.flip(true,false);
-//            isRunningRight = false;
-//            System.out.println(region.isFlipX());
-//        }
-//        else if (((avatar.getMovementX() > 0 && isRunningRight))&& region.isFlipX()){
-//            System.out.println(region.isFlipX());
-//            region.flip(true,false);
-//            isRunningRight = true;
-//            System.out.println(region.isFlipX());
-//        }
 
         if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)){
-
-//            if ((avatar.isLeft()|| (isAttackAniInt == 1))&& !region.isFlipX()&& avatar.getMovementX() == 0){
-//                region.flip(true,false);
-//                isAttackAniInt = 1;
-//            }
-//            else if ((avatar.isRight()||(isAttackAniInt == 2))&& region.isFlipX()&& avatar.getMovementX() == 0){
-//                region.flip(true,false);
-//                isAttackAniInt = 2;
-//            }
-//            else if ((avatar.isLeft()|| (isAttackAniInt == 3))&& !region.isFlipX()&& avatar.getMovementX() > 0){
-//                region.flip(true,false);
-//                isAttackAniInt = 3;
-//            }
-//            else if ((avatar.isRight()|| (isAttackAniInt == 4))&& !region.isFlipX()&& avatar.getMovementX() < 0){
-//                region.flip(true,false);
-//                isAttackAniInt = 4;
-//            }
-//            if (avatar.isLeft()) {
-//                isAttackAni = true;
-//                attackedRight = false;
-//                region.flip(true, false);
-//            }
-//            if (avatar.isRight()) {
-//                isAttackAni = true;
-//                attackedRight = true;
-//            }
-//            if (!attackedRight && isAttackAni) {
-//                region.flip(true, false);
-//            }
-
-//
-//            if ((avatar.isLeft()||isAttackAni)&& !region.isFlipX()) {
-//                if (!isAttackingRight) {
-//                    region.flip(true, false);
-//                    isAttackAni = true;
-//                }
-//                else
-//            }
-//            else  ((avatar.isRight()||isAttackAni)&& !region.isFlipX()){
-//                isAttackingRight = false;
-//                region.flip(true,false);
-//                isAttackAni = true;
-//            }
-
-
-
-//            if (((avatar.isLeft()||isAttackAni)&& !region.isFlipX())||
-//                    ((avatar.isRight()||isAttackAni)&& !region.isFlipX())){
-//                System.out.println("flip");
-//                region.flip(true,false);
-//                isAttackAni = true;
-//            }
-//            if ((avatar.isLeft()&& !region.isFlipX())||(isAttackAni&& region.isFlipX())){
-//                System.out.println("flipping");
-//                region.flip(true,false);
-//                isAttackAni = true;
-//            }
-//            else if ((avatar.isRight()&& region.isFlipX())||(isAttackAni&& !region.isFlipX())){
-//                System.out.println("flipping");
-//                region.flip(true,false);
-//                isAttackAni = true;
-//            }
 
             if ((previousState == currentState) &&attackTimer > 0) {
                 attackTimer -= dt;
             }else if((previousState == currentState) && attackTimer <= 0) {
                 attackTimer = 0;
-                isAttackAniInt = 0;
             }
         }
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
