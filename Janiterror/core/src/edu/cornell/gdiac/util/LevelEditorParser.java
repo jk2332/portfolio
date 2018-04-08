@@ -13,10 +13,8 @@ import java.util.ArrayList;
 public class LevelEditorParser {
 
     private int [][] tiles;
-    private int [][] hazardTiles;
 
     private ArrayList<Vector2> hazardPos = new ArrayList<Vector2>();
-
     private ArrayList<Vector2> wallMidPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallRightPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallLeftPos = new ArrayList<Vector2>();
@@ -100,7 +98,6 @@ public class LevelEditorParser {
             }
         }
         tiles = layerToList(layers.get(0));
-        hazardTiles = layerToList(layers.get(3));
 
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
@@ -227,6 +224,7 @@ public class LevelEditorParser {
 
         int[][] horiWalls = layerToList(layers.get(1));
         int[][] vertiWalls = layerToList(layers.get(2));
+        int [][] hazardTiles = layerToList(layers.get(3));
 
         for (int i = 0; i < vertiWalls.length; i++) {
             for (int j = 0; j < vertiWalls[0].length; j++) {
@@ -283,8 +281,6 @@ public class LevelEditorParser {
     }
 
     public int[][] getTiles() { return tiles; }
-
-    public int[][] getHazardTiles() { return hazardTiles; }
 
     public ArrayList<Vector2> getHazardPos() {
         return hazardPos;

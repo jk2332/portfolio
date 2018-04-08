@@ -5,11 +5,12 @@
  <tileset firstgid="10" source="goaldoor.tsx"/>
  <tileset firstgid="11" source="joe.tsx"/>
  <tileset firstgid="12" source="wallsh.tsx"/>
- <tileset firstgid="18" source="wallv.tsx"/>
- <tileset firstgid="19" source="robot.tsx"/>
- <tileset firstgid="20" source="slime.tsx"/>
- <tileset firstgid="21" source="scientist.tsx"/>
- <tileset firstgid="22" source="lizard.tsx"/>
+ <tileset firstgid="18" source="wallsv.tsx"/>
+ <tileset firstgid="20" source="robot.tsx"/>
+ <tileset firstgid="21" source="slime.tsx"/>
+ <tileset firstgid="22" source="scientist.tsx"/>
+ <tileset firstgid="23" source="lizard.tsx"/>
+ <tileset firstgid="24" source="hazard.tsx"/>
  <layer name="tiles" width="32" height="18">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -56,7 +57,7 @@
     <property name="Velocity" type="float" value="5"/>
    </properties>
   </object>
-  <object id="14" type="slime" gid="20" x="464" y="473" width="64" height="64">
+  <object id="14" type="slime" gid="21" x="464" y="473" width="64" height="64">
    <properties>
     <property name="Attack Range" type="int" value="8"/>
     <property name="Density" type="float" value="1"/>
@@ -65,9 +66,9 @@
     <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
-  <object id="18" type="slime" gid="20" x="489.127" y="323.751" width="64" height="64"/>
-  <object id="19" type="slime" gid="20" x="167.195" y="233.207" width="64" height="64"/>
-  <object id="20" type="slime" gid="20" x="788.926" y="201.014" width="64" height="64"/>
+  <object id="18" type="slime" gid="21" x="489.127" y="323.751" width="64" height="64"/>
+  <object id="19" type="slime" gid="21" x="167.195" y="233.207" width="64" height="64"/>
+  <object id="20" type="slime" gid="21" x="788.926" y="201.014" width="64" height="64"/>
  </objectgroup>
  <layer name="vertical walls" width="32" height="18">
   <data encoding="csv">
@@ -111,6 +112,28 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 15,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,17
+</data>
+ </layer>
+ <layer name="hazards" width="32" height="18">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,24,24,24,24,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,24,24,0,24,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,24,24,0,24,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,24,24,0,24,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,24,24,24,24,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
 </map>

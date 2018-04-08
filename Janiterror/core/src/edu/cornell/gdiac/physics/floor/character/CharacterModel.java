@@ -114,6 +114,11 @@ public class CharacterModel extends CapsuleObstacle {
     }
 
     /**
+     * Sets the HP of the character
+     */
+    public void setHP(int new_hp) { hp = new_hp; }
+
+    /**
      * Decrements the characters HP by one.
      */
     public void decrHP() {
