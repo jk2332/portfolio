@@ -192,9 +192,7 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallTRPos;
     ArrayList<Vector2> wallBLPos;
     ArrayList<Vector2> wallBRPos;
-
     ArrayList<Vector2> hazardPos;
-    int [][] hazardTiles;
 
     int [][] tiles;
 
@@ -279,7 +277,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         hazardPos = level.getHazardPos();
         System.out.println(hazardPos.size());
-        hazardTiles = level.getHazardTiles();
 
         tiles = level.getTiles();
     }
@@ -360,6 +357,7 @@ public class FloorController extends WorldController implements ContactListener 
         addCharacters();
 
         setHazardTiles();
+        //does this using hazardpos
     }
 
     private void addUIInfo() {
@@ -508,33 +506,11 @@ public class FloorController extends WorldController implements ContactListener 
         }
     }
 
-    private void setHazardTiles(){
-        for (int ii=0; ii < hazardPos.size(); ii++){
+    private void setHazardTiles() {
+        for (int ii = 0; ii < hazardPos.size(); ii++) {
             board.setHazard((int) hazardPos.get(ii).x, (int) hazardPos.get(ii).y);
         }
     }
-
-//    private void addHazardTiles() {
-//        String pname = "hazard";
-//        float dwidth  = hazardTexture.getRegionWidth()/scale.x;
-//        float dheight = hazardTexture.getRegionHeight()/scale.y;
-//
-//        offset = -(TILE_SIZE * 2*(1 - WALL_THICKNESS_SCALE))/2;
-//        BoxObstacle obj;
-//        float x;
-//        float y;
-//        for (int ii = 0; ii < wallMidPos.size(); ii++) {
-//            x = board.boardToScreenX((int) wallMidPos.get(ii).x);
-//            y = board.boardToScreenY((int) wallMidPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-//            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y);
-//            board.setBlocked((int) wallMidPos.get(ii).x, (int) wallMidPos.get(ii).y+1);
-//
-//            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE);
-//            obj.setTexture(wallMidTexture, 0, offset);
-//            obj.setName(pname+ii);
-//            addWallObject(obj);
-//        }
-//    }
 
     private void addWalls() {
         String pname = "wall";
@@ -1054,8 +1030,12 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
-            if (mop.getDurability() != 0) {
+            if (mop.getDurability() > 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+
+                mop.decrDurability();
+                if (mop.durability < 0) { mop.durability = 0; } //fix negative durability UI displays;
+
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
@@ -1077,7 +1057,6 @@ public class FloorController extends WorldController implements ContactListener 
                         s.applyImpulse(knockbackForce);
                         s.setKnockbackTimer(KNOCKBACK_TIMER);
                         //System.out.println(knockbackForce);
-                        mop.decrDurability();
                     }
                 }
             }
@@ -1426,7 +1405,6 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
-
         if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() < 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
@@ -1439,7 +1417,6 @@ public class FloorController extends WorldController implements ContactListener 
             attackTimer = ATTACK_DURATION;
             return State.MOPL;
         }
-
         else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
            attackTimer = ATTACK_DURATION;
             return State.MOPU;
@@ -1454,11 +1431,15 @@ public class FloorController extends WorldController implements ContactListener 
             attackTimer = ATTACK_DURATION;
             return State.LIDR;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"){
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"){
+            //&& avatar.getHasLid() == true //because you can only do throw animation if you have the lid
+            System.out.println("upthrow");
             attackTimer = ATTACK_DURATION;
             return State.LIDU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"){
+            //&& avatar.getHasLid() == true //because you can only do throw animation if you have the lid
+            System.out.println("downthrow");
             attackTimer = ATTACK_DURATION;
             return State.LIDD;
         }
