@@ -114,6 +114,7 @@ public abstract class WorldController implements Screen {
 	private static final String GRATE_TILE_FILE = "shared/grate-tile-32.png";
 	private static final String STAIRS_TILE_FILE = "shared/stairs-down.png";
 	private static final String UNDER_TILE_FILE = "shared/undertile-32.png";
+	private static final String HAZARD_TILE_FILE = "shared/undertile-32.png";
 
 	private static final String PLAY_BTN_FILE = "shared/play.png";
 
@@ -159,6 +160,7 @@ public abstract class WorldController implements Screen {
 	protected Texture grateTileTexture;
 	protected Texture stairsTileTexture;
 	protected Texture underTileTexture;
+	protected Texture hazardTileTexture;
 	/** Texture asset for the mop cart background */
 	protected Texture backgroundTexture;
 	/** The texture for the exit condition */
@@ -261,6 +263,8 @@ public abstract class WorldController implements Screen {
 		assets.add(UNDER_TILE_FILE);
 		manager.load(STAIRS_TILE_FILE, Texture.class);
 		assets.add(STAIRS_TILE_FILE);
+		manager.load(HAZARD_TILE_FILE, Texture.class);
+		assets.add(HAZARD_TILE_FILE);
 
 		manager.load(GOAL_FILE,Texture.class);
 		assets.add(GOAL_FILE);
@@ -333,6 +337,7 @@ public abstract class WorldController implements Screen {
 		grateTileTexture = new Texture(GRATE_TILE_FILE);
 		underTileTexture = new Texture(STAIRS_TILE_FILE);
 		stairsTileTexture = new Texture(UNDER_TILE_FILE);
+		hazardTileTexture = new Texture(HAZARD_TILE_FILE);
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopTile = createTexture(manager,MOP_CART_FILE, true);

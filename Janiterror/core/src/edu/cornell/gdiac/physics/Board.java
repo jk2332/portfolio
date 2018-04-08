@@ -198,6 +198,7 @@ public class Board {
      * @param y The y index for the Tile cell
      */
     private void drawTile(int x, int y, GameCanvas canvas, Texture tileTexture) {
+//        System.out.println(tileTexture);
         TileState tile = getTileState(x, y);
 
         // Compute drawing coordinates
