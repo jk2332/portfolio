@@ -77,23 +77,15 @@ public class AIController {
         return true;
     }
 
-    private boolean hasNoHazardBetw (int x, int y, int tx, int ty) {
-        if (y==ty){
-            for (int i=Math.min(x, tx); i<=Math.max(x, tx); i++){
-                if (board.isHazard(i, y)) {
-                    System.out.println("hazard");
-                    return false;
-                }
+    //fix this - look at the path?
+    private boolean hasNoHazardBetw (int sx, int sy, int tx, int ty) {
+        for (int i=Math.min(sx, tx); i<=Math.max(sx, tx); i++){
+            for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
+                if (board.isHazard(i, j)) return false;
             }
         }
-        if (tx==x){
-            for (int j=Math.min(y, ty); j<=Math.max(y, ty); j++){
-                if (board.isHazard(x, j)) {
-                    System.out.println("hazard");
-
-                    return false;
-                }
-            }
+        for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
+            if (board.isHazard(tx, j)) return false;
         }
         return true;
     }
@@ -191,24 +183,19 @@ public class AIController {
     }
 
     // n=0 : left, n=1 : right, n=2 : up, n=3 : down
-    private boolean markGoalHelper(int sx, int sy, int n, int dist){
-        if (n==0 && board.isSuperSafeAt(sx-dist, sy)) {
+    private void markGoalHelper(int sx, int sy, int n, int dist){
+        if (n==0) {
           board.setGoal(sx-dist, sy);
-          return true;
         }
-        if (n==1 && board.isSuperSafeAt(sx+dist, sy)) {
+        if (n==1) {
            board.setGoal(sx+dist, sy);
-            return true;
         }
-        if (n==2 && board.isSuperSafeAt(sx, sy+dist)) {
+        if (n==2) {
             board.setGoal(sx, sy+dist);
-            return true;
         }
-        if (n==3 && board.isSuperSafeAt(sx, sy-dist)) {
+        if (n==3) {
             board.setGoal(sx, sy-dist);
-            return true;
         }
-        return false;
     }
 
     private void markGoalTiles() {
@@ -232,59 +219,59 @@ public class AIController {
                 //System.out.println("WANDER");
                 if (patrolPath == PatrolPath.HORIZONTAL){
                     if (this.patrolSeq<=2) {
-                        b = markGoalHelper(sx, sy, 0, 1) && hasNoWallBetw(sx, sy, sx-1, sy) &&
+                        b = board.isSuperSafeAt(sx-1, sy) && hasNoWallBetw(sx, sy, sx-1, sy) &&
                         hasNoHazardBetw(sx, sy, sx-1, sy);
                         patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
                     }
                     else {
-                        b = markGoalHelper(sx, sy, 1, 1) && hasNoWallBetw(sx, sy, sx+1, sy) &&
+                        b = board.isSuperSafeAt(sx+1, sy) && hasNoWallBetw(sx, sy, sx+1, sy) &&
                         hasNoHazardBetw(sx, sy, sx+1, sy);
                         if (patrolSeq==5) patrolSeq=0;
                         else patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
                     }
                 }
                 else if (patrolPath == PatrolPath.VERTICAL) {
                     if (this.patrolSeq<=2){
-                        b = markGoalHelper(sx, sy, 2, 1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
+                        b = board.isSuperSafeAt(sx, sy+1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
                         hasNoHazardBetw(sx, sy, sx, sy+1);
                         patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
                     }
                     else {
-                        b = markGoalHelper(sx, sy, 3, 1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
+                        b = board.isSuperSafeAt(sx, sy-1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
                         hasNoHazardBetw(sx, sy, sx, sy-1);
                         if (patrolSeq==5) patrolSeq=0;
                         else patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
                     }
                 }
                 else {
                     if (this.patrolSeq < 1 || (patrolSeq>=7)){
-                        b = markGoalHelper(sx, sy, 2, 1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
+                        b = board.isSuperSafeAt(sx, sy+1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
                         hasNoHazardBetw(sx, sy, sx, sy+1);
                         if (patrolSeq==7) patrolSeq=0;
                         else patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=2) {
-                        b = markGoalHelper(sx, sy, 0, 1) && hasNoWallBetw(sx, sy, sx-1, sy) &&
+                        b = board.isSuperSafeAt(sx-1, sy) && hasNoWallBetw(sx, sy, sx-1, sy) &&
                         hasNoHazardBetw(sx, sy, sx-1, sy);
                         patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=4){
-                        b = markGoalHelper(sx, sy, 3, 1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
+                        b = board.isSuperSafeAt(sx, sy-1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
                         hasNoHazardBetw(sx, sy, sx, sy-1);
                         patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=6) {
-                        b = markGoalHelper(sx, sy, 1, 1) && hasNoWallBetw(sx, sy, sx+1, sy) &&
+                        b = board.isSuperSafeAt(sx+1, sy) && hasNoWallBetw(sx, sy, sx+1, sy) &&
                         hasNoHazardBetw(sx, sy, sx+1, sy);
                         patrolSeq++;
-                        if (b) setGoal=true; break;
+                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
                     }
                 }
                 break;
@@ -302,19 +289,19 @@ public class AIController {
                 int manDown =  manhattan(sx, sy, tx, ty-attackRange);
 
                 if (board.isSuperSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx-attackRange, ty, tx, ty) &&
-                        hasNoHazardBetw(tx-attackRange, ty, tx, ty)){
+                        hasNoHazardBetw(sx, sy, tx-attackRange, ty)){
                     fin = 0; temp=manLeft;
                 }
                 if (board.isSuperSafeAt(tx+attackRange, ty) && manRight<temp && hasNoWallBetw(tx+attackRange, ty, tx, ty)
-                        && hasNoHazardBetw(tx+attackRange, ty, tx, ty)) {
+                        && hasNoHazardBetw(sx, sy,tx+attackRange, ty)) {
                     fin=1; temp=manRight;
                 }
                 if (board.isSuperSafeAt(tx , ty+attackRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
-                        && hasNoHazardBetw(tx, ty, tx, ty+attackRange)) {
+                        && hasNoHazardBetw(sx, sy, tx, ty+attackRange)) {
                     fin=2; temp=manUp;
                 }
                 if (board.isSuperSafeAt(tx , ty-attackRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
-                        && hasNoHazardBetw(tx, ty, tx, ty-attackRange)) {
+                        && hasNoHazardBetw(sx, sy, tx, ty-attackRange)) {
                     fin=3;
                 }
                 if (fin < 0) break;
@@ -335,19 +322,19 @@ public class AIController {
                 int manhDown =  manhattan(sx, sy, tx, ty-attackRange);
 
                 if (board.isSuperSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx, ty, tx-attackRange, ty) &&
-                        hasNoHazardBetw(tx-attackRange, ty, tx, ty)){
+                        hasNoHazardBetw(sx, sy,tx-attackRange, ty)){
                     fin=0; temp=manhLeft;
                 }
                 if (board.isSuperSafeAt(tx+attackRange, ty) && manhRight<temp && hasNoWallBetw(tx, ty, tx+attackRange, ty)
-                        && hasNoHazardBetw(tx+attackRange, ty, tx, ty)) {
+                        && hasNoHazardBetw(sx, sy,tx+attackRange, ty)) {
                     fin=1; temp=manhRight;
                 }
                 if (board.isSuperSafeAt(tx, ty+attackRange) && manhUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
-                        && hasNoHazardBetw(tx, ty, tx, ty+attackRange)) {
+                        && hasNoHazardBetw(sx,sy, tx, ty+attackRange)) {
                     fin=2; temp=manhUp;
                 }
                 if (board.isSuperSafeAt(tx, ty-attackRange) && manhDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
-                        && hasNoHazardBetw(tx, ty, tx, ty-attackRange)) {
+                        && hasNoHazardBetw(sx, sy, tx, ty-attackRange)) {
                     fin=3;
                 }
                 if (fin < 0) break;
