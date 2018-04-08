@@ -210,6 +210,9 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> joeMopL;
     private Animation <TextureRegion> joeMopU;
     private Animation <TextureRegion> joeMopD;
+    private Animation <TextureRegion> joeLidR;
+    private Animation <TextureRegion> joeLidU;
+    private Animation <TextureRegion> joeLidD;
 
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
@@ -434,6 +437,21 @@ public class FloorController extends WorldController implements ContactListener 
             frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,192));
         }
         joeMopD = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarLidRTexture,i*64,0,64,64));
+        }
+        joeLidR = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarLidUTexture,i*64,0,64,64));
+        }
+        joeLidU = new Animation<TextureRegion>(0.2f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarLidDTexture,i*64,0,64,64));
+        }
+        joeLidD = new Animation<TextureRegion>(0.2f, frames);
         frames.clear();
 
 
@@ -1399,7 +1417,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPL, MOPU, MOPD }
+    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPL, MOPU, MOPD, LIDR,LIDU,LIDD }
     public State currentState;
     public State previousState;
 
@@ -1417,6 +1435,7 @@ public class FloorController extends WorldController implements ContactListener 
             attackTimer = ATTACK_DURATION;
             return State.MOPL;
         }
+
         else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
            attackTimer = ATTACK_DURATION;
             return State.MOPU;
@@ -1424,6 +1443,20 @@ public class FloorController extends WorldController implements ContactListener 
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"){
            attackTimer = ATTACK_DURATION;
             return State.MOPD;
+        }
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"&& !(avatar.getMovementX() < 0)&& avatar.isFacingRight() )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")&& avatar.getMovementX() < 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")&& avatar.getMovementX() == 0 && !avatar.isFacingRight() )){
+            attackTimer = ATTACK_DURATION;
+            return State.LIDR;
+        }
+        else if (avatar.isUp()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"){
+            attackTimer = ATTACK_DURATION;
+            return State.LIDU;
+        }
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"){
+            attackTimer = ATTACK_DURATION;
+            return State.LIDD;
         }
         else if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0 && attackTimer == 0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)&& attackTimer == 0){
             return State.RUNNINGR;
@@ -1469,12 +1502,22 @@ public class FloorController extends WorldController implements ContactListener 
             case MOPD:
                 region = joeMopD.getKeyFrame(stateTimer,false);
                 break;
+            case LIDR:
+                region = joeLidR.getKeyFrame(stateTimer,true);
+                break;
+            case LIDU:
+                region = joeLidU.getKeyFrame(stateTimer,false);
+                break;
+            case LIDD:
+                region = joeLidD.getKeyFrame(stateTimer,false);
+                break;
             default:
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
         }
 
-        if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)){
+        if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)||
+                (currentState == State.LIDR)||(currentState == State.LIDU)||(currentState == State.LIDD)){
 
             if ((previousState == currentState) &&attackTimer > 0) {
                 attackTimer -= dt;
