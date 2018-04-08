@@ -222,6 +222,8 @@ public class FloorController extends WorldController implements ContactListener 
     protected AIController[] controls;
     /** Game sectioned off into tiles for AI purposes */
     private Board board;
+    /** ticks for update loop */
+    private long ticks;
 
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
@@ -278,6 +280,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallBRPos = level.getWallBRPos();
 
         hazardPos = level.getHazardPos();
+        System.out.println(hazardPos.size());
         hazardTiles = level.getHazardTiles();
 
         tiles = level.getTiles();
@@ -358,7 +361,7 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-//        setHazardTiles();
+        setHazardTiles();
     }
 
     private void addUIInfo() {
@@ -650,12 +653,14 @@ public class FloorController extends WorldController implements ContactListener 
      * @param delta Number of seconds since last animation frame
      */
     public void update(float dt) {
+        ticks ++;
         if(avatar.getHP()<=0) {
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()))){
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
+                ticks % 30==0L){ //adjust this later
             System.out.println("You're on a hazard tile");
             avatar.decrHP();
         }
