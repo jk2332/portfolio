@@ -257,15 +257,15 @@ public class FloorController extends WorldController implements ContactListener 
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-        slimePos = level.getSlimePos();
-        robotPos = level.getRobotPos();
-        lizardPos = level.getLizardPos();
+        //slimePos = level.getSlimePos();
+        //robotPos = level.getRobotPos();
+        //lizardPos = level.getLizardPos();
 
-        //robotPos = new ArrayList<Vector2>();
-        //lizardPos = new ArrayList<Vector2>();
+        robotPos = new ArrayList<Vector2>();
+        lizardPos = new ArrayList<Vector2>();
         //scientistPos=new ArrayList<Vector2>();
         //scientistPos=level.getLizardPos();
-        //slimePos = new ArrayList<Vector2>();
+        slimePos = new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -276,7 +276,6 @@ public class FloorController extends WorldController implements ContactListener 
         wallBRPos = level.getWallBRPos();
 
         hazardPos = level.getHazardPos();
-        System.out.println(hazardPos.size());
 
         tiles = level.getTiles();
     }
@@ -351,12 +350,10 @@ public class FloorController extends WorldController implements ContactListener 
                 broken4tileTexture,underTileTexture,stairsTileTexture, hazardTileTexture};
 
         board.setTileTextures(tileTextures);
-
+        setHazardTiles();
         addUIInfo();
         addWalls();
         addCharacters();
-
-        setHazardTiles();
         //does this using hazardpos
     }
 
@@ -655,7 +652,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
-            System.out.println("You're on a hazard tile");
+            //System.out.println("You're on a hazard tile");
             avatar.decrHP();
         }
         else {
@@ -781,7 +778,7 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
                     && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
-                System.out.println("Enemy is on a hazard tile");
+                //System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
                 if (s.getHP() <= 0) {
                     controls[s.getId()]=null;
