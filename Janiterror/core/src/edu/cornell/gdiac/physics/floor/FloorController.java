@@ -798,6 +798,16 @@ public class FloorController extends WorldController implements ContactListener 
 
                 performAction(s, action);
             }
+
+            if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY())) &&
+                    ticks % 30==0L){ //adjust this later
+                System.out.println("Enemy is on a hazard tile");
+                s.decrHP();
+                if (s.getHP() <= 0) {
+                    controls[s.getId()]=null;
+                    s.markRemoved(true);
+                }
+            }
         }
     }
 
@@ -1301,12 +1311,6 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.begin();
 
         board.draw(canvas, tiles);
-//        for (int i = 0; i < hazardTiles.length; i++) {
-//            for (int j = 0; j < hazardTiles[0].length; j++) {
-//                System.out.println(hazardTiles[i][j]);
-//            }
-//        }
-//        board.draw(canvas, hazardTiles);
 
         for(Obstacle obj : objects) {
             obj.draw(canvas);

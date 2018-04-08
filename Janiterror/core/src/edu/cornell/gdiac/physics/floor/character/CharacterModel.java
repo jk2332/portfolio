@@ -117,6 +117,7 @@ public class CharacterModel extends CapsuleObstacle {
      * Decrements the characters HP by one.
      */
     public void decrHP() {
+
         hp -= 1; /* TODO dont do if negative */
     }
 
