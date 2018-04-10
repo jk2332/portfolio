@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-basic.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
@@ -67,7 +67,6 @@ public class FloorController extends WorldController implements ContactListener 
     public static int CONTROL_MOVE_UP = 4;
     public static int CONTROL_MOVE_DOWN = 8;
     public static int CONTROL_FIRE = 16;
-
 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
@@ -274,15 +273,15 @@ public class FloorController extends WorldController implements ContactListener 
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-//        slimePos = level.getSlimePos();
-//        robotPos = level.getRobotPos();
-//        lizardPos = level.getLizardPos();
+        slimePos = level.getSlimePos();
+        robotPos = level.getRobotPos();
+        lizardPos = level.getLizardPos();
 
-        robotPos = new ArrayList<Vector2>();
-        lizardPos = new ArrayList<Vector2>();
+//        robotPos = new ArrayList<Vector2>();
+//        lizardPos = new ArrayList<Vector2>();
+//        slimePos = new ArrayList<Vector2>();
         //scientistPos=new ArrayList<Vector2>();
         //scientistPos=level.getLizardPos();
-        slimePos = new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -817,7 +816,7 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping()) {
             //get weapon at index
             String swapping_weapon_name = mopcart_menu[mopcart_index];
-            System.out.print(swapping_weapon_name);
+//            System.out.print(swapping_weapon_name);
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
             //set all new weapons
@@ -1511,8 +1510,6 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
-        System.out.println(avatar.getHasLid());
-        System.out.println(avatar.getWep1().durability);
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
