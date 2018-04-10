@@ -76,7 +76,7 @@ public class FloorController extends WorldController implements ContactListener 
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private String[] list_of_weapons = new String[4];
-    private String[] mopcart = new String[2];
+    private String[] mopcart_menu = new String[2];
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
     private boolean mop_cart_reloaded_before = false;
@@ -129,7 +129,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
-
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
@@ -234,7 +233,6 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Saved lid velocity before colliding with slimeball */
     private Vector2 lidVel = new Vector2();
-
 
 
     /**
@@ -347,9 +345,10 @@ public class FloorController extends WorldController implements ContactListener 
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
-                broken4tileTexture,underTileTexture,stairsTileTexture, hazardTileTexture};
+                broken4tileTexture,underTileTexture,stairsTileTexture};
 
         board.setTileTextures(tileTextures);
+        board.setHazardTileTexture(hazardTileTexture);
         setHazardTiles();
         addUIInfo();
         addWalls();
@@ -366,8 +365,8 @@ public class FloorController extends WorldController implements ContactListener 
         list_of_weapons[1] = "spray";
         list_of_weapons[2] = "vacuum";
         list_of_weapons[3] = "lid";
-        mopcart[0] = "vacuum";
-        mopcart[1] = "lid";
+        mopcart_menu[0] = "vacuum";
+        mopcart_menu[1] = "lid";
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
@@ -721,7 +720,7 @@ public class FloorController extends WorldController implements ContactListener 
         // swapping weapon
         if (avatar.isSwapping()) {
             //get weapon at index
-            String swapping_weapon_name = mopcart[mopcart_index];
+            String swapping_weapon_name = mopcart_menu[mopcart_index];
             System.out.print(swapping_weapon_name);
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
@@ -730,7 +729,7 @@ public class FloorController extends WorldController implements ContactListener 
             WeaponModel old_secondary = avatar.getWep2();
             avatar.setWep1(swapping_weapon);
             avatar.setWep2(old_primary);
-            mopcart[mopcart_index] = old_secondary.name;
+            mopcart_menu[mopcart_index] = old_secondary.name;
             if (swapping_weapon_name == "lid") {
                 avatar.setHasLid(true);
             }
@@ -1034,9 +1033,7 @@ public class FloorController extends WorldController implements ContactListener 
             if (mop.getDurability() > 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
 
-                mop.decrDurability();
-                if (mop.durability < 0) { mop.durability = 0; } //fix negative durability UI displays;
-
+                boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
@@ -1046,6 +1043,7 @@ public class FloorController extends WorldController implements ContactListener 
                     boolean case4 = Math.abs(vertiGap)<= mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                     if ((case1 || case2 || case3 || case4)) {
+                        enemy_hit = true;
                         if (s.getHP() == 1) {
                             s.markRemoved(true);
                             controls[s.getId()]=null;
@@ -1059,6 +1057,10 @@ public class FloorController extends WorldController implements ContactListener 
                         s.setKnockbackTimer(KNOCKBACK_TIMER);
                         //System.out.println(knockbackForce);
                     }
+                }
+                if (enemy_hit) {
+                    mop.decrDurability();
+                    if (mop.durability < 0) { mop.durability = 0; } //fix negative durability UI displays;
                 }
             }
         } else if (wep instanceof SprayModel) {
@@ -1357,7 +1359,8 @@ public class FloorController extends WorldController implements ContactListener 
             //DRAW MOP CART TEXT AND BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 180, 0, .18f, .34f);
+                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 180, 0, .18f, .8f);
+                //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
             canvas.drawText("Mop Cart", displayFont,
                     canvas.getWidth()/2 + 375, canvas.getHeight()/2 + 280);
@@ -1366,7 +1369,7 @@ public class FloorController extends WorldController implements ContactListener 
             //RETRIEVE MOP CART WEAPONS
             String[] draw_mopcart = new String[2];
             int unused_indexer = 0;
-            for (String wep: mopcart) {
+            for (String wep: mopcart_menu) {
                 //if weapon not in use
                 draw_mopcart[unused_indexer] = wep;
                 unused_indexer += 1;
@@ -1379,7 +1382,7 @@ public class FloorController extends WorldController implements ContactListener 
 
             //DRAW MOPCART INDEX
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
-            canvas.draw(heartTexture, current_xlocation, canvas.getHeight()/2 + 170);
+            canvas.draw(mopcartIndexTexture, current_xlocation, canvas.getHeight()/2 + 170);
         }
 
         //Draw Enemy Health
@@ -1406,6 +1409,7 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
+        System.out.println(avatar.getHasLid());
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")

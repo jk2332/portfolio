@@ -108,6 +108,7 @@ public abstract class WorldController implements Screen {
 	private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
 	private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
 	private static final String HEART_FILE  = "floor/sponge.png";
+    private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String TILE_FILE = "shared/basic-tile-32.png";
@@ -118,7 +119,7 @@ public abstract class WorldController implements Screen {
 	private static final String GRATE_TILE_FILE = "shared/grate-tile-32.png";
 	private static final String STAIRS_TILE_FILE = "shared/stairs-down.png";
 	private static final String UNDER_TILE_FILE = "shared/undertile-32.png";
-	private static final String HAZARD_TILE_FILE = "shared/undertile-32.png";
+	private static final String HAZARD_TILE_FILE = "shared/hazard-tile.png";
 
 	private static final String PLAY_BTN_FILE = "shared/play.png";
 
@@ -158,8 +159,9 @@ public abstract class WorldController implements Screen {
 	protected Texture vacuumTextureSmall;
 	protected Texture lidTextureSmall;
 	protected Texture heartTexture;
+    protected Texture mopcartIndexTexture;
 
-	/** Texture Asset for tiles */
+    /** Texture Asset for tiles */
 	protected Texture tileTexture;
 	protected Texture broken1TileTexture;
 	protected Texture broken2tileTexture;
@@ -263,6 +265,9 @@ public abstract class WorldController implements Screen {
 		assets.add(LID_FILE_SMALL);
 		manager.load(HEART_FILE, Texture.class);
 		assets.add(HEART_FILE);
+        manager.load(MOPCART_INDEX_FILE, Texture.class);
+        assets.add(MOPCART_INDEX_FILE);
+
 		manager.load(TILE_FILE, Texture.class);
 		assets.add(TILE_FILE);
 		manager.load(BROKEN1_TILE_FILE, Texture.class);
@@ -286,7 +291,6 @@ public abstract class WorldController implements Screen {
 		assets.add(GOAL_FILE);
 		manager.load(MOP_CART_FILE,Texture.class);
 		assets.add(MOP_CART_FILE);
-
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -348,8 +352,9 @@ public abstract class WorldController implements Screen {
 		vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
 		lidTextureSmall = new Texture(LID_FILE_SMALL);
 		heartTexture = new Texture(HEART_FILE);
+        mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
 
-		tileTexture = new Texture(TILE_FILE);
+        tileTexture = new Texture(TILE_FILE);
 		broken1TileTexture = new Texture(BROKEN1_TILE_FILE);
 		broken2tileTexture = new Texture(BROKEN2_TILE_FILE);
 		broken3tileTexture = new Texture(BROKEN3_TILE_FILE);
