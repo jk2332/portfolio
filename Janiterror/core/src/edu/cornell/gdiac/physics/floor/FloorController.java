@@ -653,6 +653,7 @@ public class FloorController extends WorldController implements ContactListener 
                 ticks % 30==0L){ //adjust this later
             //System.out.println("You're on a hazard tile");
             avatar.decrHP();
+            SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
         }
         else {
             // Process actions in object model
@@ -843,6 +844,7 @@ public class FloorController extends WorldController implements ContactListener 
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 avatar.decrHP();
                 s.resetAttackAniFrame();
+                SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
             }
         } else if (s instanceof SlimeModel) {
             //System.out.println("shoot1");
@@ -1197,6 +1199,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (!bd1.isRemoved()) {
                     avatar.decrHP();
                     removeBullet(bd1);
+                    SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
                 }
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
                 removeBullet(bd1);
@@ -1206,6 +1209,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (!bd2.isRemoved()) {
                     removeBullet(bd2);
                     avatar.decrHP();
+                    SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
                 }
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
