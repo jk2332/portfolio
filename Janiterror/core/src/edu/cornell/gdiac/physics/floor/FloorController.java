@@ -130,6 +130,7 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         }
 
+
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
         sounds.allocate(manager, JUMP_FILE);
@@ -160,8 +161,14 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float  SLIMEBALL_SPEED = 10.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
-    /** Attack total time frames*timerperframe */
-    private static final float ATTACK_DURATION = 0.8f;
+    /** Attack total time frames*timerperframe for mop */
+    private static final float ATTACK_DURATION_MOP = 0.4f;
+    /** Attack total time frames*timerperframe for lid */
+    private static final float ATTACK_DURATION_LID = 0.2f;
+    /** Attack total time frames*timerperframe for spray */
+    private static final float ATTACK_DURATION_SPRAY= 0.8f;
+    /** Attack total time frames*timerperframe for vacuum */
+    private static final float ATTACK_DURATION_VACUUM= 0.5f;
     /** The timer for animations*/
     private float stateTimer;
     /** The cooldown for attack animations*/
@@ -208,8 +215,17 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> joeMopU;
     private Animation <TextureRegion> joeMopD;
     private Animation <TextureRegion> joeLidR;
+    private Animation <TextureRegion> joeLidL;
     private Animation <TextureRegion> joeLidU;
     private Animation <TextureRegion> joeLidD;
+    private Animation <TextureRegion> joeSprayR;
+    private Animation <TextureRegion> joeSprayL;
+    private Animation <TextureRegion> joeSprayU;
+    private Animation <TextureRegion> joeSprayD;
+    private Animation <TextureRegion> joeVacuumR;
+    private Animation <TextureRegion> joeVacuumL;
+    private Animation <TextureRegion> joeVacuumU;
+    private Animation <TextureRegion> joeVacuumD;
 
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
@@ -233,6 +249,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Saved lid velocity before colliding with slimeball */
     private Vector2 lidVel = new Vector2();
+
 
 
     /**
@@ -415,38 +432,85 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopRTexture,i*192,0,192,64));
         }
-        joeMopR = new Animation<TextureRegion>(0.2f, frames);
+        joeMopR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopLTexture,i*192,0,192,64));
         }
-        joeMopL = new Animation<TextureRegion>(0.2f, frames);
+        joeMopL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,192));
         }
-        joeMopU = new Animation<TextureRegion>(0.2f, frames);
+        joeMopU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,192));
         }
-        joeMopD = new Animation<TextureRegion>(0.2f, frames);
+        joeMopD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidRTexture,i*64,0,64,64));
         }
-        joeLidR = new Animation<TextureRegion>(0.2f, frames);
+        joeLidR = new Animation<TextureRegion>(0.05f, frames);
+        frames.clear();
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(avatarLidLTexture,i*64,0,64,64));
+        }
+        joeLidL = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidUTexture,i*64,0,64,64));
         }
-        joeLidU = new Animation<TextureRegion>(0.2f, frames);
+        joeLidU = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidDTexture,i*64,0,64,64));
         }
-        joeLidD = new Animation<TextureRegion>(0.2f, frames);
+        joeLidD = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarSprayRTexture,i*320,0,320,64));
+        }
+        joeSprayR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarSprayLTexture,i*320,0,320,64));
+        }
+        joeSprayL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarSprayUTexture,i*64,0,64,320));
+        }
+        joeSprayU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(avatarSprayDTexture,i*64,0,64,320));
+        }
+        joeSprayD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+        for (int i=0; i <= 0; i++){
+            frames.add (new TextureRegion(avatarVacuumRTexture,i*64,0,64,64));
+        }
+        joeVacuumR = new Animation<TextureRegion>(0.5f, frames);
+        frames.clear();
+        for (int i=0; i <= 0; i++){
+            frames.add (new TextureRegion(avatarVacuumLTexture,i*64,0,64,64));
+        }
+        joeVacuumL = new Animation<TextureRegion>(0.5f, frames);
+        frames.clear();
+        for (int i=0; i <= 0; i++){
+            frames.add (new TextureRegion(avatarVacuumUTexture,i*64,0,64,64));
+        }
+        joeVacuumU = new Animation<TextureRegion>(0.5f, frames);
+        frames.clear();
+        for (int i=0; i <= 0; i++){
+            frames.add (new TextureRegion(avatarVacuumDTexture,i*64,0,64,64));
+        }
+        joeVacuumD = new Animation<TextureRegion>(0.5f, frames);
+        frames.clear();
+
+
 
 
         float dwidth  = 64/scale.x;
@@ -1096,7 +1160,6 @@ public class FloorController extends WorldController implements ContactListener 
             LidModel lid = (LidModel) wep;
             if (lid.getDurability() != 0 && avatar.getHasLid()) {
                 createBullet(avatar);
-                avatar.setHasLid(false);
                 lid.decrDurability();
             }
         } else if (wep instanceof VacuumModel) {
@@ -1408,19 +1471,24 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD, MOPR, MOPL, MOPU, MOPD, LIDR,LIDU,LIDD }
+    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+        MOPR, MOPL, MOPU, MOPD,
+        LIDR,LIDL,LIDU,LIDD,
+        SPRAYR,SPRAYL,SPRAYU,SPRAYD,
+        VACUUMR,VACUUML,VACUUMU,VACUUMD}
     public State currentState;
     public State previousState;
 
     public State getState(){
         System.out.println(avatar.getHasLid());
+        System.out.println(avatar.getWep1().durability);
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
                         && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
-           attackTimer = ATTACK_DURATION;
+           attackTimer = ATTACK_DURATION_MOP;
             return State.MOPR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
@@ -1429,17 +1497,17 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
-            attackTimer = ATTACK_DURATION;
+            attackTimer = ATTACK_DURATION_MOP;
             return State.MOPL;
         }
         else if (avatar.isUp() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
                 && avatar.getWep1().durability > 0){
-           attackTimer = ATTACK_DURATION;
+           attackTimer = ATTACK_DURATION_MOP;
             return State.MOPU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
                 && avatar.getWep1().durability > 0){
-           attackTimer = ATTACK_DURATION;
+           attackTimer = ATTACK_DURATION_MOP;
             return State.MOPD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
@@ -1450,18 +1518,94 @@ public class FloorController extends WorldController implements ContactListener 
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
                         && avatar.getWep1().durability > 0 && avatar.getHasLid())){
-            attackTimer = ATTACK_DURATION;
+            attackTimer = ATTACK_DURATION_LID;
+            avatar.setHasLid(false);
             return State.LIDR;
+        }
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
+                && avatar.getWep1().durability > 0 && avatar.getHasLid() ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                        && avatar.getHasLid())){
+            attackTimer = ATTACK_DURATION_LID;
+            avatar.setHasLid(false);
+            return State.LIDL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability > 0 && avatar.getHasLid()){
-            attackTimer = ATTACK_DURATION;
+            attackTimer = ATTACK_DURATION_LID;
+            avatar.setHasLid(false);
             return State.LIDU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability > 0 && avatar.getHasLid()){
-            attackTimer = ATTACK_DURATION;
+            attackTimer = ATTACK_DURATION_LID;
+            avatar.setHasLid(false);
             return State.LIDD;
+        }
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
+                && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
+                && avatar.getWep1().durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight()
+                        && avatar.getWep1().durability > 0)){
+            attackTimer = ATTACK_DURATION_SPRAY;
+            return State.SPRAYR;
+        }
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
+                && avatar.getWep1().durability > 0  ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                        )){
+            attackTimer = ATTACK_DURATION_SPRAY;
+            return State.SPRAYL;
+        }
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
+                && avatar.getWep1().durability > 0 ){
+            attackTimer = ATTACK_DURATION_SPRAY;
+            return State.SPRAYU;
+        }
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
+                && avatar.getWep1().durability > 0 ){
+            attackTimer = ATTACK_DURATION_SPRAY;
+            return State.SPRAYD;
+        }
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
+                && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
+                && avatar.getWep1().durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight()
+                        && avatar.getWep1().durability > 0)){
+            attackTimer = ATTACK_DURATION_VACUUM;
+            return State.VACUUMR;
+        }
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
+                && avatar.getWep1().durability > 0  ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum")
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                )){
+            attackTimer = ATTACK_DURATION_VACUUM;
+            return State.VACUUML;
+        }
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
+                && avatar.getWep1().durability > 0 ){
+            attackTimer = ATTACK_DURATION_VACUUM;
+            return State.VACUUMU;
+        }
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
+                && avatar.getWep1().durability > 0 ){
+            attackTimer = ATTACK_DURATION_VACUUM;
+            return State.VACUUMD;
         }
         else if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0 && attackTimer == 0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)&& attackTimer == 0){
             return State.RUNNINGR;
@@ -1496,10 +1640,10 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
             case MOPR:
-                region = joeMopR.getKeyFrame(stateTimer,true);
+                region = joeMopR.getKeyFrame(stateTimer,false);
                 break;
             case MOPL:
-                region = joeMopL.getKeyFrame(stateTimer,true);
+                region = joeMopL.getKeyFrame(stateTimer,false);
                 break;
             case MOPU:
                 region = joeMopU.getKeyFrame(stateTimer,false);
@@ -1508,7 +1652,10 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeMopD.getKeyFrame(stateTimer,false);
                 break;
             case LIDR:
-                region = joeLidR.getKeyFrame(stateTimer,true);
+                region = joeLidR.getKeyFrame(stateTimer,false);
+                break;
+            case LIDL:
+                region = joeLidL.getKeyFrame(stateTimer,false);
                 break;
             case LIDU:
                 region = joeLidU.getKeyFrame(stateTimer,false);
@@ -1516,13 +1663,39 @@ public class FloorController extends WorldController implements ContactListener 
             case LIDD:
                 region = joeLidD.getKeyFrame(stateTimer,false);
                 break;
+            case SPRAYR:
+                region = joeSprayR.getKeyFrame(stateTimer,false);
+                break;
+            case SPRAYL:
+                region = joeSprayL.getKeyFrame(stateTimer,false);
+                break;
+            case SPRAYU:
+                region = joeSprayU.getKeyFrame(stateTimer,false);
+                break;
+            case SPRAYD:
+                region = joeVacuumD.getKeyFrame(stateTimer,false);
+                break;
+            case VACUUMR:
+                region = joeVacuumR.getKeyFrame(stateTimer,false);
+                break;
+            case VACUUML:
+                region = joeVacuumL.getKeyFrame(stateTimer,false);
+                break;
+            case VACUUMU:
+                region = joeVacuumU.getKeyFrame(stateTimer,false);
+                break;
+            case VACUUMD:
+                region = joeVacuumD.getKeyFrame(stateTimer,false);
+                break;
             default:
                 region = joeStand.getKeyFrame(stateTimer,true);
                 break;
         }
 
         if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)||
-                (currentState == State.LIDR)||(currentState == State.LIDU)||(currentState == State.LIDD)){
+                (currentState == State.LIDR)||(currentState == State.LIDU)||(currentState == State.LIDD)||(currentState == State.LIDL)||
+        (currentState == State.SPRAYR)||(currentState == State.SPRAYU)||(currentState == State.SPRAYD)||(currentState == State.SPRAYL) ||
+                (currentState == State.VACUUMR)||(currentState == State.VACUUMU)||(currentState == State.VACUUMD)||(currentState == State.VACUUML)){
 
             if ((previousState == currentState) &&attackTimer > 0) {
                 attackTimer -= dt;
