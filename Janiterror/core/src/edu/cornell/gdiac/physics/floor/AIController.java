@@ -79,6 +79,7 @@ public class AIController {
 
     //fix this - look at the path?
     private boolean hasNoHazardBetw (int sx, int sy, int tx, int ty) {
+        /**
         for (int i=Math.min(sx, tx); i<=Math.max(sx, tx); i++){
             for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
                 if (board.isHazard(i, j)) return false;
@@ -86,7 +87,7 @@ public class AIController {
         }
         for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
             if (board.isHazard(tx, j)) return false;
-        }
+        }**/
         return true;
     }
 
