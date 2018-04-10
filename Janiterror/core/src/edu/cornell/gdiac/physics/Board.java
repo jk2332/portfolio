@@ -221,10 +221,10 @@ public class Board {
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
         if (x==goalX && y==goalY){
-//            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
-            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
                     1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+//            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         }
         //else if (getTileState(x,y).blocked){
         //    canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,

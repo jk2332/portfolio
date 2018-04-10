@@ -75,7 +75,7 @@ public abstract class WorldController implements Screen {
     private static final String WALL_SL_FILE = "shared/vertical-right-special.png";
 
 	/** File to texture for the win door */
-	private static final String GOAL_FILE = "shared/goaldoor64.png";
+	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	/** Retro font for displaying messages */
