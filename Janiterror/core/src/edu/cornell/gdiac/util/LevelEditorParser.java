@@ -22,6 +22,8 @@ public class LevelEditorParser {
     private ArrayList<Vector2> wallTLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallBRPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallBLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSRPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> scientistPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
@@ -241,12 +243,16 @@ public class LevelEditorParser {
                     wallMidPos.add(new Vector2(j, i ));
                 } else if (horiWalls[i][j] == wallhgid) {
                     wallTLPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == wallhgid + 2) {
-                    wallTRPos.add(new Vector2(j, i ));
                 } else if (horiWalls[i][j] == wallhgid + 3) {
+                    wallTRPos.add(new Vector2(j, i ));
+                } else if (horiWalls[i][j] == wallhgid + 4) {
                     wallBLPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == wallhgid + 5) {
+                } else if (horiWalls[i][j] == wallhgid + 7) {
                     wallBRPos.add(new Vector2(j, i ));
+                } else if (horiWalls[i][j] == wallhgid + 6) {
+                    wallSLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallhgid + 5) {
+                    wallSRPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -328,6 +334,14 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getLizardPos() {
         return lizardPos;
+    }
+
+    public ArrayList<Vector2> getWallSLPos() {
+        return wallSLPos;
+    }
+
+    public ArrayList<Vector2> getWallSRPos() {
+        return wallSRPos;
     }
 
     public float getGoalDoorX() {

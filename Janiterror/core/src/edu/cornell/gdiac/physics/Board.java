@@ -20,6 +20,7 @@ public class Board {
 
     /** Texture+Mesh for tile. Only need one, since all have same geometry */
     private Texture[] tileTextures;
+    private Texture hazardTileTexture;
 
     public Board(int width, int height) {
         this.width = width;
@@ -186,6 +187,10 @@ public class Board {
         tileTextures = t;
     }
 
+    public void setHazardTileTexture(Texture t) {
+        hazardTileTexture = t;
+    }
+
     public boolean isBlocked(int x, int y){
         if (!inBounds(x, y)) return false;
         return getTileState(x, y).blocked;
@@ -216,7 +221,9 @@ public class Board {
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
         if (x==goalX && y==goalY){
-            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
                     1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         }
         //else if (getTileState(x,y).blocked){
@@ -224,7 +231,7 @@ public class Board {
         //            1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         //}
         else if (getTileState(x,y).isHazard){
-            canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+            canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
                     1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         }
         else {

@@ -71,6 +71,8 @@ public abstract class WorldController implements Screen {
 	private static final String WALL_TR_FILE = "shared/corner-top-right.png";
 	private static final String WALL_BR_FILE = "shared/corner-bottom-right.png";
 	private static final String WALL_BL_FILE = "shared/corner-bottom-left.png";
+    private static final String WALL_SR_FILE = "shared/vertical-left-special.png";
+    private static final String WALL_SL_FILE = "shared/vertical-right-special.png";
 
 	/** File to texture for the win door */
 	private static final String GOAL_FILE = "shared/goaldoor64.png";
@@ -89,8 +91,17 @@ public abstract class WorldController implements Screen {
 	private static final String JANITOR_MOPU_FILE  = "floor/janitor-attack-U-mop.png";
 	private static final String JANITOR_MOPD_FILE  = "floor/janitor-attack-D-mop.png";
     private static final String JANITOR_LIDR_FILE  = "floor/janitor-attack-R-garbage-lid.png";
+	private static final String JANITOR_LIDL_FILE  = "floor/janitor-attack-L-garbage-lid.png";
     private static final String JANITOR_LIDU_FILE  = "floor/janitor-attack-U-garbage-lid.png";
     private static final String JANITOR_LIDD_FILE  = "floor/janitor-attack-D-garbage-lid.png";
+	private static final String JANITOR_SPRAYR_FILE  = "floor/janitor-attack-R-spray.png";
+	private static final String JANITOR_SPRAYL_FILE  = "floor/janitor-attack-L-spray.png";
+	private static final String JANITOR_SPRAYU_FILE  = "floor/janitor-attack-U-spray.png";
+	private static final String JANITOR_SPRAYD_FILE  = "floor/janitor-attack-D-spray.png";
+    private static final String JANITOR_VACUUMR_FILE  = "floor/janitor-attack-R-vacuum.png";
+    private static final String JANITOR_VACUUML_FILE  = "floor/janitor-attack-L-vacuum.png";
+    private static final String JANITOR_VACUUMU_FILE  = "floor/janitor-attack-U-vacuum.png";
+    private static final String JANITOR_VACUUMD_FILE  = "floor/janitor-attack-D-vacuum.png";
 	private static final String SCIENTIST_FILE  = "floor/scientist.png";
 	private static final String SLIME_FILE  = "floor/slime.png";
 	private static final String LIZARD_FILE  = "floor/lizard.png";
@@ -108,6 +119,7 @@ public abstract class WorldController implements Screen {
 	private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
 	private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
 	private static final String HEART_FILE  = "floor/sponge.png";
+    private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String TILE_FILE = "shared/basic-tile-32.png";
@@ -118,7 +130,7 @@ public abstract class WorldController implements Screen {
 	private static final String GRATE_TILE_FILE = "shared/grate-tile-32.png";
 	private static final String STAIRS_TILE_FILE = "shared/stairs-down.png";
 	private static final String UNDER_TILE_FILE = "shared/undertile-32.png";
-	private static final String HAZARD_TILE_FILE = "shared/undertile-32.png";
+	private static final String HAZARD_TILE_FILE = "shared/hazard-tile.png";
 
 	private static final String PLAY_BTN_FILE = "shared/play.png";
 
@@ -130,6 +142,8 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion wallTRTexture;
 	protected TextureRegion wallBLTexture;
 	protected TextureRegion wallBRTexture;
+    protected TextureRegion wallSLTexture;
+    protected TextureRegion wallSRTexture;
 	protected TextureRegion avatarIdleTexture;
 	protected TextureRegion avatarWalkRTexture;
 	protected TextureRegion avatarWalkUTexture;
@@ -139,8 +153,17 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion avatarMopUTexture;
 	protected TextureRegion avatarMopDTexture;
     protected TextureRegion avatarLidRTexture;
+	protected TextureRegion avatarLidLTexture;
     protected TextureRegion avatarLidUTexture;
     protected TextureRegion avatarLidDTexture;
+	protected TextureRegion avatarSprayRTexture;
+	protected TextureRegion avatarSprayLTexture;
+	protected TextureRegion avatarSprayUTexture;
+	protected TextureRegion avatarSprayDTexture;
+    protected TextureRegion avatarVacuumRTexture;
+    protected TextureRegion avatarVacuumLTexture;
+    protected TextureRegion avatarVacuumUTexture;
+    protected TextureRegion avatarVacuumDTexture;
 	protected TextureRegion scientistTexture;
 	protected TextureRegion slimeTexture;
 	protected TextureRegion lizardTexture;
@@ -158,8 +181,9 @@ public abstract class WorldController implements Screen {
 	protected Texture vacuumTextureSmall;
 	protected Texture lidTextureSmall;
 	protected Texture heartTexture;
+    protected Texture mopcartIndexTexture;
 
-	/** Texture Asset for tiles */
+    /** Texture Asset for tiles */
 	protected Texture tileTexture;
 	protected Texture broken1TileTexture;
 	protected Texture broken2tileTexture;
@@ -209,6 +233,10 @@ public abstract class WorldController implements Screen {
 		assets.add(WALL_BL_FILE);
 		manager.load(WALL_BR_FILE, Texture.class);
 		assets.add(WALL_BR_FILE);
+        manager.load(WALL_SL_FILE, Texture.class);
+        assets.add(WALL_SL_FILE);
+        manager.load(WALL_SR_FILE, Texture.class);
+        assets.add(WALL_SR_FILE);
 		manager.load(JANITOR_IDLE_FILE, Texture.class);
 		assets.add(JANITOR_IDLE_FILE);
 		manager.load(JANITOR_WALKR_FILE, Texture.class);
@@ -227,10 +255,28 @@ public abstract class WorldController implements Screen {
         assets.add(JANITOR_MOPD_FILE);
         manager.load(JANITOR_LIDR_FILE, Texture.class);
         assets.add(JANITOR_LIDR_FILE);
+		manager.load(JANITOR_LIDL_FILE, Texture.class);
+		assets.add(JANITOR_LIDL_FILE);
         manager.load(JANITOR_LIDU_FILE, Texture.class);
         assets.add(JANITOR_LIDU_FILE);
         manager.load(JANITOR_LIDD_FILE, Texture.class);
         assets.add(JANITOR_LIDD_FILE);
+		manager.load(JANITOR_SPRAYR_FILE, Texture.class);
+		assets.add(JANITOR_SPRAYR_FILE);
+		manager.load(JANITOR_SPRAYL_FILE, Texture.class);
+		assets.add(JANITOR_SPRAYL_FILE);
+		manager.load(JANITOR_SPRAYU_FILE, Texture.class);
+		assets.add(JANITOR_SPRAYU_FILE);
+		manager.load(JANITOR_SPRAYD_FILE, Texture.class);
+		assets.add(JANITOR_SPRAYD_FILE);
+        manager.load(JANITOR_VACUUMR_FILE, Texture.class);
+        assets.add(JANITOR_VACUUMR_FILE);
+        manager.load(JANITOR_VACUUML_FILE, Texture.class);
+        assets.add(JANITOR_VACUUML_FILE);
+        manager.load(JANITOR_VACUUMU_FILE, Texture.class);
+        assets.add(JANITOR_VACUUMU_FILE);
+        manager.load(JANITOR_VACUUMD_FILE, Texture.class);
+        assets.add(JANITOR_VACUUMD_FILE);
 		manager.load(SCIENTIST_FILE, Texture.class);
 		assets.add(SCIENTIST_FILE);
 		manager.load(SLIME_FILE, Texture.class);
@@ -263,6 +309,9 @@ public abstract class WorldController implements Screen {
 		assets.add(LID_FILE_SMALL);
 		manager.load(HEART_FILE, Texture.class);
 		assets.add(HEART_FILE);
+        manager.load(MOPCART_INDEX_FILE, Texture.class);
+        assets.add(MOPCART_INDEX_FILE);
+
 		manager.load(TILE_FILE, Texture.class);
 		assets.add(TILE_FILE);
 		manager.load(BROKEN1_TILE_FILE, Texture.class);
@@ -286,7 +335,6 @@ public abstract class WorldController implements Screen {
 		assets.add(GOAL_FILE);
 		manager.load(MOP_CART_FILE,Texture.class);
 		assets.add(MOP_CART_FILE);
-
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -319,6 +367,8 @@ public abstract class WorldController implements Screen {
 		wallTLTexture = createTexture(manager,WALL_TL_FILE,false);
 		wallBRTexture = createTexture(manager,WALL_BR_FILE,false);
 		wallBLTexture = createTexture(manager,WALL_BL_FILE,false);
+        wallSRTexture = createTexture(manager,WALL_SR_FILE,false);
+        wallSLTexture = createTexture(manager,WALL_SL_FILE,false);
 		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
@@ -328,8 +378,17 @@ public abstract class WorldController implements Screen {
 		avatarMopUTexture = createTexture(manager,JANITOR_MOPU_FILE,false);
 		avatarMopDTexture = createTexture(manager,JANITOR_MOPD_FILE,false);
         avatarLidRTexture = createTexture(manager,JANITOR_LIDR_FILE,false);
-        avatarLidUTexture = createTexture(manager,JANITOR_LIDU_FILE,false);
-        avatarLidDTexture = createTexture(manager,JANITOR_LIDD_FILE,false);
+		avatarLidLTexture = createTexture(manager,JANITOR_LIDL_FILE,false);
+		avatarLidUTexture = createTexture(manager,JANITOR_LIDU_FILE,false);
+		avatarLidDTexture = createTexture(manager,JANITOR_LIDD_FILE,false);
+		avatarSprayRTexture = createTexture(manager,JANITOR_SPRAYR_FILE,false);
+		avatarSprayLTexture = createTexture(manager,JANITOR_SPRAYL_FILE,false);
+		avatarSprayUTexture = createTexture(manager,JANITOR_SPRAYU_FILE,false);
+		avatarSprayDTexture = createTexture(manager,JANITOR_SPRAYD_FILE,false);
+        avatarVacuumRTexture = createTexture(manager,JANITOR_VACUUMR_FILE,false);
+        avatarVacuumLTexture = createTexture(manager,JANITOR_VACUUML_FILE,false);
+        avatarVacuumUTexture = createTexture(manager,JANITOR_VACUUMU_FILE,false);
+        avatarVacuumDTexture = createTexture(manager,JANITOR_VACUUMD_FILE,false);
 		scientistTexture = createTexture(manager,SCIENTIST_FILE,false);
 		robotTexture = createTexture(manager,ROBOT_FILE,false);
 		slimeTexture = createTexture(manager,SLIME_FILE, false);
@@ -348,8 +407,9 @@ public abstract class WorldController implements Screen {
 		vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
 		lidTextureSmall = new Texture(LID_FILE_SMALL);
 		heartTexture = new Texture(HEART_FILE);
+        mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
 
-		tileTexture = new Texture(TILE_FILE);
+        tileTexture = new Texture(TILE_FILE);
 		broken1TileTexture = new Texture(BROKEN1_TILE_FILE);
 		broken2tileTexture = new Texture(BROKEN2_TILE_FILE);
 		broken3tileTexture = new Texture(BROKEN3_TILE_FILE);
