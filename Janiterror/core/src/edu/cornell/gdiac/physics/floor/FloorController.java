@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level-basic.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
@@ -1701,7 +1701,7 @@ public class FloorController extends WorldController implements ContactListener 
                 region = joeSprayU.getKeyFrame(stateTimer,false);
                 break;
             case SPRAYD:
-                region = joeVacuumD.getKeyFrame(stateTimer,false);
+                region = joeSprayD.getKeyFrame(stateTimer,false);
                 break;
             case VACUUMR:
                 region = joeVacuumR.getKeyFrame(stateTimer,false);
