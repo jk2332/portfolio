@@ -513,9 +513,6 @@ public class FloorController extends WorldController implements ContactListener 
         joeVacuumD = new Animation<TextureRegion>(0.5f, frames);
         frames.clear();
 
-
-
-
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
@@ -747,6 +744,7 @@ public class FloorController extends WorldController implements ContactListener 
                 ticks % 30==0L){ //adjust this later
             //System.out.println("You're on a hazard tile");
             avatar.decrHP();
+//            avatar.drawAttacked(canvas);
             SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
         }
         else {
@@ -821,14 +819,12 @@ public class FloorController extends WorldController implements ContactListener 
 
             //set all new weapons
             WeaponModel old_primary = avatar.getWep1();
-            WeaponModel old_secondary = avatar.getWep2();
             avatar.setWep1(swapping_weapon);
-            avatar.setWep2(old_primary);
-            mopcart_menu[mopcart_index] = old_secondary.name;
+            mopcart_menu[mopcart_index] = old_primary.name;
             if (swapping_weapon_name == "lid") {
                 avatar.setHasLid(true);
             }
-            if (old_secondary.name == "lid") {
+            if (old_primary.name == "lid") {
                 avatar.setHasLid(false);
             }
         }
@@ -937,6 +933,7 @@ public class FloorController extends WorldController implements ContactListener 
             s.incrAttackAniFrame();
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 avatar.decrHP();
+//                avatar.drawAttacked(canvas);
                 s.resetAttackAniFrame();
                 SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
             }
@@ -1291,8 +1288,10 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
                     avatar.decrHP();
+//                    avatar.drawAttacked(canvas);
                     removeBullet(bd1);
                     SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
+
                 }
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
                 removeBullet(bd1);
@@ -1302,6 +1301,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (!bd2.isRemoved()) {
                     removeBullet(bd2);
                     avatar.decrHP();
+//                    avatar.drawAttacked(canvas);
                     SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
                 }
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
