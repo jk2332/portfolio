@@ -43,7 +43,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
     /** The sound file for a reload */
     private static final String RELOAD_FILE = "floor/reload.mp3";
-
+    /** The sound file for a reload */
+    private static final String OUCH_FILE = "floor/ouch.mp3";
 
     private static final int TILE_SIZE = 32;
 
@@ -110,6 +111,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(POP_FILE);
         manager.load(RELOAD_FILE, Sound.class);
         assets.add(RELOAD_FILE);
+        manager.load(OUCH_FILE, Sound.class);
+        assets.add(OUCH_FILE);
 
         super.preLoadContent(manager);
     }
@@ -136,6 +139,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
         sounds.allocate(manager, RELOAD_FILE);
+        sounds.allocate(manager, OUCH_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -745,7 +749,7 @@ public class FloorController extends WorldController implements ContactListener 
             //System.out.println("You're on a hazard tile");
             avatar.decrHP();
 //            avatar.drawAttacked(canvas);
-            SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
+            SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
         else {
             // Process actions in object model
@@ -935,7 +939,7 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.decrHP();
 //                avatar.drawAttacked(canvas);
                 s.resetAttackAniFrame();
-                SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
+                SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
         } else if (s instanceof SlimeModel) {
             //System.out.println("shoot1");
@@ -996,7 +1000,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         addQueuedObject(bullet);
 
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
     }
 
     /**
@@ -1044,7 +1048,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setFixtureGroupIndex((short) -1);
         addQueuedObject(bullet);
 
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
     }
 
     /**
@@ -1066,11 +1070,11 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void removeLid(Obstacle lid,EnemyModel enemy) {
         if (avatar.getHasLid() == false) {
+            avatar.setHasLid(true);
             float knockbackx = 10f;
             float knockbackx2 = (lid.getX() > enemy.getX() ? -knockbackx : knockbackx);
             knockbackForce.set(knockbackx2,0f);
             lid.markRemoved(true);
-            avatar.setHasLid(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
@@ -1124,7 +1128,7 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() > 0) {
-                SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+                SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
 
                 boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
@@ -1157,7 +1161,7 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         } else if (wep instanceof SprayModel) {
-            SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+            SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
             SprayModel spray = (SprayModel) wep;
             if (spray.getDurability() != 0) {
                 spray.decrDurability();
@@ -1182,12 +1186,6 @@ public class FloorController extends WorldController implements ContactListener 
 
                     }
                 }
-            }
-        } else if (wep instanceof LidModel) {
-            LidModel lid = (LidModel) wep;
-            if (lid.getDurability() != 0 && avatar.getHasLid()) {
-                createBullet(avatar);
-                lid.decrDurability();
             }
         } else if (wep instanceof VacuumModel) {
                 VacuumModel vacuum = (VacuumModel) wep;
@@ -1229,6 +1227,13 @@ public class FloorController extends WorldController implements ContactListener 
 
                     }
                 }
+        } else if (wep instanceof LidModel) {
+            LidModel lid = (LidModel) wep;
+            if (lid.getDurability() != 0 && avatar.getHasLid()) {
+//                avatar.setHasLid(false);
+                createBullet(avatar);
+                lid.decrDurability();
+            }
         }
     }
 
@@ -1290,7 +1295,7 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.decrHP();
 //                    avatar.drawAttacked(canvas);
                     removeBullet(bd1);
-                    SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
+                    SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
                 }
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
@@ -1302,7 +1307,7 @@ public class FloorController extends WorldController implements ContactListener 
                     removeBullet(bd2);
                     avatar.decrHP();
 //                    avatar.drawAttacked(canvas);
-                    SoundController.getInstance().play(POP_FILE, POP_FILE,false,EFFECT_VOLUME);
+                    SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
@@ -1510,6 +1515,7 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
+        System.out.println(avatar.getHasLid());
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")

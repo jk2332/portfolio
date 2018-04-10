@@ -10,7 +10,7 @@ import edu.cornell.gdiac.physics.*;
  */
 public class EnemyModel extends CharacterModel {
 
-    private static final int ENEMY_MAX_ATTACK_COOLDOWN = 40;
+    private static final int ENEMY_MAX_ATTACK_COOLDOWN = 20;
 
     private int id;
     private long stunTicks;
