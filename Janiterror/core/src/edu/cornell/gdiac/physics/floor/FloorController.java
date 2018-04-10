@@ -203,6 +203,8 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallBRPos;
     ArrayList<Vector2> wallSLPos;
     ArrayList<Vector2> wallSRPos;
+    ArrayList<Vector2> wallELPos;
+    ArrayList<Vector2> wallERPos;
     ArrayList<Vector2> hazardPos;
 
     int [][] tiles;
@@ -296,6 +298,8 @@ public class FloorController extends WorldController implements ContactListener 
         wallBRPos = level.getWallBRPos();
         wallSLPos = level.getWallSLPos();
         wallSRPos = level.getWallSRPos();
+        wallELPos = level.getWallELPos();
+        wallERPos = level.getWallERPos();
 
         hazardPos = level.getHazardPos();
 
@@ -640,6 +644,30 @@ public class FloorController extends WorldController implements ContactListener 
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallBLTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallERPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallERPos.get(ii).x);
+            y = board.boardToScreenY((int) wallERPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallERPos.get(ii).x, (int) wallERPos.get(ii).y);
+            board.setBlocked((int) wallERPos.get(ii).x, (int) wallERPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallERTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallELPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallELPos.get(ii).x);
+            y = board.boardToScreenY((int) wallELPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallELPos.get(ii).x, (int) wallELPos.get(ii).y);
+            board.setBlocked((int) wallELPos.get(ii).x, (int) wallELPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallELTexture, 0, offset);
             obj.setName(pname+ii);
             addWallObject(obj);
         }
