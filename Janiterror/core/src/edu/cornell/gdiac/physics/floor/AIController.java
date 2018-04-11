@@ -39,6 +39,7 @@ public class AIController {
         double tmp = Math.random();
         patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
         if (ship.getName()=="lizard") patrolPath=PatrolPath.HORIZONTAL;
+        if (ship.getName()=="robot") patrolPath=PatrolPath.HORIZONTAL;
         chaseDist=9;
         if (ship.getName()=="slime") chaseDist=16;
         patrolSeq=0;
