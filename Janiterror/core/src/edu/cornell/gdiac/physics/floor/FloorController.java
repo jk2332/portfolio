@@ -283,11 +283,11 @@ public class FloorController extends WorldController implements ContactListener 
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
 
+        //Make empty arrays if you don't want the enemies to appear
 //        robotPos = new ArrayList<Vector2>();
 //        lizardPos = new ArrayList<Vector2>();
 //        slimePos = new ArrayList<Vector2>();
-        //scientistPos=new ArrayList<Vector2>();
-        //scientistPos=level.getLizardPos();
+//        scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -900,7 +900,7 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
                     && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
-                //System.out.println("Enemy is on a hazard tile");
+                System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
                 if (s.getHP() <= 0) {
                     controls[s.getId()]=null;
@@ -944,7 +944,6 @@ public class FloorController extends WorldController implements ContactListener 
         } else {
             s.decrAttackCooldown();
         }
-
 
         if (s.getKnockbackTimer() == 0) {
             s.setVelocity();
@@ -1105,6 +1104,7 @@ public class FloorController extends WorldController implements ContactListener 
             lid.markRemoved(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
+            System.out.println("was lidded");
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
             enemy.applyImpulse(knockbackForce);
             if (enemy.getHP() <= 0) {
@@ -1173,6 +1173,7 @@ public class FloorController extends WorldController implements ContactListener 
                             s.markRemoved(true);
                             controls[s.getId()]=null;
                         } else {
+                            System.out.println("was mopped");
                             s.decrHP();
                         }
                         knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
@@ -1206,6 +1207,7 @@ public class FloorController extends WorldController implements ContactListener 
                             controls[s.getId()]=null;
                             s.markRemoved(true);
                         } else if (s instanceof RobotModel){
+                            System.out.println("was robot");
                             s.setStunned(true);
                             s.decrHP();
                         } else {
@@ -1543,7 +1545,7 @@ public class FloorController extends WorldController implements ContactListener 
     public State previousState;
 
     public State getState(){
-        System.out.println(avatar.getHasLid());
+//        System.out.println(avatar.getHasLid());
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
