@@ -1159,6 +1159,9 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
+            if (mop.getDurability() == 0){
+                mop.decrDurability(); // just quick fix for animations while keeping ui correct for alpha present
+            }
             if (mop.getDurability() > 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
 
@@ -1190,14 +1193,19 @@ public class FloorController extends WorldController implements ContactListener 
                 }
                 if (enemy_hit) {
                     mop.decrDurability();
-                    if (mop.durability < 0) { mop.durability = 0; } //fix negative durability UI displays;
+//                    if (mop.durability < 0) {
+//                        mop.durability = 0;
+//                    } //fix negative durability UI displays;
                 }
+
             }
+
         } else if (wep instanceof SprayModel) {
-            SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
+
             SprayModel spray = (SprayModel) wep;
-            if (spray.getDurability() != 0) {
-                spray.decrDurability();
+            spray.decrDurability();//hot fix for animations
+            if (spray.getDurability() >= 0) {
+                SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
                 for (EnemyModel s : enemies) {
                     int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                     int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
@@ -1223,9 +1231,32 @@ public class FloorController extends WorldController implements ContactListener 
             }
         } else if (wep instanceof VacuumModel) {
                 VacuumModel vacuum = (VacuumModel) wep;
-                if (vacuum.getDurability() != 0){
-                    System.out.println("vacuum");
-                    vacuum.decrDurability();
+                vacuum.decrDurability(); //hotfix for animations
+                if (vacuum.getDurability() >= 0){
+//                    System.out.println("vacuum");
+
+                    for  (Obstacle obj : objects) {
+                        if (obj.getName() == "lid") {
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(obj.getY());
+                            boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
+                            boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <= 1;
+                            boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <= 1;
+                            boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <= 1;
+                            if ((case1)) {
+                                obj.setVX(BULLET_SPEED);
+                            }
+                            if ((case2)) {
+                                obj.setVX(-BULLET_SPEED);
+                            }
+                            if ((case3)) {
+                                obj.setVY(BULLET_SPEED);
+                            }
+                            if ((case4)) {
+                                obj.setVY(-BULLET_SPEED);
+                            }
+                        }
+                    }
                     for (EnemyModel s : enemies){
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
@@ -1263,10 +1294,14 @@ public class FloorController extends WorldController implements ContactListener 
                 }
         } else if (wep instanceof LidModel) {
             LidModel lid = (LidModel) wep;
-            if (lid.getDurability() != 0 && avatar.getHasLid()) {
-//                avatar.setHasLid(false);
-                createBullet(avatar);
+            if (lid.getDurability() == 0 ){
                 lid.decrDurability();
+            }
+            if (lid.getDurability() > 0 && avatar.getHasLid()) {
+                lid.decrDurability();
+//               avatar.setHasLid(false);
+                createBullet(avatar);
+
             }
         }
     }
@@ -1455,8 +1490,14 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
         //draw weapon UI durability bars (currently temporary)
         int durability1 = avatar.getWep1().getDurability();
+        if (durability1 < 0){
+            durability1 = 0;
+        }
         String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
         int durability2 = avatar.getWep2().getDurability();
+        if (durability2 < 0){
+            durability2 = 0;
+        }
         String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
         displayFont.getData().setScale(0.8f);
         if (durability1 <= 3 && durability2 <= 3) {
@@ -1551,127 +1592,127 @@ public class FloorController extends WorldController implements ContactListener 
     public State getState(){
 //        System.out.println(avatar.getHasLid());
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
-                && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
+                && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability >= 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0)){
            attackTimer = ATTACK_DURATION_MOP;
             return State.MOPR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
-                        && avatar.getWep1().durability > 0 ) ||
+                        && avatar.getWep1().durability >= 0 ) ||
                 ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0)||
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_MOP;
             return State.MOPL;
         }
         else if (avatar.isUp() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
-                && avatar.getWep1().durability > 0){
+                && avatar.getWep1().durability >= 0){
            attackTimer = ATTACK_DURATION_MOP;
             return State.MOPU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
-                && avatar.getWep1().durability > 0){
+                && avatar.getWep1().durability >= 0){
            attackTimer = ATTACK_DURATION_MOP;
             return State.MOPD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
                         && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                        && avatar.getWep1().durability >= 0 && avatar.getHasLid())||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 && avatar.getHasLid())||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0 && avatar.getHasLid())){
+                        && avatar.getWep1().durability >= 0 && avatar.getHasLid())){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
             return State.LIDR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid() ) ||
+                && avatar.getWep1().durability >= 0 && avatar.getHasLid() ) ||
                 ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 && avatar.getHasLid())||
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0
                         && avatar.getHasLid())){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
             return State.LIDL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
+                && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
             return State.LIDU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
+                && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
             return State.LIDD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                && avatar.getWep1().durability > 0 )||
+                && avatar.getWep1().durability >= 0 )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0)){
+                        && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_SPRAY;
             return State.SPRAYR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0  ) ||
+                && avatar.getWep1().durability >= 0  ) ||
                 ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 )||
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0
                         )){
             attackTimer = ATTACK_DURATION_SPRAY;
             return State.SPRAYL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0 ){
+                && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_SPRAY;
             return State.SPRAYU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0 ){
+                && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_SPRAY;
             return State.SPRAYD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                && avatar.getWep1().durability > 0 )||
+                && avatar.getWep1().durability >= 0 )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 )||
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0)){
+                        && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_VACUUM;
             return State.VACUUMR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0  ) ||
+                && avatar.getWep1().durability >= 0  ) ||
                 ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
+                        && avatar.getMovementX() < 0 && avatar.getWep1().durability >= 0 )||
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0
                 )){
             attackTimer = ATTACK_DURATION_VACUUM;
             return State.VACUUML;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0 ){
+                && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_VACUUM;
             return State.VACUUMU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0 ){
+                && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_VACUUM;
             return State.VACUUMD;
         }
