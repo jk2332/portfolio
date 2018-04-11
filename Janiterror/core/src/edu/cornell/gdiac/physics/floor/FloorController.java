@@ -888,6 +888,10 @@ public class FloorController extends WorldController implements ContactListener 
      * @param action action to be performed
      */
     private void performAction(EnemyModel s, int action) {
+        if (action==CONTROL_NO_ACTION) {
+            s.setMovementX(0);
+            s.setMovementY(0);
+        }
         if (action == CONTROL_MOVE_DOWN) {
             s.setMovementY(-s.getVelocity());
             s.setMovementX(0);
