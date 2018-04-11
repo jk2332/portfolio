@@ -73,9 +73,11 @@ public abstract class WorldController implements Screen {
 	private static final String WALL_BL_FILE = "shared/corner-bottom-left.png";
     private static final String WALL_SR_FILE = "shared/vertical-left-special.png";
     private static final String WALL_SL_FILE = "shared/vertical-right-special.png";
+	private static final String WALL_ER_FILE = "shared/horizontal-wall-rightend.png";
+	private static final String WALL_EL_FILE = "shared/horizontal-wall-leftend.png";
 
 	/** File to texture for the win door */
-	private static final String GOAL_FILE = "shared/goaldoor64.png";
+	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	/** Retro font for displaying messages */
@@ -144,6 +146,8 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion wallBRTexture;
     protected TextureRegion wallSLTexture;
     protected TextureRegion wallSRTexture;
+	protected TextureRegion wallELTexture;
+	protected TextureRegion wallERTexture;
 	protected TextureRegion avatarIdleTexture;
 	protected TextureRegion avatarWalkRTexture;
 	protected TextureRegion avatarWalkUTexture;
@@ -237,6 +241,10 @@ public abstract class WorldController implements Screen {
         assets.add(WALL_SL_FILE);
         manager.load(WALL_SR_FILE, Texture.class);
         assets.add(WALL_SR_FILE);
+		manager.load(WALL_EL_FILE, Texture.class);
+		assets.add(WALL_EL_FILE);
+		manager.load(WALL_ER_FILE, Texture.class);
+		assets.add(WALL_ER_FILE);
 		manager.load(JANITOR_IDLE_FILE, Texture.class);
 		assets.add(JANITOR_IDLE_FILE);
 		manager.load(JANITOR_WALKR_FILE, Texture.class);
@@ -369,6 +377,8 @@ public abstract class WorldController implements Screen {
 		wallBLTexture = createTexture(manager,WALL_BL_FILE,false);
         wallSRTexture = createTexture(manager,WALL_SR_FILE,false);
         wallSLTexture = createTexture(manager,WALL_SL_FILE,false);
+		wallERTexture = createTexture(manager,WALL_ER_FILE,false);
+		wallELTexture = createTexture(manager,WALL_EL_FILE,false);
 		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);

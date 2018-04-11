@@ -24,6 +24,8 @@ public class LevelEditorParser {
     private ArrayList<Vector2> wallBLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallSRPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallSLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallERPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallELPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> scientistPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
@@ -245,14 +247,18 @@ public class LevelEditorParser {
                     wallTLPos.add(new Vector2(j, i ));
                 } else if (horiWalls[i][j] == wallhgid + 3) {
                     wallTRPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == wallhgid + 4) {
-                    wallBLPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == wallhgid + 7) {
-                    wallBRPos.add(new Vector2(j, i ));
-                } else if (horiWalls[i][j] == wallhgid + 6) {
-                    wallSLPos.add(new Vector2(j, i));
                 } else if (horiWalls[i][j] == wallhgid + 5) {
+                    wallBLPos.add(new Vector2(j, i ));
+                } else if (horiWalls[i][j] == wallhgid + 8) {
+                    wallBRPos.add(new Vector2(j, i ));
+                } else if (horiWalls[i][j] == wallhgid + 7) {
+                    wallSLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallhgid + 6) {
                     wallSRPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallhgid + 9) {
+                    wallERPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallhgid + 4) {
+                    wallELPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -342,6 +348,14 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getWallSRPos() {
         return wallSRPos;
+    }
+
+    public ArrayList<Vector2> getWallELPos() {
+        return wallELPos;
+    }
+
+    public ArrayList<Vector2> getWallERPos() {
+        return wallERPos;
     }
 
     public float getGoalDoorX() {

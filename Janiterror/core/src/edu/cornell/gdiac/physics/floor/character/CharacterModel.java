@@ -231,6 +231,11 @@ public class CharacterModel extends CapsuleObstacle {
         float effect = faceRight ? 1.0f : -1.0f;
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
+    public void drawAttacked(GameCanvas canvas) {
+        System.out.println("attacked");
+        float effect = faceRight ? 1.0f : -1.0f;
+        canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+    }
 
     /**
      * Draws the outline of the physics body.
