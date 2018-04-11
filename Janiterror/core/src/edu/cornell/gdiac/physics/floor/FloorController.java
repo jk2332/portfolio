@@ -284,10 +284,10 @@ public class FloorController extends WorldController implements ContactListener 
         lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
-//        robotPos = new ArrayList<Vector2>();
-//        lizardPos = new ArrayList<Vector2>();
-//        slimePos = new ArrayList<Vector2>();
-//        scientistPos=new ArrayList<Vector2>();
+        //robotPos = new ArrayList<Vector2>();
+        //lizardPos = new ArrayList<Vector2>();
+        //slimePos = new ArrayList<Vector2>();
+        //scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -900,7 +900,7 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
                     && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
-                System.out.println("Enemy is on a hazard tile");
+                //System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
                 if (s.getHP() <= 0) {
                     controls[s.getId()]=null;

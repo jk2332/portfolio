@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.physics.floor;
 
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.character.EnemyModel;
 import edu.cornell.gdiac.physics.floor.character.JoeModel;
@@ -25,6 +26,7 @@ public class AIController {
     private int patrolSeq;
     private PatrolPath patrolPath;
     private int chaseDist;
+    private int TILE_SIZE = 1;
 
     public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
@@ -38,7 +40,7 @@ public class AIController {
         patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
         if (ship.getName()=="lizard") patrolPath=PatrolPath.HORIZONTAL;
         chaseDist=9;
-        if (ship.getName()=="slime") chaseDist=20;
+        if (ship.getName()=="slime") chaseDist=16;
         patrolSeq=0;
     }
 
@@ -51,12 +53,35 @@ public class AIController {
         }
 
         int action = this.move;
-//        System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
+        System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
 
         return action;
+    }
+
+    private float getEqY(float x0, float y0, float x1, float y1, float x){
+        return (y0-y1)/(x0-x1)*(x-x0)+y0;
+    }
+
+    private boolean canSeeJoe(){
+        Vector2 shipPos = new Vector2(ship.getX(), ship.getY());
+        Vector2 tarPos = new Vector2(target.getX(), target.getY());
+
+        float lineLength = (float) Math.sqrt((tarPos.x-shipPos.x)*(tarPos.x-shipPos.x) + (tarPos.y-shipPos.y)*(tarPos.y-shipPos.y));
+        float tilted = (tarPos.y-shipPos.y)/(tarPos.x-shipPos.x);
+        float x = Math.min(shipPos.x, tarPos.x);
+        float y = shipPos.x > tarPos.x ? tarPos.y : shipPos.y;
+
+        for (int ii=0; ii < (int) lineLength/TILE_SIZE; ii++){
+            int tileX = board.screenToBoardX(x);
+            int tileY = board.screenToBoardY(y);
+            if (board.isBlocked(tileX, tileY)) return false;
+            x = TILE_SIZE/(float) Math.sqrt(tilted*tilted+1) + x;
+            y = getEqY(tarPos.x, tarPos.y, shipPos.x, shipPos.y, x);
+        }
+        return true;
     }
 
     private boolean hasNoWallBetw(int x, int y, int tx, int ty){
@@ -79,15 +104,6 @@ public class AIController {
 
     //fix this - look at the path?
     private boolean hasNoHazardBetw (int sx, int sy, int tx, int ty) {
-        /**
-        for (int i=Math.min(sx, tx); i<=Math.max(sx, tx); i++){
-            for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
-                if (board.isHazard(i, j)) return false;
-            }
-        }
-        for (int j=Math.min(sy, ty); j<=Math.max(sy, ty); j++){
-            if (board.isHazard(tx, j)) return false;
-        }**/
         return true;
     }
 
@@ -100,31 +116,25 @@ public class AIController {
         int dieroll;
         switch(state) {
             case SPAWN:
-                dieroll = rand.nextInt(4);
-                if (target.isRemoved()){
-                    this.state=FSMState.WANDER;
-                }
-                else {
+                if (canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoWallBetw(sx, sy, tx, ty) &&
-                            hasNoHazardBetw(sx, sy, tx, ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state = FSMState.ATTACK;
-                    } else if (dieroll != 0){
+                    } else {
                         this.state = FSMState.CHASE;
                     }
-                    else {
-                        this.state= FSMState.WANDER;
-                    }
+                }
+                else {
+                    this.state=FSMState.WANDER;
                 }
                 break;
             case WANDER:
-                if (!target.isRemoved()) {
+                if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoWallBetw(sx, sy, tx, ty) &&
-                            hasNoHazardBetw(sx, sy,tx,ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= chaseDist) {
@@ -138,11 +148,10 @@ public class AIController {
                 }
                 break;
             case CHASE:
-                if (!target.isRemoved()) {
+                if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoWallBetw(sx, sy, tx, ty) &&
-                            hasNoHazardBetw(sx, sy, tx, ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state =FSMState.ATTACK;
                     }
                 } else {
@@ -150,11 +159,10 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                if (!target.isRemoved()) {
+                if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoWallBetw(sx, sy, tx, ty)) &&
-                            hasNoHazardBetw(sx, sy, tx, ty)) {
+                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty))) {
                         this.state =FSMState.CHASE;
                     }
                 } else {
@@ -220,13 +228,13 @@ public class AIController {
                 //System.out.println("WANDER");
                 if (patrolPath == PatrolPath.HORIZONTAL){
                     if (this.patrolSeq<=2) {
-                        b = board.isSuperSafeAt(sx-1, sy) && hasNoWallBetw(sx, sy, sx-1, sy) &&
+                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
                         hasNoHazardBetw(sx, sy, sx-1, sy);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
                     }
                     else {
-                        b = board.isSuperSafeAt(sx+1, sy) && hasNoWallBetw(sx, sy, sx+1, sy) &&
+                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
                         hasNoHazardBetw(sx, sy, sx+1, sy);
                         if (patrolSeq==5) patrolSeq=0;
                         else patrolSeq++;
@@ -235,13 +243,13 @@ public class AIController {
                 }
                 else if (patrolPath == PatrolPath.VERTICAL) {
                     if (this.patrolSeq<=2){
-                        b = board.isSuperSafeAt(sx, sy+1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
+                        b = board.isSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
                         hasNoHazardBetw(sx, sy, sx, sy+1);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
                     }
                     else {
-                        b = board.isSuperSafeAt(sx, sy-1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
+                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
                         hasNoHazardBetw(sx, sy, sx, sy-1);
                         if (patrolSeq==5) patrolSeq=0;
                         else patrolSeq++;
@@ -250,26 +258,26 @@ public class AIController {
                 }
                 else {
                     if (this.patrolSeq < 1 || (patrolSeq>=7)){
-                        b = board.isSuperSafeAt(sx, sy+1) && hasNoWallBetw(sx, sy, sx, sy+1) &&
+                        b = board.isSuperSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
                         hasNoHazardBetw(sx, sy, sx, sy+1);
                         if (patrolSeq==7) patrolSeq=0;
                         else patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=2) {
-                        b = board.isSuperSafeAt(sx-1, sy) && hasNoWallBetw(sx, sy, sx-1, sy) &&
+                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
                         hasNoHazardBetw(sx, sy, sx-1, sy);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=4){
-                        b = board.isSuperSafeAt(sx, sy-1) && hasNoWallBetw(sx, sy, sx, sy-1) &&
+                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
                         hasNoHazardBetw(sx, sy, sx, sy-1);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
                     }
                     else if (patrolSeq <=6) {
-                        b = board.isSuperSafeAt(sx+1, sy) && hasNoWallBetw(sx, sy, sx+1, sy) &&
+                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
                         hasNoHazardBetw(sx, sy, sx+1, sy);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
@@ -281,8 +289,9 @@ public class AIController {
                 sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) &&
-                        hasNoHazardBetw(sx, sy, tx, ty)) break;
+                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                    System.out.println("here"); break;
+                }
 
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
