@@ -313,6 +313,10 @@ public class LevelEditorParser {
         return hazardPos;
     }
 
+    public ArrayList<Vector2> getSpecialHealthPos() {
+        return specialHealthPos;
+    }
+
     public ArrayList<Vector2> getScientistPos() {
         return scientistPos;
     }

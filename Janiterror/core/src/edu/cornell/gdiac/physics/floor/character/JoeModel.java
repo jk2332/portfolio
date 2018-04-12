@@ -20,7 +20,8 @@ public class JoeModel extends CharacterModel {
     private static final int JOE_MAX_ATTACK_COOLDOWN = 20;
 
     /** Joe's max HP */
-    private static final int MAX_HP = 15;
+    private static int MAX_HP = 15;
+        //To increase this, instead make a final base HP and then a modifiable int that adds to it?
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
@@ -89,6 +90,14 @@ public class JoeModel extends CharacterModel {
      * @return max HP of Joe
      */
     public int getMaxHP() { return MAX_HP ; }
+
+    /**
+     * Upgrades max HP of Joe and full heals
+     *
+     */
+    public void upgradeHP() {
+        MAX_HP += 3;
+    }
 
     /**
      * Returns true if Joe is actively swapping.

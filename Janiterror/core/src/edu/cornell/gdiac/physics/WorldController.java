@@ -80,6 +80,8 @@ public abstract class WorldController implements Screen {
 	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
+	/** File to texture for the mop cart */
+	private static final String SPECIAL_HEALTH_FILE = "shared/undertile-32.png";
 	/** Retro font for displaying messages */
 	private static final String FONT_FILE = "shared/RetroGame.ttf";
 	private static final int FONT_SIZE = 32;
@@ -346,6 +348,10 @@ public abstract class WorldController implements Screen {
 		manager.load(MOP_CART_FILE,Texture.class);
 		assets.add(MOP_CART_FILE);
 
+		//Load Special Power Up Tiles
+		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
+		assets.add(SPECIAL_HEALTH_FILE);
+
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
@@ -433,7 +439,7 @@ public abstract class WorldController implements Screen {
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopTile = createTexture(manager,MOP_CART_FILE, true);
-		specialHealthTile = createTexture(manager,MOP_CART_FILE, true);
+		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
 
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {

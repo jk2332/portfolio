@@ -207,6 +207,8 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallERPos;
     ArrayList<Vector2> hazardPos;
 
+    ArrayList<Vector2> specialHealthPos;
+
     int [][] tiles;
 
     // Physics objects for the game
@@ -248,6 +250,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
 
+    /** Reference to the special health power up (for collision detection) */
+    private BoxObstacle specialHealth;
+
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
@@ -278,6 +283,7 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
+
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();
         robotPos = level.getRobotPos();
@@ -302,6 +308,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallERPos = level.getWallERPos();
 
         hazardPos = level.getHazardPos();
+        specialHealthPos = level.getSpecialHealthPos();
 
         tiles = level.getTiles();
     }
@@ -372,18 +379,25 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(mopCart);
 
         // Add special elements (power ups)
-//        float mopwidth  = mopTile.getRegionWidth()/scale.x;
-//        float mopheight= mopTile.getRegionHeight()/scale.y;
-//        mopCart = new BoxObstacle(level.getMopCartX()/32+OBJ_OFFSET_X, level.getMopCartY()/32+OBJ_OFFSET_X,mopwidth,mopheight);
-//        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
-//        mopCart.setDensity(0.0f);
-//        mopCart.setFriction(0.0f);
-//        mopCart.setRestitution(0.0f);
-//        mopCart.setSensor(true);
-//        mopCart.setDrawScale(scale);
-//        mopCart.setTexture(mopTile);
-//        mopCart.setName("mopCart");
-//        addObject(mopCart);
+        float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
+        float specialHealthHeight = specialHealthTile.getRegionHeight()/scale.y;
+
+        for (int ii=0; ii<specialHealthPos.size(); ii++) {
+            Vector2 vec = specialHealthPos.get(ii);
+            specialHealth = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialHealthWidth, specialHealthHeight);
+            specialHealth.setBodyType(BodyDef.BodyType.StaticBody);
+            specialHealth.setDensity(0.0f);
+            specialHealth.setFriction(0.0f);
+            specialHealth.setRestitution(0.0f);
+            specialHealth.setSensor(true);
+            specialHealth.setDrawScale(scale);
+            specialHealth.setTexture(specialHealthTile);
+            specialHealth.setName("specialHealth");
+            addObject(specialHealth);
+        }
+
+        //FIX THIS POSITIONING
+
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -1351,7 +1365,6 @@ public class FloorController extends WorldController implements ContactListener 
                     //don't drop at mop cart
                     dropLid(bd1);
                 }
-
                 if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1 != mopCart) ) {
                     //don't drop at mop cart
                     dropLid(bd2);
@@ -1407,6 +1420,23 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
                 removeBullet(bd1);
+            }
+
+            //Check if avatar has reached a powerup
+            if ((bd1 == avatar && bd2 == specialHealth) ||
+                    (bd1 == specialHealth && bd2 == avatar)) {
+                avatar.upgradeHP();
+                    //upgrade max HP by 5 for now for testing
+                avatar.setHP(avatar.getMaxHP());
+                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+                specialHealth.markRemoved(true);
+            } else if ((bd2 == avatar && bd1 == specialHealth) ||
+                    (bd1 == specialHealth && bd2 == avatar)) {
+                avatar.upgradeHP();
+                //upgrade max HP by 5 for now for testing
+                avatar.setHP(avatar.getMaxHP());
+                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
+                specialHealth.markRemoved(true);
             }
 
             // Check for win condition
