@@ -76,6 +76,8 @@ public class GameCanvas {
 	
 	/** Camera for the underlying SpriteBatch */
 	private OrthographicCamera camera;
+
+	private Affine2 affine_transform;
 	
 	/** Value to cache window width (if we are currently full screen) */
 	int width;
@@ -193,7 +195,11 @@ public class GameCanvas {
 		}
 		resize();
 	}
-	
+
+	public void setAffineTransform(Affine2 oTran) {
+		affine_transform = oTran;
+	}
+
 	/**
 	 * Returns the dimensions of this canvas
 	 *
@@ -202,7 +208,7 @@ public class GameCanvas {
 	public Vector2 getSize() {
 		return new Vector2(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 	}
-	
+
 	/**
 	 * Changes the width and height of this canvas
 	 *
@@ -225,16 +231,16 @@ public class GameCanvas {
 		resize();
 
 	}
-	
+
 	/**
 	 * Returns whether this canvas is currently fullscreen.
 	 *
 	 * @return whether this canvas is currently fullscreen.
-	 */	 
+	 */
 	public boolean isFullscreen() {
-		return Gdx.graphics.isFullscreen(); 
+		return Gdx.graphics.isFullscreen();
 	}
-	
+
 	/**
 	 * Sets whether or not this canvas should change to fullscreen.
 	 *
@@ -248,7 +254,7 @@ public class GameCanvas {
 	 *
 	 * @param fullscreen Whether this canvas should change to fullscreen.
 	 * @param desktop 	 Whether to use the current desktop resolution
-	 */	 
+	 */
 	public void setFullscreen(boolean value, boolean desktop) {
 		if (active != DrawPass.INACTIVE) {
 			Gdx.app.error("GameCanvas", "Cannot alter property while drawing active", new IllegalStateException());
@@ -260,7 +266,7 @@ public class GameCanvas {
 			Gdx.graphics.setWindowedMode(width, height);
 		}
 	}
-	
+
 	/**
 	 * Resets the SpriteBatch camera when this canvas is resized.
 	 *
@@ -271,7 +277,7 @@ public class GameCanvas {
 		// Resizing screws up the spriteBatch projection matrix
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
 	}
-	
+
 	/**
 	 * Returns the current color blending state for this canvas.
 	 *
@@ -283,14 +289,14 @@ public class GameCanvas {
 	public BlendState getBlendState() {
 		return blend;
 	}
-	
+
 	/**
 	 * Sets the color blending state for this canvas.
 	 *
-	 * Any texture draw subsequent to this call will use the rules of this blend 
-	 * state to composite with other textures.  Unlike the other setters, if it is 
-	 * perfectly safe to use this setter while  drawing is active (e.g. in-between 
-	 * a begin-end pair).  
+	 * Any texture draw subsequent to this call will use the rules of this blend
+	 * state to composite with other textures.  Unlike the other setters, if it is
+	 * perfectly safe to use this setter while  drawing is active (e.g. in-between
+	 * a begin-end pair).
 	 *
 	 * @param state the color blending rule
 	 */
@@ -314,14 +320,14 @@ public class GameCanvas {
 		}
 		blend = state;
 	}
-	
+
 	/**
 	 * Clear the screen so we can start a new animation frame
 	 */
 	public void clear() {
     	// Clear the screen
 		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);		
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 
 	/**
@@ -354,16 +360,23 @@ public class GameCanvas {
 		global.scl(sx,sy,1.0f);
     	global.mulLeft(camera.combined);
 		spriteBatch.setProjectionMatrix(global);
-		
+
     	spriteBatch.begin();
     	active = DrawPass.STANDARD;
     }
-    
-	/**
-	 * Start a standard drawing sequence.
-	 *
-	 * Nothing is flushed to the graphics card until the method end() is called.
-	 */
+
+	public OrthographicCamera getCamera () {
+    	return camera;
+	}
+	public void setCameraPosition( float width, float height) {
+		camera.position.set(width, height, 0);
+		camera.update();
+	}
+		/**
+         * Start a standard drawing sequence.
+         *
+         * Nothing is flushed to the graphics card until the method end() is called.
+         */
     public void begin() {
 		spriteBatch.setProjectionMatrix(camera.combined);
     	spriteBatch.begin();
@@ -398,12 +411,12 @@ public class GameCanvas {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
-		
+
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(Color.WHITE);
 		spriteBatch.draw(image, x,  y);
 	}
-	
+
 	/**
 	 * Draws the tinted texture at the given position.
 	 *
@@ -427,13 +440,11 @@ public class GameCanvas {
 			return;
 		}
 
-		//WALKER CODE
-
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(tint);
 		spriteBatch.draw(image, x,  y, width, height);
 	}
-	
+
 	/**
 	 * Draws the tinted texture at the given position.
 	 *
@@ -458,7 +469,7 @@ public class GameCanvas {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
-		
+
 		// Call the master drawing method (more efficient that base method)
 		holder.setRegion(image);
 		draw(holder, tint, x-ox, y-oy, width, height);
@@ -471,11 +482,11 @@ public class GameCanvas {
 	 * The texture colors will be multiplied by the given color.  This will turn
 	 * any white into the given color.  Other colors will be similarly affected.
 	 *
-	 * The transformations are BEFORE after the global transform (@see begin(Affine2)).  
-	 * As a result, the specified texture origin will be applied to all transforms 
+	 * The transformations are BEFORE after the global transform (@see begin(Affine2)).
+	 * As a result, the specified texture origin will be applied to all transforms
 	 * (both the local and global).
 	 *
-	 * The local transformations in this method are applied in the following order: 
+	 * The local transformations in this method are applied in the following order:
 	 * scaling, then rotation, then translation (e.g. placement at (sx,sy)).
 	 *
 	 * @param image The texture to draw
@@ -487,14 +498,14 @@ public class GameCanvas {
 	 * @param angle The rotation angle (in degrees) about the origin.
 	 * @param sx 	The x-axis scaling factor
 	 * @param sy 	The y-axis scaling factor
-	 */	
-	public void draw(Texture image, Color tint, float ox, float oy, 
+	 */
+	public void draw(Texture image, Color tint, float ox, float oy,
 					float x, float y, float angle, float sx, float sy) {
 		if (active != DrawPass.STANDARD) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
-		
+
 		// Call the master drawing method (more efficient that base method)
 		holder.setRegion(image);
 		draw(holder,tint,ox,oy,x,y,angle,sx,sy);
@@ -568,7 +579,7 @@ public class GameCanvas {
 		
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(Color.WHITE);
-		spriteBatch.draw(region, x,  y);
+		spriteBatch.draw(region, x,  y, affine_transform);
 	}
 
 	/**

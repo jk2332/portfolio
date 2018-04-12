@@ -799,6 +799,19 @@ public class FloorController extends WorldController implements ContactListener 
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        OrthographicCamera camera = canvas.getCamera();
+//        canvas.setCameraPosition(avatar.getX(), avatar.getY());
+
+        Affine2 oTran = new Affine2();
+		oTran.setToTranslation(avatar.getX(), avatar.getY());
+		    //is this for avatar or for camera?
+		Affine2 wTran = new Affine2();
+		Vector3 wPos = camera.position;
+		wTran.setToTranslation(-wPos.x,-wPos.y);
+		oTran.mul(wTran);
+		System.out.println(oTran);
+		canvas.setAffineTransform(oTran);
+
         ticks ++;
         if(avatar.getHP()<=0) {
             System.out.println("died");
@@ -1541,16 +1554,16 @@ public class FloorController extends WorldController implements ContactListener 
             margin = margin + 25;
         }
 
-        // DISPLAY ACTIVE WEAPON UI
-        //get textures via hash map from weapons names
+        // DRAW ACTIVE WEAPON UI
+            //get textures via hash map from weapons names
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
-        //draw retrieved textures
+            //draw retrieved textures
         canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
         canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
-        //draw weapon UI durability bars (currently temporary)
+            //draw weapon UI durability bars (currently temporary)
         int durability1 = avatar.getWep1().getDurability();
         if (durability1 < 0){
             durability1 = 0;

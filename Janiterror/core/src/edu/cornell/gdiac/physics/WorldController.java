@@ -114,7 +114,7 @@ public abstract class WorldController implements Screen {
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
 
 	/** The texture files for the UI icons */
-	private static final String MOP_FILE  = "floor/ui-mop.png";
+	private static final String MOP_FILE  = "floor/vacuum-ui.png";
 	private static final String SPRAY_FILE  = "floor/ui-spray.png";
 	private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
 	private static final String LID_FILE  = "floor/ui-lid.png";
