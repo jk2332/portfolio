@@ -320,6 +320,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        //avatar has never visited mopcart before
         mop_cart_reloaded_before = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
@@ -558,6 +559,8 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
+        //remove all hp bonuses gained during this level
+        avatar.setCurrentMaxHP(avatar.getBaseHP());
         addObject(avatar);
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
@@ -796,6 +799,7 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         ticks ++;
         if(avatar.getHP()<=0) {
+            System.out.println("died");
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
@@ -852,7 +856,7 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
             //recharge to max health
-            avatar.setHP(avatar.getMaxHP());
+            avatar.setHP(avatar.getCurrentMaxHP());
         }
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
@@ -1225,9 +1229,7 @@ public class FloorController extends WorldController implements ContactListener 
 //                        mop.durability = 0;
 //                    } //fix negative durability UI displays;
                 }
-
             }
-
         } else if (wep instanceof SprayModel) {
 
             SprayModel spray = (SprayModel) wep;
@@ -1279,6 +1281,7 @@ public class FloorController extends WorldController implements ContactListener 
                             if ((case4)) {
                                 obj.setVY(-BULLET_SPEED);
                             }
+                            System.out.println("lid sucked in");
                         }
                     }
                     for (EnemyModel s : enemies){
@@ -1372,12 +1375,13 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
+                System.out.println("lid retrieved");
                 removeBullet(bd2);
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
-            }
-            if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
+            } else if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
+                System.out.println("lid retrieved");
                 removeBullet(bd2);
                 avatar.setHasLid(true);
                 lidGround = false;
@@ -1396,7 +1400,6 @@ public class FloorController extends WorldController implements ContactListener 
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
-                System.out.println("remove bullet");
                 removeBullet(bd1);
             }
 
@@ -1410,7 +1413,6 @@ public class FloorController extends WorldController implements ContactListener 
             } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
                 //do nothing, don't remove bullet if mop cart
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
-                System.out.println("remove bullet");
                 removeBullet(bd2);
             }
 
@@ -1427,14 +1429,14 @@ public class FloorController extends WorldController implements ContactListener 
                     (bd1 == specialHealth && bd2 == avatar)) {
                 avatar.upgradeHP();
                     //upgrade max HP by 5 for now for testing
-                avatar.setHP(avatar.getMaxHP());
+                avatar.setHP(avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 specialHealth.markRemoved(true);
             } else if ((bd2 == avatar && bd1 == specialHealth) ||
                     (bd1 == specialHealth && bd2 == avatar)) {
                 avatar.upgradeHP();
                 //upgrade max HP by 5 for now for testing
-                avatar.setHP(avatar.getMaxHP());
+                avatar.setHP(avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
                 specialHealth.markRemoved(true);
             }
