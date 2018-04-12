@@ -1378,7 +1378,7 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
                 System.out.println("lid retrieved");
-                removeBullet(bd2);
+                removeBullet(bd1);
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
