@@ -560,6 +560,8 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
         //remove all hp bonuses gained during this level
+        //TODO: Avatar in level only has 15 health because set in Tiled, however, we need to change the HP dynamically
+        //depending on what the player has from the last level
         avatar.setCurrentMaxHP(avatar.getBaseHP());
         addObject(avatar);
 
@@ -1430,6 +1432,8 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.upgradeHP();
                     //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 specialHealth.markRemoved(true);
             } else if ((bd2 == avatar && bd1 == specialHealth) ||
@@ -1437,13 +1441,20 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.upgradeHP();
                 //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
                 specialHealth.markRemoved(true);
             }
 
-            // Check for win condition
+            // Check for win / victory condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
                     (bd1 == goalDoor && bd2 == avatar)) {
+                //Perma upgrade player's base HP
+                avatar.setBaseHP(avatar.getCurrentMaxHP());
+                avatar.setCurrentMaxHP(avatar.getBaseHP());
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
             }
             if ((bd1 == avatar   && bd2 == mopCart) ||
