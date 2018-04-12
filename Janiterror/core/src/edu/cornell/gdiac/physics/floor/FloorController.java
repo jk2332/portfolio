@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-basic.tmx";
+    private static final String LEVEL = "level-basic2.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
     /** The sound file for background music */
@@ -370,6 +370,20 @@ public class FloorController extends WorldController implements ContactListener 
         mopCart.setTexture(mopTile);
         mopCart.setName("mopCart");
         addObject(mopCart);
+
+        // Add special elements (power ups)
+//        float mopwidth  = mopTile.getRegionWidth()/scale.x;
+//        float mopheight= mopTile.getRegionHeight()/scale.y;
+//        mopCart = new BoxObstacle(level.getMopCartX()/32+OBJ_OFFSET_X, level.getMopCartY()/32+OBJ_OFFSET_X,mopwidth,mopheight);
+//        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
+//        mopCart.setDensity(0.0f);
+//        mopCart.setFriction(0.0f);
+//        mopCart.setRestitution(0.0f);
+//        mopCart.setSensor(true);
+//        mopCart.setDrawScale(scale);
+//        mopCart.setTexture(mopTile);
+//        mopCart.setName("mopCart");
+//        addObject(mopCart);
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -1215,17 +1229,13 @@ public class FloorController extends WorldController implements ContactListener 
                     boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
-                        if (s.getHP() == 1 ) {
-                            controls[s.getId()]=null;
-                            s.markRemoved(true);
-                        } else if (s instanceof RobotModel){
+                        if (s instanceof RobotModel){
                             System.out.println("was robot");
                             s.setStunned(true);
                             s.decrHP();
                         } else {
                             s.setStunned(true);
                         }
-
                     }
                 }
             }
@@ -1258,38 +1268,39 @@ public class FloorController extends WorldController implements ContactListener 
                         }
                     }
                     for (EnemyModel s : enemies){
-                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
-                        boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
-                        boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
-                        boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
-                        if ((case1)) {
-                            knockbackForce.set(30f,0f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
+                        if (!(s instanceof RobotModel)) {
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
+                            boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
+                            boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
+                            boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
+                            if ((case1)) {
+                                knockbackForce.set(30f,0f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
 
+                            }
+                            if ((case2)) {
+                                knockbackForce.set(-30f,0f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
+                            if ((case3)) {
+                                knockbackForce.set(0f,30f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
+                            if ((case4)) {
+                                knockbackForce.set(0f,-30f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
                         }
-                        if ((case2)) {
-                            knockbackForce.set(-30f,0f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
-                        }
-                        if ((case3)) {
-                            knockbackForce.set(0f,30f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
-                        }
-                        if ((case4)) {
-                            knockbackForce.set(0f,-30f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
-                        }
-
                     }
                 }
         } else if (wep instanceof LidModel) {
@@ -1336,11 +1347,13 @@ public class FloorController extends WorldController implements ContactListener 
                 if (bd2.getName().equals("lid") && bd1 == s) {
                     removeLid(bd2,s);
                 }
-                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) ) {
+                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) && (bd2 != mopCart) ) {
+                    //don't drop at mop cart
                     dropLid(bd1);
                 }
 
-                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) ) {
+                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1 != mopCart) ) {
+                    //don't drop at mop cart
                     dropLid(bd2);
                 }
             }
@@ -1350,7 +1363,6 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
-
             }
             if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
                 removeBullet(bd2);
@@ -1367,7 +1379,11 @@ public class FloorController extends WorldController implements ContactListener 
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
                 }
+            } else if (bd1.getName().equals("slimeball") && bd2 == mopCart) {
+                //maybe combine this in below if statement, be careful of order or might break
+                //do nothing, don't remove bullet if mop cart
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
+                System.out.println("remove bullet");
                 removeBullet(bd1);
             }
 
@@ -1378,7 +1394,10 @@ public class FloorController extends WorldController implements ContactListener 
 //                    avatar.drawAttacked(canvas);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
+            } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
+                //do nothing, don't remove bullet if mop cart
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
+                System.out.println("remove bullet");
                 removeBullet(bd2);
             }
 

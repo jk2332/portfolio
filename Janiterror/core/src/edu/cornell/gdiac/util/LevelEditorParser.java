@@ -33,6 +33,7 @@ public class LevelEditorParser {
     private Vector2 joePos;
     private Vector2 goalDoorPos;
     private Vector2 mopCartPos;
+    private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
 
     private int robotAttackRange;
     private float robotDensity;
@@ -223,6 +224,20 @@ public class LevelEditorParser {
                     }
                 }
                 lizardPos.add(new Vector2(x, y));
+            }
+        }
+
+        Array<Element> specialElement = objects.get(3).getChildrenByName("object");
+        //get raw locations of special elements (powerups)
+        for (int i = 0; i < specialElement.size; i++) {
+            Element special = specialElement.get(i);
+            String type = special.get("type");
+            float x = special.getFloatAttribute("x");
+            float y = boardHeight - special.getFloatAttribute("y");
+            if (type.equals("health")) {
+                specialHealthPos.add(new Vector2(x, y));
+            } else if (type.equals("mop")) {
+                //make new position vector for mop powerups
             }
         }
 

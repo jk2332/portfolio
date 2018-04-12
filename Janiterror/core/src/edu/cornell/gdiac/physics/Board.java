@@ -21,6 +21,7 @@ public class Board {
     /** Texture+Mesh for tile. Only need one, since all have same geometry */
     private Texture[] tileTextures;
     private Texture hazardTileTexture;
+//    private Texture specialTileTexture;
 
     public Board(int width, int height) {
         this.width = width;
@@ -191,6 +192,10 @@ public class Board {
         hazardTileTexture = t;
     }
 
+//    public void setSpecialTileTexture(Texture t) {
+//        specialTileTexture = t;
+//    }
+
     public boolean isBlocked(int x, int y){
         if (!inBounds(x, y)) return false;
         return getTileState(x, y).blocked;
@@ -230,7 +235,7 @@ public class Board {
         //    canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
         //            1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         //}
-         if (getTileState(x,y).isHazard){
+        if (getTileState(x,y).isHazard){
             canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
                     1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         }
