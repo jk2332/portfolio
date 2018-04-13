@@ -579,7 +579,7 @@ public class GameCanvas {
 		
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(Color.WHITE);
-		spriteBatch.draw(region, x,  y, affine_transform);
+		spriteBatch.draw(region, x,  y);
 	}
 
 	/**

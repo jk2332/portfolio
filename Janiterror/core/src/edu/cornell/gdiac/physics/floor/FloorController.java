@@ -72,6 +72,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, TextureRegion[]> wep_to_texture2 = new HashMap<String, TextureRegion[]>();
+    private TextureRegion[] heartTextures;
+
     private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
@@ -425,6 +428,18 @@ public class FloorController extends WorldController implements ContactListener 
         mopcart_menu[0] = "vacuum";
         mopcart_menu[1] = "lid";
         /** Load name -> texture dictionary */
+
+        TextureRegion[][] mopTextures = mopBarTexture.split(164, 64);
+        TextureRegion[][] sprayTextures = sprayBarTexture.split(114, 64);
+        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
+        TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
+        heartTextures = healthBarTexture.split(114, 64)[0];
+
+        wep_to_texture2.put("mop", mopTextures[0]);
+        wep_to_texture2.put("spray", sprayTextures[0]);
+        wep_to_texture2.put("vacuum", vacuumTextures[0]);
+        wep_to_texture2.put("lid", lidTextures[0]);
+
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
@@ -1556,73 +1571,65 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.getData().setScale(1.0f);
 
         /* Show Multiple HP and Mop Icons */
-        int margin = 0;
-        int HP = avatar.getHP();
-        for (int j = 0; j < HP; j++) {
-            canvas.draw(heartTexture, UI_OFFSET + 30 + margin, canvas.getHeight()-UI_OFFSET - 27);
-            margin = margin + 25;
-        }
+        int currentHP = avatar.getHP();
+        int maxHP = avatar.getCurrentMaxHP();
+        if (currentHP < 0){ currentHP = 0; } //prevent array exception
+        canvas.draw(heartTextures[(maxHP - currentHP) / 3],
+                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 210);
 
         // DRAW ACTIVE WEAPON UI
-            //get textures via hash map from weapons names
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
-            //draw retrieved textures
-        canvas.draw(wep1Texture, (avatar.getX() * 32) - (490),
-                (avatar.getY() * 32) + 140);
-        canvas.draw(wep2Texture,  (avatar.getX() * 32) - (450),
-                (avatar.getY() * 32) + 90);
-            //draw weapon UI durability bars (currently temporary)
 
-        //DRAW HP
-        canvas.draw(wep1Texture, (avatar.getX() * 32) - (490),
-                (avatar.getY() * 32) + 210);
-
-
+        TextureRegion[] wep1Textures = wep_to_texture2.get(wep1FileName);
         int durability1 = avatar.getWep1().getDurability();
-        if (durability1 < 0){
-            durability1 = 0;
-        }
-        String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
+        int maxDurability1 = avatar.getWep1().getMaxDurability();
+        if (durability1 < 0){ durability1 = 0; } //fix for negative durability
+        canvas.draw(wep1Textures[maxDurability1 - durability1],
+                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 140);
+
+        TextureRegion[] wep2Textures = wep_to_texture2.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
-        if (durability2 < 0){
-            durability2 = 0;
-        }
-        String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
-        displayFont.getData().setScale(0.8f);
-        if (durability1 <= 3 && durability2 <= 3) {
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-            displayFont.setColor(Color.WHITE);
-        }
-        else if (durability1 <= 3) {
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            displayFont.setColor(Color.WHITE);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-        }
-        else if (durability2 <= 3) {
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-            displayFont.setColor(Color.WHITE);
-        }
-        else {
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-        }
-        displayFont.getData().setScale(1f);
+        int maxDurability2 = avatar.getWep2().getMaxDurability();
+        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
+        canvas.draw(wep2Textures[maxDurability2 - durability2],
+                (avatar.getX() * 32) - (450), (avatar.getY() * 32) + 90);
+
+        //Write out durabilities
+//        displayFont.getData().setScale(0.8f);
+//        if (durability1 <= 3 && durability2 <= 3) {
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//            displayFont.setColor(Color.WHITE);
+//        }
+//        else if (durability1 <= 3) {
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            displayFont.setColor(Color.WHITE);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//        }
+//        else if (durability2 <= 3) {
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//            displayFont.setColor(Color.WHITE);
+//        }
+//        else {
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//        }
+//        displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND

@@ -101,9 +101,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="power ups">
-  <object id="30" type="health" gid="8" x="126.425" y="288.387" width="32" height="32"/>
- </objectgroup>
+ <objectgroup name="power ups"/>
  <layer name="horizontal walls" width="32" height="18">
   <data encoding="csv">
 9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,12,
