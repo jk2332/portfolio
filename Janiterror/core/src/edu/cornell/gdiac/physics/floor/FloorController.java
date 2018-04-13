@@ -132,7 +132,6 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         }
 
-
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
         sounds.allocate(manager, JUMP_FILE);
@@ -415,8 +414,9 @@ public class FloorController extends WorldController implements ContactListener 
 
     private void addUIInfo() {
         /** Pixel Locations of Weapon Icons in Mop Cart*/
-        mopcart_index_xlocation[0] = 890;
-        mopcart_index_xlocation[1] = 960;
+            //added on to avatar.getX()
+        mopcart_index_xlocation[0] = 375;
+        mopcart_index_xlocation[1] = 450;
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -800,7 +800,10 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
-//        canvas.setCameraPosition(avatar.getX(), avatar.getY());
+//        System.out.println(avatar.getX());
+//        System.out.println(avatar.getY());
+        canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
+            //getX only gets the tile #, multiply by 32 to get the pixel number
 
         Affine2 oTran = new Affine2();
 		oTran.setToTranslation(avatar.getX(), avatar.getY());
@@ -809,8 +812,9 @@ public class FloorController extends WorldController implements ContactListener 
 		Vector3 wPos = camera.position;
 		wTran.setToTranslation(-wPos.x,-wPos.y);
 		oTran.mul(wTran);
-		System.out.println(oTran);
-		canvas.setAffineTransform(oTran);
+//		System.out.println(oTran);
+//		canvas.setAffineTransform(oTran);
+            //this doesn't do anything rn
 
         ticks ++;
         if(avatar.getHP()<=0) {
@@ -1390,13 +1394,11 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
-                System.out.println("lid retrieved");
                 removeBullet(bd1);
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
             } else if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
-                System.out.println("lid retrieved");
                 removeBullet(bd2);
                 avatar.setHasLid(true);
                 lidGround = false;
@@ -1440,24 +1442,22 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             //Check if avatar has reached a powerup
-            if ((bd1 == avatar && bd2 == specialHealth) ||
-                    (bd1 == specialHealth && bd2 == avatar)) {
+            if (bd1 == avatar && bd2 == specialHealth) {
+                specialHealth.markRemoved(true);
                 avatar.upgradeHP();
                     //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
                 System.out.println("base hp" + avatar.getBaseHP());
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+            } else if (bd2 == avatar && bd1 == specialHealth) {
                 specialHealth.markRemoved(true);
-            } else if ((bd2 == avatar && bd1 == specialHealth) ||
-                    (bd1 == specialHealth && bd2 == avatar)) {
                 avatar.upgradeHP();
-                //upgrade max HP by 5 for now for testing
+                    //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
                 System.out.println("base hp" + avatar.getBaseHP());
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
-                specialHealth.markRemoved(true);
             }
 
             // Check for win / victory condition
@@ -1546,6 +1546,15 @@ public class FloorController extends WorldController implements ContactListener 
 
         displayFont.setColor(Color.WHITE);
 
+        //Draw Enemy Health
+        displayFont.getData().setScale(0.5f);
+        for (EnemyModel s : enemies) {
+            if (!(s.isRemoved())) {
+                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
+            }
+        }
+        displayFont.getData().setScale(1.0f);
+
         /* Show Multiple HP and Mop Icons */
         int margin = 0;
         int HP = avatar.getHP();
@@ -1561,9 +1570,17 @@ public class FloorController extends WorldController implements ContactListener 
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
             //draw retrieved textures
-        canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
-        canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
+        canvas.draw(wep1Texture, (avatar.getX() * 32) - (490),
+                (avatar.getY() * 32) + 140);
+        canvas.draw(wep2Texture,  (avatar.getX() * 32) - (450),
+                (avatar.getY() * 32) + 90);
             //draw weapon UI durability bars (currently temporary)
+
+        //DRAW HP
+        canvas.draw(wep1Texture, (avatar.getX() * 32) - (490),
+                (avatar.getY() * 32) + 210);
+
+
         int durability1 = avatar.getWep1().getDurability();
         if (durability1 < 0){
             durability1 = 0;
@@ -1608,14 +1625,16 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
-            //DRAW MOP CART TEXT AND BACKGROUND
+            //DRAW MOP CART BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 180, 0, .18f, .8f);
+                    (avatar.getX() * 32) + (350), (avatar.getY() * 32) + (140), 0, .18f, .4f);
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
+
+            //DRAW MOP CART TEXT
             canvas.drawText("Mop Cart", displayFont,
-                    canvas.getWidth()/2 + 375, canvas.getHeight()/2 + 280);
+                    (avatar.getX() * 32) + (380), (avatar.getY() * 32) + (270));
             displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
@@ -1629,22 +1648,13 @@ public class FloorController extends WorldController implements ContactListener 
             //draw unused weapons currently in cart
             Texture unused_wep1 = wep_to_texture.get(draw_mopcart[0]);
             Texture unused_wep2 = wep_to_texture.get(draw_mopcart[1]);
-            canvas.draw(unused_wep1, canvas.getWidth()/2 + 360, canvas.getHeight()/2 + 200);
-            canvas.draw(unused_wep2, canvas.getWidth()/2 + 430, canvas.getHeight()/2 + 200);
+            canvas.draw(unused_wep1, (avatar.getX() * 32) + (360), (avatar.getY() * 32) + (180));
+            canvas.draw(unused_wep2, (avatar.getX() * 32) + (435), (avatar.getY() * 32) + (180));
 
             //DRAW MOPCART INDEX
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
-            canvas.draw(mopcartIndexTexture, current_xlocation, canvas.getHeight()/2 + 170);
+            canvas.draw(mopcartIndexTexture, (avatar.getX() * 32) + current_xlocation, (avatar.getY() * 32) + (145));
         }
-
-        //Draw Enemy Health
-        displayFont.getData().setScale(0.5f);
-        for (EnemyModel s : enemies) {
-            if (!(s.isRemoved())) {
-                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
-            }
-        }
-        displayFont.getData().setScale(1.0f);
 
         canvas.end();
 

@@ -104,10 +104,10 @@ public class LevelEditorParser {
         }
         tiles = layerToList(layers.get(0));
 
-        Element goalDoorElement = objects.get(1).getChild(0);
-        goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
         Element mopCartElement = objects.get(0).getChild(0);
         mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),boardHeight - mopCartElement.getFloatAttribute("y"));
+        Element goalDoorElement = objects.get(1).getChild(0);
+        goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
         for (int i = 0; i < charactersElement.size; i++) {
             Element character = charactersElement.get(i);
@@ -151,6 +151,7 @@ public class LevelEditorParser {
                 }
                 robotPos.add(new Vector2(x, y));
             } else if (type.equals("joe")) {
+                System.out.println("joe found");
                 if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -298,7 +299,6 @@ public class LevelEditorParser {
         for (int i = 0; i < h; i++) {
             grid[h - i - 1] = rows[i].split(",");
         }
-
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 grid2[i][j] = Integer.parseInt(grid[i][j]);

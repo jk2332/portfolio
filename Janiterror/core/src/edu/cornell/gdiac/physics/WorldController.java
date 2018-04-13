@@ -424,6 +424,9 @@ public abstract class WorldController implements Screen {
 		sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
 		vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
 		lidTextureSmall = new Texture(LID_FILE_SMALL);
+
+//		mopBarTexture = new TextureRegion(MOP_FILE);
+
 		heartTexture = new Texture(HEART_FILE);
         mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
 
