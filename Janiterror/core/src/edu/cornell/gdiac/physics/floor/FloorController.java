@@ -33,8 +33,14 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String LEVEL = "level-basic2.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
+
+    /**
+     * WE DO NOT OWN ANY OF THIS MUSIC!!!!
+     */
+
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+        //youtube link: https://www.youtube.com/watch?v=JYfgpodCVHE
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
