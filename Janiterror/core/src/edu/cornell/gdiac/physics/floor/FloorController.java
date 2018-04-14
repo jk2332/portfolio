@@ -1504,7 +1504,6 @@ public class FloorController extends WorldController implements ContactListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
