@@ -918,7 +918,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping()) {
             //get weapon at index
             String swapping_weapon_name = mopcart_menu[mopcart_index];
-//            System.out.print(swapping_weapon_name);
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
             //set all new weapons
@@ -1583,10 +1582,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         /* Show Multiple HP and Mop Icons */
         int currentHP = avatar.getHP();
+            //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
         int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
-        canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP) / 3],
+        canvas.draw(allHeartTextures[times_improved][((maxHP - currentHP) / 3)],
                 (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 210);
 
         // DRAW ACTIVE WEAPON UI
