@@ -118,19 +118,16 @@ public abstract class WorldController implements Screen {
 	private static final String SPRAY_FILE  = "floor/ui-spray.png";
 	private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
 	private static final String LID_FILE  = "floor/ui-lid.png";
-	private static final String MOP_FILE_SMALL  = "floor/ui-mop-small.png";
-	private static final String SPRAY_FILE_SMALL  = "floor/ui-spray-small.png";
-	private static final String VACUUM_FILE_SMALL  = "floor/ui-vacuum-small.png";
-	private static final String LID_FILE_SMALL  = "floor/ui-lid-small.png";
-	private static final String HEART_FILE  = "floor/sponge.png";
-    private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 
 	/** The texture files for the UI icons */
 	private static final String HEALTH_BAR_FILE  = "floor/ui-bar-health.png";
+	private static final String HEALTH_BAR_FILE2  = "floor/ui-bar-health-upgrade1.png";
+
 	private static final String MOP_BAR_FILE  = "floor/ui-bar-mop.png";
 	private static final String SPRAY_BAR_FILE  = "floor/ui-bar-spray.png";
 	private static final String VACUUM_BAR_FILE  = "floor/ui-bar-vacuum.png";
 	private static final String LID_BAR_FILE  = "floor/ui-bar-lid.png";
+	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String TILE_FILE = "shared/basic-tile-32.png";
@@ -189,14 +186,11 @@ public abstract class WorldController implements Screen {
 	protected Texture sprayTexture;
 	protected Texture vacuumTexture;
 	protected Texture lidTexture;
-	protected Texture mopTextureSmall;
-	protected Texture sprayTextureSmall;
-	protected Texture vacuumTextureSmall;
-	protected Texture lidTextureSmall;
-	protected Texture heartTexture;
     protected Texture mopcartIndexTexture;
 
 	protected TextureRegion healthBarTexture;
+	protected TextureRegion healthBarTexture2;
+
 	protected TextureRegion mopBarTexture;
 	protected TextureRegion sprayBarTexture;
 	protected TextureRegion vacuumBarTexture;
@@ -324,21 +318,14 @@ public abstract class WorldController implements Screen {
 		assets.add(VACUUM_FILE);
 		manager.load(LID_FILE, Texture.class);
 		assets.add(LID_FILE);
-		manager.load(MOP_FILE_SMALL, Texture.class);
-		assets.add(MOP_FILE_SMALL);
-		manager.load(SPRAY_FILE_SMALL, Texture.class);
-		assets.add(SPRAY_FILE_SMALL);
-		manager.load(VACUUM_FILE_SMALL, Texture.class);
-		assets.add(VACUUM_FILE_SMALL);
-		manager.load(LID_FILE_SMALL, Texture.class);
-		assets.add(LID_FILE_SMALL);
-		manager.load(HEART_FILE, Texture.class);
-		assets.add(HEART_FILE);
         manager.load(MOPCART_INDEX_FILE, Texture.class);
         assets.add(MOPCART_INDEX_FILE);
 
 		manager.load(HEALTH_BAR_FILE, Texture.class);
 		assets.add(HEALTH_BAR_FILE);
+		manager.load(HEALTH_BAR_FILE2, Texture.class);
+		assets.add(HEALTH_BAR_FILE2);
+
 		manager.load(MOP_BAR_FILE, Texture.class);
 		assets.add(MOP_BAR_FILE);
 		manager.load(SPRAY_BAR_FILE, Texture.class);
@@ -444,18 +431,15 @@ public abstract class WorldController implements Screen {
 		sprayTexture = new Texture(SPRAY_FILE);
 		vacuumTexture = new Texture(VACUUM_FILE);
 		lidTexture = new Texture(LID_FILE);
-		mopTextureSmall = new Texture(MOP_FILE_SMALL);
-		sprayTextureSmall = new Texture(SPRAY_FILE_SMALL);
-		vacuumTextureSmall = new Texture(VACUUM_FILE_SMALL);
-		lidTextureSmall = new Texture(LID_FILE_SMALL);
 
 		healthBarTexture = createTexture(manager,HEALTH_BAR_FILE,false);
+		healthBarTexture2 = createTexture(manager,HEALTH_BAR_FILE2,false);
+		System.out.println(healthBarTexture2);
+
 		mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
 		vacuumBarTexture = createTexture(manager,VACUUM_BAR_FILE,false);
 		lidBarTexture = createTexture(manager,LID_BAR_FILE,false);
-
-		heartTexture = new Texture(HEART_FILE);
         mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
 
         tileTexture = new Texture(TILE_FILE);

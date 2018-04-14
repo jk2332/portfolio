@@ -72,8 +72,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
-    private HashMap<String, TextureRegion[]> wep_to_texture2 = new HashMap<String, TextureRegion[]>();
-    private TextureRegion[] heartTextures;
+    private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
+    private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
 
     private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
@@ -83,6 +83,8 @@ public class FloorController extends WorldController implements ContactListener 
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
     private boolean mop_cart_reloaded_before = false;
+    private boolean upgradedHealthBefore = false;
+        //I use this because for some reason when you hit the powerup it collides like 2 times even though mark removed
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -324,6 +326,8 @@ public class FloorController extends WorldController implements ContactListener 
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
         //avatar has never visited mopcart before
         mop_cart_reloaded_before = false;
+        //avatar has never upgraded health on this level before
+        upgradedHealthBefore = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -433,22 +437,24 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion[][] sprayTextures = sprayBarTexture.split(114, 64);
         TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
         TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
-        heartTextures = healthBarTexture.split(114, 64)[0];
 
-        wep_to_texture2.put("mop", mopTextures[0]);
-        wep_to_texture2.put("spray", sprayTextures[0]);
-        wep_to_texture2.put("vacuum", vacuumTextures[0]);
-        wep_to_texture2.put("lid", lidTextures[0]);
+        TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
+        System.out.println(healthBarTexture);
+        System.out.println(healthBarTexture2);
+        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        allHeartTextures[0] = heartTextures;
+        allHeartTextures[1] = heartTextures2;
 
+        wep_to_bartexture.put("mop", mopTextures[0]);
+        wep_to_bartexture.put("spray", sprayTextures[0]);
+        wep_to_bartexture.put("vacuum", vacuumTextures[0]);
+        wep_to_bartexture.put("lid", lidTextures[0]);
+
+        /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
-        /** Load name -> small texture dictionary */
-        wep_to_small_texture.put("mop", mopTextureSmall);
-        wep_to_small_texture.put("spray", sprayTextureSmall);
-        wep_to_small_texture.put("vacuum", vacuumTextureSmall);
-        wep_to_small_texture.put("lid", lidTextureSmall);
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel(level.getMopDurability(), level.getMopAttackRange(), level.getMopKnockbackTimer()));
         wep_to_model.put("spray", new SprayModel(level.getSprayDurability(), level.getSprayAttackRange(), level.getSprayStunTimer()));
@@ -1457,19 +1463,25 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             //Check if avatar has reached a powerup
-            if (bd1 == avatar && bd2 == specialHealth) {
-                specialHealth.markRemoved(true);
+            if (bd1 == avatar && bd2 == specialHealth && !upgradedHealthBefore) {
+                upgradedHealthBefore = true;
+                bd2.markRemoved(true);
+
                 avatar.upgradeHP();
-                    //upgrade max HP by 5 for now for testing
+                //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
+
                 System.out.println("base hp" + avatar.getBaseHP());
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
-            } else if (bd2 == avatar && bd1 == specialHealth) {
-                specialHealth.markRemoved(true);
+            } else if (bd2 == avatar && bd1 == specialHealth && !upgradedHealthBefore) {
+                upgradedHealthBefore = true;
+                bd1.markRemoved(true);
+
                 avatar.upgradeHP();
-                    //upgrade max HP by 5 for now for testing
+                //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
+
                 System.out.println("base hp" + avatar.getBaseHP());
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
@@ -1573,8 +1585,9 @@ public class FloorController extends WorldController implements ContactListener 
         /* Show Multiple HP and Mop Icons */
         int currentHP = avatar.getHP();
         int maxHP = avatar.getCurrentMaxHP();
+        int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
-        canvas.draw(heartTextures[(maxHP - currentHP) / 3],
+        canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP) / 3],
                 (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 210);
 
         // DRAW ACTIVE WEAPON UI
@@ -1583,14 +1596,14 @@ public class FloorController extends WorldController implements ContactListener 
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
 
-        TextureRegion[] wep1Textures = wep_to_texture2.get(wep1FileName);
+        TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
         canvas.draw(wep1Textures[maxDurability1 - durability1],
                 (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 140);
 
-        TextureRegion[] wep2Textures = wep_to_texture2.get(wep2FileName);
+        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
         int maxDurability2 = avatar.getWep2().getMaxDurability();
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
