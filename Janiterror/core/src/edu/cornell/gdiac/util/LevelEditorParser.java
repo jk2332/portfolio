@@ -80,6 +80,9 @@ public class LevelEditorParser {
     private int tilegid;
     private int hazardgid;
 
+    private int boardWidth;
+    private int boardHeight;
+
 
     public LevelEditorParser(String levelPath) {
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
@@ -103,6 +106,9 @@ public class LevelEditorParser {
             }
         }
         tiles = layerToList(layers.get(0));
+
+        boardHeight = tiles.length;
+        boardWidth = tiles[0].length;
 
         Element mopCartElement = objects.get(0).getChild(0);
         mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),boardHeight - mopCartElement.getFloatAttribute("y"));
@@ -519,5 +525,13 @@ public class LevelEditorParser {
 
     public int getSprayStunTimer() {
         return sprayStunTimer;
+    }
+
+    public int getBoardHeight() {
+        return boardHeight;
+    }
+
+    public int getBoardWidth() {
+        return boardWidth;
     }
 }
