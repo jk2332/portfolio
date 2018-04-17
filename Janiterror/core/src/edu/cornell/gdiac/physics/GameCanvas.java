@@ -428,14 +428,7 @@ public class GameCanvas {
 		}
 
 		//WALKER CODE
-//		Affine2 oTran = new Affine2();
-//		oTran.setToTranslation(getWidth(), getHeight());
-//		Affine2 wTran = new Affine2();
-//		Vector3 wPos = camera.position;
-//		wTran.setToTranslation(-wPos.x,-wPos.y);
-//		oTran.mul(wTran);
-//		spriteBatch.draw(image, width, height, oTran);
-		
+
 		// Unlike Lab 1, we can shortcut without a master drawing method
     	spriteBatch.setColor(tint);
 		spriteBatch.draw(image, x,  y, width, height);
@@ -703,7 +696,7 @@ public class GameCanvas {
 		}
 
 		local.set(affine);
-		local.translate(-ox,-oy);				
+		local.translate(-ox,-oy);
 		spriteBatch.setColor(tint);
 		spriteBatch.draw(region, region.getRegionWidth(), region.getRegionHeight(), local);
 	}
@@ -1168,6 +1161,7 @@ public class GameCanvas {
 	 * @param sy 	The y-axis scaling factor
 	 */
 	private void computeTransform(float ox, float oy, float x, float y, float angle, float sx, float sy) {
+
 		local.setToTranslation(x,y);
 		local.rotate(180.0f*angle/(float)Math.PI);
 		local.scale(sx,sy);

@@ -213,6 +213,8 @@ public class AIController {
         int ty;
         int sy;
         int sx;
+        int dx;
+        int dy;
         boolean b;
         int fin =-1;
         int temp = Integer.MAX_VALUE;
@@ -292,6 +294,10 @@ public class AIController {
                     System.out.println("here"); break;
                 }
 
+                dx = Math.abs(sx-tx);
+                dy = Math.abs(sy-ty);
+                attackRange = dx >=2 && dx < attackRange && dx <= dy ? dx : (dy < attackRange && dy < dx && dy>=2 ? dy : attackRange);
+
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
                 int manUp =  manhattan(sx, sy, tx, ty+attackRange);
@@ -324,6 +330,10 @@ public class AIController {
                 ty = this.board.screenToBoardY(this.target.getY());
                 if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) &&
                         hasNoHazardBetw(sx, sy, tx, ty)) break;
+
+                dx = Math.abs(sx-tx);
+                dy = Math.abs(sy-ty);
+                attackRange = dx >=2 && dx < attackRange && dx <= dy ? dx : (dy < attackRange && dy < dx && dy>=2 ? dy : attackRange);
 
                 int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manhRight = manhattan(sx, sy, tx+attackRange, ty);
