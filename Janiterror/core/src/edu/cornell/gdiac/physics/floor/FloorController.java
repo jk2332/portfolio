@@ -33,8 +33,14 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String LEVEL = "level-basic2.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
+
+    /**
+     * WE DO NOT OWN ANY OF THIS MUSIC!!!!
+     */
+
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+        //youtube link: https://www.youtube.com/watch?v=JYfgpodCVHE
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
@@ -72,6 +78,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
+    private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
+
     private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
@@ -80,6 +89,8 @@ public class FloorController extends WorldController implements ContactListener 
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
     private boolean mop_cart_reloaded_before = false;
+    private boolean upgradedHealthBefore = false;
+        //I use this because for some reason when you hit the powerup it collides like 2 times even though mark removed
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -131,7 +142,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
-
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
@@ -207,6 +217,8 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallERPos;
     ArrayList<Vector2> hazardPos;
 
+    ArrayList<Vector2> specialHealthPos;
+
     int [][] tiles;
 
     // Physics objects for the game
@@ -247,6 +259,9 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Reference to the mopCart (for collision detection) */
     private BoxObstacle mopCart;
+
+    /** Reference to the special health power up (for collision detection) */
+    private BoxObstacle specialHealth;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -302,6 +317,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallERPos = level.getWallERPos();
 
         hazardPos = level.getHazardPos();
+        specialHealthPos = level.getSpecialHealthPos();
 
         tiles = level.getTiles();
     }
@@ -313,7 +329,10 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        //avatar has never visited mopcart before
         mop_cart_reloaded_before = false;
+        //avatar has never upgraded health on this level before
+        upgradedHealthBefore = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -372,18 +391,25 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(mopCart);
 
         // Add special elements (power ups)
-//        float mopwidth  = mopTile.getRegionWidth()/scale.x;
-//        float mopheight= mopTile.getRegionHeight()/scale.y;
-//        mopCart = new BoxObstacle(level.getMopCartX()/32+OBJ_OFFSET_X, level.getMopCartY()/32+OBJ_OFFSET_X,mopwidth,mopheight);
-//        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
-//        mopCart.setDensity(0.0f);
-//        mopCart.setFriction(0.0f);
-//        mopCart.setRestitution(0.0f);
-//        mopCart.setSensor(true);
-//        mopCart.setDrawScale(scale);
-//        mopCart.setTexture(mopTile);
-//        mopCart.setName("mopCart");
-//        addObject(mopCart);
+        float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
+        float specialHealthHeight = specialHealthTile.getRegionHeight()/scale.y;
+
+        for (int ii=0; ii<specialHealthPos.size(); ii++) {
+            Vector2 vec = specialHealthPos.get(ii);
+            specialHealth = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialHealthWidth, specialHealthHeight);
+            specialHealth.setBodyType(BodyDef.BodyType.StaticBody);
+            specialHealth.setDensity(0.0f);
+            specialHealth.setFriction(0.0f);
+            specialHealth.setRestitution(0.0f);
+            specialHealth.setSensor(true);
+            specialHealth.setDrawScale(scale);
+            specialHealth.setTexture(specialHealthTile);
+            specialHealth.setName("specialHealth");
+            addObject(specialHealth);
+        }
+
+        //FIX THIS POSITIONING
+
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -400,8 +426,9 @@ public class FloorController extends WorldController implements ContactListener 
 
     private void addUIInfo() {
         /** Pixel Locations of Weapon Icons in Mop Cart*/
-        mopcart_index_xlocation[0] = 890;
-        mopcart_index_xlocation[1] = 960;
+            //added on to avatar.getX()
+        mopcart_index_xlocation[0] = 375;
+        mopcart_index_xlocation[1] = 450;
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -410,15 +437,29 @@ public class FloorController extends WorldController implements ContactListener 
         mopcart_menu[0] = "vacuum";
         mopcart_menu[1] = "lid";
         /** Load name -> texture dictionary */
+
+        TextureRegion[][] mopTextures = mopBarTexture.split(164, 64);
+        TextureRegion[][] sprayTextures = sprayBarTexture.split(114, 64);
+        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
+        TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
+
+        TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
+        System.out.println(healthBarTexture);
+        System.out.println(healthBarTexture2);
+        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        allHeartTextures[0] = heartTextures;
+        allHeartTextures[1] = heartTextures2;
+
+        wep_to_bartexture.put("mop", mopTextures[0]);
+        wep_to_bartexture.put("spray", sprayTextures[0]);
+        wep_to_bartexture.put("vacuum", vacuumTextures[0]);
+        wep_to_bartexture.put("lid", lidTextures[0]);
+
+        /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
-        /** Load name -> small texture dictionary */
-        wep_to_small_texture.put("mop", mopTextureSmall);
-        wep_to_small_texture.put("spray", sprayTextureSmall);
-        wep_to_small_texture.put("vacuum", vacuumTextureSmall);
-        wep_to_small_texture.put("lid", lidTextureSmall);
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel(level.getMopDurability(), level.getMopAttackRange(), level.getMopKnockbackTimer()));
         wep_to_model.put("spray", new SprayModel(level.getSprayDurability(), level.getSprayAttackRange(), level.getSprayStunTimer()));
@@ -544,6 +585,10 @@ public class FloorController extends WorldController implements ContactListener 
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
+        //remove all hp bonuses gained during this level
+        //TODO: Avatar in level only has 15 health because set in Tiled, however, we need to change the HP dynamically
+        //depending on what the player has from the last level
+        avatar.setCurrentMaxHP(avatar.getBaseHP());
         addObject(avatar);
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
@@ -780,8 +825,26 @@ public class FloorController extends WorldController implements ContactListener 
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        OrthographicCamera camera = canvas.getCamera();
+//        System.out.println(avatar.getX());
+//        System.out.println(avatar.getY());
+        canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
+            //getX only gets the tile #, multiply by 32 to get the pixel number
+
+        Affine2 oTran = new Affine2();
+		oTran.setToTranslation(avatar.getX(), avatar.getY());
+		    //is this for avatar or for camera?
+		Affine2 wTran = new Affine2();
+		Vector3 wPos = camera.position;
+		wTran.setToTranslation(-wPos.x,-wPos.y);
+		oTran.mul(wTran);
+//		System.out.println(oTran);
+//		canvas.setAffineTransform(oTran);
+            //this doesn't do anything rn
+
         ticks ++;
         if(avatar.getHP()<=0) {
+            System.out.println("died");
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
@@ -838,7 +901,7 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
             avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
             //recharge to max health
-            avatar.setHP(avatar.getMaxHP());
+            avatar.setHP(avatar.getCurrentMaxHP());
         }
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
@@ -860,7 +923,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping()) {
             //get weapon at index
             String swapping_weapon_name = mopcart_menu[mopcart_index];
-//            System.out.print(swapping_weapon_name);
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
             //set all new weapons
@@ -1211,9 +1273,7 @@ public class FloorController extends WorldController implements ContactListener 
 //                        mop.durability = 0;
 //                    } //fix negative durability UI displays;
                 }
-
             }
-
         } else if (wep instanceof SprayModel) {
 
             SprayModel spray = (SprayModel) wep;
@@ -1265,6 +1325,7 @@ public class FloorController extends WorldController implements ContactListener 
                             if ((case4)) {
                                 obj.setVY(-BULLET_SPEED);
                             }
+                            System.out.println("lid sucked in");
                         }
                     }
                     for (EnemyModel s : enemies){
@@ -1351,7 +1412,6 @@ public class FloorController extends WorldController implements ContactListener 
                     //don't drop at mop cart
                     dropLid(bd1);
                 }
-
                 if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1 != mopCart) ) {
                     //don't drop at mop cart
                     dropLid(bd2);
@@ -1359,12 +1419,11 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
-                removeBullet(bd2);
+                removeBullet(bd1);
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
-            }
-            if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
+            } else if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
                 removeBullet(bd2);
                 avatar.setHasLid(true);
                 lidGround = false;
@@ -1383,7 +1442,6 @@ public class FloorController extends WorldController implements ContactListener 
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
-                System.out.println("remove bullet");
                 removeBullet(bd1);
             }
 
@@ -1397,7 +1455,6 @@ public class FloorController extends WorldController implements ContactListener 
             } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
                 //do nothing, don't remove bullet if mop cart
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
-                System.out.println("remove bullet");
                 removeBullet(bd2);
             }
 
@@ -1409,9 +1466,39 @@ public class FloorController extends WorldController implements ContactListener 
                 removeBullet(bd1);
             }
 
-            // Check for win condition
+            //Check if avatar has reached a powerup
+            if (bd1 == avatar && bd2 == specialHealth && !upgradedHealthBefore) {
+                upgradedHealthBefore = true;
+                bd2.markRemoved(true);
+
+                avatar.upgradeHP();
+                //upgrade max HP by 5 for now for testing
+                avatar.setHP(avatar.getCurrentMaxHP());
+
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+            } else if (bd2 == avatar && bd1 == specialHealth && !upgradedHealthBefore) {
+                upgradedHealthBefore = true;
+                bd1.markRemoved(true);
+
+                avatar.upgradeHP();
+                //upgrade max HP by 5 for now for testing
+                avatar.setHP(avatar.getCurrentMaxHP());
+
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
+            }
+
+            // Check for win / victory condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
                     (bd1 == goalDoor && bd2 == avatar)) {
+                //Perma upgrade player's base HP
+                avatar.setBaseHP(avatar.getCurrentMaxHP());
+                avatar.setCurrentMaxHP(avatar.getBaseHP());
+                System.out.println("base hp" + avatar.getBaseHP());
+                System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
             }
             if ((bd1 == avatar   && bd2 == mopCart) ||
@@ -1421,7 +1508,6 @@ public class FloorController extends WorldController implements ContactListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -1490,76 +1576,89 @@ public class FloorController extends WorldController implements ContactListener 
 
         displayFont.setColor(Color.WHITE);
 
-        /* Show Multiple HP and Mop Icons */
-        int margin = 0;
-        int HP = avatar.getHP();
-        for (int j = 0; j < HP; j++) {
-            canvas.draw(heartTexture, UI_OFFSET + 30 + margin, canvas.getHeight()-UI_OFFSET - 27);
-            margin = margin + 25;
+        //Draw Enemy Health
+        displayFont.getData().setScale(0.5f);
+        for (EnemyModel s : enemies) {
+            if (!(s.isRemoved())) {
+                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
+            }
         }
+        displayFont.getData().setScale(1.0f);
 
-        // DISPLAY ACTIVE WEAPON UI
-        //get textures via hash map from weapons names
+        /* Show Multiple HP and Mop Icons */
+        int currentHP = avatar.getHP();
+            //this is currently 15 because we're setting HP within the character model in Tiled
+        int maxHP = avatar.getCurrentMaxHP();
+        int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
+        if (currentHP < 0){ currentHP = 0; } //prevent array exception
+        canvas.draw(allHeartTextures[times_improved][((maxHP - currentHP) / 3)],
+                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 210);
+
+        // DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
         Texture wep1Texture = wep_to_texture.get(wep1FileName);
         Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
-        //draw retrieved textures
-        canvas.draw(wep1Texture, UI_OFFSET + 50, canvas.getHeight()-UI_OFFSET - 100);
-        canvas.draw(wep2Texture, UI_OFFSET + 65, canvas.getHeight()-UI_OFFSET - 180);
-        //draw weapon UI durability bars (currently temporary)
+
+        TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
         int durability1 = avatar.getWep1().getDurability();
-        if (durability1 < 0){
-            durability1 = 0;
-        }
-        String maxDurability1 = Integer.toString(avatar.getWep1().getMaxDurability());
+        int maxDurability1 = avatar.getWep1().getMaxDurability();
+        if (durability1 < 0){ durability1 = 0; } //fix for negative durability
+        canvas.draw(wep1Textures[maxDurability1 - durability1],
+                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 140);
+
+        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
-        if (durability2 < 0){
-            durability2 = 0;
-        }
-        String maxDurability2 = Integer.toString(avatar.getWep2().getMaxDurability());
-        displayFont.getData().setScale(0.8f);
-        if (durability1 <= 3 && durability2 <= 3) {
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-            displayFont.setColor(Color.WHITE);
-        }
-        else if (durability1 <= 3) {
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            displayFont.setColor(Color.WHITE);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-        }
-        else if (durability2 <= 3) {
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            displayFont.setColor(Color.RED);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-            displayFont.setColor(Color.WHITE);
-        }
-        else {
-            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-        }
-        displayFont.getData().setScale(1f);
+        int maxDurability2 = avatar.getWep2().getMaxDurability();
+        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
+        canvas.draw(wep2Textures[maxDurability2 - durability2],
+                (avatar.getX() * 32) - (450), (avatar.getY() * 32) + 90);
+
+        //Write out durabilities
+//        displayFont.getData().setScale(0.8f);
+//        if (durability1 <= 3 && durability2 <= 3) {
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//            displayFont.setColor(Color.WHITE);
+//        }
+//        else if (durability1 <= 3) {
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            displayFont.setColor(Color.WHITE);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//        }
+//        else if (durability2 <= 3) {
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            displayFont.setColor(Color.RED);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//            displayFont.setColor(Color.WHITE);
+//        }
+//        else {
+//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
+//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
+//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
+//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
+//        }
+//        displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
-            //DRAW MOP CART TEXT AND BACKGROUND
+            //DRAW MOP CART BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    canvas.getWidth()/2 + 340, canvas.getHeight()/2 + 180, 0, .18f, .8f);
+                    (avatar.getX() * 32) + (350), (avatar.getY() * 32) + (140), 0, .18f, .4f);
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
+
+            //DRAW MOP CART TEXT
             canvas.drawText("Mop Cart", displayFont,
-                    canvas.getWidth()/2 + 375, canvas.getHeight()/2 + 280);
+                    (avatar.getX() * 32) + (380), (avatar.getY() * 32) + (270));
             displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
@@ -1573,22 +1672,13 @@ public class FloorController extends WorldController implements ContactListener 
             //draw unused weapons currently in cart
             Texture unused_wep1 = wep_to_texture.get(draw_mopcart[0]);
             Texture unused_wep2 = wep_to_texture.get(draw_mopcart[1]);
-            canvas.draw(unused_wep1, canvas.getWidth()/2 + 360, canvas.getHeight()/2 + 200);
-            canvas.draw(unused_wep2, canvas.getWidth()/2 + 430, canvas.getHeight()/2 + 200);
+            canvas.draw(unused_wep1, (avatar.getX() * 32) + (360), (avatar.getY() * 32) + (180));
+            canvas.draw(unused_wep2, (avatar.getX() * 32) + (435), (avatar.getY() * 32) + (180));
 
             //DRAW MOPCART INDEX
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
-            canvas.draw(mopcartIndexTexture, current_xlocation, canvas.getHeight()/2 + 170);
+            canvas.draw(mopcartIndexTexture, (avatar.getX() * 32) + current_xlocation, (avatar.getY() * 32) + (145));
         }
-
-        //Draw Enemy Health
-        displayFont.getData().setScale(0.5f);
-        for (EnemyModel s : enemies) {
-            if (!(s.isRemoved())) {
-                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
-            }
-        }
-        displayFont.getData().setScale(1.0f);
 
         canvas.end();
 

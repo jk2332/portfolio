@@ -20,7 +20,10 @@ public class JoeModel extends CharacterModel {
     private static final int JOE_MAX_ATTACK_COOLDOWN = 20;
 
     /** Joe's max HP */
-    private static final int MAX_HP = 15;
+    private static int BASE_HP = 15;
+    private static int CURRENT_MAX_HP = BASE_HP;
+        //Increase this when you get health bonuses
+        //When level is completed, set BASE_HP = CURRENT_MAX_HP and CURRENT_MAX_HP = BASE_HP
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
@@ -84,11 +87,35 @@ public class JoeModel extends CharacterModel {
     }
 
     /**
-     * Returns max HP of Joe
+     * Returns base max HP of Joe
      *
-     * @return max HP of Joe
+     * @return base max HP of Joe
      */
-    public int getMaxHP() { return MAX_HP ; }
+    public int getBaseHP() { return BASE_HP ; }
+
+    /**
+     * Returns base max HP of Joe
+     *
+     * @return base max HP of Joe
+     */
+    public void setBaseHP(int t) { BASE_HP = t; }
+
+    /**
+     * Returns current max HP of Joe
+     *
+     * @return current max HP of Joe
+     */
+    public int getCurrentMaxHP() { return CURRENT_MAX_HP ; }
+
+    /**
+     * Upgrades current max HP of Joe for the level
+     */
+    public void upgradeHP() { CURRENT_MAX_HP += 5; }
+
+    /**
+     * Resets current max HP of Joe for the level
+     */
+    public void setCurrentMaxHP(int old_total) { CURRENT_MAX_HP = BASE_HP; }
 
     /**
      * Returns true if Joe is actively swapping.
