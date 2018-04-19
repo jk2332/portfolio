@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-basic2.tmx";
+    private static final String LEVEL = "level-advanced.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
 
@@ -353,8 +353,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
-        System.out.println(NUM_OF_TILES_X);
-        board = new Board(NUM_OF_TILES_X, NUM_OF_TILES_Y);
+        System.out.println(level.getBoardHeight());
+        System.out.println(level.getBoardWidth());
+        board = new Board(level.getBoardWidth(), level.getBoardHeight(), TILE_SIZE);
         populateLevel();
     }
 

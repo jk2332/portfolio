@@ -13,8 +13,9 @@ public class Board {
     private int width;
     private int height;
     private TileState[] tiles;
-    private float BOARD_WIDTH=32;
-    private float BOARD_HEIGHT=18;
+    private float BOARD_WIDTH;
+    private float BOARD_HEIGHT;
+    private int TILE_SIZE;
     private int goalX;
     private int goalY;
 
@@ -23,10 +24,15 @@ public class Board {
     private Texture hazardTileTexture;
 //    private Texture specialTileTexture;
 
-    public Board(int width, int height) {
+    public Board(int width, int height, int tileSize) {
         this.width = width;
         this.height = height;
+        System.out.println(width);
+        System.out.println(height);
         this.tiles = new Board.TileState[width * height];
+        BOARD_WIDTH = width;
+        BOARD_HEIGHT = height;
+        TILE_SIZE = tileSize;
 
         for (int ii=0; ii<width; ii++){
             for (int jj=0; jj<height; jj++){
@@ -237,11 +243,11 @@ public class Board {
         //}
         if (getTileState(x,y).isHazard){
             canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+                    TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
         }
         else {
             canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+                    TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
         }
     }
 
