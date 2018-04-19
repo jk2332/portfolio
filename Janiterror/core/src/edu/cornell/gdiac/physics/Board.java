@@ -8,6 +8,8 @@ package edu.cornell.gdiac.physics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import edu.cornell.gdiac.util.LevelEditorParser;
+
 
 public class Board {
     private int width;

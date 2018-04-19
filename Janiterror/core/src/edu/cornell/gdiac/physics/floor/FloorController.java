@@ -354,7 +354,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
-        board = new Board(NUM_OF_TILES_X, NUM_OF_TILES_Y);
+        board = new Board(level.getBoardWidth(), level.getBoardHeight());
         populateLevel();
     }
 
