@@ -157,7 +157,6 @@ public class LevelEditorParser {
                 }
                 robotPos.add(new Vector2(x, y));
             } else if (type.equals("joe")) {
-                System.out.println("joe found");
                 if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
