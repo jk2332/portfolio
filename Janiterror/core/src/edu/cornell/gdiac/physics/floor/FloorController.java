@@ -272,8 +272,6 @@ public class FloorController extends WorldController implements ContactListener 
     /** Saved lid velocity before colliding with slimeball */
     private Vector2 lidVel = new Vector2();
 
-
-
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -412,7 +410,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         //FIX THIS POSITIONING
-
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -829,21 +826,25 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
-//        System.out.println(avatar.getX());
-//        System.out.println(avatar.getY());
+
+        //calculate half the screen
+        //calculate 4 clamped corners of the screen
+        //if avatar.getX() is > corner1 or < corner4, use it as varX, else don't
+        //if avatar.getY() is > corner2 or < corner3, use it as varY, else don't
+        System.out.println(avatar.getX());
         canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
             //getX only gets the tile #, multiply by 32 to get the pixel number
 
-        Affine2 oTran = new Affine2();
-		oTran.setToTranslation(avatar.getX(), avatar.getY());
-		    //is this for avatar or for camera?
-		Affine2 wTran = new Affine2();
-		Vector3 wPos = camera.position;
-		wTran.setToTranslation(-wPos.x,-wPos.y);
-		oTran.mul(wTran);
+//      Affine2 oTran = new Affine2();
+//		oTran.setToTranslation(avatar.getX(), avatar.getY());
+//		    //is this for avatar or for camera?
+//		Affine2 wTran = new Affine2();
+//		Vector3 wPos = camera.position;
+//		wTran.setToTranslation(-wPos.x,-wPos.y);
+//		oTran.mul(wTran);
 //		System.out.println(oTran);
 //		canvas.setAffineTransform(oTran);
-            //this doesn't do anything rn
+            //this doesn't do anything rn, I made this function
 
         ticks ++;
         if(avatar.getHP()<=0) {
@@ -864,10 +865,13 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
             avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
             avatar.setSwapping(InputController.getInstance().didTertiary());
+            avatar.setAllSwapping(InputController.getInstance().didQKey());
 
             avatar.setLeft(InputController.getInstance().didLeftArrow());
             avatar.setRight(InputController.getInstance().didRightArrow());
             avatar.setUp(InputController.getInstance().didUpArrow());
+            avatar.setDown(InputController.getInstance().didDownArrow());
+
             avatar.setDown(InputController.getInstance().didDownArrow());
 
             if (avatar.isAtMopCart()) {
@@ -936,6 +940,32 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setHasLid(true);
             }
             if (old_primary.name == "lid") {
+                avatar.setHasLid(false);
+            }
+        }
+        // swapping all weapons
+        if (avatar.isAllSwapping()) {
+            //get all weapons in cart
+            String swapping_weapon_name1 = mopcart_menu[0];
+            String swapping_weapon_name2 = mopcart_menu[1];
+
+            WeaponModel swapping_weapon1 = wep_to_model.get(swapping_weapon_name1);
+            WeaponModel swapping_weapon2 = wep_to_model.get(swapping_weapon_name2);
+
+            //set all new weapons
+            WeaponModel old_primary1 = avatar.getWep1();
+            WeaponModel old_primary2 = avatar.getWep2();
+
+            avatar.setWep1(swapping_weapon1);
+            avatar.setWep2(swapping_weapon2);
+
+            mopcart_menu[0] = old_primary1.name;
+            mopcart_menu[1] = old_primary2.name;
+
+            if (swapping_weapon_name1 == "lid" || swapping_weapon_name2 == "lid") {
+                avatar.setHasLid(true);
+            }
+            if (old_primary1.name == "lid" || old_primary2.name == "lid") {
                 avatar.setHasLid(false);
             }
         }
@@ -1616,40 +1646,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
         canvas.draw(wep2Textures[maxDurability2 - durability2],
                 (avatar.getX() * 32) - (450), (avatar.getY() * 32) + 90);
-
-        //Write out durabilities
-//        displayFont.getData().setScale(0.8f);
-//        if (durability1 <= 3 && durability2 <= 3) {
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//            displayFont.setColor(Color.WHITE);
-//        }
-//        else if (durability1 <= 3) {
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            displayFont.setColor(Color.WHITE);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//        }
-//        else if (durability2 <= 3) {
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//            displayFont.setColor(Color.WHITE);
-//        }
-//        else {
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//        }
-//        displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND

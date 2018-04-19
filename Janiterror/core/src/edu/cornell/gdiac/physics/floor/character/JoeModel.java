@@ -27,6 +27,7 @@ public class JoeModel extends CharacterModel {
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
+    private boolean isAllSwapping;
 
     //TODO rename?
     /** Whether we are looking at wep1 in cart */
@@ -36,6 +37,7 @@ public class JoeModel extends CharacterModel {
     private boolean isUp;
     private boolean isDown;
     private boolean alive;
+
 
     /** The current weapons Joe is holding */
     WeaponModel wep1;
@@ -133,6 +135,24 @@ public class JoeModel extends CharacterModel {
      */
     public void setSwapping(boolean value) {
         isSwapping = value;
+    }
+
+    /**
+     * Returns true if Joe is actively swapping.
+     *
+     * @return true if Joe is actively swapping.
+     */
+    public boolean isAllSwapping() {
+        return isAllSwapping ;
+    }
+
+    /**
+     * Sets whether the Joe is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setAllSwapping(boolean value) {
+        isAllSwapping = value;
     }
 
     /**
@@ -263,6 +283,7 @@ public class JoeModel extends CharacterModel {
         super(x,y,width,height,"joe", hp,density,velocity,JOE_MAX_ATTACK_COOLDOWN);
 
         isSwapping = false;
+        isAllSwapping = false;
         isUp = false;
         isDown = false;
         isRight = false;
