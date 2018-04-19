@@ -4,6 +4,8 @@
  */
 package edu.cornell.gdiac.physics.floor.character;
 
+import com.badlogic.gdx.graphics.Color;
+import edu.cornell.gdiac.physics.GameCanvas;
 import edu.cornell.gdiac.physics.floor.weapon.*;
 
 /**
@@ -36,6 +38,7 @@ public class JoeModel extends CharacterModel {
     private boolean isUp;
     private boolean isDown;
     private boolean alive;
+    private boolean isBeingAttacked;
 
     /** The current weapons Joe is holding */
     WeaponModel wep1;
@@ -53,6 +56,8 @@ public class JoeModel extends CharacterModel {
     public boolean canAttack(){
         return attackCooldown <= 0;
     }
+    public boolean isBeingAttacked() {return isBeingAttacked;}
+    public void setBeingAttacked(boolean b) {isBeingAttacked=b;}
 
     /**
      * Returns weapon in slot 1

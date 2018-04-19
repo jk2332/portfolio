@@ -852,7 +852,9 @@ public class FloorController extends WorldController implements ContactListener 
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
             //System.out.println("You're on a hazard tile");
+            avatar.setBeingAttacked(true);
             avatar.decrHP();
+            avatar.setBeingAttacked(false);
 //            avatar.drawAttacked(canvas);
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
@@ -1043,7 +1045,9 @@ public class FloorController extends WorldController implements ContactListener 
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
+                avatar.setBeingAttacked(true);
                 avatar.decrHP();
+                avatar.setBeingAttacked(false);
 //                avatar.drawAttacked(canvas);
                 s.resetAttackAniFrame();
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
@@ -1432,7 +1436,9 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
+                    avatar.setBeingAttacked(true);
                     avatar.decrHP();
+                    avatar.setBeingAttacked(false);
 //                    avatar.drawAttacked(canvas);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
@@ -1448,7 +1454,9 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
                     removeBullet(bd2);
+                    avatar.setBeingAttacked(true);
                     avatar.decrHP();
+                    avatar.setBeingAttacked(false);
 //                    avatar.drawAttacked(canvas);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }

@@ -36,7 +36,7 @@ public class CharacterModel extends CapsuleObstacle {
     /** The current veritcal movement of the character */
     private float movementY;
     /** Whether the character is facing right or not */
-    private boolean faceRight;
+    public boolean faceRight;
     /** Whether the character is facing up or not */
     private boolean faceUp;
     /** How long until the can attack again */
@@ -229,8 +229,14 @@ public class CharacterModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if (((JoeModel) this).isBeingAttacked()) {
+            canvas.draw(texture, Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        else {
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
+
     public void drawAttacked(GameCanvas canvas) {
         System.out.println("attacked");
         float effect = faceRight ? 1.0f : -1.0f;
