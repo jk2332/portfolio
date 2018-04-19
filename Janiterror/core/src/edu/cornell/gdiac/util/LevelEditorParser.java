@@ -98,10 +98,24 @@ public class LevelEditorParser {
                 wallhgid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("wallsv.tsx")) {
                 wallvgid = ts.getIntAttribute("firstgid");
+
             } else if (ts.get("source").equals("tiles.tsx")) {
                 tilegid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("hazard.tsx")) {
                 hazardgid = ts.getIntAttribute("firstgid");
+            }
+            if (hazardgid == 0) {
+                hazardgid = 1000;
+            }
+
+            if (tilegid == 0) {
+                tilegid = 1000;
+            }
+            if (wallvgid == 0) {
+                wallvgid = 1000;
+            }
+            if (wallhgid == 0) {
+                wallhgid = 1000;
             }
         }
         tiles = layerToList(layers.get(0));
