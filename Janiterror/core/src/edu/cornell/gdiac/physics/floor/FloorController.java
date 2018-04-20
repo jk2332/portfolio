@@ -30,8 +30,8 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
-//    private static final String LEVEL = "level-advanced.tmx";
+//    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level-advanced.tmx";
 
 
     /**
@@ -54,11 +54,19 @@ public class FloorController extends WorldController implements ContactListener 
 
     private static final int TILE_SIZE = 32;
 
-    private static final int BOARD_WIDTH=1024;
-    private static final int BOARD_HEIGHT=576;
+//    private static final int BOARD_WIDTH=1024;
+//    private static final int BOARD_HEIGHT=576;
+//    private static final int NUM_OF_TILES_X = BOARD_WIDTH/TILE_SIZE;
+//    private static final int NUM_OF_TILES_Y = BOARD_HEIGHT/TILE_SIZE;
 
-    private static final int NUM_OF_TILES_X = BOARD_WIDTH/TILE_SIZE;
-    private static final int NUM_OF_TILES_Y = BOARD_HEIGHT/TILE_SIZE;
+    private static int horizontalMargin = (1024/2);
+    private static int verticalMargin = (576/2);
+    private static int LEFT_SCROLL_CLAMP; //0 + horizontalMargin
+    private static int RIGHT_SCROLL_CLAMP; //level - horizontalMargin
+    private static int BOTTOM_SCROLL_CLAMP; //0 + verticalMargin
+    private static int TOP_SCROLL_CLAMP; //level - verticalMargin
+    private float cameraX; //where the camera is located (for drawing and scrolling)
+    private float cameraY; //where the camera is located (for drawing and scrolling)
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
 
@@ -356,6 +364,16 @@ public class FloorController extends WorldController implements ContactListener 
         System.out.println(level.getBoardHeight());
         System.out.println(level.getBoardWidth());
         board = new Board(level.getBoardWidth(), level.getBoardHeight(), TILE_SIZE);
+
+        LEFT_SCROLL_CLAMP = 0 + horizontalMargin;
+        RIGHT_SCROLL_CLAMP = (level.getBoardWidth() * 32) -  horizontalMargin;
+        BOTTOM_SCROLL_CLAMP = 0 + verticalMargin;
+        TOP_SCROLL_CLAMP = (level.getBoardHeight() * 32) -  verticalMargin;
+        System.out.println(LEFT_SCROLL_CLAMP);
+        System.out.println(RIGHT_SCROLL_CLAMP);
+        System.out.println(BOTTOM_SCROLL_CLAMP);
+        System.out.println(TOP_SCROLL_CLAMP);
+
         populateLevel();
     }
 
@@ -444,8 +462,6 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
 
         TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
-        System.out.println(healthBarTexture);
-        System.out.println(healthBarTexture2);
         TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
         allHeartTextures[0] = heartTextures;
         allHeartTextures[1] = heartTextures2;
@@ -827,13 +843,29 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
 
-        //calculate half the screen
-        //calculate 4 clamped corners of the screen
-        //if avatar.getX() is > corner1 or < corner4, use it as varX, else don't
-        //if avatar.getY() is > corner2 or < corner3, use it as varY, else don't
-        System.out.println(avatar.getX());
-        canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
-            //getX only gets the tile #, multiply by 32 to get the pixel number
+        float playerPosX = avatar.getX() * 32;
+        float playerPosY = avatar.getY() * 32;
+        cameraX = playerPosX;
+        cameraY = playerPosY;
+        if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
+            //if player is inside clamped sections, center camera on player
+            cameraX = playerPosX;
+        }
+        else {
+            //if it is going to show outside of level, set camera to clamp
+            if (playerPosX < LEFT_SCROLL_CLAMP) { cameraX = LEFT_SCROLL_CLAMP; }
+            else if (playerPosX > RIGHT_SCROLL_CLAMP) { cameraX = RIGHT_SCROLL_CLAMP; }
+        }
+        if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
+            //if player is inside clamped sections, center camera on player
+            cameraY = playerPosY;
+        }
+        else {
+            //if it is going to show outside of level, set camera to clamp
+            if (playerPosY > TOP_SCROLL_CLAMP) { cameraY = TOP_SCROLL_CLAMP; }
+            else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
+        }
+        canvas.setCameraPosition(cameraX, cameraY);
 
 //      Affine2 oTran = new Affine2();
 //		oTran.setToTranslation(avatar.getX(), avatar.getY());
@@ -855,7 +887,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
-            //System.out.println("You're on a hazard tile");
             avatar.decrHP();
 //            avatar.drawAttacked(canvas);
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
@@ -1618,14 +1649,14 @@ public class FloorController extends WorldController implements ContactListener 
         }
         displayFont.getData().setScale(1.0f);
 
-        /* Show Multiple HP and Mop Icons */
+        /* SHOW HP */
         int currentHP = avatar.getHP();
             //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
         int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
         canvas.draw(allHeartTextures[times_improved][((maxHP - currentHP) / 3)],
-                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 210);
+                (cameraX - 490), (cameraY + 210));
 
         // DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
@@ -1638,26 +1669,26 @@ public class FloorController extends WorldController implements ContactListener 
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
         canvas.draw(wep1Textures[maxDurability1 - durability1],
-                (avatar.getX() * 32) - (490), (avatar.getY() * 32) + 140);
+                (cameraX - 490), (cameraY + 140));
 
         TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
         int maxDurability2 = avatar.getWep2().getMaxDurability();
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
         canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (avatar.getX() * 32) - (450), (avatar.getY() * 32) + 90);
+                (cameraX - 450), (cameraY + 90));
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
             Color tint1 = Color.BLACK;
             canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    (avatar.getX() * 32) + (350), (avatar.getY() * 32) + (140), 0, .18f, .4f);
+                    (cameraX + 350), (cameraY + 140), 0, .18f, .4f);
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
 
             //DRAW MOP CART TEXT
             canvas.drawText("Mop Cart", displayFont,
-                    (avatar.getX() * 32) + (380), (avatar.getY() * 32) + (270));
+                    (cameraX + 380), (cameraY + 270));
             displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
@@ -1671,12 +1702,12 @@ public class FloorController extends WorldController implements ContactListener 
             //draw unused weapons currently in cart
             Texture unused_wep1 = wep_to_texture.get(draw_mopcart[0]);
             Texture unused_wep2 = wep_to_texture.get(draw_mopcart[1]);
-            canvas.draw(unused_wep1, (avatar.getX() * 32) + (360), (avatar.getY() * 32) + (180));
-            canvas.draw(unused_wep2, (avatar.getX() * 32) + (435), (avatar.getY() * 32) + (180));
+            canvas.draw(unused_wep1, (cameraX + 360), (cameraY + 180));
+            canvas.draw(unused_wep2, (cameraX + 435), (cameraY + 180));
 
             //DRAW MOPCART INDEX
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
-            canvas.draw(mopcartIndexTexture, (avatar.getX() * 32) + current_xlocation, (avatar.getY() * 32) + (145));
+            canvas.draw(mopcartIndexTexture, (cameraX + current_xlocation), (cameraY + 145));
         }
 
         canvas.end();
