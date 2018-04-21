@@ -903,11 +903,7 @@ public class FloorController extends WorldController implements ContactListener 
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
             //System.out.println("You're on a hazard tile");
-            avatar.incrFrame();
             avatar.decrHP();
-
-            if (avatar.getFrame()==4) {avatar.resetFrame();}
-//            avatar.drawAttacked(canvas);
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
         else {
@@ -1128,7 +1124,6 @@ public class FloorController extends WorldController implements ContactListener 
             s.incrAttackAniFrame();
             avatar.incrFrame();
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
-//                avatar.drawAttacked(canvas);
                 s.resetAttackAniFrame();
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
@@ -1522,7 +1517,6 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.decrHP();
                     avatar.setFrame(3);
                     gotHit=ticks;
-//                    avatar.drawAttacked(canvas);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
@@ -1540,7 +1534,6 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.setFrame(3);
                     avatar.decrHP();
                     gotHit = ticks;
-//                    avatar.drawAttacked(canvas);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
             } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
