@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-advanced.tmx";
+    private static final String LEVEL = "level-editor.tmx";
 //    private static final String LEVEL = "level3.tmx";
 
     /** The sound file for background music */
@@ -298,14 +298,14 @@ public class FloorController extends WorldController implements ContactListener 
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-//        slimePos = level.getSlimePos();
-        //robotPos = level.getRobotPos();
-//        lizardPos = level.getLizardPos();
+        slimePos = level.getSlimePos();
+        robotPos = level.getRobotPos();
+        lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
-        robotPos = new ArrayList<Vector2>();
+/*        robotPos = new ArrayList<Vector2>();
         lizardPos = new ArrayList<Vector2>();
-        slimePos = new ArrayList<Vector2>();
+        slimePos = new ArrayList<Vector2>();*/
 //        scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
