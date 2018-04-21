@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "matt-level.tmx";
 //    private static final String LEVEL = "level3.tmx";
 
     /** The sound file for background music */
