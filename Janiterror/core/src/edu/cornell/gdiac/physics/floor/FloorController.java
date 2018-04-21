@@ -840,7 +840,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
-        if (gotHit>0 && gotHit +20 == ticks) {
+        if (gotHit>0 && gotHit +20 == ticks && avatar.isAlive()) {
             avatar.resetFrame();
             gotHit = -1;
         }
@@ -1116,13 +1116,12 @@ public class FloorController extends WorldController implements ContactListener 
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
             avatar.incrFrame();
-            if (s.getAttackAnimationFrame()==1) {avatar.decrHP();}
-            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
-                s.resetAttackAniFrame();
+            if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
+                avatar.decrHP(); avatar.setFrame(3); gotHit=ticks;
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
-            if (avatar.isAlive() && avatar.getFrame()==4){
-                avatar.resetFrame();
+            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
+                s.resetAttackAniFrame();
             }
         } else if (s instanceof SlimeModel) {
             //System.out.println("shoot1");
