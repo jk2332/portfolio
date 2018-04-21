@@ -30,6 +30,11 @@ public class LevelEditorParser {
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
     private ArrayList<Vector2> lizardPos = new ArrayList<Vector2>();
+    private ArrayList<ArrayList<Vector2>> scientistPatrol = new ArrayList<ArrayList<Vector2>>();
+    private ArrayList<ArrayList<Vector2>> robotPatrol = new ArrayList<ArrayList<Vector2>>();
+    private ArrayList<ArrayList<Vector2>> slimePatrol = new ArrayList<ArrayList<Vector2>>();
+    private ArrayList<ArrayList<Vector2>> lizardPatrol = new ArrayList<ArrayList<Vector2>>();
+
     private Vector2 joePos;
     private Vector2 goalDoorPos;
     private Vector2 mopCartPos;
@@ -98,10 +103,24 @@ public class LevelEditorParser {
                 wallhgid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("wallsv.tsx")) {
                 wallvgid = ts.getIntAttribute("firstgid");
+
             } else if (ts.get("source").equals("tiles.tsx")) {
                 tilegid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("hazard.tsx")) {
                 hazardgid = ts.getIntAttribute("firstgid");
+            }
+            if (hazardgid == 0) {
+                hazardgid = 1000;
+            }
+
+            if (tilegid == 0) {
+                tilegid = 1000;
+            }
+            if (wallvgid == 0) {
+                wallvgid = 1000;
+            }
+            if (wallhgid == 0) {
+                wallhgid = 1000;
             }
         }
         tiles = layerToList(layers.get(0));
@@ -120,38 +139,38 @@ public class LevelEditorParser {
             float x = character.getFloatAttribute("x");
             float y = bh - character.getFloatAttribute("y");
             if (type.equals("scientist")) {
-                if (scientistPos.size() == 0) {
-                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
-                    for (int j = 0; j < ps.size; j++) {
-                        Element p = ps.get(j);
-                        String name = p.get("name");
-                        if (name.equals("Attack Range")) {
-                            scientistAttackRange = p.getIntAttribute("value");
-                        } else if (name.equals("Density")) {
-                            scientistDensity = p.getFloatAttribute("value");
-                        } else if (name.equals("HP")) {
-                            scientistHP = p.getIntAttribute("value");
-                        } else if (name.equals("Velocity")) {
-                            scientistVel = p.getFloatAttribute("value");
-                        }
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                for (int j = 0; j < ps.size; j++) {
+                    Element p = ps.get(j);
+                    String name = p.get("name");
+                    if (name.equals("Attack Range") && scientistPos.size() == 0) {
+                        scientistAttackRange = p.getIntAttribute("value");
+                    } else if (name.equals("Density") && scientistPos.size() == 0) {
+                        scientistDensity = p.getFloatAttribute("value");
+                    } else if (name.equals("HP") && scientistPos.size() == 0) {
+                        scientistHP = p.getIntAttribute("value");
+                    } else if (name.equals("Velocity") && scientistPos.size() == 0) {
+                        scientistVel = p.getFloatAttribute("value");
+                    } else if (name.equals("Patrol Path")) {
+                        scientistPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
                 }
                 scientistPos.add(new Vector2(x, y));
             } else if (type.equals("robot")) {
-                if (robotPos.size() == 0) {
-                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
-                    for (int j = 0; j < ps.size; j++) {
-                        Element p = ps.get(j);
-                        String name = p.get("name");
-                        if (name.equals("Attack Range")) {
-                            robotAttackRange = p.getIntAttribute("value");
-                        } else if (name.equals("Density")) {
-                            robotDensity = p.getFloatAttribute("value");
-                        } else if (name.equals("HP")) {
-                            robotHP = p.getIntAttribute("value");
-                        } else if (name.equals("Velocity")) {
-                            robotVel = p.getFloatAttribute("value");
-                        }
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                for (int j = 0; j < ps.size; j++) {
+                    Element p = ps.get(j);
+                    String name = p.get("name");
+                    if (name.equals("Attack Range") && robotPos.size() == 0) {
+                        robotAttackRange = p.getIntAttribute("value");
+                    } else if (name.equals("Density") && robotPos.size() == 0) {
+                        robotDensity = p.getFloatAttribute("value");
+                    } else if (name.equals("HP") && robotPos.size() == 0) {
+                        robotHP = p.getIntAttribute("value");
+                    } else if (name.equals("Velocity") && robotPos.size() == 0) {
+                        robotVel = p.getFloatAttribute("value");
+                    } else if (name.equals("Patrol Path")) {
+                        robotPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
                 }
                 robotPos.add(new Vector2(x, y));
@@ -192,40 +211,40 @@ public class LevelEditorParser {
                 }
                 joePos = new Vector2(x, y);
             } else if (type.equals("slime")) {
-                if (slimePos.size() == 0) {
-                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
-                    for (int j = 0; j < ps.size; j++) {
-                        Element p = ps.get(j);
-                        String name = p.get("name");
-                        if (name.equals("Attack Range")) {
-                            slimeAttackRange = p.getIntAttribute("value");
-                        } else if (name.equals("Density")) {
-                            slimeDensity = p.getFloatAttribute("value");
-                        } else if (name.equals("HP")) {
-                            slimeHP = p.getIntAttribute("value");
-                        } else if (name.equals("Velocity")) {
-                            slimeVel = p.getFloatAttribute("value");
-                        } else if (name.equals("Slimeball Speed")) {
-                            slimeballSpeed = p.getFloatAttribute("value");
-                        }
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                for (int j = 0; j < ps.size; j++) {
+                    Element p = ps.get(j);
+                    String name = p.get("name");
+                    if (name.equals("Attack Range") && slimePos.size() == 0) {
+                        slimeAttackRange = p.getIntAttribute("value");
+                    } else if (name.equals("Density") && slimePos.size() == 0) {
+                        slimeDensity = p.getFloatAttribute("value");
+                    } else if (name.equals("HP") && slimePos.size() == 0) {
+                        slimeHP = p.getIntAttribute("value");
+                    } else if (name.equals("Velocity") && slimePos.size() == 0) {
+                        slimeVel = p.getFloatAttribute("value");
+                    } else if (name.equals("Slimeball Speed") && slimePos.size() == 0) {
+                        slimeballSpeed = p.getFloatAttribute("value");
+                    } else if (name.equals("Patrol Path")) {
+                        slimePatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
                 }
                 slimePos.add(new Vector2(x, y));
             } else if (type.equals("lizard")) {
-                if (lizardPos.size() == 0) {
-                    Array<Element> ps = character.getChild(0).getChildrenByName("property");
-                    for (int j = 0; j < ps.size; j++) {
-                        Element p = ps.get(j);
-                        String name = p.get("name");
-                        if (name.equals("Attack Range")) {
-                            lizardAttackRange = p.getIntAttribute("value");
-                        } else if (name.equals("Density")) {
-                            lizardDensity = p.getFloatAttribute("value");
-                        } else if (name.equals("HP")) {
-                            lizardHP = p.getIntAttribute("value");
-                        } else if (name.equals("Velocity")) {
-                            lizardVel = p.getFloatAttribute("value");
-                        }
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                for (int j = 0; j < ps.size; j++) {
+                    Element p = ps.get(j);
+                    String name = p.get("name");
+                    if (name.equals("Attack Range") && lizardPos.size() == 0) {
+                        lizardAttackRange = p.getIntAttribute("value");
+                    } else if (name.equals("Density") && lizardPos.size() == 0) {
+                        lizardDensity = p.getFloatAttribute("value");
+                    } else if (name.equals("HP") && lizardPos.size() == 0) {
+                        lizardHP = p.getIntAttribute("value");
+                    } else if (name.equals("Velocity") && lizardPos.size() == 0) {
+                        lizardVel = p.getFloatAttribute("value");
+                    } else if (name.equals("Patrol Path")) {
+                        lizardPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
                 }
                 lizardPos.add(new Vector2(x, y));
@@ -291,6 +310,18 @@ public class LevelEditorParser {
                 }
             }
         }
+    }
+
+
+
+    private ArrayList<Vector2> patrolStrToArr(String s) {
+        String[] coordList = s.split(",");
+        ArrayList<Vector2> path = new ArrayList<Vector2>();
+        for (String coord : coordList) {
+            String[] cList = coord.split(" ");
+            path.add(new Vector2(Integer.parseInt(cList[0]), Integer.parseInt(cList[1])));
+        }
+        return path;
     }
 
     private int[][] layerToList(Element layer) {
@@ -531,5 +562,21 @@ public class LevelEditorParser {
 
     public int getBoardWidth() {
         return boardWidth;
+    }
+
+    public ArrayList<ArrayList<Vector2>> getLizardPatrol() {
+        return lizardPatrol;
+    }
+
+    public ArrayList<ArrayList<Vector2>> getRobotPatrol() {
+        return robotPatrol;
+    }
+
+    public ArrayList<ArrayList<Vector2>> getScientistPatrol() {
+        return scientistPatrol;
+    }
+
+    public ArrayList<ArrayList<Vector2>> getSlimePatrol() {
+        return slimePatrol;
     }
 }
