@@ -30,17 +30,11 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-//    private static final String LEVEL = "level-editor.tmx";
     private static final String LEVEL = "level-advanced.tmx";
-
-
-    /**
-     * WE DO NOT OWN ANY OF THIS MUSIC!!!!
-     */
+//    private static final String LEVEL = "level3.tmx";
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
-        //youtube link: https://www.youtube.com/watch?v=JYfgpodCVHE
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/jump.mp3";
     /** The sound file for a bullet fire */
@@ -303,16 +297,16 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
         level = new LevelEditorParser(LEVEL);
-        //scientistPos = level.getScientistPos();
-        slimePos = level.getSlimePos();
+        scientistPos = level.getScientistPos();
+//        slimePos = level.getSlimePos();
         //robotPos = level.getRobotPos();
-        //lizardPos = level.getLizardPos();
+//        lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
         robotPos = new ArrayList<Vector2>();
         lizardPos = new ArrayList<Vector2>();
-        //slimePos = new ArrayList<Vector2>();
-        scientistPos=new ArrayList<Vector2>();
+        slimePos = new ArrayList<Vector2>();
+//        scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
