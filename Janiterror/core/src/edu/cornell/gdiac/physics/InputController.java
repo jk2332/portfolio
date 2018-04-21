@@ -82,6 +82,9 @@ public class InputController {
 	private boolean downArrowPressed;
 	private boolean downArrowPrevious;
 
+	private boolean qKeyPressed;
+	private boolean qKeyPrevious;
+
 	/** How much did we move horizontally? */
 	private float horizontal;
 	/** How much did we move vertically? */
@@ -182,6 +185,11 @@ public class InputController {
 		return downArrowPressed && !downArrowPrevious;
 	}
 
+	public boolean didQKey() {
+//		System.out.println("q key pressed");
+		return qKeyPressed && !qKeyPrevious;
+	}
+
 
 	/**
 	 * Returns true if the reset button was pressed.
@@ -267,6 +275,8 @@ public class InputController {
 		upArrowPrevious = upArrowPressed;
 		downArrowPrevious = downArrowPressed;
 
+		qKeyPrevious = qKeyPressed;
+
 		// Check to see if a GamePad is connected
 		if (xbox.isConnected()) {
 			readGamepad(bounds, scale);
@@ -339,6 +349,8 @@ public class InputController {
 		rightArrowPressed  = (secondary && rightArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
 		upArrowPressed  = (secondary && upArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
 		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
+
+		qKeyPressed  = (secondary && qKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);

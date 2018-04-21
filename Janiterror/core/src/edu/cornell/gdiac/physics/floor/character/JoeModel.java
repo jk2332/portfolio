@@ -29,6 +29,7 @@ public class JoeModel extends CharacterModel {
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
+    private boolean isAllSwapping;
 
     //TODO rename?
     /** Whether we are looking at wep1 in cart */
@@ -38,7 +39,8 @@ public class JoeModel extends CharacterModel {
     private boolean isUp;
     private boolean isDown;
     private boolean alive;
-    private boolean isBeingAttacked;
+    private int frame;
+
 
     /** The current weapons Joe is holding */
     WeaponModel wep1;
@@ -56,8 +58,14 @@ public class JoeModel extends CharacterModel {
     public boolean canAttack(){
         return attackCooldown <= 0;
     }
-    public boolean isBeingAttacked() {return isBeingAttacked;}
-    public void setBeingAttacked(boolean b) {isBeingAttacked=b;}
+    public void resetFrame(){
+        frame=0;
+    }
+    public void incrFrame(){
+        frame++;
+    }
+    public int getFrame(){return frame;}
+    public void setFrame(int n) {frame=n;}
 
     /**
      * Returns weapon in slot 1
@@ -138,6 +146,24 @@ public class JoeModel extends CharacterModel {
      */
     public void setSwapping(boolean value) {
         isSwapping = value;
+    }
+
+    /**
+     * Returns true if Joe is actively swapping.
+     *
+     * @return true if Joe is actively swapping.
+     */
+    public boolean isAllSwapping() {
+        return isAllSwapping ;
+    }
+
+    /**
+     * Sets whether the Joe is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setAllSwapping(boolean value) {
+        isAllSwapping = value;
     }
 
     /**
@@ -268,6 +294,7 @@ public class JoeModel extends CharacterModel {
         super(x,y,width,height,"joe", hp,density,velocity,JOE_MAX_ATTACK_COOLDOWN);
 
         isSwapping = false;
+        isAllSwapping = false;
         isUp = false;
         isDown = false;
         isRight = false;
@@ -276,6 +303,7 @@ public class JoeModel extends CharacterModel {
         atMopCart = false;
         hasLid = false;
         alive = true;
+        frame=0;
     }
 
     /**
@@ -294,6 +322,16 @@ public class JoeModel extends CharacterModel {
         }
 
         super.update(dt);
+    }
+
+    public void draw(GameCanvas canvas) {
+        float effect = isFacingRight() ? 1.0f : -1.0f;
+        if (frame >= 3){
+            canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+        else {
+            canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
     }
 
 }

@@ -90,8 +90,7 @@ public class LevelEditorParser {
         Array<Element> layers = level.getChildrenByName("layer");
         Array<Element> objects = level.getChildrenByName("objectgroup");
 
-        int boardWidth = level.getIntAttribute("width") * level.getIntAttribute("tilewidth");
-        int boardHeight = level.getIntAttribute("height") * level.getIntAttribute("tileheight");
+        int bh = level.getIntAttribute("height") * level.getIntAttribute("tileheight");
 
         Array<Element> tilesets = level.getChildrenByName("tileset");
         for (Element ts : tilesets) {
@@ -107,19 +106,19 @@ public class LevelEditorParser {
         }
         tiles = layerToList(layers.get(0));
 
-        boardHeight = tiles.length;
-        boardWidth = tiles[0].length;
+        boardHeight= tiles.length;
+        boardWidth= tiles[0].length;
 
         Element mopCartElement = objects.get(0).getChild(0);
-        mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),boardHeight - mopCartElement.getFloatAttribute("y"));
+        mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),bh - mopCartElement.getFloatAttribute("y"));
         Element goalDoorElement = objects.get(1).getChild(0);
-        goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),boardHeight - goalDoorElement.getFloatAttribute("y"));
+        goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),bh - goalDoorElement.getFloatAttribute("y"));
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
         for (int i = 0; i < charactersElement.size; i++) {
             Element character = charactersElement.get(i);
             String type = character.get("type");
             float x = character.getFloatAttribute("x");
-            float y = boardHeight - character.getFloatAttribute("y");
+            float y = bh - character.getFloatAttribute("y");
             if (type.equals("scientist")) {
                 if (scientistPos.size() == 0) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
@@ -157,7 +156,6 @@ public class LevelEditorParser {
                 }
                 robotPos.add(new Vector2(x, y));
             } else if (type.equals("joe")) {
-                System.out.println("joe found");
                 if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -240,7 +238,7 @@ public class LevelEditorParser {
             Element special = specialElement.get(i);
             String type = special.get("type");
             float x = special.getFloatAttribute("x");
-            float y = boardHeight - special.getFloatAttribute("y");
+            float y = bh - special.getFloatAttribute("y");
             if (type.equals("health")) {
                 specialHealthPos.add(new Vector2(x, y));
             } else if (type.equals("mop")) {

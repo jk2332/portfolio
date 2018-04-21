@@ -227,15 +227,18 @@ public class CharacterModel extends CapsuleObstacle {
      *
      * @param canvas    Drawing context
      */
+    /**
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
         if (((JoeModel) this).isBeingAttacked()) {
+            System.out.println("here1");
             canvas.draw(texture, Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         else {
+            System.out.println("here2");
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
-    }
+    }**/
 
     public void drawAttacked(GameCanvas canvas) {
         System.out.println("attacked");

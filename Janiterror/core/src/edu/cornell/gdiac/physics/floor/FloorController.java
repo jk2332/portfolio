@@ -30,7 +30,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-basic2.tmx";
+    private static final String LEVEL = "level-advanced.tmx";
 //    private static final String LEVEL = "level-advanced.tmx";
 
 
@@ -272,7 +272,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** Saved lid velocity before colliding with slimeball */
     private Vector2 lidVel = new Vector2();
 
-
+    /** frame in which Joe just got hit by slime balls */
+    private long gotHit;
 
     /**
      * Creates and initialize a new instance of the platformer game
@@ -287,6 +288,7 @@ public class FloorController extends WorldController implements ContactListener 
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
+        gotHit = -1;
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -354,7 +356,10 @@ public class FloorController extends WorldController implements ContactListener 
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
-        board = new Board(level.getBoardWidth(), level.getBoardHeight());
+
+        //System.out.println(level.getBoardHeight());
+        //System.out.println(level.getBoardWidth());
+        board = new Board(level.getBoardWidth(), level.getBoardHeight(), TILE_SIZE);
         populateLevel();
     }
 
@@ -409,7 +414,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         //FIX THIS POSITIONING
-
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -826,21 +830,29 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
-//        System.out.println(avatar.getX());
-//        System.out.println(avatar.getY());
+        if (gotHit>0 && gotHit +20 == ticks) {
+            avatar.resetFrame();
+            gotHit = -1;
+        }
+
+        //calculate half the screen
+        //calculate 4 clamped corners of the screen
+        //if avatar.getX() is > corner1 or < corner4, use it as varX, else don't
+        //if avatar.getY() is > corner2 or < corner3, use it as varY, else don't
+        //System.out.println(avatar.getX());
         canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
             //getX only gets the tile #, multiply by 32 to get the pixel number
 
-        Affine2 oTran = new Affine2();
-		oTran.setToTranslation(avatar.getX(), avatar.getY());
-		    //is this for avatar or for camera?
-		Affine2 wTran = new Affine2();
-		Vector3 wPos = camera.position;
-		wTran.setToTranslation(-wPos.x,-wPos.y);
-		oTran.mul(wTran);
+//      Affine2 oTran = new Affine2();
+//		oTran.setToTranslation(avatar.getX(), avatar.getY());
+//		    //is this for avatar or for camera?
+//		Affine2 wTran = new Affine2();
+//		Vector3 wPos = camera.position;
+//		wTran.setToTranslation(-wPos.x,-wPos.y);
+//		oTran.mul(wTran);
 //		System.out.println(oTran);
 //		canvas.setAffineTransform(oTran);
-            //this doesn't do anything rn
+            //this doesn't do anything rn, I made this function
 
         ticks ++;
         if(avatar.getHP()<=0) {
@@ -852,9 +864,10 @@ public class FloorController extends WorldController implements ContactListener 
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
             //System.out.println("You're on a hazard tile");
-            avatar.setBeingAttacked(true);
+            avatar.incrFrame();
             avatar.decrHP();
-            avatar.setBeingAttacked(false);
+
+            if (avatar.getFrame()==4) {avatar.resetFrame();}
 //            avatar.drawAttacked(canvas);
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
@@ -863,10 +876,13 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
             avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
             avatar.setSwapping(InputController.getInstance().didTertiary());
+            avatar.setAllSwapping(InputController.getInstance().didQKey());
 
             avatar.setLeft(InputController.getInstance().didLeftArrow());
             avatar.setRight(InputController.getInstance().didRightArrow());
             avatar.setUp(InputController.getInstance().didUpArrow());
+            avatar.setDown(InputController.getInstance().didDownArrow());
+
             avatar.setDown(InputController.getInstance().didDownArrow());
 
             if (avatar.isAtMopCart()) {
@@ -935,6 +951,32 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setHasLid(true);
             }
             if (old_primary.name == "lid") {
+                avatar.setHasLid(false);
+            }
+        }
+        // swapping all weapons
+        if (avatar.isAllSwapping()) {
+            //get all weapons in cart
+            String swapping_weapon_name1 = mopcart_menu[0];
+            String swapping_weapon_name2 = mopcart_menu[1];
+
+            WeaponModel swapping_weapon1 = wep_to_model.get(swapping_weapon_name1);
+            WeaponModel swapping_weapon2 = wep_to_model.get(swapping_weapon_name2);
+
+            //set all new weapons
+            WeaponModel old_primary1 = avatar.getWep1();
+            WeaponModel old_primary2 = avatar.getWep2();
+
+            avatar.setWep1(swapping_weapon1);
+            avatar.setWep2(swapping_weapon2);
+
+            mopcart_menu[0] = old_primary1.name;
+            mopcart_menu[1] = old_primary2.name;
+
+            if (swapping_weapon_name1 == "lid" || swapping_weapon_name2 == "lid") {
+                avatar.setHasLid(true);
+            }
+            if (old_primary1.name == "lid" || old_primary2.name == "lid") {
                 avatar.setHasLid(false);
             }
         }
@@ -1043,14 +1085,16 @@ public class FloorController extends WorldController implements ContactListener 
         s.setMovementY(0);
         s.startAttackCooldown();
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
+            avatar.decrHP();
             s.incrAttackAniFrame();
+            avatar.incrFrame();
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
-                avatar.setBeingAttacked(true);
-                avatar.decrHP();
-                avatar.setBeingAttacked(false);
 //                avatar.drawAttacked(canvas);
                 s.resetAttackAniFrame();
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
+            }
+            if (avatar.isAlive() && avatar.getFrame()==4){
+                avatar.resetFrame();
             }
         } else if (s instanceof SlimeModel) {
             //System.out.println("shoot1");
@@ -1436,9 +1480,9 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
-                    avatar.setBeingAttacked(true);
                     avatar.decrHP();
-                    avatar.setBeingAttacked(false);
+                    avatar.setFrame(3);
+                    gotHit=ticks;
 //                    avatar.drawAttacked(canvas);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
@@ -1454,9 +1498,9 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
                     removeBullet(bd2);
-                    avatar.setBeingAttacked(true);
+                    avatar.setFrame(3);
                     avatar.decrHP();
-                    avatar.setBeingAttacked(false);
+                    gotHit = ticks;
 //                    avatar.drawAttacked(canvas);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
@@ -1553,6 +1597,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         }
 
+
         if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
             bd2.setVX(lidVel.x);
             bd2.setVY(lidVel.y);
@@ -1621,40 +1666,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
         canvas.draw(wep2Textures[maxDurability2 - durability2],
                 (avatar.getX() * 32) - (450), (avatar.getY() * 32) + 90);
-
-        //Write out durabilities
-//        displayFont.getData().setScale(0.8f);
-//        if (durability1 <= 3 && durability2 <= 3) {
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//            displayFont.setColor(Color.WHITE);
-//        }
-//        else if (durability1 <= 3) {
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            displayFont.setColor(Color.WHITE);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//        }
-//        else if (durability2 <= 3) {
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            displayFont.setColor(Color.RED);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//            displayFont.setColor(Color.WHITE);
-//        }
-//        else {
-//            canvas.drawText(Integer.toString(durability1) + "/" + maxDurability1,
-//                    displayFont, UI_OFFSET + 39, canvas.getHeight()-UI_OFFSET - 110);
-//            canvas.drawText(Integer.toString(durability2) + "/" + maxDurability2,
-//                    displayFont, UI_OFFSET + 43, canvas.getHeight()-UI_OFFSET - 190);
-//        }
-//        displayFont.getData().setScale(1f);
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
