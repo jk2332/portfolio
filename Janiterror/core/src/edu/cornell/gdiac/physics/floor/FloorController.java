@@ -1120,9 +1120,9 @@ public class FloorController extends WorldController implements ContactListener 
         s.setMovementY(0);
         s.startAttackCooldown();
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
-            avatar.decrHP();
             s.incrAttackAniFrame();
             avatar.incrFrame();
+            if (s.getAttackAnimationFrame()==1) {avatar.decrHP();}
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 s.resetAttackAniFrame();
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);

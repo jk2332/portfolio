@@ -8,8 +8,6 @@ package edu.cornell.gdiac.physics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import edu.cornell.gdiac.util.LevelEditorParser;
-
 
 public class Board {
     private int width;
@@ -21,9 +19,7 @@ public class Board {
     private int goalX;
     private int goalY;
 
-    /**
-     * Texture+Mesh for tile. Only need one, since all have same geometry
-     */
+    /** Texture+Mesh for tile. Only need one, since all have same geometry */
     private Texture[] tileTextures;
     private Texture hazardTileTexture;
 //    private Texture specialTileTexture;
@@ -38,21 +34,21 @@ public class Board {
         BOARD_HEIGHT = height;
         TILE_SIZE = tileSize;
 
-        for (int ii = 0; ii < width; ii++) {
-            for (int jj = 0; jj < height; jj++) {
-                tiles[jj * width + ii] = new TileState(ii, jj);
+        for (int ii=0; ii<width; ii++){
+            for (int jj=0; jj<height; jj++){
+                tiles[jj*width+ii]=new TileState(ii, jj);
             }
         }
         this.resetTiles();
     }
 
-    public TileState getGoal() {
+    public TileState getGoal(){
         return new TileState(goalX, goalY);
     }
 
     public void resetTiles() {
-        for (int x = 0; x < this.width; ++x) {
-            for (int y = 0; y < this.height; ++y) {
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState tile = this.getTileState(x, y);
                 tile.goal = false;
                 tile.visited = false;
@@ -64,8 +60,7 @@ public class Board {
         if (!this.isSafeAt(x, y)) {
             //Gdx.app.error("Board", "Illegal tile " + x + "," + y, new IndexOutOfBoundsException());
         } else {
-            goalX = x;
-            goalY = y;
+            goalX=x; goalY=y;
         }
     }
 
@@ -82,61 +77,55 @@ public class Board {
     }
 
     public boolean isGoal(int x, int y) {
-        return !this.isSafeAt(x, y) ? false : (goalX == x && goalY == y);
+        return !this.isSafeAt(x, y) ? false : (goalX==x && goalY==y);
     }
 
-    public int getWidth() {
-        return width;
+    public int getWidth() {return width;}
+
+    public int getHeight() {return height;}
+
+    public int screenToBoardX(float f){
+        return (int) (f/(BOARD_WIDTH/width));
     }
 
-    public int getHeight() {
-        return height;
-    }
-
-    public int screenToBoardX(float f) {
-        return (int) (f / (BOARD_WIDTH / width));
-    }
-
-    public int screenToBoardY(float f) {
-        return (int) (f / (BOARD_HEIGHT / height));
+    public int screenToBoardY(float f){
+        return (int) (f/(BOARD_HEIGHT/height));
     }
 
     /**
      * Returns the screen position coordinate for a board cell index.
-     * <p>
+     *
      * While all positions are 2-dimensional, the dimensions to
      * the board are symmetric. This allows us to use the same
      * method to convert an x coordinate or a y coordinate to
      * a cell index.
      *
      * @param n Tile cell index
+     *
      * @return the screen position coordinate for a board cell index.
      */
     public float boardToScreenX(int n) {
-        return (float) (n + 0.5f) * (BOARD_WIDTH / width);
+        return (float) (n + 0.5f) * (BOARD_WIDTH/width);
     }
 
     public float boardToScreenY(int n) {
-        return (float) (n + 0.5f) * (BOARD_HEIGHT / height);
+        return (float) (n + 0.5f) * (BOARD_HEIGHT/height);
     }
 
     public boolean isSafeAt(int x, int y) {
-        return inBounds(x, y) && !isBlocked(x, y);
+        return inBounds(x, y) && !this.getTileState(x, y).blocked;
     }
 
-    public boolean isSuperSafeAt(int x, int y) {
-        return isSafeAt(x, y) && !isHazard(x, y);
-    }
+    public boolean isSuperSafeAt(int x, int y){ return isSafeAt(x, y) && !isHazard(x, y);}
 
-    public void setBlocked(int x, int y) {
-        if (inBounds(x, y)) getTileState(x, y).blocked = true;
+    public void setBlocked(int x, int y){
+        if (inBounds(x, y)) getTileState(x,y).blocked=true;
     }
 
     public void clearMarks() {
-        goalX = -1;
-        goalY = -1;
-        for (int x = 0; x < this.width; ++x) {
-            for (int y = 0; y < this.height; ++y) {
+        goalX=-1; goalY=-1;
+        for(int x = 0; x < this.width; ++x) {
+            for(int y = 0; y < this.height; ++y) {
                 Board.TileState state = this.getTileState(x, y);
                 state.visited = false;
             }
@@ -148,14 +137,14 @@ public class Board {
     }
 
     private TileState getTileState(int x, int y) {
-        return !this.inBounds(x, y) ? null : this.tiles[width * y + x];
+        return !this.inBounds(x, y) ? null : this.tiles[width*y+x];
     }
 
-    public void setHazard(int x, int y) {
-        if (this.isSafeAt(x, y)) getTileState(x, y).isHazard = true;
+    public void setHazard (int x, int y) {
+        if (this.isSafeAt(x, y)) getTileState(x, y).isHazard=true;
     }
 
-    public boolean isHazard(int x, int y) {
+    public boolean isHazard(int x, int y){
         if (!isSafeAt(x, y)) return false;
         return getTileState(x, y).isHazard;
     }
@@ -169,18 +158,18 @@ public class Board {
         public int y;
 
         private TileState(int x, int y) {
-            this.x = x;
-            this.y = y;
+            this.x=x;
+            this.y=y;
             this.goal = false;
             this.visited = false;
-            this.blocked = false;
-            this.isHazard = false;
+            this.blocked=false;
+            this.isHazard=false;
         }
     }
 
     /**
      * Draws the board to the given canvas.
-     * <p>
+     *
      * This method draws all of the tiles in this board. It should be the first drawing
      * pass in the GameEngine.
      *
@@ -196,7 +185,7 @@ public class Board {
 
     /**
      * Sets the textured mesh for each tile.
-     * <p>
+     *
      * We only need one mesh, as all tiles look (mostly) the same.
      *
      * @param mesh the textured mesh for each tile.
@@ -213,14 +202,14 @@ public class Board {
 //        specialTileTexture = t;
 //    }
 
-    public boolean isBlocked(int x, int y) {
+    public boolean isBlocked(int x, int y){
         if (!inBounds(x, y)) return false;
         return getTileState(x, y).blocked;
     }
 
     /**
      * Draws the individual tile at position (x,y).
-     * <p>
+     *
      * Fallen tiles are not drawn.
      *
      * @param x The x index for the Tile cell
@@ -230,19 +219,36 @@ public class Board {
 //        System.out.println(tileTexture);
         TileState tile = getTileState(x, y);
 
+        // Compute drawing coordinates
+        float sx = boardToScreenX(x);
+        float sy = boardToScreenY(y);
+
+        /*tileMesh.setColor(BASIC_COLOR);
+        if (tile.power) {
+            tileMesh.setColor(POWER_COLOR);
+        }*/
+
+
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
-        if (x == goalX && y == goalY) {
-            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
-                    1024 / width * (x + 0.5f), 576 / height * (y + 0.5f), 0, 1.0f, 1.0f);
-        }
-//        if (isBlocked(x, y)){
-//            canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//        if (x==goalX && y==goalY){
+//            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+//            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
 //                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
 //        }
-        if (getTileState(x, y).isHazard) {
-                canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
-                        1024 / width * (x + 0.5f), 576 / height * (y + 0.5f), 0, 1.0f, 1.0f);
+        //else if (getTileState(x,y).blocked){
+        //    canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+        //            1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+        //}
+        if (getTileState(x,y).isHazard){
+            canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
+        }
+        else {
+            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+                    TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
         }
     }
+
 }
