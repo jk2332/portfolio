@@ -230,52 +230,19 @@ public class Board {
 //        System.out.println(tileTexture);
         TileState tile = getTileState(x, y);
 
-        // Compute drawing coordinates
-        float sx = boardToScreenX(x);
-        float sy = boardToScreenY(y);
-
-        /*tileMesh.setColor(BASIC_COLOR);
-        if (tile.power) {
-            tileMesh.setColor(POWER_COLOR);
-        }*/
-
-
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
         if (x == goalX && y == goalY) {
             canvas.draw(tileTexture, Color.RED, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
                     1024 / width * (x + 0.5f), 576 / height * (y + 0.5f), 0, 1.0f, 1.0f);
-//            canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
         }
 //        if (isBlocked(x, y)){
 //            canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
 //                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
 //        }
         if (getTileState(x, y).isHazard) {
-            //else if (getTileState(x,y).blocked){
-            //    canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-            //            1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
-            //}
-            if (getTileState(x, y).isHazard) {
                 canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
                         1024 / width * (x + 0.5f), 576 / height * (y + 0.5f), 0, 1.0f, 1.0f);
-            } else {
-                canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
-                        1024 / width * (x + 0.5f), 576 / height * (y + 0.5f), 0, 1.0f, 1.0f);
-            }
-//        }
-            //else if (getTileState(x,y).blocked){
-            //    canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-            //            1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
-            //}
-            if (getTileState(x, y).isHazard) {
-                canvas.draw(hazardTileTexture, Color.WHITE, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
-                        TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
-            } else {
-                canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth() / 2, tileTexture.getHeight() / 2,
-                        TILE_SIZE * (x + 0.5f), TILE_SIZE * (y + 0.5f), 0, 1.0f, 1.0f);
-            }
         }
     }
 }

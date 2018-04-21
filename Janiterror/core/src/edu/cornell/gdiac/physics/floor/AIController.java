@@ -112,7 +112,6 @@ public class AIController {
         int sy = this.board.screenToBoardY(this.ship.getY());
         int tx;
         int ty;
-        int dieroll;
         switch(state) {
             case SPAWN:
                 if (canSeeJoe()) {
@@ -296,7 +295,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dx <= dy ? dx : (dy < attackRange && dy < dx && dy>=2 ? dy : attackRange);
+                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
 
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
@@ -333,7 +332,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dx <= dy ? dx : (dy < attackRange && dy < dx && dy>=2 ? dy : attackRange);
+                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
 
                 int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manhRight = manhattan(sx, sy, tx+attackRange, ty);
