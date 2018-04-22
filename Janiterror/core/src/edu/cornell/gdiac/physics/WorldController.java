@@ -139,6 +139,14 @@ public abstract class WorldController implements Screen {
 	private static final String SLIME_IDLE_FILE  = "floor/slime-walk-D.png";
 	private static final String SLIME_DEATH_FILE  = "floor/slime-dead.png";
 	private static final String SLIME_STUN_FILE  = "floor/slime-stunned.png";
+	/** The texture files for Turretslime */
+	private static final String TURRET_ATTACKL_FILE  = "floor/turret-slime-attack-L.png";
+	private static final String TURRET_ATTACKR_FILE  = "floor/turret-slime-attack-R.png";
+	private static final String TURRET_ATTACKU_FILE  = "floor/turret-slime-attack-U.png";
+	private static final String TURRET_ATTACKD_FILE  = "floor/turret-slime-attack-D.png";
+	private static final String TURRET_IDLE_FILE  = "floor/turret-slime-idle.png";
+	private static final String TURRET_DEATH_FILE  = "floor/turret-slime-dead.png";
+	private static final String TURRET_STUN_FILE  = "floor/turret-slime-stunned.png";
 	/** The texture files for lizardman */
 	private static final String LIZARD_ATTACKL_FILE  = "floor/L-attack-L.png";
 	private static final String LIZARD_ATTACKR_FILE  = "floor/L-attack-R.png";
@@ -259,6 +267,16 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion slimeIdleTexture;
 	protected TextureRegion slimeDeathTexture;
 	protected TextureRegion slimeStunTexture;
+	/** Texture assets for turret slime */
+	protected TextureRegion turretTexture;
+	protected TextureRegion turretAttackLTexture;
+	protected TextureRegion turretAttackRTexture;
+	protected TextureRegion turretAttackUTexture;
+	protected TextureRegion turretAttackDTexture;
+
+	protected TextureRegion turretIdleTexture;
+	protected TextureRegion turretDeathTexture;
+	protected TextureRegion turretStunTexture;
 	/** Texture assets for lizard */
 	protected TextureRegion lizardTexture;
 	protected TextureRegion lizardAttackLTexture;
@@ -459,6 +477,22 @@ public abstract class WorldController implements Screen {
 		assets.add(SLIME_DEATH_FILE);
 		manager.load(SLIME_STUN_FILE, Texture.class);
 		assets.add(SLIME_STUN_FILE);
+
+		manager.load(TURRET_ATTACKL_FILE, Texture.class);
+		assets.add(TURRET_ATTACKL_FILE);
+		manager.load(TURRET_ATTACKR_FILE, Texture.class);
+		assets.add(TURRET_ATTACKR_FILE);
+		manager.load(TURRET_ATTACKU_FILE, Texture.class);
+		assets.add(TURRET_ATTACKU_FILE);
+		manager.load(TURRET_ATTACKD_FILE, Texture.class);
+		assets.add(TURRET_ATTACKD_FILE);
+		manager.load(TURRET_IDLE_FILE, Texture.class);
+		assets.add(TURRET_IDLE_FILE);
+		manager.load(TURRET_DEATH_FILE, Texture.class);
+		assets.add(TURRET_DEATH_FILE);
+		manager.load(TURRET_STUN_FILE, Texture.class);
+		assets.add(TURRET_STUN_FILE);
+
 		manager.load(LIZARD_FILE, Texture.class);
 		assets.add(LIZARD_FILE);
 		manager.load(LIZARD_ATTACKL_FILE, Texture.class);
@@ -634,6 +668,14 @@ public abstract class WorldController implements Screen {
 		slimeIdleTexture = createTexture(manager,SLIME_IDLE_FILE,false);
 		slimeDeathTexture = createTexture(manager,SLIME_DEATH_FILE,false);
 		slimeStunTexture = createTexture(manager,SLIME_STUN_FILE,false);
+
+		turretAttackLTexture = createTexture(manager,TURRET_ATTACKL_FILE,false);
+		turretAttackRTexture = createTexture(manager,TURRET_ATTACKR_FILE,false);
+		turretAttackUTexture = createTexture(manager,TURRET_ATTACKU_FILE,false);
+		turretAttackDTexture = createTexture(manager,TURRET_ATTACKD_FILE,false);
+		turretIdleTexture = createTexture(manager,TURRET_IDLE_FILE,false);
+		turretDeathTexture = createTexture(manager,TURRET_DEATH_FILE,false);
+		turretStunTexture = createTexture(manager,TURRET_STUN_FILE,false);
 		lizardTexture = createTexture(manager,LIZARD_FILE, false);
 		lizardAttackLTexture = createTexture(manager,LIZARD_ATTACKL_FILE,false);
 		lizardAttackRTexture = createTexture(manager,LIZARD_ATTACKR_FILE,false);
