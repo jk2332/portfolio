@@ -35,7 +35,7 @@ import java.util.HashMap;
  */
 public class FloorController extends WorldController implements ContactListener {
 
-    private static final String LEVEL = "level1.tmx";
+    private static final String LEVEL = "level3.tmx";
 //    private static final String LEVEL = "level3.tmx";
     private static int currentLevel;
 
@@ -283,6 +283,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> robotRunR;
     private Animation <TextureRegion> robotRunU;
     private Animation <TextureRegion> robotRunD;
+    private Animation <TextureRegion> robotAttackL;
     private Animation <TextureRegion> robotAttackR;
     private Animation <TextureRegion> robotAttackU;
     private Animation <TextureRegion> robotAttackD;
@@ -291,6 +292,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> slimeRunR;
     private Animation <TextureRegion> slimeRunU;
     private Animation <TextureRegion> slimeRunD;
+    private Animation <TextureRegion> slimeAttackL;
     private Animation <TextureRegion> slimeAttackR;
     private Animation <TextureRegion> slimeAttackU;
     private Animation <TextureRegion> slimeAttackD;
@@ -300,6 +302,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> lizardRunR;
     private Animation <TextureRegion> lizardRunU;
     private Animation <TextureRegion> lizardRunD;
+    private Animation <TextureRegion> lizardAttackL;
     private Animation <TextureRegion> lizardAttackR;
     private Animation <TextureRegion> lizardAttackU;
     private Animation <TextureRegion> lizardAttackD;
@@ -459,17 +462,17 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void populateLevel() {
 
-        initLighting();
+//        initLighting();
 
-        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] pos = {0f, 0f};
-        float dist  = 7f;
-        int rays = 512;
-
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-        point.setColor(color[0],color[1],color[2],color[3]);
-        point.setSoft(false);
-        light = point;
+//        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+//        float[] pos = {0f, 0f};
+//        float dist  = 7f;
+//        int rays = 512;
+//
+//        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+//        point.setColor(color[0],color[1],color[2],color[3]);
+//        point.setSoft(false);
+//        light = point;
 
 
         // Add level goal
@@ -531,8 +534,7 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
-        //does this using hazardpos
+//        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 
     private void initLighting() {
@@ -793,6 +795,12 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(robotAttackLTexture,i*64,0,64,64));
+        }
+        robotAttackL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(robotAttackRTexture,i*64,0,64,64));
         }
         robotAttackR = new Animation<TextureRegion>(0.1f, frames);
@@ -838,6 +846,12 @@ public class FloorController extends WorldController implements ContactListener 
             frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
         }
         slimeRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackLTexture,i*64,0,64,64));
+        }
+        slimeAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
@@ -934,6 +948,12 @@ public class FloorController extends WorldController implements ContactListener 
             frames.add (new TextureRegion(lizardWalkDTexture,i*64,0,64,64));
         }
         lizardRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(lizardAttackLTexture,i*64,0,64,64));
+        }
+        lizardAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
@@ -1250,11 +1270,11 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
-        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
-        raycamera.update();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
+//        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+//        raycamera.update();
+//        if (rayhandler != null) {
+//            rayhandler.update();
+//        }
 
 //      Affine2 oTran = new Affine2();
 //		oTran.setToTranslation(avatar.getX(), avatar.getY());
@@ -2540,6 +2560,9 @@ public class FloorController extends WorldController implements ContactListener 
             case RUNNINGD:
                 region = robotRunD.getKeyFrame(stateTimerR,true);
                 break;
+            case ATTACKL:
+                region = robotAttackL.getKeyFrame(stateTimerR,false);
+                break;
             case ATTACKR:
                 region = robotAttackR.getKeyFrame(stateTimerR,false);
                 break;
@@ -2566,9 +2589,11 @@ public class FloorController extends WorldController implements ContactListener 
             return StateSlime.DEATH;
         }
         if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
-            return StateSlime.ATTACKR;
+            System.out.println("slime attacking left");
+            return StateSlime.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
+            System.out.println("slime attacking right");
             return StateSlime.ATTACKR;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
@@ -2608,6 +2633,9 @@ public class FloorController extends WorldController implements ContactListener 
                 break;
             case RUNNINGD:
                 region = slimeRunD.getKeyFrame(stateTimerS,true);
+                break;
+            case ATTACKL:
+                region = slimeAttackL.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKR:
                 region = slimeAttackR.getKeyFrame(stateTimerS,false);
@@ -2680,6 +2708,9 @@ public class FloorController extends WorldController implements ContactListener 
                 break;
             case RUNNINGD:
                 region = lizardRunD.getKeyFrame(stateTimerL,true);
+                break;
+            case ATTACKL:
+                region = lizardAttackL.getKeyFrame(stateTimerL,false);
                 break;
             case ATTACKR:
                 region = lizardAttackR.getKeyFrame(stateTimerL,false);

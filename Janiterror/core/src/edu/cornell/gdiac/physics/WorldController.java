@@ -81,7 +81,7 @@ public abstract class WorldController implements Screen {
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	/** File to texture for the mop cart */
-	private static final String SPECIAL_HEALTH_FILE = "shared/undertile-32.png";
+	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
 	/** Retro font for displaying messages */
 	private static final String FONT_FILE = "shared/RetroGame.ttf";
 	private static final int FONT_SIZE = 32;
@@ -117,7 +117,8 @@ public abstract class WorldController implements Screen {
 	private static final String MAD_IDLE_FILE  = "floor/mad-idle.png";
 	private static final String MAD_DEATH_FILE  = "floor/mad-death-v2.png";
 	/** The texture files for robot */
-	private static final String ROBOT_ATTACKR_FILE  = "floor/robot-attack-side-recolor.png";
+	private static final String ROBOT_ATTACKL_FILE  = "floor/robot-attack-left.png";
+	private static final String ROBOT_ATTACKR_FILE  = "floor/robot-attack-right.png";
 	private static final String ROBOT_ATTACKU_FILE  = "floor/robot-attack-back-recolor.png";
 	private static final String ROBOT_ATTACKD_FILE  = "floor/robot-attack-front-recolor.png";
 	private static final String ROBOT_WALKR_FILE  = "floor/robot-walk-side-recolor.png";
@@ -126,6 +127,7 @@ public abstract class WorldController implements Screen {
 	private static final String ROBOT_IDLE_FILE  = "floor/robot-idle-v2.png";
 	private static final String ROBOT_DEATH_FILE  = "floor/R-death.png";
 	/** The texture files for slime */
+	private static final String SLIME_ATTACKL_FILE  = "floor/slime-attack-L.png";
 	private static final String SLIME_ATTACKR_FILE  = "floor/slime-attack-R.png";
 	private static final String SLIME_ATTACKU_FILE  = "floor/slime-attack-U.png";
 	private static final String SLIME_ATTACKD_FILE  = "floor/slime-attack-D.png";
@@ -133,10 +135,12 @@ public abstract class WorldController implements Screen {
 	private static final String SLIME_WALKU_FILE  = "floor/slime-walk-U.png";
 	private static final String SLIME_WALKD_FILE  = "floor/slime-walk-D.png";
 	private static final String SLIME_IDLE_FILE  = "floor/robot-idle-v2.png";
+		//slime idle
 	private static final String SLIME_DEATH_FILE  = "floor/slime-dead.png";
 	private static final String SLIME_STUN_FILE  = "floor/slime-stunned.png";
 	/** The texture files for lizardman */
-	private static final String LIZARD_ATTACKR_FILE  = "floor/L-attack-side.png";
+	private static final String LIZARD_ATTACKL_FILE  = "floor/L-attack-L.png";
+	private static final String LIZARD_ATTACKR_FILE  = "floor/L-attack-R.png";
 	private static final String LIZARD_ATTACKU_FILE  = "floor/L-attack-back.png";
 	private static final String LIZARD_ATTACKD_FILE  = "floor/L-attack-front.png";
 	private static final String LIZARD_WALKR_FILE  = "floor/L-walk-side.png";
@@ -227,6 +231,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion scientistDeathTexture;
 	/** Texture assets for robot */
 	protected TextureRegion robotTexture;
+	protected TextureRegion robotAttackLTexture;
 	protected TextureRegion robotAttackRTexture;
 	protected TextureRegion robotAttackUTexture;
 	protected TextureRegion robotAttackDTexture;
@@ -237,6 +242,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion robotDeathTexture;
 	/** Texture assets for slime */
 	protected TextureRegion slimeTexture;
+	protected TextureRegion slimeAttackLTexture;
 	protected TextureRegion slimeAttackRTexture;
 	protected TextureRegion slimeAttackUTexture;
 	protected TextureRegion slimeAttackDTexture;
@@ -248,6 +254,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion slimeStunTexture;
 	/** Texture assets for lizard */
 	protected TextureRegion lizardTexture;
+	protected TextureRegion lizardAttackLTexture;
 	protected TextureRegion lizardAttackRTexture;
 	protected TextureRegion lizardAttackUTexture;
 	protected TextureRegion lizardAttackDTexture;
@@ -397,6 +404,8 @@ public abstract class WorldController implements Screen {
 		assets.add(MAD_DEATH_FILE);
 		manager.load(ROBOT_FILE, Texture.class);
 		assets.add(ROBOT_FILE);
+		manager.load(ROBOT_ATTACKL_FILE, Texture.class);
+		assets.add(ROBOT_ATTACKL_FILE);
 		manager.load(ROBOT_ATTACKR_FILE, Texture.class);
 		assets.add(ROBOT_ATTACKR_FILE);
 		manager.load(ROBOT_ATTACKU_FILE, Texture.class);
@@ -415,6 +424,8 @@ public abstract class WorldController implements Screen {
 		assets.add(ROBOT_DEATH_FILE);
 		manager.load(SLIME_FILE, Texture.class);
 		assets.add(SLIME_FILE);
+		manager.load(SLIME_ATTACKL_FILE, Texture.class);
+		assets.add(SLIME_ATTACKL_FILE);
 		manager.load(SLIME_ATTACKR_FILE, Texture.class);
 		assets.add(SLIME_ATTACKR_FILE);
 		manager.load(SLIME_ATTACKU_FILE, Texture.class);
@@ -435,6 +446,8 @@ public abstract class WorldController implements Screen {
 		assets.add(SLIME_STUN_FILE);
 		manager.load(LIZARD_FILE, Texture.class);
 		assets.add(LIZARD_FILE);
+		manager.load(LIZARD_ATTACKL_FILE, Texture.class);
+		assets.add(LIZARD_ATTACKL_FILE);
 		manager.load(LIZARD_ATTACKR_FILE, Texture.class);
 		assets.add(LIZARD_ATTACKR_FILE);
 		manager.load(LIZARD_ATTACKU_FILE, Texture.class);
@@ -577,6 +590,7 @@ public abstract class WorldController implements Screen {
 		scientistIdleTexture = createTexture(manager,MAD_IDLE_FILE,false);
 		scientistDeathTexture = createTexture(manager,MAD_DEATH_FILE,false);
 		robotTexture = createTexture(manager,ROBOT_FILE,false);
+		robotAttackLTexture = createTexture(manager,ROBOT_ATTACKL_FILE,false);
 		robotAttackRTexture = createTexture(manager,ROBOT_ATTACKR_FILE,false);
 		robotAttackUTexture = createTexture(manager,ROBOT_ATTACKU_FILE,false);
 		robotAttackDTexture = createTexture(manager,ROBOT_ATTACKD_FILE,false);
@@ -586,6 +600,7 @@ public abstract class WorldController implements Screen {
 		robotIdleTexture = createTexture(manager,ROBOT_IDLE_FILE,false);
 		robotDeathTexture = createTexture(manager,ROBOT_DEATH_FILE,false);
 		slimeTexture = createTexture(manager,SLIME_FILE, false);
+		slimeAttackLTexture = createTexture(manager,SLIME_ATTACKL_FILE,false);
 		slimeAttackRTexture = createTexture(manager,SLIME_ATTACKR_FILE,false);
 		slimeAttackUTexture = createTexture(manager,SLIME_ATTACKU_FILE,false);
 		slimeAttackDTexture = createTexture(manager,SLIME_ATTACKD_FILE,false);
@@ -596,6 +611,7 @@ public abstract class WorldController implements Screen {
 		slimeDeathTexture = createTexture(manager,SLIME_DEATH_FILE,false);
 		slimeStunTexture = createTexture(manager,SLIME_STUN_FILE,false);
 		lizardTexture = createTexture(manager,LIZARD_FILE, false);
+		lizardAttackLTexture = createTexture(manager,LIZARD_ATTACKL_FILE,false);
 		lizardAttackRTexture = createTexture(manager,LIZARD_ATTACKR_FILE,false);
 		lizardAttackUTexture = createTexture(manager,LIZARD_ATTACKU_FILE,false);
 		lizardAttackDTexture = createTexture(manager,LIZARD_ATTACKD_FILE,false);
