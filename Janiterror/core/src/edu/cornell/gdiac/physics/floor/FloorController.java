@@ -67,7 +67,7 @@ public class FloorController extends WorldController implements ContactListener 
     private float cameraY; //where the camera is located (for drawing and scrolling)
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
-    private static final float WALL_HEIGHT_SCALE = 0.90f;
+    private static final float WALL_HEIGHT_SCALE = 0.9f;
 
     private static final float OBJ_OFFSET_X = 1f;
     private static final float OBJ_OFFSET_Y = 1f;
@@ -280,6 +280,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> madAttackU;
     private Animation <TextureRegion> madAttackD;
     private Animation <TextureRegion> madDeath;
+    private Animation <TextureRegion> madStun;
     private Animation <TextureRegion> robotStand;
     private Animation <TextureRegion> robotRunR;
     private Animation <TextureRegion> robotRunU;
@@ -289,6 +290,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> robotAttackU;
     private Animation <TextureRegion> robotAttackD;
     private Animation <TextureRegion> robotDeath;
+    private Animation <TextureRegion> robotStun;
     private Animation <TextureRegion> slimeStand;
     private Animation <TextureRegion> slimeRunR;
     private Animation <TextureRegion> slimeRunU;
@@ -308,6 +310,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> lizardAttackU;
     private Animation <TextureRegion> lizardAttackD;
     private Animation <TextureRegion> lizardDeath;
+    private Animation <TextureRegion> lizardStun;
 
 
     /** Reference to the goalDoor (for collision detection) */
@@ -470,6 +473,8 @@ public class FloorController extends WorldController implements ContactListener 
         point.setColor(color[0],color[1],color[2],color[3]);
         point.setSoft(false);
         light = point;
+
+
 
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
@@ -786,6 +791,12 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistStunTexture,i*64,0,64,64));
+        }
+        madStun = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotWalkRTexture,i*64,0,64,64));
         }
         robotRunR = new Animation<TextureRegion>(0.1f, frames);
@@ -840,18 +851,24 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotStunTexture,i*64,0,64,64));
+        }
+        robotStun = new Animation<TextureRegion>(0.25f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
         }
         slimeRunR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
         }
         slimeRunU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
         }
         slimeRunD = new Animation<TextureRegion>(0.1f, frames);
@@ -881,49 +898,7 @@ public class FloorController extends WorldController implements ContactListener 
         slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
-        }
-        slimeStand = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
-        }
-        slimeRunR = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
-        }
-        slimeRunU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
-        }
-        slimeRunD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackRTexture,i*64,0,64,64));
-        }
-        slimeAttackR = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackUTexture,i*64,0,64,64));
-        }
-        slimeAttackU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackDTexture,i*64,0,64,64));
-        }
-        slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
         }
         slimeStand = new Animation<TextureRegion>(0.1f, frames);
@@ -938,7 +913,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(slimeStunTexture,i*64,0,64,64));
         }
-        slimeStun= new Animation<TextureRegion>(0.1f, frames);
+        slimeStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -995,6 +970,12 @@ public class FloorController extends WorldController implements ContactListener 
         lizardDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardStunTexture,i*64,0,64,64));
+        }
+        lizardStun = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
@@ -1013,7 +994,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii, 5, 1.0f, 2.5f, 2);
+                    dwidth, dheight, ii, 3, 1.0f, 2.5f, 2,
+                    StateMad.STANDING, StateMad.STANDING);
             mon.setDrawScale(scale);
             mon.setName("scientist");
             addObject(mon);
@@ -1022,7 +1004,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2);
+                    dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2,
+                    StateRobot.STANDING, StateRobot.STANDING);
             mon.setDrawScale(scale);
             mon.setName("robot");
             addObject(mon);
@@ -1030,16 +1013,16 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 5, 1.0f, 1.5f, 8, 10.0f);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f,StateSlime.STANDING,StateSlime.STANDING);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
-
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 5, 1.0f, 6.0f, 1);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 6.5f, 1,
+                    StateLizard.STANDING, StateLizard.STANDING);
             mon.setDrawScale(scale);
             mon.setName("lizard");
             addObject(mon);
@@ -1047,7 +1030,8 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 5, 1.0f, 0, 8, 10.0f);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 10.0f,
+                    StateSlime.STANDING,StateSlime.STANDING);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
@@ -2119,6 +2103,7 @@ public class FloorController extends WorldController implements ContactListener 
             obj.draw(canvas);
         }
 
+
         canvas.end();
         // Now draw the shadows
         if (rayhandler != null && light.isActive()) {
@@ -2128,7 +2113,6 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.setColor(Color.WHITE);
 
         //Draw Enemy Health
-            //TARGET
         displayFont.getData().setScale(0.5f);
         for (EnemyModel s : enemies) {
             if (!(s.isRemoved())) {
@@ -2514,18 +2498,19 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getMovementY() < 0) {
               return StateMad.RUNNINGD;
           }
-//        } else if (s.getStunned() == true) {
-//            return StateMad.RUNNINGD;
-//        }
+        else if (s.getStunned() == true) {
+            return StateMad.STUN;
+        }
         else {
               return StateMad.STANDING;
           }
 
     }
     public TextureRegion getFrameScientist (float dt , EnemyModel s){
-        currentStateM = getStateMad(s);
+        stateTimerS = s.getStateTimer();
+        ((ScientistModel)s).state = getStateMad(s);
         TextureRegion region;
-        switch (currentStateM){
+        switch (((ScientistModel)s).state){
             case RUNNINGR:
                 region = madRunR.getKeyFrame(stateTimerM,true);
                 break;
@@ -2550,12 +2535,20 @@ public class FloorController extends WorldController implements ContactListener 
             case DEATH:
                 region = madDeath.getKeyFrame(stateTimerM,false);
                 break;
+            case STUN:
+                region = madStun.getKeyFrame(stateTimerM,true);
+                break;
             default:
                 region = madStand.getKeyFrame(stateTimerM,true);
                 break;
         }
-        stateTimerM = currentStateM == previousStateM ? stateTimerM + dt : 0;
-        previousStateM = currentStateM;
+        if (((ScientistModel)s).state ==((ScientistModel)s).previousState ){
+            s.setStateTimer(s.getStateTimer()+dt);
+        }
+        else {
+            s.setStateTimer(0);
+        }
+        ((ScientistModel)s).previousState = ((ScientistModel)s).state;
         return region;
     }
     public StateRobot getStateRobot(EnemyModel s) {
@@ -2590,18 +2583,19 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (s.getMovementY() < 0) {
             return StateRobot.RUNNINGD;
         }
-//        } else if (s.getStunned() == true) {
-//            return StateMad.RUNNINGD;
-//        }
+         else if (s.getStunned() == true) {
+            return StateRobot.STUN;
+        }
         else {
             return StateRobot.STANDING;
         }
 
     }
     public TextureRegion getFrameRobot (float dt , EnemyModel s){
-        currentStateR = getStateRobot(s);
+        stateTimerR = s.getStateTimer();
+        ((RobotModel)s).state = getStateRobot(s);
         TextureRegion region;
-        switch (currentStateR){
+        switch ( ((RobotModel)s).state ){
             case RUNNINGR:
                 region = robotRunR.getKeyFrame(stateTimerR,true);
                 break;
@@ -2626,12 +2620,20 @@ public class FloorController extends WorldController implements ContactListener 
             case DEATH:
                 region = robotDeath.getKeyFrame(stateTimerR,false);
                 break;
+            case STUN:
+                region = robotStun.getKeyFrame(stateTimerR,true);
+                break;
             default:
                 region = robotStand.getKeyFrame(stateTimerR,true);
                 break;
         }
-        stateTimerR = currentStateR == previousStateR ? stateTimerR + dt : 0;
-        previousStateR = currentStateR;
+        if (((RobotModel)s).state ==((RobotModel)s).previousState ){
+            s.setStateTimer(s.getStateTimer()+dt);
+        }
+        else {
+            s.setStateTimer(0);
+        }
+        ((RobotModel)s).previousState = ((RobotModel)s).state;
         return region;
     }
     public StateSlime getStateSlime(EnemyModel s) {
@@ -2639,13 +2641,15 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateSlime.DEATH;
         }
-        if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
             System.out.println("slime attacking left");
-            return StateSlime.ATTACKL;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
-            System.out.println("slime attacking right");
             return StateSlime.ATTACKR;
+        }
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
+            System.out.println("slime attacking right");
+            return StateSlime.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
             return StateSlime.ATTACKU;
@@ -2654,9 +2658,13 @@ public class FloorController extends WorldController implements ContactListener 
             return StateSlime.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
+            System.out.println("Slime run right");
+            slimeMovedLeft = false;
             return StateSlime.RUNNINGR;
         }
         else if (s.getMovementX() < 0) {
+            System.out.println("Slime run left");
+            slimeMovedLeft = true;
             return StateSlime.RUNNINGR;
         }
         else if (s.getMovementY() > 0) {
@@ -2673,9 +2681,10 @@ public class FloorController extends WorldController implements ContactListener 
 
     }
     public TextureRegion getFrameSlime (float dt , EnemyModel s){
-        currentStateS = getStateSlime(s);
+        stateTimerS = s.getStateTimer();
+        ((SlimeModel)s).state = getStateSlime(s);
         TextureRegion region;
-        switch (currentStateS){
+        switch (((SlimeModel)s).state){
             case RUNNINGR:
                 region = slimeRunR.getKeyFrame(stateTimerS,true);
                 break;
@@ -2701,14 +2710,19 @@ public class FloorController extends WorldController implements ContactListener 
                 region = slimeDeath.getKeyFrame(stateTimerS,false);
                 break;
             case STUN:
-                region = slimeStun.getKeyFrame(stateTimerS,false);
+                region = slimeStun.getKeyFrame(stateTimerS,true);
                 break;
             default:
                 region = slimeStand.getKeyFrame(stateTimerS,true);
                 break;
         }
-        stateTimerS = currentStateS == previousStateS ? stateTimerS + dt : 0;
-        previousStateS = currentStateS;
+        if (((SlimeModel)s).state ==((SlimeModel)s).previousState ){
+            s.setStateTimer(s.getStateTimer()+dt);
+        }
+        else {
+            s.setStateTimer(0);
+        }
+        ((SlimeModel)s).previousState = ((SlimeModel)s).state;
         return region;
     }
     public StateLizard getStateLizard(EnemyModel s) {
@@ -2716,11 +2730,13 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateLizard.DEATH;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == false)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true){
             return StateLizard.ATTACKR;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
-            return StateLizard.ATTACKR;
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == true)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == false){
+            return StateLizard.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
             return StateLizard.ATTACKU;
@@ -2729,9 +2745,11 @@ public class FloorController extends WorldController implements ContactListener 
             return StateLizard.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
+            lizardMovedLeft = false;
             return StateLizard.RUNNINGR;
         }
         else if (s.getMovementX() < 0) {
+            lizardMovedLeft = true;
             return StateLizard.RUNNINGR;
         }
         else if (s.getMovementY() > 0) {
@@ -2739,18 +2757,19 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (s.getMovementY() < 0) {
             return StateLizard.RUNNINGD;
         }
-//        } else if (s.getStunned() == true) {
-//            return StateMad.RUNNINGD;
-//        }
+         else if (s.getStunned() == true) {
+            return StateLizard.STUN;
+        }
         else {
             return StateLizard.STANDING;
         }
 
     }
     public TextureRegion getFrameLizard (float dt , EnemyModel s){
-        currentStateL = getStateLizard(s);
+        stateTimerS = s.getStateTimer();
+        ((LizardModel)s).state = getStateLizard(s);
         TextureRegion region;
-        switch (currentStateL){
+        switch (((LizardModel)s).state){
             case RUNNINGR:
                 region = lizardRunR.getKeyFrame(stateTimerL,true);
                 break;
@@ -2775,12 +2794,20 @@ public class FloorController extends WorldController implements ContactListener 
             case DEATH:
                 region = lizardDeath.getKeyFrame(stateTimerL,false);
                 break;
+            case STUN:
+                region = lizardStun.getKeyFrame(stateTimerL,true);
+                break;
             default:
                 region = lizardStand.getKeyFrame(stateTimerL,true);
                 break;
         }
-        stateTimerL = currentStateL == previousStateL ? stateTimerL + dt : 0;
-        previousStateL = currentStateL;
+        if (((LizardModel)s).state ==((LizardModel)s).previousState ){
+            s.setStateTimer(s.getStateTimer()+dt);
+        }
+        else {
+            s.setStateTimer(0);
+        }
+        ((LizardModel)s).previousState = ((LizardModel)s).state;
         return region;
     }
 
