@@ -67,6 +67,7 @@ public class FloorController extends WorldController implements ContactListener 
     private float cameraY; //where the camera is located (for drawing and scrolling)
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
+    private static final float WALL_HEIGHT_SCALE = 0.90f;
 
     private static final float OBJ_OFFSET_X = 1f;
     private static final float OBJ_OFFSET_Y = 1f;
@@ -1063,8 +1064,12 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = wallMidTexture.getRegionWidth()/scale.x;
         float dheight = wallMidTexture.getRegionHeight()/scale.y;
         float offset;
+        float offsetCornerX;
+        float offsetCornerY;
 
         offset = (TILE_SIZE * 2*(1 - WALL_THICKNESS_SCALE))/2;
+        offsetCornerX = (TILE_SIZE * (1 - WALL_THICKNESS_SCALE))/2;
+        offsetCornerY = (TILE_SIZE/2 + TILE_SIZE*3*(1 -WALL_HEIGHT_SCALE));
         BoxObstacle obj;
         float x;
         float y;
@@ -1088,6 +1093,9 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setTexture(wallTRTexture, 0, offset);
             obj.setName(pname+ii);
             addWallObject(obj);
+            obj = new BoxObstacle(x+offsetCornerX/32, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
+            obj.setName(pname+ii);
+            addWallObject(obj);
         }
 
         for (int ii = 0; ii < wallTLPos.size(); ii++) {
@@ -1098,6 +1106,10 @@ public class FloorController extends WorldController implements ContactListener 
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallTLTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x-offsetCornerX/32, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
             obj.setName(pname+ii);
             addWallObject(obj);
         }
@@ -1163,6 +1175,10 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setTexture(wallSLTexture, offset, offsetY);
             obj.setName(pname+ii);
             addWallObject(obj);
+
+            obj = new BoxObstacle(x, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
+            obj.setName(pname+ii);
+            addWallObject(obj);
         }
 
         offset = -offset;
@@ -1174,6 +1190,10 @@ public class FloorController extends WorldController implements ContactListener 
 
             obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallSRTexture, offset, offsetY);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
             obj.setName(pname+ii);
             addWallObject(obj);
         }
