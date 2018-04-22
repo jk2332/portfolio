@@ -34,8 +34,10 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level2.tmx";
+
+    private static final String LEVEL = "level3.tmx";
 //    private static final String LEVEL = "level3.tmx";
+    private static int currentLevel;
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -307,6 +309,10 @@ public class FloorController extends WorldController implements ContactListener 
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
+
+//        currentLevel = input_level;
+//        LEVEL = "level" + Integer.toString(currentLevel) + ".tmx";
+
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();
@@ -891,13 +897,9 @@ public class FloorController extends WorldController implements ContactListener 
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        OrthographicCamera camera = canvas.getCamera();
+        //OrthographicCamera camera = canvas.getCamera();
 
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
-
-        if (gotHit>0 && gotHit +20 == ticks) {
+        if (gotHit>0 && gotHit +20 == ticks && avatar.isAlive()) {
             avatar.resetFrame();
             gotHit = -1;
         }
@@ -907,7 +909,8 @@ public class FloorController extends WorldController implements ContactListener 
         //if avatar.getX() is > corner1 or < corner4, use it as varX, else don't
         //if avatar.getY() is > corner2 or < corner3, use it as varY, else don't
         //System.out.println(avatar.getX());
-        canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
+        //canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
+
             //getX only gets the tile #, multiply by 32 to get the pixel number
         float playerPosX = avatar.getX() * 32;
         float playerPosY = avatar.getY() * 32;
@@ -932,6 +935,11 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
+        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+        raycamera.update();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
 //      Affine2 oTran = new Affine2();
 //		oTran.setToTranslation(avatar.getX(), avatar.getY());
@@ -1173,13 +1181,12 @@ public class FloorController extends WorldController implements ContactListener 
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
             avatar.incrFrame();
-            if (s.getAttackAnimationFrame()==1) {avatar.decrHP();}
-            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
-                s.resetAttackAniFrame();
+            if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
+                avatar.decrHP(); avatar.setFrame(3); gotHit=ticks;
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
-            if (avatar.isAlive() && avatar.getFrame()==4){
-                avatar.resetFrame();
+            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
+                s.resetAttackAniFrame();
             }
         } else if (s instanceof SlimeModel) {
             //System.out.println("shoot1");
