@@ -10,6 +10,8 @@
  */
 package edu.cornell.gdiac.physics.floor.character;
 
+import edu.cornell.gdiac.physics.floor.FloorController;
+
 /**
  * Player avatar for the plaform game.
  *
@@ -19,6 +21,8 @@ package edu.cornell.gdiac.physics.floor.character;
 public class SlimeModel extends EnemyModel {
 
     float slimeballSpeed;
+    public FloorController.StateSlime state;
+    public FloorController.StateSlime previousState;
 
 
     /**
@@ -33,9 +37,12 @@ public class SlimeModel extends EnemyModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed) {
+    public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
+                      FloorController.StateSlime state, FloorController.StateSlime previousState) {
         super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3);
         this.slimeballSpeed = slimeballSpeed;
+        this.state = state;
+        this.previousState = previousState;
     }
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {

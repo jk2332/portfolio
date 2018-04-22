@@ -19,7 +19,7 @@ public class EnemyModel extends CharacterModel {
     private int knockbackTimer;
     private int attackAnimationFrame;
     private int maxAniFrame;
-
+    private float stateTimer;
     private int attackRange;
 
 
@@ -107,6 +107,13 @@ public class EnemyModel extends CharacterModel {
     }
 
     public int getAttackAnimationFrame(){return attackAnimationFrame;}
+
+    public void setStateTimer (float timer){
+        this.stateTimer = timer;
+    }
+    public float getStateTimer (){
+        return stateTimer;
+    }
 
     /**
      * Draws the enemy to the screen
