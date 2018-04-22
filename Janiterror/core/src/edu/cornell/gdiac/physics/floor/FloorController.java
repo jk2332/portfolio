@@ -1013,7 +1013,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii, 5, 1.0f, 2.5f, 2);
+                    dwidth, dheight, ii, 3, 1.0f, 2.5f, 2);
             mon.setDrawScale(scale);
             mon.setName("scientist");
             addObject(mon);
@@ -1030,7 +1030,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 5, 1.0f, 1.5f, 8, 10.0f);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
@@ -1039,7 +1039,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 5, 1.0f, 6.0f, 1);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 6.0f, 1);
             mon.setDrawScale(scale);
             mon.setName("lizard");
             addObject(mon);
@@ -1047,7 +1047,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 5, 1.0f, 0, 8, 10.0f);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 10.0f);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
