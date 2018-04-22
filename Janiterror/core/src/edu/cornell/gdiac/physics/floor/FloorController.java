@@ -218,6 +218,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     ArrayList<Vector2> scientistPos;
     ArrayList<Vector2> slimePos;
+    ArrayList<Vector2> slimeTurretPos;
     ArrayList<Vector2> robotPos;
     ArrayList<Vector2> lizardPos;
     ArrayList<Vector2> wallRightPos;
@@ -366,6 +367,7 @@ public class FloorController extends WorldController implements ContactListener 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();
+        slimeTurretPos = level.getSlimeTurretPos();
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
 
@@ -436,8 +438,8 @@ public class FloorController extends WorldController implements ContactListener 
         lidTimer = LID_RANGE;
         lidGround = false;
 
-        enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
-        controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size()];
+        enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
+        controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
 
         //System.out.println(level.getBoardHeight());
         //System.out.println(level.getBoardWidth());
@@ -590,10 +592,10 @@ public class FloorController extends WorldController implements ContactListener 
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
         /** Load name -> model dictionary */
-        wep_to_model.put("mop", new MopModel(level.getMopDurability(), level.getMopAttackRange(), level.getMopKnockbackTimer()));
-        wep_to_model.put("spray", new SprayModel(level.getSprayDurability(), level.getSprayAttackRange(), level.getSprayStunTimer()));
-        wep_to_model.put("vacuum", new VacuumModel(level.getVacuumDurability(), level.getVacuumAttackRange()));
-        wep_to_model.put("lid", new LidModel(level.getLidDurability(), level.getLidAttackRange()));
+        wep_to_model.put("mop", new MopModel(10, 2, 15));
+        wep_to_model.put("spray", new SprayModel(5, 4, 150));
+        wep_to_model.put("vacuum", new VacuumModel(10, 10));
+        wep_to_model.put("lid", new LidModel(10, 10));
         /** Load name -> in use dictionary */
         wep_in_use.put("mop", true);
         wep_in_use.put("spray", true);
@@ -991,7 +993,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                level.getJoeHP(), 200, level.getJoeVel());
+                15, 200f, 5.0f);
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -1005,7 +1007,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii, level.getScientistHP(), level.getScientistDensity(), level.getScientistVel(), level.getScientistAttackRange());
+                    dwidth, dheight, ii, 5, 1.0f, 2.5f, 2);
             mon.setDrawScale(scale);
             mon.setName("scientist");
             addObject(mon);
@@ -1014,7 +1016,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+ii, level.getRobotHP(), level.getRobotDensity(), level.getRobotVel(), level.getRobotAttackRange());
+                    dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2);
             mon.setDrawScale(scale);
             mon.setName("robot");
             addObject(mon);
@@ -1022,19 +1024,28 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, level.getSlimeHP(), level.getSlimeDensity(), level.getSlimeVel(), level.getSlimeAttackRange(), level.getSlimeballSpeed());
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 5, 1.0f, 1.5f, 8, 10.0f);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
+
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, level.getLizardHP(), level.getLizardDensity(), level.getLizardVel(), level.getLizardAttackRange());
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 5, 1.0f, 6.0f, 1);
             mon.setDrawScale(scale);
             mon.setName("lizard");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
+        }
+        for (int ii = 0; ii< slimeTurretPos.size(); ii++){
+            EnemyModel mon =new SlimeModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 5, 1.0f, 0, 8, 10.0f);
+            mon.setDrawScale(scale);
+            mon.setName("slime");
+            addObject(mon);
+            enemies[scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii]=mon;
         }
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
@@ -1450,7 +1461,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (s.getStunned()) {
                     System.out.println("stunned");
                     s.incrStunTicks();
-                    if (s.getStunTicks()<=level.getSprayStunTimer()) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
+                    if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
 
