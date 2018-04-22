@@ -30,8 +30,12 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "matt-level.tmx";
-//    private static final String LEVEL = "level3.tmx";
+//    private static String LEVEL = "";
+        //this will be set when FloorController is initalized
+    //    private static final String LEVEL = "level1.tmx";
+    private static final String LEVEL = "level-basic2.tmx";
+    private static int currentLevel;
+
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -296,6 +300,10 @@ public class FloorController extends WorldController implements ContactListener 
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
+
+//        currentLevel = input_level;
+//        LEVEL = "level" + Integer.toString(currentLevel) + ".tmx";
+
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();

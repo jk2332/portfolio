@@ -434,7 +434,6 @@ public abstract class WorldController implements Screen {
 
 		healthBarTexture = createTexture(manager,HEALTH_BAR_FILE,false);
 		healthBarTexture2 = createTexture(manager,HEALTH_BAR_FILE2,false);
-		System.out.println(healthBarTexture2);
 
 		mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
@@ -572,6 +571,8 @@ public abstract class WorldController implements Screen {
 	private boolean active;
 	/** Whether we have completed this level */
 	private boolean complete;
+	/** What level we are currently on */
+	private int currentLevel;
 	/** Whether a player has lost in this level*/
 	private boolean lost;
 	/** Whether we have failed at this world (and need a reset) */
