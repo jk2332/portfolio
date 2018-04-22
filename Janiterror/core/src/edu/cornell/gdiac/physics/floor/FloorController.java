@@ -533,7 +533,10 @@ public class FloorController extends WorldController implements ContactListener 
 
 
         light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
+
+
     }
+
 
     private void initLighting() {
         raycamera = new OrthographicCamera(bounds.width,bounds.height);
@@ -545,7 +548,7 @@ public class FloorController extends WorldController implements ContactListener 
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
-        float[] color = {0.25f, 0.25f, 0.25f, 0.25f};
+        float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 3;
         rayhandler.setBlur(blur > 0);
@@ -1262,8 +1265,11 @@ public class FloorController extends WorldController implements ContactListener 
         }
         canvas.setCameraPosition(cameraX, cameraY);
 
+        if (InputController.getInstance().getDidLighting()) {
+            toggleLighting();
+        }
+
         raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
-        raycamera.update();
         if (rayhandler != null) {
             rayhandler.update();
         }
@@ -1329,6 +1335,14 @@ public class FloorController extends WorldController implements ContactListener 
         clearEnemy(dt);
 
         SoundController.getInstance().update();
+    }
+
+    private void toggleLighting() {
+        if (light.isActive()) {
+            light.setActive(false);
+        } else {
+            light.setActive(true);
+        }
     }
 
     /**
@@ -2061,7 +2075,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         canvas.end();
         // Now draw the shadows
-        if (rayhandler != null) {
+        if (rayhandler != null && light.isActive()) {
             rayhandler.render();
         }
         canvas.begin();
