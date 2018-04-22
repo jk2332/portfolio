@@ -85,6 +85,8 @@ public class InputController {
 	private boolean qKeyPressed;
 	private boolean qKeyPrevious;
 
+	private boolean lKeyPressed;
+	private boolean lKeyPrevious;
 	/** How much did we move horizontally? */
 	private float horizontal;
 	/** How much did we move vertically? */
@@ -236,6 +238,9 @@ public class InputController {
 		return exitPressed && !exitPrevious;
 	}
 
+
+	public boolean getDidLighting() {return lKeyPressed && !lKeyPrevious;}
+
 	/**
 	 * Creates a new input controller
 	 *
@@ -276,6 +281,8 @@ public class InputController {
 		downArrowPrevious = downArrowPressed;
 
 		qKeyPrevious = qKeyPressed;
+		lKeyPrevious = lKeyPressed;
+
 
 		// Check to see if a GamePad is connected
 		if (xbox.isConnected()) {
@@ -351,6 +358,7 @@ public class InputController {
 		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
 
 		qKeyPressed  = (secondary && qKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
+		lKeyPressed  = (secondary && lKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
