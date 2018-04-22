@@ -2639,34 +2639,34 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion region;
         switch (((ScientistModel)s).state){
             case RUNNINGR:
-                region = madRunR.getKeyFrame(stateTimerM,true);
+                region = madRunR.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGU:
-                region = madRunU.getKeyFrame(stateTimerM,true);
+                region = madRunU.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGD:
-                region = madRunD.getKeyFrame(stateTimerM,true);
+                region = madRunD.getKeyFrame(stateTimerS,true);
                 break;
             case ATTACKR:
-                region = madAttackR.getKeyFrame(stateTimerM,false);
+                region = madAttackR.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKL:
-                region = madAttackL.getKeyFrame(stateTimerM,false);
+                region = madAttackL.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKU:
-                region = madAttackU.getKeyFrame(stateTimerM,false);
+                region = madAttackU.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKD:
-                region = madAttackD.getKeyFrame(stateTimerM,false);
+                region = madAttackD.getKeyFrame(stateTimerS,false);
                 break;
             case DEATH:
-                region = madDeath.getKeyFrame(stateTimerM,false);
+                region = madDeath.getKeyFrame(stateTimerS,false);
                 break;
             case STUN:
-                region = madStun.getKeyFrame(stateTimerM,true);
+                region = madStun.getKeyFrame(stateTimerS,true);
                 break;
             default:
-                region = madStand.getKeyFrame(stateTimerM,true);
+                region = madStand.getKeyFrame(stateTimerS,true);
                 break;
         }
         if (((ScientistModel)s).state ==((ScientistModel)s).previousState ){
@@ -2988,34 +2988,34 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion region;
         switch (((LizardModel)s).state){
             case RUNNINGR:
-                region = lizardRunR.getKeyFrame(stateTimerL,true);
+                region = lizardRunR.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGU:
-                region = lizardRunU.getKeyFrame(stateTimerL,true);
+                region = lizardRunU.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGD:
-                region = lizardRunD.getKeyFrame(stateTimerL,true);
+                region = lizardRunD.getKeyFrame(stateTimerS,true);
                 break;
             case ATTACKL:
-                region = lizardAttackL.getKeyFrame(stateTimerL,false);
+                region = lizardAttackL.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKR:
-                region = lizardAttackR.getKeyFrame(stateTimerL,false);
+                region = lizardAttackR.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKU:
-                region = lizardAttackU.getKeyFrame(stateTimerL,false);
+                region = lizardAttackU.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKD:
-                region = lizardAttackD.getKeyFrame(stateTimerL,false);
+                region = lizardAttackD.getKeyFrame(stateTimerS,false);
                 break;
             case DEATH:
-                region = lizardDeath.getKeyFrame(stateTimerL,false);
+                region = lizardDeath.getKeyFrame(stateTimerS,false);
                 break;
             case STUN:
-                region = lizardStun.getKeyFrame(stateTimerL,true);
+                region = lizardStun.getKeyFrame(stateTimerS,true);
                 break;
             default:
-                region = lizardStand.getKeyFrame(stateTimerL,true);
+                region = lizardStand.getKeyFrame(stateTimerS,true);
                 break;
         }
         if (((LizardModel)s).state ==((LizardModel)s).previousState ){
