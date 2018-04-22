@@ -102,6 +102,7 @@
     <property name="Attack Range" type="int" value="2"/>
     <property name="Density" type="float" value="30"/>
     <property name="HP" type="int" value="5"/>
+    <property name="Patrol Path" value="11 13"/>
     <property name="Velocity" type="float" value="2.5"/>
    </properties>
   </object>
@@ -110,6 +111,7 @@
     <property name="Attack Range" type="int" value="2"/>
     <property name="Density" type="float" value="1"/>
     <property name="HP" type="int" value="3"/>
+    <property name="Patrol Path" value="11 13"/>
     <property name="Velocity" type="float" value="2.5"/>
    </properties>
   </object>
