@@ -128,6 +128,11 @@ public class LevelEditorParser {
         boardHeight= tiles.length;
         boardWidth= tiles[0].length;
 
+        for (int i = 0; i < boardHeight; i++) {
+            for (int j = 0; j < boardWidth; j++) {
+                tiles[i][j] = tiles[i][j] - tilegid + 1;
+            }
+        }
         Element mopCartElement = objects.get(0).getChild(0);
         mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),bh - mopCartElement.getFloatAttribute("y"));
         Element goalDoorElement = objects.get(1).getChild(0);

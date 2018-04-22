@@ -4,6 +4,8 @@
  */
 package edu.cornell.gdiac.physics.floor;
 
+import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
@@ -12,6 +14,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.physics.floor.weapon.*;
+import edu.cornell.gdiac.physics.lights.LightSource;
+import edu.cornell.gdiac.physics.lights.PointSource;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
@@ -30,7 +34,7 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
-    private static final String LEVEL = "level-editor.tmx";
+    private static final String LEVEL = "level2.tmx";
 //    private static final String LEVEL = "level3.tmx";
 
     /** The sound file for background music */
@@ -223,6 +227,13 @@ public class FloorController extends WorldController implements ContactListener 
 
     int [][] tiles;
 
+    /** The camera defining the RayHandler view; scale is in physics coordinates */
+    protected OrthographicCamera raycamera;
+    /** The rayhandler for storing lights, and drawing them (SIGH) */
+    protected RayHandler rayhandler;
+    /** All of the active lights that we loaded from the JSON file */
+    private LightSource light;
+
     // Physics objects for the game
     /** Reference to the character avatar */
     private JoeModel avatar;
@@ -332,6 +343,14 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        if (light != null) {
+            light = null;
+        }
+        if (rayhandler != null) {
+            rayhandler.dispose();
+            rayhandler = null;
+        }
+
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
         //avatar has never visited mopcart before
         mop_cart_reloaded_before = false;
@@ -379,6 +398,20 @@ public class FloorController extends WorldController implements ContactListener 
      * Lays out the game geography.
      */
     private void populateLevel() {
+
+        initLighting();
+
+        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] pos = {0f, 0f};
+        float dist  = 7f;
+        int rays = 512;
+
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0],color[1],color[2],color[3]);
+        point.setSoft(false);
+        light = point;
+
+
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -437,7 +470,26 @@ public class FloorController extends WorldController implements ContactListener 
         addUIInfo();
         addWalls();
         addCharacters();
+
+        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
         //does this using hazardpos
+    }
+
+    private void initLighting() {
+        raycamera = new OrthographicCamera(bounds.width,bounds.height);
+        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+        raycamera.update();
+
+        RayHandler.setGammaCorrection(true);
+        RayHandler.useDiffuseLight(true);
+        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler.setCombinedMatrix(raycamera);
+
+        float[] color = {0.25f, 0.25f, 0.25f, 0.25f};
+        rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
+        int blur = 3;
+        rayhandler.setBlur(blur > 0);
+        rayhandler.setBlurNum(blur);
     }
 
     private void addUIInfo() {
@@ -840,6 +892,11 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         OrthographicCamera camera = canvas.getCamera();
+
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
+
         if (gotHit>0 && gotHit +20 == ticks) {
             avatar.resetFrame();
             gotHit = -1;
@@ -1653,6 +1710,13 @@ public class FloorController extends WorldController implements ContactListener 
             obj.draw(canvas);
         }
 
+
+        canvas.end();
+        // Now draw the shadows
+        if (rayhandler != null) {
+            rayhandler.render();
+        }
+        canvas.begin();
         displayFont.setColor(Color.WHITE);
 
         //Draw Enemy Health
@@ -1724,7 +1788,6 @@ public class FloorController extends WorldController implements ContactListener 
             int current_xlocation = mopcart_index_xlocation[mopcart_index];
             canvas.draw(mopcartIndexTexture, (cameraX + current_xlocation), (cameraY + 145));
         }
-
         canvas.end();
 
         super.draw(delta);
