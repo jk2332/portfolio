@@ -42,7 +42,7 @@
  <objectgroup name="characters">
   <object id="8" type="joe" gid="11" x="311.619" y="557.597" width="64" height="64">
    <properties>
-    <property name="Density" type="float" value="15"/>
+    <property name="Density" type="float" value="100"/>
     <property name="HP" type="int" value="15"/>
     <property name="Lid Attack Range" type="int" value="10"/>
     <property name="Lid Durability" type="int" value="10"/>
