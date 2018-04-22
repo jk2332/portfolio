@@ -35,7 +35,7 @@ import java.util.HashMap;
  */
 public class FloorController extends WorldController implements ContactListener {
 
-    private static final String LEVEL = "level3.tmx";
+    private static final String LEVEL = "level1.tmx";
 //    private static final String LEVEL = "level3.tmx";
     private static int currentLevel;
 
@@ -190,6 +190,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float ATTACK_DURATION_SPRAY= 0.8f;
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.5f;
+    private static final float DEATH_ANIMATION_TIME = 0.8f;
     /** The timer for animations*/
     private float stateTimer;
     private float stateTimerM;
@@ -202,6 +203,7 @@ public class FloorController extends WorldController implements ContactListener 
     private boolean lizardMovedLeft;
     /** The cooldown for attack animations*/
     private float attackTimer;
+    private float deathTimer;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -276,6 +278,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> madAttackL;
     private Animation <TextureRegion> madAttackU;
     private Animation <TextureRegion> madAttackD;
+    private Animation <TextureRegion> madDeath;
     private Animation <TextureRegion> robotStand;
     private Animation <TextureRegion> robotRunR;
     private Animation <TextureRegion> robotRunU;
@@ -283,6 +286,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> robotAttackR;
     private Animation <TextureRegion> robotAttackU;
     private Animation <TextureRegion> robotAttackD;
+    private Animation <TextureRegion> robotDeath;
     private Animation <TextureRegion> slimeStand;
     private Animation <TextureRegion> slimeRunR;
     private Animation <TextureRegion> slimeRunU;
@@ -290,6 +294,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> slimeAttackR;
     private Animation <TextureRegion> slimeAttackU;
     private Animation <TextureRegion> slimeAttackD;
+    private Animation <TextureRegion> slimeDeath;
     private Animation <TextureRegion> lizardStand;
     private Animation <TextureRegion> lizardRunR;
     private Animation <TextureRegion> lizardRunU;
@@ -297,6 +302,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> lizardAttackR;
     private Animation <TextureRegion> lizardAttackU;
     private Animation <TextureRegion> lizardAttackD;
+    private Animation <TextureRegion> lizardDeath;
 
 
     /** Reference to the goalDoor (for collision detection) */
@@ -337,6 +343,7 @@ public class FloorController extends WorldController implements ContactListener 
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         currentState = StateJoe.STANDING;
         previousState = StateJoe.STANDING;
+        deathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
         stateTimerM = 0.0f;
         stateTimerR = 0.0f;
@@ -417,6 +424,7 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);
+        deathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
         stateTimerM = 0.0f;
         stateTimerR = 0.0f;
@@ -760,6 +768,12 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistDeathTexture,i*64,0,64,64));
+        }
+        madDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotWalkRTexture,i*64,0,64,64));
         }
         robotRunR = new Animation<TextureRegion>(0.1f, frames);
@@ -802,45 +816,9 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(robotDeathTexture,i*64,0,64,64));
         }
-        slimeRunR = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
-        }
-        slimeRunU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
-        }
-        slimeRunD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackRTexture,i*64,0,64,64));
-        }
-        slimeAttackR = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackUTexture,i*64,0,64,64));
-        }
-        slimeAttackU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(slimeAttackDTexture,i*64,0,64,64));
-        }
-        slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
-        }
-        slimeStand = new Animation<TextureRegion>(0.1f, frames);
+        robotDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -883,6 +861,54 @@ public class FloorController extends WorldController implements ContactListener 
             frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
         }
         slimeStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
+        }
+        slimeRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
+        }
+        slimeRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
+        }
+        slimeRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackRTexture,i*64,0,64,64));
+        }
+        slimeAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackUTexture,i*64,0,64,64));
+        }
+        slimeAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackDTexture,i*64,0,64,64));
+        }
+        slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
+        }
+        slimeStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeDeathTexture,i*64,0,64,64));
+        }
+        slimeDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -926,6 +952,13 @@ public class FloorController extends WorldController implements ContactListener 
         }
         lizardStand = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardDeathTexture,i*64,0,64,64));
+        }
+        lizardDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
@@ -1285,6 +1318,8 @@ public class FloorController extends WorldController implements ContactListener 
                 s.setTexture(getFrameLizard(dt,s));
             }
         }
+        clearEnemy(dt);
+
         SoundController.getInstance().update();
     }
 
@@ -1404,10 +1439,21 @@ public class FloorController extends WorldController implements ContactListener 
                     && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                 //System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
-                if (s.getHP() <= 0) {
-                    controls[s.getId()]=null;
-                    s.markRemoved(true);
-                }
+
+//                if (s.getHP() <= 0) {
+//                    controls[s.getId()]=null;
+//                    s.markRemoved(true);
+//                }
+            }
+        }
+    }
+    private void clearEnemy (float dt) {
+        for (EnemyModel s : enemies) {
+            if (s.getHP() <= 0 && deathTimer <= 0) {
+                s.markRemoved(true);
+                deathTimer = DEATH_ANIMATION_TIME;
+            } else if (s.getHP() <= 0 && deathTimer > 0) {
+                deathTimer -= dt;
             }
         }
     }
@@ -1680,13 +1726,13 @@ public class FloorController extends WorldController implements ContactListener 
 
                     if ((case1 || case2 || case3 || case4)) {
                         enemy_hit = true;
-                        if (s.getHP() == 1) {
-                            s.markRemoved(true);
-                            controls[s.getId()]=null;
-                        } else {
+//                        if (s.getHP() == 1) {
+////                            s.markRemoved(true);
+////                            controls[s.getId()]=null;
+//                        } else {
                             System.out.println("was mopped");
                             s.decrHP();
-                        }
+//                        }
                         knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
                         //knockbackForce.nor();
 
@@ -2100,16 +2146,16 @@ public class FloorController extends WorldController implements ContactListener 
         VACUUMR,VACUUML,VACUUMU,VACUUMD}
 
     public enum StateMad {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
 
     public enum StateRobot {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
 
     public enum StateSlime {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
 
     public enum StateLizard {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
 
     public StateJoe currentState;
     public StateJoe previousState;
@@ -2356,7 +2402,11 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateMad getStateMad(EnemyModel s) {
-          if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateMad.DEATH;
+        }
+          else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
                   (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == true){
               System.out.println("attack right" + "" + scientistMovedLeft);
             return StateMad.ATTACKR;
@@ -2368,21 +2418,22 @@ public class FloorController extends WorldController implements ContactListener 
           }
           else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
             return StateMad.ATTACKU;
-        }
+          }
           else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
               return StateMad.ATTACKD;
           }
           else if (s.getMovementX() > 0) {
               scientistMovedLeft = false;
             return StateMad.RUNNINGR;
-        }
+          }
           else if (s.getMovementX() < 0) {
               scientistMovedLeft = true;
               return StateMad.RUNNINGR;
           }
           else if (s.getMovementY() > 0) {
             return StateMad.RUNNINGU;
-        } else if (s.getMovementY() < 0) {
+          }
+        else if (s.getMovementY() < 0) {
               return StateMad.RUNNINGD;
           }
 //        } else if (s.getStunned() == true) {
@@ -2418,8 +2469,11 @@ public class FloorController extends WorldController implements ContactListener 
             case ATTACKD:
                 region = madAttackD.getKeyFrame(stateTimerM,false);
                 break;
+            case DEATH:
+                region = madDeath.getKeyFrame(stateTimerM,false);
+                break;
             default:
-                region = madStand.getKeyFrame(stateTimer,true);
+                region = madStand.getKeyFrame(stateTimerM,true);
                 break;
         }
         stateTimerM = currentStateM == previousStateM ? stateTimerM + dt : 0;
@@ -2427,7 +2481,11 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateRobot getStateRobot(EnemyModel s) {
-        if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == false)||
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateRobot.DEATH;
+        }
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& robotMovedLeft == true){
             return StateRobot.ATTACKR;
         }
@@ -2484,6 +2542,9 @@ public class FloorController extends WorldController implements ContactListener 
             case ATTACKD:
                 region = robotAttackD.getKeyFrame(stateTimerR,false);
                 break;
+            case DEATH:
+                region = robotDeath.getKeyFrame(stateTimerR,false);
+                break;
             default:
                 region = robotStand.getKeyFrame(stateTimerR,true);
                 break;
@@ -2493,6 +2554,10 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateSlime getStateSlime(EnemyModel s) {
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateSlime.DEATH;
+        }
         if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
             return StateSlime.ATTACKR;
         }
@@ -2546,6 +2611,9 @@ public class FloorController extends WorldController implements ContactListener 
             case ATTACKD:
                 region = slimeAttackD.getKeyFrame(stateTimerS,false);
                 break;
+            case DEATH:
+                region = slimeDeath.getKeyFrame(stateTimerS,false);
+                break;
             default:
                 region = slimeStand.getKeyFrame(stateTimerS,true);
                 break;
@@ -2555,7 +2623,11 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateLizard getStateLizard(EnemyModel s) {
-        if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateLizard.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
             return StateLizard.ATTACKR;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
@@ -2607,6 +2679,9 @@ public class FloorController extends WorldController implements ContactListener 
                 break;
             case ATTACKD:
                 region = lizardAttackD.getKeyFrame(stateTimerL,false);
+                break;
+            case DEATH:
+                region = lizardDeath.getKeyFrame(stateTimerL,false);
                 break;
             default:
                 region = lizardStand.getKeyFrame(stateTimerL,true);
