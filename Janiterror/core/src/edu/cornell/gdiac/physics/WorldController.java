@@ -134,8 +134,7 @@ public abstract class WorldController implements Screen {
 	private static final String SLIME_WALKR_FILE  = "floor/slime-walk-R.png";
 	private static final String SLIME_WALKU_FILE  = "floor/slime-walk-U.png";
 	private static final String SLIME_WALKD_FILE  = "floor/slime-walk-D.png";
-	private static final String SLIME_IDLE_FILE  = "floor/robot-idle-v2.png";
-		//slime idle
+	private static final String SLIME_IDLE_FILE  = "floor/slime-walk-D.png";
 	private static final String SLIME_DEATH_FILE  = "floor/slime-dead.png";
 	private static final String SLIME_STUN_FILE  = "floor/slime-stunned.png";
 	/** The texture files for lizardman */
