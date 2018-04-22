@@ -462,17 +462,17 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void populateLevel() {
 
-//        initLighting();
+        initLighting();
 
-//        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-//        float[] pos = {0f, 0f};
-//        float dist  = 7f;
-//        int rays = 512;
-//
-//        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-//        point.setColor(color[0],color[1],color[2],color[3]);
-//        point.setSoft(false);
-//        light = point;
+        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] pos = {0f, 0f};
+        float dist  = 7f;
+        int rays = 512;
+
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0],color[1],color[2],color[3]);
+        point.setSoft(false);
+        light = point;
 
 
         // Add level goal
@@ -534,7 +534,7 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-//        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
+        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 
     private void initLighting() {
@@ -1270,11 +1270,11 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
-//        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
-//        raycamera.update();
-//        if (rayhandler != null) {
-//            rayhandler.update();
-//        }
+        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+        raycamera.update();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
 //      Affine2 oTran = new Affine2();
 //		oTran.setToTranslation(avatar.getX(), avatar.getY());
