@@ -35,11 +35,8 @@ import java.util.HashMap;
  */
 public class FloorController extends WorldController implements ContactListener {
     private static int currentLevel;
+
     private String LEVEL;
-
-//    private static final String LEVEL = "level2.tmx";
-//    private static final String LEVEL = "level3.tmx";
-
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
     /** The sound file for a jump */
@@ -463,18 +460,18 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void populateLevel() {
 
-        //LIGHTING
-//        initLighting();
-//
-//        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-//        float[] pos = {0f, 0f};
-//        float dist  = 7f;
-//        int rays = 512;
-//
-//        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-//        point.setColor(color[0],color[1],color[2],color[3]);
-//        point.setSoft(false);
-//        light = point;
+        initLighting();
+
+        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+        float[] pos = {0f, 0f};
+        float dist  = 7f;
+        int rays = 512;
+
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0],color[1],color[2],color[3]);
+        point.setSoft(false);
+        light = point;
+
 
 
         // Add level goal
@@ -534,9 +531,12 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-        //LIGHTING
-//        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
+
+        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
+
+
     }
+
 
     private void initLighting() {
         raycamera = new OrthographicCamera(bounds.width,bounds.height);
@@ -548,7 +548,7 @@ public class FloorController extends WorldController implements ContactListener 
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
-        float[] color = {0.25f, 0.25f, 0.25f, 0.25f};
+        float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 3;
         rayhandler.setBlur(blur > 0);
@@ -991,7 +991,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                level.getJoeHP(), level.getJoeDensity(), level.getJoeVel());
+                level.getJoeHP(), 200, level.getJoeVel());
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -1235,8 +1235,8 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
 
-        if (gotHit>0 && gotHit +20 == ticks && avatar.isAlive()) {
-            avatar.resetFrame();
+        if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
+            avatar.setRed(false);
             gotHit = -1;
         }
 
@@ -1264,12 +1264,15 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
-        //LIGHTING
-//        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
-//        raycamera.update();
-//        if (rayhandler != null) {
-//            rayhandler.update();
-//        }
+
+        if (InputController.getInstance().getDidLighting()) {
+            toggleLighting();
+        }
+
+        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
         ticks ++;
         if(avatar.getHP()<=0) {
@@ -1332,6 +1335,14 @@ public class FloorController extends WorldController implements ContactListener 
         clearEnemy(dt);
 
         SoundController.getInstance().update();
+    }
+
+    private void toggleLighting() {
+        if (light.isActive()) {
+            light.setActive(false);
+        } else {
+            light.setActive(true);
+        }
     }
 
     /**
@@ -1525,9 +1536,8 @@ public class FloorController extends WorldController implements ContactListener 
         s.startAttackCooldown();
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
-            avatar.incrFrame();
             if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
-                avatar.decrHP(); avatar.setFrame(3); gotHit=ticks;
+                gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
@@ -1917,9 +1927,9 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
-                    avatar.decrHP();
-                    avatar.setFrame(3);
                     gotHit=ticks;
+                    avatar.decrHP();
+                    avatar.setRed(true);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
@@ -1933,10 +1943,10 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
-                    removeBullet(bd2);
-                    avatar.setFrame(3);
-                    avatar.decrHP();
                     gotHit = ticks;
+                    removeBullet(bd2);
+                    avatar.setRed(true);
+                    avatar.decrHP();
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
             } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
@@ -2065,7 +2075,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         canvas.end();
         // Now draw the shadows
-        if (rayhandler != null) {
+        if (rayhandler != null && light.isActive()) {
             rayhandler.render();
         }
         canvas.begin();
