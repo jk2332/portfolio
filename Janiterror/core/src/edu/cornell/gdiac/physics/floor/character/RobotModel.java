@@ -25,7 +25,7 @@ public class RobotModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public RobotModel(float x, float y, float width, float height, int id, int hp,float density, float velocity, int attackRange) {
-        super(x,y,width, height, "robot", hp, density, velocity, attackRange, id, 3);
+        super(x,y,width, height, "robot", hp, density, velocity, 1, id, 3);
     }
 
 }

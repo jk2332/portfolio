@@ -22,7 +22,7 @@ public class ScientistModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public ScientistModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange) {
-        super(x,y,width, height, "scientist", hp, density, velocity, attackRange, id, 3);
+        super(x,y,width, height, "scientist", hp, density, velocity, 1, id, 3);
     }
 
 }
