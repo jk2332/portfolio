@@ -36,8 +36,7 @@ import java.util.HashMap;
 public class FloorController extends WorldController implements ContactListener {
     private static int currentLevel;
 
-    private static final String LEVEL = "level-editor.tmx";
-
+    private String LEVEL;
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
     /** The sound file for a jump */
