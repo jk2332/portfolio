@@ -190,10 +190,20 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float ATTACK_DURATION_SPRAY= 0.8f;
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.5f;
+    private static final float DEATH_ANIMATION_TIME = 0.8f;
     /** The timer for animations*/
     private float stateTimer;
+    private float stateTimerM;
+    private float stateTimerR;
+    private float stateTimerL;
+    private float stateTimerS;
+    private boolean scientistMovedLeft;
+    private boolean robotMovedLeft;
+    private boolean slimeMovedLeft;
+    private boolean lizardMovedLeft;
     /** The cooldown for attack animations*/
     private float attackTimer;
+    private float deathTimer;
     /** The "range" for the lid */
     private static final float LID_RANGE = 0.5f;
     /** The timer for lid range*/
@@ -260,6 +270,44 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> joeVacuumL;
     private Animation <TextureRegion> joeVacuumU;
     private Animation <TextureRegion> joeVacuumD;
+    private Animation <TextureRegion> madStand;
+    private Animation <TextureRegion> madRunR;
+    private Animation <TextureRegion> madRunU;
+    private Animation <TextureRegion> madRunD;
+    private Animation <TextureRegion> madAttackR;
+    private Animation <TextureRegion> madAttackL;
+    private Animation <TextureRegion> madAttackU;
+    private Animation <TextureRegion> madAttackD;
+    private Animation <TextureRegion> madDeath;
+    private Animation <TextureRegion> robotStand;
+    private Animation <TextureRegion> robotRunR;
+    private Animation <TextureRegion> robotRunU;
+    private Animation <TextureRegion> robotRunD;
+    private Animation <TextureRegion> robotAttackL;
+    private Animation <TextureRegion> robotAttackR;
+    private Animation <TextureRegion> robotAttackU;
+    private Animation <TextureRegion> robotAttackD;
+    private Animation <TextureRegion> robotDeath;
+    private Animation <TextureRegion> slimeStand;
+    private Animation <TextureRegion> slimeRunR;
+    private Animation <TextureRegion> slimeRunU;
+    private Animation <TextureRegion> slimeRunD;
+    private Animation <TextureRegion> slimeAttackL;
+    private Animation <TextureRegion> slimeAttackR;
+    private Animation <TextureRegion> slimeAttackU;
+    private Animation <TextureRegion> slimeAttackD;
+    private Animation <TextureRegion> slimeDeath;
+    private Animation <TextureRegion> slimeStun;
+    private Animation <TextureRegion> lizardStand;
+    private Animation <TextureRegion> lizardRunR;
+    private Animation <TextureRegion> lizardRunU;
+    private Animation <TextureRegion> lizardRunD;
+    private Animation <TextureRegion> lizardAttackL;
+    private Animation <TextureRegion> lizardAttackR;
+    private Animation <TextureRegion> lizardAttackU;
+    private Animation <TextureRegion> lizardAttackD;
+    private Animation <TextureRegion> lizardDeath;
+
 
     /** Reference to the goalDoor (for collision detection) */
     private BoxObstacle goalDoor;
@@ -297,10 +345,14 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public FloorController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
-        currentState = State.STANDING;
-        previousState = State.STANDING;
+        currentState = StateJoe.STANDING;
+        previousState = StateJoe.STANDING;
+        deathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
-        attackTimer = 0.0f;
+        stateTimerM = 0.0f;
+        stateTimerR = 0.0f;
+        stateTimerS = 0.0f;
+        stateTimerL = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
         gotHit = -1;
@@ -376,7 +428,12 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);
+        deathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
+        stateTimerM = 0.0f;
+        stateTimerR = 0.0f;
+        stateTimerS = 0.0f;
+        stateTimerL = 0.0f;
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
@@ -405,17 +462,17 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void populateLevel() {
 
-        initLighting();
+//        initLighting();
 
-        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] pos = {0f, 0f};
-        float dist  = 7f;
-        int rays = 512;
-
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-        point.setColor(color[0],color[1],color[2],color[3]);
-        point.setSoft(false);
-        light = point;
+//        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+//        float[] pos = {0f, 0f};
+//        float dist  = 7f;
+//        int rays = 512;
+//
+//        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+//        point.setColor(color[0],color[1],color[2],color[3]);
+//        point.setSoft(false);
+//        light = point;
 
 
         // Add level goal
@@ -477,8 +534,7 @@ public class FloorController extends WorldController implements ContactListener 
         addWalls();
         addCharacters();
 
-        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
-        //does this using hazardpos
+//        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 
     private void initLighting() {
@@ -557,96 +613,379 @@ public class FloorController extends WorldController implements ContactListener 
         }
         joeStand = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarWalkUTexture,i*64,0,64,64));
         }
         joeRunU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarWalkDTexture,i*64,0,64,64));
         }
         joeRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopRTexture,i*192,0,192,64));
         }
         joeMopR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopLTexture,i*192,0,192,64));
         }
         joeMopL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,192));
         }
         joeMopU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,192));
         }
         joeMopD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidRTexture,i*64,0,64,64));
         }
         joeLidR = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidLTexture,i*64,0,64,64));
         }
         joeLidL = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidUTexture,i*64,0,64,64));
         }
         joeLidU = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
+
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarLidDTexture,i*64,0,64,64));
         }
         joeLidD = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayRTexture,i*320,0,320,64));
         }
         joeSprayR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayLTexture,i*320,0,320,64));
         }
         joeSprayL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayUTexture,i*64,0,64,320));
         }
         joeSprayU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayDTexture,i*64,0,64,320));
         }
         joeSprayD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
+
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumRTexture,i*64,0,64,64));
         }
         joeVacuumR = new Animation<TextureRegion>(0.5f, frames);
         frames.clear();
+
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumLTexture,i*64,0,64,64));
         }
         joeVacuumL = new Animation<TextureRegion>(0.5f, frames);
         frames.clear();
+
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumUTexture,i*64,0,64,64));
         }
         joeVacuumU = new Animation<TextureRegion>(0.5f, frames);
         frames.clear();
+
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumDTexture,i*64,0,64,64));
         }
         joeVacuumD = new Animation<TextureRegion>(0.5f, frames);
         frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistWalkRTexture,i*64,0,64,64));
+        }
+        madRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistWalkUTexture,i*64,0,64,64));
+        }
+        madRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistWalkDTexture,i*64,0,64,64));
+        }
+        madRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(scientistAttackRTexture,i*64,0,64,64));
+        }
+        madAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(scientistAttackLTexture,i*64,0,64,64));
+        }
+        madAttackL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,64));
+        }
+        madAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(scientistAttackDTexture,i*64,0,64,64));
+        }
+        madAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistIdleTexture,i*64,0,64,64));
+        }
+        madStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(scientistDeathTexture,i*64,0,64,64));
+        }
+        madDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotWalkRTexture,i*64,0,64,64));
+        }
+        robotRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotWalkUTexture,i*64,0,64,64));
+        }
+        robotRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotWalkDTexture,i*64,0,64,64));
+        }
+        robotRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(robotAttackLTexture,i*64,0,64,64));
+        }
+        robotAttackL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(robotAttackRTexture,i*64,0,64,64));
+        }
+        robotAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(robotAttackUTexture,i*64,0,64,64));
+        }
+        robotAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(robotAttackDTexture,i*64,0,64,64));
+        }
+        robotAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotIdleTexture,i*64,0,64,64));
+        }
+        robotStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(robotDeathTexture,i*64,0,64,64));
+        }
+        robotDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
+        }
+        slimeRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
+        }
+        slimeRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
+        }
+        slimeRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackLTexture,i*64,0,64,64));
+        }
+        slimeAttackL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackRTexture,i*64,0,64,64));
+        }
+        slimeAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackUTexture,i*64,0,64,64));
+        }
+        slimeAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackDTexture,i*64,0,64,64));
+        }
+        slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
+        }
+        slimeStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkRTexture,i*64,0,64,64));
+        }
+        slimeRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkUTexture,i*64,0,64,64));
+        }
+        slimeRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeWalkDTexture,i*64,0,64,64));
+        }
+        slimeRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackRTexture,i*64,0,64,64));
+        }
+        slimeAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackUTexture,i*64,0,64,64));
+        }
+        slimeAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(slimeAttackDTexture,i*64,0,64,64));
+        }
+        slimeAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeIdleTexture,i*64,0,64,64));
+        }
+        slimeStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeDeathTexture,i*64,0,64,64));
+        }
+        slimeDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeStunTexture,i*64,0,64,64));
+        }
+        slimeStun= new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardWalkRTexture,i*64,0,64,64));
+        }
+        lizardRunR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardWalkUTexture,i*64,0,64,64));
+        }
+        lizardRunU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardWalkDTexture,i*64,0,64,64));
+        }
+        lizardRunD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(lizardAttackLTexture,i*64,0,64,64));
+        }
+        lizardAttackL = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(lizardAttackRTexture,i*64,0,64,64));
+        }
+        lizardAttackR = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(lizardAttackUTexture,i*64,0,64,64));
+        }
+        lizardAttackU = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 3; i++){
+            frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,64));
+        }
+        lizardAttackD = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardIdleTexture,i*64,0,64,64));
+        }
+        lizardStand = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(lizardDeathTexture,i*64,0,64,64));
+        }
+        lizardDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
@@ -667,7 +1006,6 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, ii, level.getScientistHP(), level.getScientistDensity(), level.getScientistVel(), level.getScientistAttackRange());
             mon.setDrawScale(scale);
-            mon.setTexture(scientistTexture);
             mon.setName("scientist");
             addObject(mon);
             enemies[ii]=mon;
@@ -677,7 +1015,6 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+ii, level.getRobotHP(), level.getRobotDensity(), level.getRobotVel(), level.getRobotAttackRange());
             mon.setDrawScale(scale);
-            mon.setTexture(robotTexture);
             mon.setName("robot");
             addObject(mon);
             enemies[scientistPos.size()+ii]=mon;
@@ -686,7 +1023,6 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii, level.getSlimeHP(), level.getSlimeDensity(), level.getSlimeVel(), level.getSlimeAttackRange(), level.getSlimeballSpeed());
             mon.setDrawScale(scale);
-            mon.setTexture(slimeTexture);
             mon.setName("slime");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
@@ -695,7 +1031,6 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, level.getLizardHP(), level.getLizardDensity(), level.getLizardVel(), level.getLizardAttackRange());
             mon.setDrawScale(scale);
-            mon.setTexture(lizardTexture);
             mon.setName("lizard");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
@@ -935,11 +1270,11 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
-        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
-        raycamera.update();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
+//        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+//        raycamera.update();
+//        if (rayhandler != null) {
+//            rayhandler.update();
+//        }
 
 //      Affine2 oTran = new Affine2();
 //		oTran.setToTranslation(avatar.getX(), avatar.getY());
@@ -977,7 +1312,6 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setUp(InputController.getInstance().didUpArrow());
             avatar.setDown(InputController.getInstance().didDownArrow());
 
-            avatar.setDown(InputController.getInstance().didDownArrow());
 
             if (avatar.isAtMopCart()) {
                 joeAtMopCartUpdate();
@@ -992,10 +1326,26 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setMovementY(0.0f);
                 avatar.setVelocity();
             }
-            avatar.setTexture(getFrame(dt));
+            avatar.setTexture(getFrameJoe(dt));
+
         }
         lidRange(dt);
         enemyUpdate();
+        for (EnemyModel s: enemies){
+            if (s.getName() == "scientist"){
+                s.setTexture(getFrameScientist(dt,s));
+            }
+            else if (s.getName() == "robot"){
+                s.setTexture(getFrameRobot(dt,s));
+            }
+            else if (s.getName() == "slime"){
+                s.setTexture(getFrameSlime(dt,s));
+            }
+            else if (s.getName() == "lizard"){
+                s.setTexture(getFrameLizard(dt,s));
+            }
+        }
+        clearEnemy(dt);
 
         SoundController.getInstance().update();
     }
@@ -1116,10 +1466,21 @@ public class FloorController extends WorldController implements ContactListener 
                     && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                 //System.out.println("Enemy is on a hazard tile");
                 s.decrHP();
-                if (s.getHP() <= 0) {
-                    controls[s.getId()]=null;
-                    s.markRemoved(true);
-                }
+
+//                if (s.getHP() <= 0) {
+//                    controls[s.getId()]=null;
+//                    s.markRemoved(true);
+//                }
+            }
+        }
+    }
+    private void clearEnemy (float dt) {
+        for (EnemyModel s : enemies) {
+            if (s.getHP() <= 0 && deathTimer <= 0) {
+                s.markRemoved(true);
+                deathTimer = DEATH_ANIMATION_TIME;
+            } else if (s.getHP() <= 0 && deathTimer > 0) {
+                deathTimer -= dt;
             }
         }
     }
@@ -1392,13 +1753,13 @@ public class FloorController extends WorldController implements ContactListener 
 
                     if ((case1 || case2 || case3 || case4)) {
                         enemy_hit = true;
-                        if (s.getHP() == 1) {
-                            s.markRemoved(true);
-                            controls[s.getId()]=null;
-                        } else {
+//                        if (s.getHP() == 1) {
+////                            s.markRemoved(true);
+////                            controls[s.getId()]=null;
+//                        } else {
                             System.out.println("was mopped");
                             s.decrHP();
-                        }
+//                        }
                         knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
                         //knockbackForce.nor();
 
@@ -1805,16 +2166,41 @@ public class FloorController extends WorldController implements ContactListener 
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
 
-    public enum State {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+    public enum StateJoe {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
         MOPR, MOPL, MOPU, MOPD,
         LIDR,LIDL,LIDU,LIDD,
         SPRAYR,SPRAYL,SPRAYU,SPRAYD,
         VACUUMR,VACUUML,VACUUMU,VACUUMD}
-    public State currentState;
-    public State previousState;
 
-    public State getState(){
-//        System.out.println(avatar.getHasLid());
+    public enum StateMad {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
+
+    public enum StateRobot {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
+
+    public enum StateSlime {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
+
+    public enum StateLizard {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
+
+    public StateJoe currentState;
+    public StateJoe previousState;
+
+    public StateMad currentStateM;
+    public StateMad previousStateM;
+
+    public StateRobot currentStateR;
+    public StateRobot previousStateR;
+
+    public StateSlime currentStateS;
+    public StateSlime previousStateS;
+
+    public StateLizard currentStateL;
+    public StateLizard previousStateL;
+
+
+    public StateJoe getStateJoe(){
         if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                 && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability >= 0)||
                 ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
@@ -1822,7 +2208,7 @@ public class FloorController extends WorldController implements ContactListener 
                 ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0)){
            attackTimer = ATTACK_DURATION_MOP;
-            return State.MOPR;
+            return StateJoe.MOPR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
                         && avatar.getWep1().durability >= 0 ) ||
@@ -1831,17 +2217,17 @@ public class FloorController extends WorldController implements ContactListener 
                 ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_MOP;
-            return State.MOPL;
+            return StateJoe.MOPL;
         }
         else if (avatar.isUp() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
                 && avatar.getWep1().durability >= 0){
            attackTimer = ATTACK_DURATION_MOP;
-            return State.MOPU;
+            return StateJoe.MOPU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
                 && avatar.getWep1().durability >= 0){
            attackTimer = ATTACK_DURATION_MOP;
-            return State.MOPD;
+            return StateJoe.MOPD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
                         && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
@@ -1853,7 +2239,7 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getWep1().durability >= 0 && avatar.getHasLid())){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
-            return State.LIDR;
+            return StateJoe.LIDR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability >= 0 && avatar.getHasLid() ) ||
@@ -1864,19 +2250,19 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getHasLid())){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
-            return State.LIDL;
+            return StateJoe.LIDL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
-            return State.LIDU;
+            return StateJoe.LIDU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             attackTimer = ATTACK_DURATION_LID;
             avatar.setHasLid(false);
-            return State.LIDD;
+            return StateJoe.LIDD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
@@ -1887,7 +2273,7 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
                         && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_SPRAY;
-            return State.SPRAYR;
+            return StateJoe.SPRAYR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
                 && avatar.getWep1().durability >= 0  ) ||
@@ -1897,17 +2283,17 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0
                         )){
             attackTimer = ATTACK_DURATION_SPRAY;
-            return State.SPRAYL;
+            return StateJoe.SPRAYL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
                 && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_SPRAY;
-            return State.SPRAYU;
+            return StateJoe.SPRAYU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
                 && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_SPRAY;
-            return State.SPRAYD;
+            return StateJoe.SPRAYD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
@@ -1918,7 +2304,7 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
                         && avatar.getWep1().durability >= 0)){
             attackTimer = ATTACK_DURATION_VACUUM;
-            return State.VACUUMR;
+            return StateJoe.VACUUMR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
                 && avatar.getWep1().durability >= 0  ) ||
@@ -1928,36 +2314,36 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability >= 0
                 )){
             attackTimer = ATTACK_DURATION_VACUUM;
-            return State.VACUUML;
+            return StateJoe.VACUUML;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
                 && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_VACUUM;
-            return State.VACUUMU;
+            return StateJoe.VACUUMU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
                 && avatar.getWep1().durability >= 0 ){
             attackTimer = ATTACK_DURATION_VACUUM;
-            return State.VACUUMD;
+            return StateJoe.VACUUMD;
         }
         else if ((avatar.getMovementX()!=0 && avatar.getMovementY()==0 && attackTimer == 0)||(avatar.getMovementX()!=0 && avatar.getMovementY()!=0)&& attackTimer == 0){
-            return State.RUNNINGR;
+            return StateJoe.RUNNINGR;
         }
         else if (avatar.getMovementX()==0 && avatar.getMovementY()>0&& attackTimer == 0) {
-            return State.RUNNINGU;
+            return StateJoe.RUNNINGU;
         }
         else if (avatar.getMovementX()==0 && avatar.getMovementY()<0&& attackTimer == 0) {
-            return State.RUNNINGD;
+            return StateJoe.RUNNINGD;
         }
         else if (avatar.getMovementX()==0 && avatar.getMovementY()== 0 && attackTimer == 0) {
-           return State.STANDING;
+           return StateJoe.STANDING;
        }
        else
        return previousState;
     }
 
-    public TextureRegion getFrame (float dt){
-        currentState = getState();
+    public TextureRegion getFrameJoe (float dt){
+        currentState = getStateJoe();
         TextureRegion region;
         switch (currentState){
             case RUNNINGR:
@@ -2025,19 +2411,325 @@ public class FloorController extends WorldController implements ContactListener 
                 break;
         }
 
-        if ((currentState == State.MOPR)||(currentState == State.MOPL) || (currentState == State.MOPD)||(currentState == State.MOPU)||
-                (currentState == State.LIDR)||(currentState == State.LIDU)||(currentState == State.LIDD)||(currentState == State.LIDL)||
-        (currentState == State.SPRAYR)||(currentState == State.SPRAYU)||(currentState == State.SPRAYD)||(currentState == State.SPRAYL) ||
-                (currentState == State.VACUUMR)||(currentState == State.VACUUMU)||(currentState == State.VACUUMD)||(currentState == State.VACUUML)){
+        if ((currentState == StateJoe.MOPR)||(currentState == StateJoe.MOPL) || (currentState == StateJoe.MOPD)||(currentState == StateJoe.MOPU)||
+                (currentState == StateJoe.LIDR)||(currentState == StateJoe.LIDU)||(currentState == StateJoe.LIDD)||(currentState == StateJoe.LIDL)||
+        (currentState == StateJoe.SPRAYR)||(currentState == StateJoe.SPRAYU)||(currentState == StateJoe.SPRAYD)||(currentState == StateJoe.SPRAYL) ||
+                (currentState == StateJoe.VACUUMR)||(currentState == StateJoe.VACUUMU)||(currentState == StateJoe.VACUUMD)||(currentState == StateJoe.VACUUML)) {
 
-            if ((previousState == currentState) &&attackTimer > 0) {
-                attackTimer -= dt;
-            }else if((previousState == currentState) && attackTimer <= 0) {
-                attackTimer = 0;
+
+                if ((previousState == currentState) && attackTimer > 0) {
+                    attackTimer -= dt;
+                } else if ((previousState == currentState) && attackTimer <= 0) {
+                    attackTimer = 0;
+                }
             }
-        }
+
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
         previousState = currentState;
+        return region;
+    }
+    public StateMad getStateMad(EnemyModel s) {
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateMad.DEATH;
+        }
+          else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
+                  (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == true){
+              System.out.println("attack right" + "" + scientistMovedLeft);
+            return StateMad.ATTACKR;
+        }
+          else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == true)||
+                  (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == false){
+              System.out.println("attack left" + "" + scientistMovedLeft);
+              return StateMad.ATTACKL;
+          }
+          else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
+            return StateMad.ATTACKU;
+          }
+          else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
+              return StateMad.ATTACKD;
+          }
+          else if (s.getMovementX() > 0) {
+              scientistMovedLeft = false;
+            return StateMad.RUNNINGR;
+          }
+          else if (s.getMovementX() < 0) {
+              scientistMovedLeft = true;
+              return StateMad.RUNNINGR;
+          }
+          else if (s.getMovementY() > 0) {
+            return StateMad.RUNNINGU;
+          }
+        else if (s.getMovementY() < 0) {
+              return StateMad.RUNNINGD;
+          }
+//        } else if (s.getStunned() == true) {
+//            return StateMad.RUNNINGD;
+//        }
+        else {
+              return StateMad.STANDING;
+          }
+
+    }
+    public TextureRegion getFrameScientist (float dt , EnemyModel s){
+        currentStateM = getStateMad(s);
+        TextureRegion region;
+        switch (currentStateM){
+            case RUNNINGR:
+                region = madRunR.getKeyFrame(stateTimerM,true);
+                break;
+            case RUNNINGU:
+                region = madRunU.getKeyFrame(stateTimerM,true);
+                break;
+            case RUNNINGD:
+                region = madRunD.getKeyFrame(stateTimerM,true);
+                break;
+            case ATTACKR:
+                region = madAttackR.getKeyFrame(stateTimerM,false);
+                break;
+            case ATTACKL:
+                region = madAttackL.getKeyFrame(stateTimerM,false);
+                break;
+            case ATTACKU:
+                region = madAttackU.getKeyFrame(stateTimerM,false);
+                break;
+            case ATTACKD:
+                region = madAttackD.getKeyFrame(stateTimerM,false);
+                break;
+            case DEATH:
+                region = madDeath.getKeyFrame(stateTimerM,false);
+                break;
+            default:
+                region = madStand.getKeyFrame(stateTimerM,true);
+                break;
+        }
+        stateTimerM = currentStateM == previousStateM ? stateTimerM + dt : 0;
+        previousStateM = currentStateM;
+        return region;
+    }
+    public StateRobot getStateRobot(EnemyModel s) {
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateRobot.DEATH;
+        }
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == false)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& robotMovedLeft == true){
+            return StateRobot.ATTACKR;
+        }
+        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == true)||
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& robotMovedLeft == false){
+            return StateRobot.ATTACKR;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
+            return StateRobot.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
+            return StateRobot.ATTACKD;
+        }
+        else if (s.getMovementX() > 0) {
+            robotMovedLeft = false;
+            return StateRobot.RUNNINGR;
+        }
+        else if (s.getMovementX() < 0) {
+            robotMovedLeft = true;
+            return StateRobot.RUNNINGR;
+        }
+        else if (s.getMovementY() > 0) {
+            return StateRobot.RUNNINGU;
+        } else if (s.getMovementY() < 0) {
+            return StateRobot.RUNNINGD;
+        }
+//        } else if (s.getStunned() == true) {
+//            return StateMad.RUNNINGD;
+//        }
+        else {
+            return StateRobot.STANDING;
+        }
+
+    }
+    public TextureRegion getFrameRobot (float dt , EnemyModel s){
+        currentStateR = getStateRobot(s);
+        TextureRegion region;
+        switch (currentStateR){
+            case RUNNINGR:
+                region = robotRunR.getKeyFrame(stateTimerR,true);
+                break;
+            case RUNNINGU:
+                region = robotRunU.getKeyFrame(stateTimerR,true);
+                break;
+            case RUNNINGD:
+                region = robotRunD.getKeyFrame(stateTimerR,true);
+                break;
+            case ATTACKL:
+                region = robotAttackL.getKeyFrame(stateTimerR,false);
+                break;
+            case ATTACKR:
+                region = robotAttackR.getKeyFrame(stateTimerR,false);
+                break;
+            case ATTACKU:
+                region = robotAttackU.getKeyFrame(stateTimerR,false);
+                break;
+            case ATTACKD:
+                region = robotAttackD.getKeyFrame(stateTimerR,false);
+                break;
+            case DEATH:
+                region = robotDeath.getKeyFrame(stateTimerR,false);
+                break;
+            default:
+                region = robotStand.getKeyFrame(stateTimerR,true);
+                break;
+        }
+        stateTimerR = currentStateR == previousStateR ? stateTimerR + dt : 0;
+        previousStateR = currentStateR;
+        return region;
+    }
+    public StateSlime getStateSlime(EnemyModel s) {
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateSlime.DEATH;
+        }
+        if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
+            System.out.println("slime attacking left");
+            return StateSlime.ATTACKL;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
+            System.out.println("slime attacking right");
+            return StateSlime.ATTACKR;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
+            return StateSlime.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
+            return StateSlime.ATTACKD;
+        }
+        else if (s.getMovementX() > 0) {
+            return StateSlime.RUNNINGR;
+        }
+        else if (s.getMovementX() < 0) {
+            return StateSlime.RUNNINGR;
+        }
+        else if (s.getMovementY() > 0) {
+            return StateSlime.RUNNINGU;
+        } else if (s.getMovementY() < 0) {
+            return StateSlime.RUNNINGD;
+        }
+         else if (s.getStunned() == true) {
+            return StateSlime.STUN;
+        }
+        else {
+            return StateSlime.STANDING;
+        }
+
+    }
+    public TextureRegion getFrameSlime (float dt , EnemyModel s){
+        currentStateS = getStateSlime(s);
+        TextureRegion region;
+        switch (currentStateS){
+            case RUNNINGR:
+                region = slimeRunR.getKeyFrame(stateTimerS,true);
+                break;
+            case RUNNINGU:
+                region = slimeRunU.getKeyFrame(stateTimerS,true);
+                break;
+            case RUNNINGD:
+                region = slimeRunD.getKeyFrame(stateTimerS,true);
+                break;
+            case ATTACKL:
+                region = slimeAttackL.getKeyFrame(stateTimerS,false);
+                break;
+            case ATTACKR:
+                region = slimeAttackR.getKeyFrame(stateTimerS,false);
+                break;
+            case ATTACKU:
+                region = slimeAttackU.getKeyFrame(stateTimerS,false);
+                break;
+            case ATTACKD:
+                region = slimeAttackD.getKeyFrame(stateTimerS,false);
+                break;
+            case DEATH:
+                region = slimeDeath.getKeyFrame(stateTimerS,false);
+                break;
+            case STUN:
+                region = slimeStun.getKeyFrame(stateTimerS,false);
+                break;
+            default:
+                region = slimeStand.getKeyFrame(stateTimerS,true);
+                break;
+        }
+        stateTimerS = currentStateS == previousStateS ? stateTimerS + dt : 0;
+        previousStateS = currentStateS;
+        return region;
+    }
+    public StateLizard getStateLizard(EnemyModel s) {
+        if (s.getHP()<= 0) {
+            controls[s.getId()]=null;
+            return StateLizard.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()){
+            return StateLizard.ATTACKR;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX() ){
+            return StateLizard.ATTACKR;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
+            return StateLizard.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
+            return StateLizard.ATTACKD;
+        }
+        else if (s.getMovementX() > 0) {
+            return StateLizard.RUNNINGR;
+        }
+        else if (s.getMovementX() < 0) {
+            return StateLizard.RUNNINGR;
+        }
+        else if (s.getMovementY() > 0) {
+            return StateLizard.RUNNINGU;
+        } else if (s.getMovementY() < 0) {
+            return StateLizard.RUNNINGD;
+        }
+//        } else if (s.getStunned() == true) {
+//            return StateMad.RUNNINGD;
+//        }
+        else {
+            return StateLizard.STANDING;
+        }
+
+    }
+    public TextureRegion getFrameLizard (float dt , EnemyModel s){
+        currentStateL = getStateLizard(s);
+        TextureRegion region;
+        switch (currentStateL){
+            case RUNNINGR:
+                region = lizardRunR.getKeyFrame(stateTimerL,true);
+                break;
+            case RUNNINGU:
+                region = lizardRunU.getKeyFrame(stateTimerL,true);
+                break;
+            case RUNNINGD:
+                region = lizardRunD.getKeyFrame(stateTimerL,true);
+                break;
+            case ATTACKL:
+                region = lizardAttackL.getKeyFrame(stateTimerL,false);
+                break;
+            case ATTACKR:
+                region = lizardAttackR.getKeyFrame(stateTimerL,false);
+                break;
+            case ATTACKU:
+                region = lizardAttackU.getKeyFrame(stateTimerL,false);
+                break;
+            case ATTACKD:
+                region = lizardAttackD.getKeyFrame(stateTimerL,false);
+                break;
+            case DEATH:
+                region = lizardDeath.getKeyFrame(stateTimerL,false);
+                break;
+            default:
+                region = lizardStand.getKeyFrame(stateTimerL,true);
+                break;
+        }
+        stateTimerL = currentStateL == previousStateL ? stateTimerL + dt : 0;
+        previousStateL = currentStateL;
         return region;
     }
 
