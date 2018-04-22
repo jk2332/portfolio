@@ -34,10 +34,9 @@ import java.util.HashMap;
  * place nicely with the static assets.
  */
 public class FloorController extends WorldController implements ContactListener {
+    private static int currentLevel;
 
     private static final String LEVEL = "level-editor.tmx";
-//    private static final String LEVEL = "level3.tmx";
-    private static int currentLevel;
 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
@@ -343,7 +342,7 @@ public class FloorController extends WorldController implements ContactListener 
      *
      * The game has default gravity and other settings
      */
-    public FloorController() {
+    public FloorController(int input_level) {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         currentState = StateJoe.STANDING;
         previousState = StateJoe.STANDING;
@@ -362,8 +361,8 @@ public class FloorController extends WorldController implements ContactListener 
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
 
-//        currentLevel = input_level;
-//        LEVEL = "level" + Integer.toString(currentLevel) + ".tmx";
+        currentLevel = input_level;
+        LEVEL = "level" + Integer.toString(currentLevel) + ".tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -475,6 +474,7 @@ public class FloorController extends WorldController implements ContactListener 
         light = point;
 
 
+
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -521,8 +521,6 @@ public class FloorController extends WorldController implements ContactListener 
             addObject(specialHealth);
         }
 
-        //FIX THIS POSITIONING
-
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
                 broken4tileTexture,underTileTexture,stairsTileTexture};
@@ -533,6 +531,7 @@ public class FloorController extends WorldController implements ContactListener 
         addUIInfo();
         addWalls();
         addCharacters();
+
 
         light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
     }
@@ -1239,15 +1238,8 @@ public class FloorController extends WorldController implements ContactListener 
             gotHit = -1;
         }
 
-        //calculate half the screen
-        //calculate 4 clamped corners of the screen
-        //if avatar.getX() is > corner1 or < corner4, use it as varX, else don't
-        //if avatar.getY() is > corner2 or < corner3, use it as varY, else don't
-        //System.out.println(avatar.getX());
-        //canvas.setCameraPosition(avatar.getX() * 32, avatar.getY() * 32);
-
-            //getX only gets the tile #, multiply by 32 to get the pixel number
         float playerPosX = avatar.getX() * 32;
+            //getX only gets the tile #, multiply by 32 to get the pixel number
         float playerPosY = avatar.getY() * 32;
         cameraX = playerPosX;
         cameraY = playerPosY;
@@ -1270,22 +1262,12 @@ public class FloorController extends WorldController implements ContactListener 
             else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
         }
         canvas.setCameraPosition(cameraX, cameraY);
+
         raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
         raycamera.update();
         if (rayhandler != null) {
             rayhandler.update();
         }
-
-//      Affine2 oTran = new Affine2();
-//		oTran.setToTranslation(avatar.getX(), avatar.getY());
-//		    //is this for avatar or for camera?
-//		Affine2 wTran = new Affine2();
-//		Vector3 wPos = camera.position;
-//		wTran.setToTranslation(-wPos.x,-wPos.y);
-//		oTran.mul(wTran);
-//		System.out.println(oTran);
-//		canvas.setAffineTransform(oTran);
-            //this doesn't do anything rn, I made this function
 
         ticks ++;
         if(avatar.getHP()<=0) {
