@@ -18,11 +18,11 @@ import edu.cornell.gdiac.physics.floor.FloorController;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class SlimeModel extends EnemyModel {
+public class TurretModel extends EnemyModel {
 
     float slimeballSpeed;
-    public FloorController.StateSlime state;
-    public FloorController.StateSlime previousState;
+    public FloorController.StateTurret state;
+    public FloorController.StateTurret previousState;
 
 
     /**
@@ -37,9 +37,9 @@ public class SlimeModel extends EnemyModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
-                      FloorController.StateSlime state, FloorController.StateSlime previousState) {
-        super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3);
+    public TurretModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
+                      FloorController.StateTurret state, FloorController.StateTurret previousState) {
+        super(x,y,width, height, "turret", hp, density, velocity, attackRange, id,3);
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;

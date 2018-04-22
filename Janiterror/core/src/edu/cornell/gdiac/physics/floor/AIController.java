@@ -52,7 +52,7 @@ public class AIController {
         }
 
         int action = this.move;
-        //System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
+        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -73,7 +73,7 @@ public class AIController {
         float x = Math.min(shipPos.x, tarPos.x);
         float y = shipPos.x > tarPos.x ? tarPos.y : shipPos.y;
 
-        for (int ii=0; ii < (int) lineLength/TILE_SIZE; ii++){
+        for (int ii=0; ii <= (int) lineLength/TILE_SIZE; ii++){
             int tileX = board.screenToBoardX(x);
             int tileY = board.screenToBoardY(y);
             if (board.isBlocked(tileX, tileY)) return false;

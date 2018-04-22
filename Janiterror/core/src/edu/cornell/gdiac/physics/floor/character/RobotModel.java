@@ -5,12 +5,15 @@ package edu.cornell.gdiac.physics.floor.character;
 
 import com.badlogic.gdx.graphics.Color;
 import edu.cornell.gdiac.physics.GameCanvas;
+import edu.cornell.gdiac.physics.floor.FloorController;
 
 /**
  * Model class for the robot enemy in the game.
  */
 public class RobotModel extends EnemyModel {
 
+    public FloorController.StateRobot state;
+    public FloorController.StateRobot previousState;
 
     /**
      * Creates a new robot at the given position.
@@ -24,8 +27,11 @@ public class RobotModel extends EnemyModel {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public RobotModel(float x, float y, float width, float height, int id, int hp,float density, float velocity, int attackRange) {
+    public RobotModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange,
+                      FloorController.StateRobot state, FloorController.StateRobot previousState) {
         super(x,y,width, height, "robot", hp, density, velocity, 1, id, 3);
+        this.previousState = previousState;
+        this.state = state;
     }
 
 }
