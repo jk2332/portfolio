@@ -86,6 +86,7 @@ public class FloorController extends WorldController implements ContactListener 
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
     private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
     private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
+    private TextureRegion[][] allEnemyHeartTextures = new TextureRegion[2][];
 
     private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
@@ -447,11 +448,6 @@ public class FloorController extends WorldController implements ContactListener 
         RIGHT_SCROLL_CLAMP = (level.getBoardWidth() * 32) -  horizontalMargin;
         BOTTOM_SCROLL_CLAMP = 0 + verticalMargin;
         TOP_SCROLL_CLAMP = (level.getBoardHeight() * 32) -  verticalMargin;
-        System.out.println(LEFT_SCROLL_CLAMP);
-        System.out.println(RIGHT_SCROLL_CLAMP);
-        System.out.println(BOTTOM_SCROLL_CLAMP);
-        System.out.println(TOP_SCROLL_CLAMP);
-
         populateLevel();
     }
 
@@ -471,8 +467,6 @@ public class FloorController extends WorldController implements ContactListener 
         point.setColor(color[0],color[1],color[2],color[3]);
         point.setSoft(false);
         light = point;
-
-
 
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
@@ -532,9 +526,9 @@ public class FloorController extends WorldController implements ContactListener 
         addCharacters();
 
 
-        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
-
-
+        light.attachToBody(avatar.getBody(), light.getX() * 32, light.getY() * 32, light.getDirection());
+//        light.attachToBody(avatar.getBody());
+//        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
     }
 
 
@@ -545,7 +539,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+//        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        rayhandler = new RayHandler(world, level.getBoardWidth(), level.getBoardWidth());
+        System.out.println(Gdx.graphics.getWidth());
+        System.out.println(Gdx.graphics.getHeight());
+
         rayhandler.setCombinedMatrix(raycamera);
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
@@ -574,10 +572,17 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
         TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
 
+        //for temporary use to add to allHeartTextures
         TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
         TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
         allHeartTextures[0] = heartTextures;
         allHeartTextures[1] = heartTextures2;
+
+        //for temporary use to add to allEnemyHeartTextures
+        TextureRegion[] enemyBar1 = enemyHealth3Texture.split(64, 64)[0];
+        TextureRegion[] enemyBar2 = enemyHealth5Texture.split(64, 64)[0];
+        allEnemyHeartTextures[0] = enemyBar1;
+        allEnemyHeartTextures[1] = enemyBar2;
 
         wep_to_bartexture.put("mop", mopTextures[0]);
         wep_to_bartexture.put("spray", sprayTextures[0]);
@@ -1245,6 +1250,8 @@ public class FloorController extends WorldController implements ContactListener 
         float playerPosY = avatar.getY() * 32;
         cameraX = playerPosX;
         cameraY = playerPosY;
+
+        float rayCameraX = playerPosX;
         if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
             //if player is inside clamped sections, center camera on player
             cameraX = playerPosX;
@@ -1269,7 +1276,16 @@ public class FloorController extends WorldController implements ContactListener 
             toggleLighting();
         }
 
-        raycamera.position.set(cameraX/2.0f, cameraY/2.0f, 0);
+//        System.out.println(playerPosX / 32);
+//        System.out.println(playerPosY / 32);
+
+//        raycamera.position.set(10, 10, 0);
+//        raycamera.update();
+//        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
+
+//        System.out.println(playerPosX / 32);
+//        System.out.println(playerPosY / 32);
+
         if (rayhandler != null) {
             rayhandler.update();
         }
@@ -2072,7 +2088,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.draw(canvas);
         }
 
-
         canvas.end();
         // Now draw the shadows
         if (rayhandler != null && light.isActive()) {
@@ -2082,10 +2097,21 @@ public class FloorController extends WorldController implements ContactListener 
         displayFont.setColor(Color.WHITE);
 
         //Draw Enemy Health
+            //TARGET
         displayFont.getData().setScale(0.5f);
         for (EnemyModel s : enemies) {
             if (!(s.isRemoved())) {
-                canvas.drawText("" + s.getHP(), displayFont, s.getX() * scale.x, (s.getY() + 1) * scale.y);
+                int enemy_hp = s.getHP();
+                if (enemy_hp < 0) {enemy_hp = 0;}
+
+                if (s instanceof RobotModel) {
+                    canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
+                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                }
+                else {
+                    canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
+                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                }
             }
         }
         displayFont.getData().setScale(1.0f);

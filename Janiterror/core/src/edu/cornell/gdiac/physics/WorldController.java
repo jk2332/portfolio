@@ -166,7 +166,10 @@ public abstract class WorldController implements Screen {
 	private static final String HEALTH_BAR_FILE  = "floor/ui-bar-health.png";
 	private static final String HEALTH_BAR_FILE2  = "floor/ui-bar-health-upgrade1.png";
 
-	private static final String MOP_BAR_FILE  = "floor/ui-bar-mop.png";
+    private static final String ENEMY_HEALTH_3_FILE  = "floor/enemy-health-3.png";
+    private static final String ENEMY_HEALTH_5_FILE  = "floor/enemy-health-5.png";
+
+    private static final String MOP_BAR_FILE  = "floor/ui-bar-mop.png";
 	private static final String SPRAY_BAR_FILE  = "floor/ui-bar-spray.png";
 	private static final String VACUUM_BAR_FILE  = "floor/ui-bar-vacuum.png";
 	private static final String LID_BAR_FILE  = "floor/ui-bar-lid.png";
@@ -276,7 +279,10 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion healthBarTexture;
 	protected TextureRegion healthBarTexture2;
 
-	protected TextureRegion mopBarTexture;
+    protected TextureRegion enemyHealth3Texture;
+    protected TextureRegion enemyHealth5Texture;
+
+    protected TextureRegion mopBarTexture;
 	protected TextureRegion sprayBarTexture;
 	protected TextureRegion vacuumBarTexture;
 	protected TextureRegion lidBarTexture;
@@ -487,6 +493,11 @@ public abstract class WorldController implements Screen {
 		manager.load(HEALTH_BAR_FILE2, Texture.class);
 		assets.add(HEALTH_BAR_FILE2);
 
+        manager.load(ENEMY_HEALTH_3_FILE, Texture.class);
+        assets.add(ENEMY_HEALTH_3_FILE);
+        manager.load(ENEMY_HEALTH_5_FILE, Texture.class);
+        assets.add(ENEMY_HEALTH_5_FILE);
+
 		manager.load(MOP_BAR_FILE, Texture.class);
 		assets.add(MOP_BAR_FILE);
 		manager.load(SPRAY_BAR_FILE, Texture.class);
@@ -632,7 +643,10 @@ public abstract class WorldController implements Screen {
 		healthBarTexture = createTexture(manager,HEALTH_BAR_FILE,false);
 		healthBarTexture2 = createTexture(manager,HEALTH_BAR_FILE2,false);
 
-		mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
+        enemyHealth3Texture = createTexture(manager,ENEMY_HEALTH_3_FILE,false);
+        enemyHealth5Texture = createTexture(manager,ENEMY_HEALTH_5_FILE,false);
+
+        mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
 		vacuumBarTexture = createTexture(manager,VACUUM_BAR_FILE,false);
 		lidBarTexture = createTexture(manager,LID_BAR_FILE,false);
