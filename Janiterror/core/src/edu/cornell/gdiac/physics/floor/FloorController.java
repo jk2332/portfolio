@@ -295,6 +295,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> slimeAttackU;
     private Animation <TextureRegion> slimeAttackD;
     private Animation <TextureRegion> slimeDeath;
+    private Animation <TextureRegion> slimeStun;
     private Animation <TextureRegion> lizardStand;
     private Animation <TextureRegion> lizardRunR;
     private Animation <TextureRegion> lizardRunU;
@@ -909,6 +910,12 @@ public class FloorController extends WorldController implements ContactListener 
             frames.add (new TextureRegion(slimeDeathTexture,i*64,0,64,64));
         }
         slimeDeath = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 7; i++){
+            frames.add (new TextureRegion(slimeStunTexture,i*64,0,64,64));
+        }
+        slimeStun= new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -2146,16 +2153,16 @@ public class FloorController extends WorldController implements ContactListener 
         VACUUMR,VACUUML,VACUUMU,VACUUMD}
 
     public enum StateMad {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
 
     public enum StateRobot {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
 
     public enum StateSlime {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
 
     public enum StateLizard {STANDING, RUNNINGR, RUNNINGU ,RUNNINGD,
-        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH}
+        ATTACKR,ATTACKL,ATTACKU,ATTACKD,DEATH,STUN}
 
     public StateJoe currentState;
     public StateJoe previousState;
@@ -2581,9 +2588,9 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (s.getMovementY() < 0) {
             return StateSlime.RUNNINGD;
         }
-//        } else if (s.getStunned() == true) {
-//            return StateMad.RUNNINGD;
-//        }
+         else if (s.getStunned() == true) {
+            return StateSlime.STUN;
+        }
         else {
             return StateSlime.STANDING;
         }
@@ -2613,6 +2620,9 @@ public class FloorController extends WorldController implements ContactListener 
                 break;
             case DEATH:
                 region = slimeDeath.getKeyFrame(stateTimerS,false);
+                break;
+            case STUN:
+                region = slimeStun.getKeyFrame(stateTimerS,false);
                 break;
             default:
                 region = slimeStand.getKeyFrame(stateTimerS,true);

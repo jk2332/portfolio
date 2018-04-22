@@ -134,6 +134,7 @@ public abstract class WorldController implements Screen {
 	private static final String SLIME_WALKD_FILE  = "floor/slime-walk-D.png";
 	private static final String SLIME_IDLE_FILE  = "floor/robot-idle-v2.png";
 	private static final String SLIME_DEATH_FILE  = "floor/slime-dead.png";
+	private static final String SLIME_STUN_FILE  = "floor/slime-stunned.png";
 	/** The texture files for lizardman */
 	private static final String LIZARD_ATTACKR_FILE  = "floor/L-attack-side.png";
 	private static final String LIZARD_ATTACKU_FILE  = "floor/L-attack-back.png";
@@ -244,6 +245,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion slimeWalkDTexture;
 	protected TextureRegion slimeIdleTexture;
 	protected TextureRegion slimeDeathTexture;
+	protected TextureRegion slimeStunTexture;
 	/** Texture assets for lizard */
 	protected TextureRegion lizardTexture;
 	protected TextureRegion lizardAttackRTexture;
@@ -429,6 +431,8 @@ public abstract class WorldController implements Screen {
 		assets.add(SLIME_IDLE_FILE);
 		manager.load(SLIME_DEATH_FILE, Texture.class);
 		assets.add(SLIME_DEATH_FILE);
+		manager.load(SLIME_STUN_FILE, Texture.class);
+		assets.add(SLIME_STUN_FILE);
 		manager.load(LIZARD_FILE, Texture.class);
 		assets.add(LIZARD_FILE);
 		manager.load(LIZARD_ATTACKR_FILE, Texture.class);
@@ -590,6 +594,7 @@ public abstract class WorldController implements Screen {
 		slimeWalkDTexture = createTexture(manager,SLIME_WALKD_FILE,false);
 		slimeIdleTexture = createTexture(manager,SLIME_IDLE_FILE,false);
 		slimeDeathTexture = createTexture(manager,SLIME_DEATH_FILE,false);
+		slimeStunTexture = createTexture(manager,SLIME_STUN_FILE,false);
 		lizardTexture = createTexture(manager,LIZARD_FILE, false);
 		lizardAttackRTexture = createTexture(manager,LIZARD_ATTACKR_FILE,false);
 		lizardAttackUTexture = createTexture(manager,LIZARD_ATTACKU_FILE,false);
