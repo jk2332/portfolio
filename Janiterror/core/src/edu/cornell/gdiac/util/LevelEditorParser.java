@@ -30,17 +30,19 @@ public class LevelEditorParser {
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
     private ArrayList<Vector2> lizardPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> slimeTurretPos = new ArrayList<Vector2>();
     private ArrayList<ArrayList<Vector2>> scientistPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> robotPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> slimePatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> lizardPatrol = new ArrayList<ArrayList<Vector2>>();
+    private ArrayList<ArrayList<Vector2>> slimeTurretPatrol = new ArrayList<ArrayList<Vector2>>();
 
     private Vector2 joePos;
     private Vector2 goalDoorPos;
     private Vector2 mopCartPos;
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
 
-    private int robotAttackRange;
+   /* private int robotAttackRange;
     private float robotDensity;
     private int robotHP;
     private float robotVel;
@@ -78,7 +80,7 @@ public class LevelEditorParser {
     private int vacuumDurability;
 
     private int mopKnockbackTimer;
-    private int sprayStunTimer;
+    private int sprayStunTimer;*/
 
     private int wallvgid;
     private int wallhgid;
@@ -144,7 +146,7 @@ public class LevelEditorParser {
             float x = character.getFloatAttribute("x");
             float y = bh - character.getFloatAttribute("y");
             if (type.equals("scientist")) {
-                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                /*Array<Element> ps = character.getChild(0).getChildrenByName("property");
                 for (int j = 0; j < ps.size; j++) {
                     Element p = ps.get(j);
                     String name = p.get("name");
@@ -159,10 +161,12 @@ public class LevelEditorParser {
                     } else if (name.equals("Patrol Path")) {
                         scientistPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
-                }
+                }*/
+                Element p = character.getChild(0).getChildrenByName("property").get(0);
+                scientistPatrol.add(patrolStrToArr(p.getAttribute("value")));
                 scientistPos.add(new Vector2(x, y));
             } else if (type.equals("robot")) {
-                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                /*Array<Element> ps = character.getChild(0).getChildrenByName("property");
                 for (int j = 0; j < ps.size; j++) {
                     Element p = ps.get(j);
                     String name = p.get("name");
@@ -177,10 +181,12 @@ public class LevelEditorParser {
                     } else if (name.equals("Patrol Path")) {
                         robotPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
-                }
+                }*/
+                Element p = character.getChild(0).getChildrenByName("property").get(0);
+                robotPatrol.add(patrolStrToArr(p.getAttribute("value")));
                 robotPos.add(new Vector2(x, y));
             } else if (type.equals("joe")) {
-                if (joePos == null) {
+                /*if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
                         Element p = ps.get(j);
@@ -213,10 +219,10 @@ public class LevelEditorParser {
                             sprayStunTimer = p.getIntAttribute("value");
                         }
                     }
-                }
+                }*/
                 joePos = new Vector2(x, y);
             } else if (type.equals("slime")) {
-                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                /*Array<Element> ps = character.getChild(0).getChildrenByName("property");
                 for (int j = 0; j < ps.size; j++) {
                     Element p = ps.get(j);
                     String name = p.get("name");
@@ -233,10 +239,12 @@ public class LevelEditorParser {
                     } else if (name.equals("Patrol Path")) {
                         slimePatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
-                }
+                }*/
+                Element p = character.getChild(0).getChildrenByName("property").get(0);
+                slimePatrol.add(patrolStrToArr(p.getAttribute("value")));
                 slimePos.add(new Vector2(x, y));
             } else if (type.equals("lizard")) {
-                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                /*Array<Element> ps = character.getChild(0).getChildrenByName("property");
                 for (int j = 0; j < ps.size; j++) {
                     Element p = ps.get(j);
                     String name = p.get("name");
@@ -251,8 +259,14 @@ public class LevelEditorParser {
                     } else if (name.equals("Patrol Path")) {
                         lizardPatrol.add(patrolStrToArr(p.getAttribute("value")));
                     }
-                }
+                }*/
+                Element p = character.getChild(0).getChildrenByName("property").get(0);
+                lizardPatrol.add(patrolStrToArr(p.getAttribute("value")));
                 lizardPos.add(new Vector2(x, y));
+            } else if (type.equals("turret-slime")) {
+                Element p = character.getChild(0).getChildrenByName("property").get(0);
+                slimeTurretPatrol.add(patrolStrToArr(p.getAttribute("value")));
+                slimeTurretPos.add(new Vector2(x, y));
             }
         }
 
@@ -441,7 +455,7 @@ public class LevelEditorParser {
         return joePos.y;
     }
 
-    public int getJoeHP() {
+    /*public int getJoeHP() {
         return joeHP;
     }
 
@@ -559,7 +573,7 @@ public class LevelEditorParser {
 
     public int getSprayStunTimer() {
         return sprayStunTimer;
-    }
+    }*/
 
     public int getBoardHeight() {
         return boardHeight;
@@ -583,5 +597,13 @@ public class LevelEditorParser {
 
     public ArrayList<ArrayList<Vector2>> getSlimePatrol() {
         return slimePatrol;
+    }
+
+    public ArrayList<Vector2> getSlimeTurretPos() {
+        return slimeTurretPos;
+    }
+
+    public ArrayList<ArrayList<Vector2>> getSlimeTurretPatrol() {
+        return slimeTurretPatrol;
     }
 }
