@@ -67,6 +67,7 @@ public class FloorController extends WorldController implements ContactListener 
     private float cameraY; //where the camera is located (for drawing and scrolling)
 
     private static final float WALL_THICKNESS_SCALE = 0.33f;
+    private static final float WALL_HEIGHT_SCALE = 0.9f;
 
     private static final float OBJ_OFFSET_X = 1f;
     private static final float OBJ_OFFSET_Y = 1f;
@@ -1029,7 +1030,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 5, 1.0f, 0, 8, 10.0f,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 10.0f,
                     StateSlime.STANDING,StateSlime.STANDING);
             mon.setDrawScale(scale);
             mon.setName("slime");
