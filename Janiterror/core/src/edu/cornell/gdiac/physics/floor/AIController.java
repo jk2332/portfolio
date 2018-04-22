@@ -295,7 +295,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
+                attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
@@ -332,7 +332,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
+                attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
                 int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manhRight = manhattan(sx, sy, tx+attackRange, ty);

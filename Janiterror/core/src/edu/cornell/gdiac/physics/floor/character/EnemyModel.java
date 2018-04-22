@@ -53,7 +53,7 @@ public class EnemyModel extends CharacterModel {
                       float density, float velocity, int attackRange, int id, int maxAniFrame) {
         super(x, y, width, height, name, hp, density, velocity, ENEMY_MAX_ATTACK_COOLDOWN);
 
-        this.attackRange = attackRange;
+        this.attackRange = 1;
         this.stunTicks=0;
         this.stunned=false;
         this.attackAnimationFrame=0;
@@ -137,8 +137,8 @@ public class EnemyModel extends CharacterModel {
         int dx = tx > x ? tx - x : x - tx;
         int dy = ty > y ? ty - y : y - ty;
         //boolean power = this.board.isPowerTileAt(x, y);
-        boolean canhit = dx <= 2 && dy == 0;
-        canhit |= dx == 0 && dy <= 2;
+        boolean canhit = dx <= 1 && dy == 0;
+        canhit |= dx == 0 && dy <= 1;
         //canhit |= power && dx == dy && dx <= 3;
         return canhit;
         /* TODO look over this again to make sure its right*/

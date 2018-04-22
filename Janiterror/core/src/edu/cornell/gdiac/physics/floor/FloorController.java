@@ -988,7 +988,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                level.getJoeHP(), level.getJoeDensity(), level.getJoeVel());
+                level.getJoeHP(), 200, level.getJoeVel());
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -1232,8 +1232,8 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
 
-        if (gotHit>0 && gotHit +20 == ticks && avatar.isAlive()) {
-            avatar.resetFrame();
+        if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
+            avatar.setRed(false);
             gotHit = -1;
         }
 
@@ -1522,9 +1522,8 @@ public class FloorController extends WorldController implements ContactListener 
         s.startAttackCooldown();
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
-            avatar.incrFrame();
             if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
-                avatar.decrHP(); avatar.setFrame(3); gotHit=ticks;
+                gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
@@ -1914,9 +1913,9 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
-                    avatar.decrHP();
-                    avatar.setFrame(3);
                     gotHit=ticks;
+                    avatar.decrHP();
+                    avatar.setRed(true);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
@@ -1930,10 +1929,10 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
-                    removeBullet(bd2);
-                    avatar.setFrame(3);
-                    avatar.decrHP();
                     gotHit = ticks;
+                    removeBullet(bd2);
+                    avatar.setRed(true);
+                    avatar.decrHP();
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
             } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {

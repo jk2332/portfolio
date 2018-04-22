@@ -39,7 +39,7 @@ public class JoeModel extends CharacterModel {
     private boolean isUp;
     private boolean isDown;
     private boolean alive;
-    private int frame;
+    private boolean isRed;
 
 
     /** The current weapons Joe is holding */
@@ -58,14 +58,6 @@ public class JoeModel extends CharacterModel {
     public boolean canAttack(){
         return attackCooldown <= 0;
     }
-    public void resetFrame(){
-        frame=0;
-    }
-    public void incrFrame(){
-        frame++;
-    }
-    public int getFrame(){return frame;}
-    public void setFrame(int n) {frame=n;}
 
     /**
      * Returns weapon in slot 1
@@ -278,6 +270,8 @@ public class JoeModel extends CharacterModel {
         return alive;
     }
 
+    public boolean isRed() {return isRed;}
+
     /**
      * Creates a new dude avatar at the given position.
      *
@@ -303,7 +297,7 @@ public class JoeModel extends CharacterModel {
         atMopCart = false;
         hasLid = false;
         alive = true;
-        frame=0;
+        isRed = false;
     }
 
     /**
@@ -324,9 +318,11 @@ public class JoeModel extends CharacterModel {
         super.update(dt);
     }
 
+    public void setRed(boolean b){isRed=b;}
+
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
-        if (frame >= 3){
+        if (isRed){
             canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
         else {
