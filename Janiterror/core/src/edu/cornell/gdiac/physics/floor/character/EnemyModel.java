@@ -53,7 +53,7 @@ public class EnemyModel extends CharacterModel {
                       float density, float velocity, int attackRange, int id, int maxAniFrame) {
         super(x, y, width, height, name, hp, density, velocity, ENEMY_MAX_ATTACK_COOLDOWN);
 
-        this.attackRange = 1;
+        this.attackRange = attackRange;
         this.stunTicks=0;
         this.stunned=false;
         this.attackAnimationFrame=0;
