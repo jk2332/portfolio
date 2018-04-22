@@ -52,7 +52,7 @@ public class AIController {
         }
 
         int action = this.move;
-        //System.out.println(this.ship.getId()+"/state: "+state+"/action: "+action);
+        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -73,7 +73,7 @@ public class AIController {
         float x = Math.min(shipPos.x, tarPos.x);
         float y = shipPos.x > tarPos.x ? tarPos.y : shipPos.y;
 
-        for (int ii=0; ii < (int) lineLength/TILE_SIZE; ii++){
+        for (int ii=0; ii <= (int) lineLength/TILE_SIZE; ii++){
             int tileX = board.screenToBoardX(x);
             int tileY = board.screenToBoardY(y);
             if (board.isBlocked(tileX, tileY)) return false;
@@ -295,7 +295,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
+                attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
                 int manLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manRight = manhattan(sx, sy, tx+attackRange, ty);
@@ -332,7 +332,7 @@ public class AIController {
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
-                attackRange = dx >=2 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 2 && dx < dy ? dy : attackRange);
+                attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
                 int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
                 int manhRight = manhattan(sx, sy, tx+attackRange, ty);
