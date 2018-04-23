@@ -115,7 +115,7 @@ public class JoeModel extends CharacterModel {
     /**
      * Upgrades current max HP of Joe for the level
      */
-    public void upgradeHP() { CURRENT_MAX_HP += 5; }
+    public void upgradeHP() { CURRENT_MAX_HP += 1; }
 
     /**
      * Resets current max HP of Joe for the level
