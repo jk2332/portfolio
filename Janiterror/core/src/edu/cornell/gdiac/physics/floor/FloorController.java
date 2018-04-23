@@ -456,8 +456,6 @@ public class FloorController extends WorldController implements ContactListener 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
 
-        //System.out.println(level.getBoardHeight());
-        //System.out.println(level.getBoardWidth());
         board = new Board(level.getBoardWidth(), level.getBoardHeight(), TILE_SIZE);
 
         LEFT_SCROLL_CLAMP = 0 + horizontalMargin;
@@ -561,7 +559,6 @@ public class FloorController extends WorldController implements ContactListener 
         RayHandler.useDiffuseLight(true);
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
-        /*System.out.println("hi");
         System.out.println(Gdx.graphics.getWidth());
         System.out.println(Gdx.graphics.getHeight());
         System.out.println(level.getBoardWidth());
@@ -1353,9 +1350,6 @@ public class FloorController extends WorldController implements ContactListener 
 //        raycamera.position.set(10, 10, 0);
 //        raycamera.update();
 //        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
-
-//        System.out.println(playerPosX / 32);
-//        System.out.println(playerPosY / 32);
 
         raycamera.position.set(cameraX, cameraY, 0);
         raycamera.update();
@@ -2258,8 +2252,6 @@ public class FloorController extends WorldController implements ContactListener 
             //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
         int times_improved = (avatar.getCurrentMaxHP() - 5);
-        System.out.println(currentHP);
-        System.out.println(maxHP);
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
         canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
