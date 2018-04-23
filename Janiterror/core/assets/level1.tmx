@@ -59,60 +59,32 @@
   </object>
   <object id="14" type="slime" gid="25" x="287" y="192" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="19" type="slime" gid="25" x="224.528" y="192.874" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="20" type="slime" gid="25" x="351.593" y="191.014" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="25" type="slime" gid="25" x="415.667" y="192.667" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="26" type="robot" gid="24" x="805.333" y="464" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="2"/>
-    <property name="Density" type="float" value="30"/>
-    <property name="HP" type="int" value="5"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Velocity" type="float" value="2.5"/>
    </properties>
   </object>
   <object id="28" type="scientist" gid="26" x="96" y="382.667" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="2"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Velocity" type="float" value="2.5"/>
    </properties>
   </object>
  </objectgroup>

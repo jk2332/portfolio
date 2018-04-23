@@ -96,82 +96,42 @@
   </object>
   <object id="2" type="slime" gid="22" x="310.059" y="1273.5" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="3" type="slime" gid="22" x="407.839" y="1144" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="4" type="slime" gid="22" x="526.761" y="1141.36" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="5" type="slime" gid="22" x="645.683" y="1278.78" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="8" type="slime" gid="22" x="426.338" y="319.48" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="9" type="slime" gid="22" x="545.26" y="319.48" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="10" type="slime" gid="22" x="674.753" y="443.687" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
   <object id="11" type="slime" gid="22" x="323.273" y="446.33" width="64" height="64">
    <properties>
-    <property name="Attack Range" type="int" value="8"/>
-    <property name="Density" type="float" value="1"/>
-    <property name="HP" type="int" value="3"/>
     <property name="Patrol Path" value="11 13"/>
-    <property name="Slimeball Speed" type="float" value="10"/>
-    <property name="Velocity" type="float" value="1.5"/>
    </properties>
   </object>
  </objectgroup>
