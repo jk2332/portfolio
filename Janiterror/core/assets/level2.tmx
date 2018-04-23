@@ -136,11 +136,6 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="21" type="slime" gid="22" x="671.422" y="1694.58" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup name="special"/>
  <layer name="horizontal walls" width="32" height="60">
