@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="32" height="60" tilewidth="32" tileheight="32" infinite="0" nextobjectid="17">
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="32" height="60" tilewidth="32" tileheight="32" infinite="0" nextobjectid="22">
  <tileset firstgid="1" source="wallsh.tsx"/>
  <tileset firstgid="11" source="wallsv.tsx"/>
  <tileset firstgid="13" source="tiles.tsx"/>
  <tileset firstgid="21" source="joe.tsx"/>
  <tileset firstgid="22" source="slime.tsx"/>
  <tileset firstgid="23" source="mop-cart.tsx"/>
+ <tileset firstgid="24" source="scientist.tsx"/>
+ <tileset firstgid="25" source="lizard.tsx"/>
  <layer name="tiles" width="32" height="60">
   <data encoding="csv">
 20,20,20,20,20,20,20,20,20,20,20,20,20,20,13,13,13,13,13,20,20,20,20,20,20,20,20,20,20,20,20,20,
@@ -74,7 +76,7 @@
   <object id="6" type="mop cart" gid="23" x="481.835" y="797.81" width="64" height="64"/>
  </objectgroup>
  <objectgroup name="goal door">
-  <object id="12" gid="19" x="511.049" y="97.9239" width="32" height="32"/>
+  <object id="12" gid="19" x="509.321" y="96.1956" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="characters">
   <object id="1" type="joe" gid="21" x="481.835" y="1728.04" width="64" height="64">
@@ -94,42 +96,47 @@
     <property name="Velocity" type="float" value="5"/>
    </properties>
   </object>
-  <object id="2" type="slime" gid="22" x="310.059" y="1273.5" width="64" height="64">
+  <object id="8" type="slime" gid="22" x="384.859" y="321.208" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="3" type="slime" gid="22" x="407.839" y="1144" width="64" height="64">
+  <object id="9" type="slime" gid="22" x="610.936" y="319.48" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="4" type="slime" gid="22" x="406.761" y="359.36" width="64" height="64">
+  <object id="10" type="slime" gid="22" x="674.753" y="443.687" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="5" type="slime" gid="22" x="645.683" y="1278.78" width="64" height="64">
+  <object id="11" type="slime" gid="22" x="323.273" y="446.33" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="13" type="slime" gid="22" x="544" y="1129" width="64" height="64">
+  <object id="17" name="lizard3" type="lizard" gid="25" x="286.009" y="1250.41" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="14" type="slime" gid="22" x="546" y="362" width="64" height="64">
+  <object id="18" name="lizard3" type="lizard" gid="25" x="686.977" y="1252.13" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="15" type="slime" gid="22" x="616" y="486" width="64" height="64">
+  <object id="19" name="lizard3" type="lizard" gid="25" x="308.477" y="1172.63" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="16" type="slime" gid="22" x="348" y="488" width="64" height="64">
+  <object id="20" name="lizard3" type="lizard" gid="25" x="633.399" y="1153.62" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="21" type="slime" gid="22" x="671.422" y="1694.58" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
@@ -138,7 +145,7 @@
  <objectgroup name="special"/>
  <layer name="horizontal walls" width="32" height="60">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,8,2,2,2,2,2,7,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -164,7 +171,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,6,2,4,0,0,0,0,1,2,9,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,6,2,2,0,0,0,0,1,2,9,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

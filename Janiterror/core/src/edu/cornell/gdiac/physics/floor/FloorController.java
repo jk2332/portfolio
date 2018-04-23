@@ -179,7 +179,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** The speed of the bullet after firing */
     private static final float  BULLET_SPEED = 20.0f;
     /** The speed of the slimeball after firing */
-    private static final float  SLIMEBALL_SPEED = 10.0f;
+    private static final float  SLIMEBALL_SPEED = 8.5f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** Attack total time frames*timerperframe for mop */
@@ -1036,7 +1036,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                15, 200f, 5.0f);
+                5, 200f, 5.0f);
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -1069,7 +1069,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f,StateSlime.STANDING,StateSlime.STANDING);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 8.5f,StateSlime.STANDING,StateSlime.STANDING);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
@@ -1077,7 +1077,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 6.5f, 1,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 4f, 1,
                     StateLizard.STANDING, StateLizard.STANDING);
             mon.setDrawScale(scale);
             mon.setName("lizard");
@@ -1086,7 +1086,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
             EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 10.0f,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
                     StateTurret.STANDING,StateTurret.STANDING);
             mon.setDrawScale(scale);
             mon.setName("turret");
@@ -1641,8 +1641,6 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
                 createBullet((SlimeModel) s);
-                gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
-                SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 s.resetAttackAniFrame();
@@ -1654,8 +1652,6 @@ public class FloorController extends WorldController implements ContactListener 
 
             if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
                 createBullet2((TurretModel)s);
-                gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
-                SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
             }
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 s.resetAttackAniFrame();
@@ -2230,7 +2226,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.draw(canvas);
         }
 
-
         canvas.end();
         // Now draw the shadows
         if (rayhandler != null && light.isActive()) {
@@ -2262,9 +2257,11 @@ public class FloorController extends WorldController implements ContactListener 
         int currentHP = avatar.getHP();
             //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
-        int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
+        int times_improved = (avatar.getCurrentMaxHP() - 5);
+        System.out.println(currentHP);
+        System.out.println(maxHP);
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
-        canvas.draw(allHeartTextures[times_improved][((maxHP - currentHP) / 3)],
+        canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
 
         // DRAW ACTIVE WEAPON UI
@@ -2289,20 +2286,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
-//            Color tint1 = Color.BLACK;
-//            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-//                    (cameraX + 350), (cameraY + 140), 0, .18f, .18f);
-//            //change sy to increase height of black box
-//            displayFont.getData().setScale(0.5f);
-
             canvas.draw(mopcartBackgroundTexture, (cameraX + 350), (cameraY + 140));
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
-
-            //DRAW MOP CART TEXT
-//            canvas.drawText("Mop Cart", displayFont,
-//                    (cameraX + 380), (cameraY + 270));
-//            displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
             String[] draw_mopcart = new String[2];

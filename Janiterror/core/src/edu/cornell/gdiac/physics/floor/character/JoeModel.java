@@ -22,7 +22,7 @@ public class JoeModel extends CharacterModel {
     private static final int JOE_MAX_ATTACK_COOLDOWN = 20;
 
     /** Joe's max HP */
-    private static int BASE_HP = 15;
+    private static int BASE_HP = 5;
     private static int CURRENT_MAX_HP = BASE_HP;
         //Increase this when you get health bonuses
         //When level is completed, set BASE_HP = CURRENT_MAX_HP and CURRENT_MAX_HP = BASE_HP
@@ -115,7 +115,7 @@ public class JoeModel extends CharacterModel {
     /**
      * Upgrades current max HP of Joe for the level
      */
-    public void upgradeHP() { CURRENT_MAX_HP += 5; }
+    public void upgradeHP() { CURRENT_MAX_HP += 1; }
 
     /**
      * Resets current max HP of Joe for the level

@@ -44,7 +44,6 @@ import edu.cornell.gdiac.physics.obstacle.*;
  * place nicely with the static assets.
  */
 public abstract class WorldController implements Screen {
-	
 	/** 
 	 * Tracks the asset state.  Otherwise subclasses will try to load assets 
 	 */
