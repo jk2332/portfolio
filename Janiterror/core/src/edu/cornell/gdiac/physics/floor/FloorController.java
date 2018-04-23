@@ -483,6 +483,8 @@ public class FloorController extends WorldController implements ContactListener 
         point.setColor(color[0],color[1],color[2],color[3]);
         point.setSoft(false);
         light = point;
+        light.setActive(false);
+
 
 
 
