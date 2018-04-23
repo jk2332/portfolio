@@ -92,6 +92,7 @@ public class LevelEditorParser {
 
 
     public LevelEditorParser(String levelPath) {
+        System.out.println(levelPath);
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
 
         Array<Element> layers = level.getChildrenByName("layer");

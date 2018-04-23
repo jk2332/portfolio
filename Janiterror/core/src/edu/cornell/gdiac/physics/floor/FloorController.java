@@ -562,7 +562,7 @@ public class FloorController extends WorldController implements ContactListener 
         System.out.println(Gdx.graphics.getWidth());
         System.out.println(Gdx.graphics.getHeight());
         System.out.println(level.getBoardWidth());
-        System.out.println(level.getBoardHeight());*/
+        System.out.println(level.getBoardHeight());
 
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
