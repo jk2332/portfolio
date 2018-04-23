@@ -1034,7 +1034,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                15, 200f, 5.0f);
+                5, 200f, 5.0f);
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -2260,9 +2260,11 @@ public class FloorController extends WorldController implements ContactListener 
         int currentHP = avatar.getHP();
             //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
-        int times_improved = (avatar.getCurrentMaxHP() - 15) / 3;
+        int times_improved = (avatar.getCurrentMaxHP() - 5);
+        System.out.println(currentHP);
+        System.out.println(maxHP);
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
-        canvas.draw(allHeartTextures[times_improved][((maxHP - currentHP) / 3)],
+        canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
 
         // DRAW ACTIVE WEAPON UI
