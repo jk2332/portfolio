@@ -187,6 +187,7 @@ public abstract class WorldController implements Screen {
 	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 
 	private static final String BACKGROUND_FILE = "shared/loading.png";
+	private static final String MOPCART_BACKGROUND_FILE = "shared/mop-cart-ui.png";
 	private static final String TILE_FILE = "shared/basic-tile-32.png";
 	private static final String BROKEN1_TILE_FILE = "shared/broken-tile-1-32.png";
 	private static final String BROKEN2_TILE_FILE = "shared/broken-tile-2-32.png";
@@ -323,6 +324,7 @@ public abstract class WorldController implements Screen {
 	protected Texture hazardTileTexture;
 	/** Texture asset for the mop cart background */
 	protected Texture backgroundTexture;
+	protected Texture mopcartBackgroundTexture;
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The texture for the mop cart*/
@@ -690,6 +692,7 @@ public abstract class WorldController implements Screen {
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
+		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);

@@ -544,7 +544,7 @@ public class FloorController extends WorldController implements ContactListener 
         addCharacters();
 
 
-        light.attachToBody(avatar.getBody(), light.getX() * 32, light.getY() * 32, light.getDirection());
+        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
 //        light.attachToBody(avatar.getBody());
 //        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
     }
@@ -557,12 +557,14 @@ public class FloorController extends WorldController implements ContactListener 
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-//        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        rayhandler = new RayHandler(world, level.getBoardWidth(), level.getBoardWidth());
+        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler.setCombinedMatrix(raycamera);
+        /*System.out.println("hi");
         System.out.println(Gdx.graphics.getWidth());
         System.out.println(Gdx.graphics.getHeight());
+        System.out.println(level.getBoardWidth());
+        System.out.println(level.getBoardHeight());*/
 
-        rayhandler.setCombinedMatrix(raycamera);
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
@@ -1353,6 +1355,8 @@ public class FloorController extends WorldController implements ContactListener 
 //        System.out.println(playerPosX / 32);
 //        System.out.println(playerPosY / 32);
 
+        raycamera.position.set(cameraX, cameraY, 0);
+        raycamera.update();
         if (rayhandler != null) {
             rayhandler.update();
         }
@@ -2283,16 +2287,20 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
-            Color tint1 = Color.BLACK;
-            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    (cameraX + 350), (cameraY + 140), 0, .18f, .4f);
+//            Color tint1 = Color.BLACK;
+//            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
+//                    (cameraX + 350), (cameraY + 140), 0, .18f, .18f);
+//            //change sy to increase height of black box
+//            displayFont.getData().setScale(0.5f);
+
+            canvas.draw(mopcartBackgroundTexture, (cameraX + 350), (cameraY + 140));
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
 
             //DRAW MOP CART TEXT
-            canvas.drawText("Mop Cart", displayFont,
-                    (cameraX + 380), (cameraY + 270));
-            displayFont.getData().setScale(1.0f);
+//            canvas.drawText("Mop Cart", displayFont,
+//                    (cameraX + 380), (cameraY + 270));
+//            displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
             String[] draw_mopcart = new String[2];
@@ -2639,34 +2647,34 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion region;
         switch (((ScientistModel)s).state){
             case RUNNINGR:
-                region = madRunR.getKeyFrame(stateTimerM,true);
+                region = madRunR.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGU:
-                region = madRunU.getKeyFrame(stateTimerM,true);
+                region = madRunU.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGD:
-                region = madRunD.getKeyFrame(stateTimerM,true);
+                region = madRunD.getKeyFrame(stateTimerS,true);
                 break;
             case ATTACKR:
-                region = madAttackR.getKeyFrame(stateTimerM,false);
+                region = madAttackR.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKL:
-                region = madAttackL.getKeyFrame(stateTimerM,false);
+                region = madAttackL.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKU:
-                region = madAttackU.getKeyFrame(stateTimerM,false);
+                region = madAttackU.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKD:
-                region = madAttackD.getKeyFrame(stateTimerM,false);
+                region = madAttackD.getKeyFrame(stateTimerS,false);
                 break;
             case DEATH:
-                region = madDeath.getKeyFrame(stateTimerM,false);
+                region = madDeath.getKeyFrame(stateTimerS,false);
                 break;
             case STUN:
-                region = madStun.getKeyFrame(stateTimerM,true);
+                region = madStun.getKeyFrame(stateTimerS,true);
                 break;
             default:
-                region = madStand.getKeyFrame(stateTimerM,true);
+                region = madStand.getKeyFrame(stateTimerS,true);
                 break;
         }
         if (((ScientistModel)s).state ==((ScientistModel)s).previousState ){
@@ -2988,34 +2996,34 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion region;
         switch (((LizardModel)s).state){
             case RUNNINGR:
-                region = lizardRunR.getKeyFrame(stateTimerL,true);
+                region = lizardRunR.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGU:
-                region = lizardRunU.getKeyFrame(stateTimerL,true);
+                region = lizardRunU.getKeyFrame(stateTimerS,true);
                 break;
             case RUNNINGD:
-                region = lizardRunD.getKeyFrame(stateTimerL,true);
+                region = lizardRunD.getKeyFrame(stateTimerS,true);
                 break;
             case ATTACKL:
-                region = lizardAttackL.getKeyFrame(stateTimerL,false);
+                region = lizardAttackL.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKR:
-                region = lizardAttackR.getKeyFrame(stateTimerL,false);
+                region = lizardAttackR.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKU:
-                region = lizardAttackU.getKeyFrame(stateTimerL,false);
+                region = lizardAttackU.getKeyFrame(stateTimerS,false);
                 break;
             case ATTACKD:
-                region = lizardAttackD.getKeyFrame(stateTimerL,false);
+                region = lizardAttackD.getKeyFrame(stateTimerS,false);
                 break;
             case DEATH:
-                region = lizardDeath.getKeyFrame(stateTimerL,false);
+                region = lizardDeath.getKeyFrame(stateTimerS,false);
                 break;
             case STUN:
-                region = lizardStun.getKeyFrame(stateTimerL,true);
+                region = lizardStun.getKeyFrame(stateTimerS,true);
                 break;
             default:
-                region = lizardStand.getKeyFrame(stateTimerL,true);
+                region = lizardStand.getKeyFrame(stateTimerS,true);
                 break;
         }
         if (((LizardModel)s).state ==((LizardModel)s).previousState ){
