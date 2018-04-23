@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="36" height="32" tilewidth="32" tileheight="32" infinite="0" nextobjectid="31">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="36" height="32" tilewidth="32" tileheight="32" infinite="0" nextobjectid="35">
  <tileset firstgid="1" source="joe.tsx"/>
  <tileset firstgid="2" source="wallsv.tsx"/>
  <tileset firstgid="4" source="wallsh.tsx"/>
@@ -148,6 +148,26 @@
   <object id="30" type="turret-slime" gid="27" x="929.538" y="321.846" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+   </properties>
+  </object>
+  <object id="31" type="scientist" gid="28" x="832.103" y="826.974" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="32" type="scientist" gid="28" x="896.205" y="829.538" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="33" type="scientist" gid="28" x="834.667" y="770.564" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="34" type="scientist" gid="28" x="893.641" y="770.564" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
  </objectgroup>
