@@ -97,6 +97,7 @@ public class FloorController extends WorldController implements ContactListener 
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
     private boolean mop_cart_reloaded_before = false;
+        //move this to in mopcartlist
     private boolean upgradedHealthBefore = false;
         //I use this because for some reason when you hit the powerup it collides like 2 times even though mark removed
 
@@ -235,8 +236,10 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallELPos;
     ArrayList<Vector2> wallERPos;
     ArrayList<Vector2> hazardPos;
-
     ArrayList<Vector2> specialHealthPos;
+
+    ArrayList<Vector2> mopCartPos;
+    ArrayList<Boolean> mopCartVisitedBefore;
 
     int [][] tiles;
 
@@ -335,7 +338,8 @@ public class FloorController extends WorldController implements ContactListener 
     private long ticks;
 
     /** Reference to the mopCart (for collision detection) */
-    private BoxObstacle mopCart;
+        //List of all mopcarts in level, should check if each one was used or not
+    private ArrayList<BoxObstacle> mopCartList = new ArrayList<BoxObstacle>();
 
     /** Reference to the special health power up (for collision detection) */
     private BoxObstacle specialHealth;
@@ -406,6 +410,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         hazardPos = level.getHazardPos();
         specialHealthPos = level.getSpecialHealthPos();
+        mopCartPos = level.getMopCartPos();
+        mopCartVisitedBefore = level.getMopCartVisitedBefore();
 
         tiles = level.getTiles();
     }
@@ -503,16 +509,20 @@ public class FloorController extends WorldController implements ContactListener 
         // Add mopcart
         float mopwidth  = mopTile.getRegionWidth()/scale.x;
         float mopheight= mopTile.getRegionHeight()/scale.y;
-        mopCart = new BoxObstacle(level.getMopCartX()/32+OBJ_OFFSET_X, level.getMopCartY()/32+OBJ_OFFSET_X,mopwidth,mopheight);
-        mopCart.setBodyType(BodyDef.BodyType.StaticBody);
-        mopCart.setDensity(0.0f);
-        mopCart.setFriction(0.0f);
-        mopCart.setRestitution(0.0f);
-        mopCart.setSensor(true);
-        mopCart.setDrawScale(scale);
-        mopCart.setTexture(mopTile);
-        mopCart.setName("mopCart");
-        addObject(mopCart);
+        for (int ii=0; ii<mopCartPos.size(); ii++) {
+            Vector2 vec = mopCartPos.get(ii);
+            BoxObstacle mopCart = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
+            mopCart.setBodyType(BodyDef.BodyType.StaticBody);
+            mopCart.setDensity(0.0f);
+            mopCart.setFriction(0.0f);
+            mopCart.setRestitution(0.0f);
+            mopCart.setSensor(true);
+            mopCart.setDrawScale(scale);
+            mopCart.setTexture(mopTile);
+            mopCart.setName("mopCart");
+            addObject(mopCart);
+            mopCartList.add(mopCart);
+        }
 
         // Add special elements (power ups)
         float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
@@ -1366,7 +1376,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
                 ticks % 30==0L){ //adjust this later
-            //System.out.println("You're on a hazard tile");
             avatar.decrHP();
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
@@ -2051,11 +2060,11 @@ public class FloorController extends WorldController implements ContactListener 
                 if (bd2.getName().equals("lid") && bd1 == s) {
                     removeLid(bd2,s);
                 }
-                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) && (bd2 != mopCart) ) {
+                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) && (bd2.getName() != "mopCart") ) {
                     //don't drop at mop cart
                     dropLid(bd1);
                 }
-                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1 != mopCart) ) {
+                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1.getName() != "mopCart") ) {
                     //don't drop at mop cart
                     dropLid(bd2);
                 }
@@ -2082,7 +2091,7 @@ public class FloorController extends WorldController implements ContactListener 
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
 
                 }
-            } else if (bd1.getName().equals("slimeball") && bd2 == mopCart) {
+            } else if (bd1.getName().equals("slimeball") && bd2.getName() == "mopCart") {
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
@@ -2097,7 +2106,7 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.decrHP();
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2.getName().equals("slimeball") && bd1 == mopCart) {
+            } else if (bd2.getName().equals("slimeball") && bd1.getName() == "mopCart") {
                 //do nothing, don't remove bullet if mop cart
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
@@ -2146,8 +2155,13 @@ public class FloorController extends WorldController implements ContactListener 
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
             }
-            if ((bd1 == avatar   && bd2 == mopCart) ||
-                    (bd1 == mopCart && bd2 == avatar)) {
+            if ((bd1 == avatar   && bd2.getName() == "mopCart") ||
+                    (bd1.getName() == "mopCart" && bd2 == avatar)) {
+                //check for which one it is by parsing last number of name string?
+                //get number of mop cart(which one are you at)
+                //pass in with setAtMopCart
+                //when checking in draw update loop,
+                //see if you upgraded at that on before with MopCartUpgradedBefore list
                 avatar.setAtMopCart(true);
             }
         } catch (Exception e) {
@@ -2175,8 +2189,8 @@ public class FloorController extends WorldController implements ContactListener 
         Obstacle bd1 = (Obstacle) body1.getUserData();
         Obstacle bd2 = (Obstacle) body2.getUserData();
 
-        if ((bd1 == avatar   && bd2 == mopCart) ||
-                (bd1 == mopCart && bd2 == avatar)) {
+        if ((bd1 == avatar   && bd2.getName() == "mopCart") ||
+                (bd1.getName() == "mopCart" && bd2 == avatar)) {
             avatar.setAtMopCart(false);
         }
 

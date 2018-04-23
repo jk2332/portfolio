@@ -82,12 +82,12 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers = new WorldController[3];
 		controllers[0] = new FloorController(1);
 		controllers[1] = new FloorController(2);
-		controllers[2] = new FloorController(32);
+		controllers[2] = new FloorController(3);
 
 		//
-		//CHANGE LEVEL HERE
+		//CHANGE FIRST LEVEL LOADED HERE
 //		controllers[0] = new FloorController(1);
-		//CHANGE LEVEL HERE
+		//CHANGE FIRST LEVEL LOADED HERE
 		//
 
 		for(int ii = 0; ii < controllers.length; ii++) {
