@@ -534,7 +534,7 @@ public class FloorController extends WorldController implements ContactListener 
         addCharacters();
 
 
-        light.attachToBody(avatar.getBody(), light.getX() * 32, light.getY() * 32, light.getDirection());
+        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
 //        light.attachToBody(avatar.getBody());
 //        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
     }
@@ -547,12 +547,14 @@ public class FloorController extends WorldController implements ContactListener 
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-//        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        rayhandler = new RayHandler(world, level.getBoardWidth(), level.getBoardWidth());
+        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler.setCombinedMatrix(raycamera);
+        /*System.out.println("hi");
         System.out.println(Gdx.graphics.getWidth());
         System.out.println(Gdx.graphics.getHeight());
+        System.out.println(level.getBoardWidth());
+        System.out.println(level.getBoardHeight());*/
 
-        rayhandler.setCombinedMatrix(raycamera);
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
@@ -1301,6 +1303,8 @@ public class FloorController extends WorldController implements ContactListener 
 //        System.out.println(playerPosX / 32);
 //        System.out.println(playerPosY / 32);
 
+        raycamera.position.set(cameraX, cameraY, 0);
+        raycamera.update();
         if (rayhandler != null) {
             rayhandler.update();
         }
