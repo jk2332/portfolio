@@ -66,7 +66,7 @@ public class PointSource extends PointLight implements LightSource {
 	 * @param color			the light color, or null for default
 	 * @param distance		the light radius
 	 * @param x				the horizontal position in world coordinates
-	 * @param y				the vertical position in world coordinates
+	 * @param y				the vertical position in world coordinastes
 	 */
 	public PointSource(RayHandler rayHandler, int rays, Color color, float distance, float x, float y) {
 		super(rayHandler, rays, color, distance, x, y);
