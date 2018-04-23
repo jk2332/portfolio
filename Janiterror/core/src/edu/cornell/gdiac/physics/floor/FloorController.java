@@ -2287,16 +2287,20 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
-            Color tint1 = Color.BLACK;
-            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
-                    (cameraX + 350), (cameraY + 140), 0, .18f, .4f);
+//            Color tint1 = Color.BLACK;
+//            canvas.draw(backgroundTexture, tint1, 10.0f, 14.0f,
+//                    (cameraX + 350), (cameraY + 140), 0, .18f, .18f);
+//            //change sy to increase height of black box
+//            displayFont.getData().setScale(0.5f);
+
+            canvas.draw(mopcartBackgroundTexture, (cameraX + 350), (cameraY + 140));
                 //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
 
             //DRAW MOP CART TEXT
-            canvas.drawText("Mop Cart", displayFont,
-                    (cameraX + 380), (cameraY + 270));
-            displayFont.getData().setScale(1.0f);
+//            canvas.drawText("Mop Cart", displayFont,
+//                    (cameraX + 380), (cameraY + 270));
+//            displayFont.getData().setScale(1.0f);
 
             //RETRIEVE MOP CART WEAPONS
             String[] draw_mopcart = new String[2];
