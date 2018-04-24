@@ -142,7 +142,8 @@ public class LevelEditorParser {
             Vector2 mopCartVector = new Vector2(mopCartElement.getFloatAttribute("x"),
                     bh - mopCartElement.getFloatAttribute("y"));
             mopCartPos.add(mopCartVector);
-//            mopCartVisitedBefore.add(mopCartElement.getBooleanAttribute("reloaded_before"));
+            boolean reloaded = Boolean.parseBoolean(mopCartElement.getChild(0).getChildrenByName("property").get(0).getAttribute("value"));
+            mopCartVisitedBefore.add(reloaded);
         }
 
         Element goalDoorElement = objects.get(1).getChild(0);

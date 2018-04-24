@@ -50,6 +50,7 @@ public class JoeModel extends CharacterModel {
 
     /** Whether Joe is at the mop cart or not */
     private boolean atMopCart;
+    private int whichMopCart;
 
     /** Whether Joe is holding the lid weapon or not */
     private boolean hasLid;
@@ -234,8 +235,9 @@ public class JoeModel extends CharacterModel {
      * Sets whether Joe is at the mop cart
      * @param value whether or not Joe is at the mop cart
      */
-    public void setAtMopCart(boolean value) {
+    public void setAtMopCart(boolean value, int which_mopcart) {
         atMopCart = value;
+        whichMopCart = which_mopcart;
     }
 
     /**
@@ -245,6 +247,10 @@ public class JoeModel extends CharacterModel {
     public boolean isAtMopCart( ) {
         return atMopCart;
     }
+    public int isAtWhichMopCart( ) {
+        return whichMopCart;
+    }
+        //returns index of current mopcart in mopcart list
 
     /**
      * Sets whether Joe is holding the lid weapon

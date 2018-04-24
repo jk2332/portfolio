@@ -73,7 +73,11 @@
 </data>
  </layer>
  <objectgroup name="mop cart">
-  <object id="6" type="mop cart" gid="23" x="481.835" y="797.81" width="64" height="64"/>
+  <object id="6" type="mop cart" gid="23" x="481.835" y="797.81" width="64" height="64">
+   <properties>
+    <property name="reloaded_before" type="bool" value="false"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="goal door">
   <object id="12" gid="19" x="509.321" y="96.1956" width="32" height="32"/>

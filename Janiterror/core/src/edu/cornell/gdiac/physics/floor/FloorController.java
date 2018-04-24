@@ -1449,7 +1449,7 @@ public class FloorController extends WorldController implements ContactListener 
         int mc_i = avatar.isAtWhichMopCart();
         if (!mopCartVisitedBefore.get(mc_i)) {
             if (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
-                    || (avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
+                || (avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
                 //if you haven't reloaded at this mop cart and you need to reload, reload
 
                 mopCartVisitedBefore.set(mc_i, true);
@@ -1737,55 +1737,35 @@ public class FloorController extends WorldController implements ContactListener 
      * Add a new slimeball to the world and send it in the right direction.
      */
     private void createBullet(SlimeModel player) {
+        // Compute position and velocity
+
+        int dirX = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(player.getX());
+        int dirY =  board.screenToBoardY(avatar.getY()) - board.screenToBoardY(player.getY());
+
         float speedX  = 0;
         float speedY = 0;
         float offsetX = 0;
         float offsetY = 0;
-        if (!player.getTurret()){
-            // Compute position and velocity
 
-            int dirX = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(player.getX());
-            int dirY =  board.screenToBoardY(avatar.getY()) - board.screenToBoardY(player.getY());
-
-            if (dirX > 0) {
-                speedX = SLIMEBALL_SPEED;
-                offsetX = BULLET_OFFSET;
-            } else if (dirX < 0) {
-                speedX = -SLIMEBALL_SPEED;
-                offsetX = -BULLET_OFFSET;
-            }
-
-            if (dirY > 0) {
-                speedY = SLIMEBALL_SPEED;
-                offsetY = BULLET_OFFSET;
-            } else if (dirY < 0) {
-                speedY = -SLIMEBALL_SPEED;
-                offsetY = -BULLET_OFFSET;
-            }
-
-            float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
+        if (dirX > 0) {
+            speedX = SLIMEBALL_SPEED;
+            offsetX = BULLET_OFFSET;
+        } else if (dirX < 0) {
+            speedX = -SLIMEBALL_SPEED;
+            offsetX = -BULLET_OFFSET;
         }
-        else {
-            // Compute position and velocity
-            assert player.getDirection()!=-1;
 
-            if (player.getDirection() == 0) {
-                speedX = -SLIMEBALL_SPEED;
-                offsetX = -BULLET_OFFSET;
-            } else if (player.getDirection() == 1) {
-                speedX = SLIMEBALL_SPEED;
-                offsetX = BULLET_OFFSET;
-            }
-            else if (player.getDirection()==2) {
-                speedY = SLIMEBALL_SPEED;
-                offsetY = BULLET_OFFSET;
-            } else {
-                speedY = -SLIMEBALL_SPEED;
-                offsetY = -BULLET_OFFSET;
-            }
+        if (dirY > 0) {
+            speedY = SLIMEBALL_SPEED;
+            offsetY = BULLET_OFFSET;
+        } else if (dirY < 0) {
+            speedY = -SLIMEBALL_SPEED;
+            offsetY = -BULLET_OFFSET;
         }
+
         float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX() + offsetX, player.getY() + offsetY, radius);
+
         bullet.setName("slimeball");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
@@ -1799,6 +1779,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
     }
+
     private void createBullet2(TurretModel player) {
 
         // Compute position and velocity
