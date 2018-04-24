@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.character.EnemyModel;
 import edu.cornell.gdiac.physics.floor.character.JoeModel;
+import edu.cornell.gdiac.physics.floor.character.SlimeModel;
 import edu.cornell.gdiac.util.LevelEditorParser;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.Path;
@@ -32,7 +33,8 @@ public class AIController {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.fleet = ships;
-        this.state = FSMState.SPAWN;
+        if (ship.getName()=="slime" && ((SlimeModel) ship).getTurret()) {this.state=FSMState.ATTACK;}
+        else {this.state = FSMState.SPAWN;}
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
@@ -45,19 +47,24 @@ public class AIController {
 
     public int getAction() {
         ++this.ticks;
-        if (((long)this.ship.getId() + this.ticks) % 20L == 0L) {
-            this.changeStateIfApplicable();
-            this.markGoalTiles();
-            this.move = this.getMoveAlongPathToGoalTile();
+        int action;
+        if (this.state==FSMState.ATTACK && ship.getName()=="slime" && ((SlimeModel) ship).getTurret()) {
+            return FloorController.CONTROL_FIRE;
         }
+        else {
+            if (((long) this.ship.getId() + this.ticks) % 20L == 0L) {
+                this.changeStateIfApplicable();
+                this.markGoalTiles();
+                this.move = this.getMoveAlongPathToGoalTile();
+            }
 
-        int action = this.move;
-        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
-        if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
-            action = FloorController.CONTROL_FIRE;
+            action = this.move;
+            if (this.state == FSMState.ATTACK && this.canShootTarget()) {
+                action = FloorController.CONTROL_FIRE;
+            }
+            //System.out.println(this.ship.getName() + "/state: " + state + "/action: " + action);
+            return action;
         }
-
-        return action;
     }
 
     private float getEqY(float x0, float y0, float x1, float y1, float x){
@@ -157,16 +164,19 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                if (!target.isRemoved() && canSeeJoe()) {
-                    tx = this.board.screenToBoardX(this.target.getX());
-                    ty = this.board.screenToBoardY(this.target.getY());
-                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty))) {
-                        this.state =FSMState.CHASE;
+                if (!(ship.getName()=="slime" && ((SlimeModel) ship).getTurret())){
+                    if (!target.isRemoved() && canSeeJoe()) {
+                        tx = this.board.screenToBoardX(this.target.getX());
+                        ty = this.board.screenToBoardY(this.target.getY());
+                        if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty))) {
+                            this.state =FSMState.CHASE;
+                        }
+                    } else {
+                        this.state = FSMState.WANDER;
                     }
-                } else {
-                    this.state = FSMState.WANDER;
+                    break;
                 }
-                break;
+
             default:
                 assert false;
         }

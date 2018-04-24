@@ -391,10 +391,10 @@ public class FloorController extends WorldController implements ContactListener 
         lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
-/*        robotPos = new ArrayList<Vector2>();
-        lizardPos = new ArrayList<Vector2>();
-        slimePos = new ArrayList<Vector2>();*/
-//        scientistPos=new ArrayList<Vector2>();
+        //robotPos = new ArrayList<Vector2>();
+        //lizardPos = new ArrayList<Vector2>();
+        //slimePos = new ArrayList<Vector2>();
+        //scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -1077,7 +1077,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 8.5f,StateSlime.STANDING,StateSlime.STANDING);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f,StateSlime.STANDING,StateSlime.STANDING, -1);
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
@@ -1093,9 +1093,12 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+ii]=mon;
         }
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
-            EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
-                    StateTurret.STANDING,StateTurret.STANDING);
+            EnemyModel mon =new SlimeModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 10.0f,
+                    StateSlime.STANDING,StateSlime.STANDING, 1);
+            mon.setDrawScale(scale);
+            ((SlimeModel) mon).setTurret(true);
+            mon.setName("slime");
             mon.setDrawScale(scale);
             mon.setName("turret");
             addObject(mon);
@@ -1749,36 +1752,55 @@ public class FloorController extends WorldController implements ContactListener 
      * Add a new slimeball to the world and send it in the right direction.
      */
     private void createBullet(SlimeModel player) {
-
-        // Compute position and velocity
-
-        int dirX = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(player.getX());
-        int dirY =  board.screenToBoardY(avatar.getY()) - board.screenToBoardY(player.getY());
-
         float speedX  = 0;
         float speedY = 0;
         float offsetX = 0;
         float offsetY = 0;
+        if (!player.getTurret()){
+            // Compute position and velocity
 
-        if (dirX > 0) {
-            speedX = SLIMEBALL_SPEED;
-            offsetX = BULLET_OFFSET;
-        } else if (dirX < 0) {
-            speedX = -SLIMEBALL_SPEED;
-            offsetX = -BULLET_OFFSET;
+            int dirX = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(player.getX());
+            int dirY =  board.screenToBoardY(avatar.getY()) - board.screenToBoardY(player.getY());
+
+            if (dirX > 0) {
+                speedX = SLIMEBALL_SPEED;
+                offsetX = BULLET_OFFSET;
+            } else if (dirX < 0) {
+                speedX = -SLIMEBALL_SPEED;
+                offsetX = -BULLET_OFFSET;
+            }
+
+            if (dirY > 0) {
+                speedY = SLIMEBALL_SPEED;
+                offsetY = BULLET_OFFSET;
+            } else if (dirY < 0) {
+                speedY = -SLIMEBALL_SPEED;
+                offsetY = -BULLET_OFFSET;
+            }
+
+            float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
         }
+        else {
+            // Compute position and velocity
+            assert player.getDirection()!=-1;
 
-        if (dirY > 0) {
-            speedY = SLIMEBALL_SPEED;
-            offsetY = BULLET_OFFSET;
-        } else if (dirY < 0) {
-            speedY = -SLIMEBALL_SPEED;
-            offsetY = -BULLET_OFFSET;
+            if (player.getDirection() == 0) {
+                speedX = -SLIMEBALL_SPEED;
+                offsetX = -BULLET_OFFSET;
+            } else if (player.getDirection() == 1) {
+                speedX = SLIMEBALL_SPEED;
+                offsetX = BULLET_OFFSET;
+            }
+            else if (player.getDirection()==2) {
+                speedY = SLIMEBALL_SPEED;
+                offsetY = BULLET_OFFSET;
+            } else {
+                speedY = -SLIMEBALL_SPEED;
+                offsetY = -BULLET_OFFSET;
+            }
         }
-
         float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX() + offsetX, player.getY() + offsetY, radius);
-
         bullet.setName("slimeball");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);

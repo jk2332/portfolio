@@ -38,7 +38,7 @@ public class CharacterModel extends CapsuleObstacle {
     /** Whether the character is facing right or not */
     public boolean faceRight;
     /** Whether the character is facing up or not */
-    private boolean faceUp;
+    public boolean faceUp;
     /** How long until the can attack again */
     private int attackCooldown;
     /** The maximum cooldown of the character */
