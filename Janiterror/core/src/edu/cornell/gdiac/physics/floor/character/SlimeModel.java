@@ -23,6 +23,8 @@ public class SlimeModel extends EnemyModel {
     float slimeballSpeed;
     public FloorController.StateSlime state;
     public FloorController.StateSlime previousState;
+    private boolean turret;
+    private int direction; //direction: -1-not a turret (no need for direction), 0-left, 1-right, 2-up, 3-down
 
 
     /**
@@ -38,12 +40,24 @@ public class SlimeModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
-                      FloorController.StateSlime state, FloorController.StateSlime previousState) {
+                      FloorController.StateSlime state, FloorController.StateSlime previousState, int direction) {
         super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3);
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;
+        turret=false;
+        this.direction=direction;
+        if (direction!=-1){
+            if (direction==0) this.faceRight=false;
+            if (direction==1) this.faceRight=true;
+            if (direction==2) this.faceUp=true;
+            if (direction==3) this.faceUp=false;
+        }
     }
+
+    public void setTurret (boolean b) {turret=b;}
+    public boolean getTurret(){return turret;}
+    public int getDirection() {return direction;}
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
         return tx == x && Math.abs(ty - y) <= getAttackRange() || ty == y && Math.abs(tx - x) <= getAttackRange();
