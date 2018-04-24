@@ -412,6 +412,7 @@ public class FloorController extends WorldController implements ContactListener 
         specialHealthPos = level.getSpecialHealthPos();
         mopCartPos = level.getMopCartPos();
         mopCartVisitedBefore = level.getMopCartVisitedBefore();
+        System.out.println(mopCartVisitedBefore);
 
         tiles = level.getTiles();
     }
@@ -513,7 +514,8 @@ public class FloorController extends WorldController implements ContactListener 
             Vector2 vec = mopCartPos.get(ii);
             BoxObstacle mopCart = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
             mopCart.setBodyType(BodyDef.BodyType.StaticBody);
-            mopCart.setDensity(0.0f);
+            mopCart.setDensity(ii);
+                //save the index of the mop cart for checking specific mop carts
             mopCart.setFriction(0.0f);
             mopCart.setRestitution(0.0f);
             mopCart.setSensor(true);
@@ -527,7 +529,6 @@ public class FloorController extends WorldController implements ContactListener 
         // Add special elements (power ups)
         float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
         float specialHealthHeight = specialHealthTile.getRegionHeight()/scale.y;
-
         for (int ii=0; ii<specialHealthPos.size(); ii++) {
             Vector2 vec = specialHealthPos.get(ii);
             specialHealth = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialHealthWidth, specialHealthHeight);
@@ -1444,17 +1445,43 @@ public class FloorController extends WorldController implements ContactListener 
      * Update function for Joe when he at the mop cart
      */
     private void joeAtMopCartUpdate() {
-        if (!mop_cart_reloaded_before
-                && (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
-                || avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
-            SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
-            mop_cart_reloaded_before = true;
-            //recharge durability of weapons
-            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-            //recharge to max health
-            avatar.setHP(avatar.getCurrentMaxHP());
+        int mc_i = avatar.isAtWhichMopCart();
+        System.out.println(mc_i);
+        if (!mopCartVisitedBefore.get(mc_i)) {
+            if (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
+                || (avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
+                //if you haven't reloaded at this mop cart and you need to reload, reload
+
+                mopCartVisitedBefore.set(mc_i, true);
+                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+                //recharge durability of weapons
+                avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+                avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+                //recharge cart weapons
+                String cart1 = mopcart_menu[0];
+                String cart2 = mopcart_menu[1];
+                WeaponModel cart_weapon1 = wep_to_model.get(cart1);
+                WeaponModel cart_weapon2 = wep_to_model.get(cart2);
+                cart_weapon1.durability = cart_weapon1.getMaxDurability();
+                cart_weapon2.durability = cart_weapon2.getMaxDurability();
+
+                //recharge to max health
+                avatar.setHP(avatar.getCurrentMaxHP());
+            }
         }
+
+//        if (!mop_cart_reloaded_before
+//                && (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
+//                || avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
+//            SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+//            mop_cart_reloaded_before = true;
+//            //recharge durability of weapons
+//            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+//            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+//            //recharge to max health
+//            avatar.setHP(avatar.getCurrentMaxHP());
+//        }
+
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
                 obj.markRemoved(true);
@@ -2155,14 +2182,20 @@ public class FloorController extends WorldController implements ContactListener 
                 System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
             }
-            if ((bd1 == avatar   && bd2.getName() == "mopCart") ||
-                    (bd1.getName() == "mopCart" && bd2 == avatar)) {
+            //Check if player is at mop cart
+            if (bd1 == avatar   && bd2.getName() == "mopCart") {
+                int mc_i = (int) bd2.getDensity();
+
                 //check for which one it is by parsing last number of name string?
                 //get number of mop cart(which one are you at)
                 //pass in with setAtMopCart
                 //when checking in draw update loop,
                 //see if you upgraded at that on before with MopCartUpgradedBefore list
-                avatar.setAtMopCart(true);
+                avatar.setAtMopCart(true, mc_i);
+            }
+            else if (bd1.getName() == "mopCart" && bd2 == avatar) {
+                int mc_i = (int) bd1.getDensity();
+                avatar.setAtMopCart(true, mc_i);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2191,7 +2224,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         if ((bd1 == avatar   && bd2.getName() == "mopCart") ||
                 (bd1.getName() == "mopCart" && bd2 == avatar)) {
-            avatar.setAtMopCart(false);
+            avatar.setAtMopCart(false, 0);
         }
 
         if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
