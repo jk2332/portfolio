@@ -84,20 +84,20 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Weapon Name -> Texture Dictionary*/
     /*TODO maybe move info to weapons class */
+    private String[] list_of_weapons = new String[4];
+    private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
+    private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
+    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
     private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
+
     private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
     private TextureRegion[][] allEnemyHeartTextures = new TextureRegion[2][];
 
-    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
-    private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
-    private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
-    private String[] list_of_weapons = new String[4];
     private String[] mopcart_menu = new String[2];
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
-    private boolean mop_cart_reloaded_before = false;
-        //move this to in mopcartlist
+
     private boolean upgradedHealthBefore = false;
         //I use this because for some reason when you hit the powerup it collides like 2 times even though mark removed
 
@@ -411,8 +411,9 @@ public class FloorController extends WorldController implements ContactListener 
         hazardPos = level.getHazardPos();
         specialHealthPos = level.getSpecialHealthPos();
         mopCartPos = level.getMopCartPos();
-        mopCartVisitedBefore = level.getMopCartVisitedBefore();
-        System.out.println(mopCartVisitedBefore);
+        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
+            //make new array because if level restarts we need original level values
+            //can't make alias / same reference
 
         tiles = level.getTiles();
     }
@@ -433,7 +434,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
         //avatar has never visited mopcart before
-        mop_cart_reloaded_before = false;
+        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
         //avatar has never upgraded health on this level before
         upgradedHealthBefore = false;
 
@@ -570,10 +571,10 @@ public class FloorController extends WorldController implements ContactListener 
         RayHandler.useDiffuseLight(true);
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
-        System.out.println(Gdx.graphics.getWidth());
-        System.out.println(Gdx.graphics.getHeight());
-        System.out.println(level.getBoardWidth());
-        System.out.println(level.getBoardHeight());
+//        System.out.println(Gdx.graphics.getWidth());
+//        System.out.println(Gdx.graphics.getHeight());
+//        System.out.println(level.getBoardWidth());
+//        System.out.println(level.getBoardHeight());
 
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
@@ -1449,7 +1450,6 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void joeAtMopCartUpdate() {
         int mc_i = avatar.isAtWhichMopCart();
-        System.out.println(mc_i);
         if (!mopCartVisitedBefore.get(mc_i)) {
             if (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
                 || (avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
@@ -1472,18 +1472,6 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setHP(avatar.getCurrentMaxHP());
             }
         }
-
-//        if (!mop_cart_reloaded_before
-//                && (avatar.getWep1().durability != avatar.getWep1().getMaxDurability()
-//                || avatar.getWep2().durability != avatar.getWep2().getMaxDurability())) {
-//            SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
-//            mop_cart_reloaded_before = true;
-//            //recharge durability of weapons
-//            avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
-//            avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
-//            //recharge to max health
-//            avatar.setHP(avatar.getCurrentMaxHP());
-//        }
 
         for(Obstacle obj : objects) {
             if (obj.getName() == "lid") {
@@ -2842,12 +2830,12 @@ public class FloorController extends WorldController implements ContactListener 
             return StateSlime.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
-            System.out.println("Slime run right");
+//            System.out.println("Slime run right");
             slimeMovedLeft = false;
             return StateSlime.RUNNINGR;
         }
         else if (s.getMovementX() < 0) {
-            System.out.println("Slime run left");
+//            System.out.println("Slime run left");
             slimeMovedLeft = true;
             return StateSlime.RUNNINGR;
         }
