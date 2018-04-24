@@ -36,11 +36,6 @@
  <objectgroup name="mop cart">
   <object id="1" type="mop cart" gid="9" x="897.823" y="464.321" width="64" height="64">
    <properties>
-    <property name="reloaded_before" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="31" type="mop cart" gid="9" x="732.086" y="320.655" width="64" height="64">
-   <properties>
     <property name="reloaded_before" type="bool" value="false"/>
    </properties>
   </object>
