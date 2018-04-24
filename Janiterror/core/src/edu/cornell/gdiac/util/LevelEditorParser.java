@@ -39,7 +39,8 @@ public class LevelEditorParser {
 
     private Vector2 joePos;
     private Vector2 goalDoorPos;
-    private Vector2 mopCartPos;
+    private ArrayList<Vector2> mopCartPos = new ArrayList<Vector2>();
+    private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
 
    /* private int robotAttackRange;
@@ -90,8 +91,8 @@ public class LevelEditorParser {
     private int boardWidth;
     private int boardHeight;
 
-
     public LevelEditorParser(String levelPath) {
+        System.out.println(levelPath);
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
 
         Array<Element> layers = level.getChildrenByName("layer");
@@ -135,8 +136,15 @@ public class LevelEditorParser {
                 tiles[i][j] = tiles[i][j] - tilegid + 1;
             }
         }
-        Element mopCartElement = objects.get(0).getChild(0);
-        mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),bh - mopCartElement.getFloatAttribute("y"));
+        Array<Element> mopCartElements = objects.get(0).getChildrenByName("object");
+        for (int i = 0; i < mopCartElements.size; i++) {
+            Element mopCartElement = mopCartElements.get(i);
+            Vector2 mopCartVector = new Vector2(mopCartElement.getFloatAttribute("x"),
+                    bh - mopCartElement.getFloatAttribute("y"));
+            mopCartPos.add(mopCartVector);
+//            mopCartVisitedBefore.add(mopCartElement.getBooleanAttribute("reloaded_before"));
+        }
+
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),bh - goalDoorElement.getFloatAttribute("y"));
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
@@ -431,20 +439,19 @@ public class LevelEditorParser {
         return wallERPos;
     }
 
+    public ArrayList<Vector2> getMopCartPos() {
+        return mopCartPos;
+    }
+    public ArrayList<Boolean> getMopCartVisitedBefore() {
+        return mopCartVisitedBefore;
+    }
+
     public float getGoalDoorX() {
         return goalDoorPos.x;
     }
 
     public float getGoalDoorY() {
         return goalDoorPos.y;
-    }
-
-    public float getMopCartX() {
-        return mopCartPos.x;
-    }
-
-    public float getMopCartY() {
-        return mopCartPos.y;
     }
 
     public float getJoePosX() {
