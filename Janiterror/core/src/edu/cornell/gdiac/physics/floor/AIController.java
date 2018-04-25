@@ -52,7 +52,7 @@ public class AIController {
         }
 
         int action = this.move;
-        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
+//        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }

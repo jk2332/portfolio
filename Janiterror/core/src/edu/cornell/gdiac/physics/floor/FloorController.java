@@ -1481,10 +1481,8 @@ public class FloorController extends WorldController implements ContactListener 
         //move mop cart index
         if (avatar.isLeft()) {
             if (mopcart_index == 1) { mopcart_index = 0; }
-            else if (mopcart_index == 0) { mopcart_index = 1; }
         } else if (avatar.isRight()) {
             if (mopcart_index == 0) { mopcart_index = 1; }
-            else if (mopcart_index == 1) { mopcart_index = 0; }
         }
         // swapping weapon
         if (avatar.isSwapping()) {
@@ -1910,35 +1908,36 @@ public class FloorController extends WorldController implements ContactListener 
 
                 boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
-                    int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                    int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap)<= mop.getRange() && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap)<= mop.getRange() && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap)<= mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap)<= mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    if (s.isActive()) {
+                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                        //implement isWallInWay method that says if wall is in way of gap and where that wall is
 
-                    if ((case1 || case2 || case3 || case4)) {
-                        enemy_hit = true;
+                        boolean case1 = Math.abs(horiGap)<= mop.getRange() && horiGap>=0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                        boolean case2 = Math.abs(horiGap)<= mop.getRange() && horiGap<=0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                        boolean case3 = Math.abs(vertiGap)<= mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                        boolean case4 = Math.abs(vertiGap)<= mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+
+                        if ((case1 || case2 || case3 || case4)) {
+                            enemy_hit = true;
 //                        if (s.getHP() == 1) {
 ////                            s.markRemoved(true);
 ////                            controls[s.getId()]=null;
 //                        } else {
-                        System.out.println("was mopped");
-                        s.decrHP();
+                            System.out.println("was mopped");
+                            s.decrHP();
 //                        }
-                        knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
-                        //knockbackForce.nor();
+                            knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
+                            //knockbackForce.nor();
 
-                        s.applyImpulse(knockbackForce);
-                        s.setKnockbackTimer(KNOCKBACK_TIMER);
-                        //System.out.println(knockbackForce);
+                            s.applyImpulse(knockbackForce);
+                            s.setKnockbackTimer(KNOCKBACK_TIMER);
+                            //System.out.println(knockbackForce);
+                        }
                     }
                 }
                 if (enemy_hit) {
                     mop.decrDurability();
-//                    if (mop.durability < 0) {
-//                        mop.durability = 0;
-//                    } //fix negative durability UI displays;
                 }
             }
         } else if (wep instanceof SprayModel) {
@@ -1992,7 +1991,6 @@ public class FloorController extends WorldController implements ContactListener 
                         if ((case4)) {
                             obj.setVY(-BULLET_SPEED);
                         }
-                        System.out.println("lid sucked in");
                     }
                 }
                 for (EnemyModel s : enemies){
@@ -2040,7 +2038,6 @@ public class FloorController extends WorldController implements ContactListener 
                 lid.decrDurability();
 //               avatar.setHasLid(false);
                 createBullet(avatar);
-
             }
         }
     }
