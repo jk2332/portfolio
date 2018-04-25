@@ -220,10 +220,16 @@ public class FloorController extends WorldController implements ContactListener 
     LevelEditorParser level;
 
     ArrayList<Vector2> scientistPos;
+    ArrayList<ArrayList<Vector2>> scientistPatrol;
     ArrayList<Vector2> slimePos;
+    ArrayList<ArrayList<Vector2>> slimePatrol;
     ArrayList<Vector2> slimeTurretPos;
+    ArrayList<String> slimeTurretDirections;
+    ArrayList<ArrayList<Vector2>> slimeTurretPatrol;
     ArrayList<Vector2> robotPos;
+    ArrayList<ArrayList<Vector2>> robotPatrol;
     ArrayList<Vector2> lizardPos;
+    ArrayList<ArrayList<Vector2>> lizardPatrol;
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
@@ -385,10 +391,17 @@ public class FloorController extends WorldController implements ContactListener 
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
+        scientistPatrol = level.getScientistPatrol();
         slimePos = level.getSlimePos();
+        slimePatrol = level.getSlimePatrol();
         slimeTurretPos = level.getSlimeTurretPos();
+        slimeTurretDirections = level.getSlimeTurretDirections();
+        slimeTurretPatrol = level.getSlimeTurretPatrol();
+            //this actually shouldn't do anything
         robotPos = level.getRobotPos();
+        robotPatrol = level.getRobotPatrol();
         lizardPos = level.getLizardPos();
+        lizardPatrol = level.getLizardPatrol();
 
         //Make empty arrays if you don't want the enemies to appear
         //robotPos = new ArrayList<Vector2>();
@@ -1151,7 +1164,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallTLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTLPos.get(ii).x);
             y = board.boardToScreenY((int) wallTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1167,7 +1179,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallBRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBRPos.get(ii).x);
             y = board.boardToScreenY((int) wallBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1179,7 +1190,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallBLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBLPos.get(ii).x);
             y = board.boardToScreenY((int) wallBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1191,7 +1201,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallERPos.size(); ii++) {
             x = board.boardToScreenX((int) wallERPos.get(ii).x);
             y = board.boardToScreenY((int) wallERPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1203,7 +1212,6 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-
         for (int ii = 0; ii < wallELPos.size(); ii++) {
             x = board.boardToScreenX((int) wallELPos.get(ii).x);
             y = board.boardToScreenY((int) wallELPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1376,8 +1384,9 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.markRemoved(true);
             setFailure(true);
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()) - 1) &&
                 ticks % 30==0L){ //adjust this later
+            //-1 so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
@@ -2268,6 +2277,7 @@ public class FloorController extends WorldController implements ContactListener 
                 if (enemy_hp < 0) {enemy_hp = 0;}
 
                 if (s instanceof RobotModel) {
+                    //draw 5 hp for robots, 3 for everyone else
                     canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
                             (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
                 }
@@ -2291,22 +2301,35 @@ public class FloorController extends WorldController implements ContactListener 
         // DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
-        Texture wep1Texture = wep_to_texture.get(wep1FileName);
-        Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
+//        Texture wep1Texture = wep_to_texture.get(wep1FileName);
+//        Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
 
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
-        canvas.draw(wep1Textures[maxDurability1 - durability1],
-                (cameraX - 490), (cameraY + 140));
+        if (durability1 == 0) {
+            //draw X-d out icon
+
+        }
+        else {
+            canvas.draw(wep1Textures[maxDurability1 - durability1],
+                    (cameraX - 490), (cameraY + 140));
+        }
+
 
         TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
         int maxDurability2 = avatar.getWep2().getMaxDurability();
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
-        canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (cameraX - 450), (cameraY + 90));
+        if (durability2 == 0) {
+            //draw X-d out icon
+
+        }
+        else {
+            canvas.draw(wep2Textures[maxDurability2 - durability2],
+                    (cameraX - 450), (cameraY + 90));
+        }
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND

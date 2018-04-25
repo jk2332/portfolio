@@ -96,61 +96,73 @@
   <object id="19" type="turret-slime" gid="27" x="32.1026" y="768" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="20" type="turret-slime" gid="27" x="288.513" y="701.333" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="right"/>
    </properties>
   </object>
   <object id="21" type="turret-slime" gid="27" x="32.1026" y="639.795" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="22" type="turret-slime" gid="27" x="285.949" y="606.462" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="right"/>
    </properties>
   </object>
   <object id="23" type="turret-slime" gid="27" x="34.6667" y="511.59" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="24" type="turret-slime" gid="27" x="32.1026" y="416.718" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="25" type="turret-slime" gid="27" x="285.949" y="352.615" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="right"/>
    </properties>
   </object>
   <object id="26" type="turret-slime" gid="27" x="29.5385" y="319.282" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="27" type="turret-slime" gid="27" x="285.949" y="257.744" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="right"/>
    </properties>
   </object>
   <object id="28" type="turret-slime" gid="27" x="811.59" y="96.2051" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="down"/>
    </properties>
   </object>
   <object id="29" type="turret-slime" gid="27" x="1050.05" y="93.641" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="down"/>
    </properties>
   </object>
   <object id="30" type="turret-slime" gid="27" x="929.538" y="321.846" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
+    <property name="attack_direction" value="left"/>
    </properties>
   </object>
   <object id="31" type="scientist" gid="28" x="832.103" y="826.974" width="64" height="64">
@@ -285,7 +297,7 @@
 0,22,22,0,0,0,0,0,22,22,0,22,22,22,22,22,22,22,0,22,22,22,22,0,22,22,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,22,22,22,22,22,0,22,22,22,22,22,22,22,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,22,22,0,22,22,22,22,22,22,22,22,22,22,22,22,22,22,0,0,0,0,0,0,0,
+0,0,0,0,22,22,0,0,0,0,0,0,22,22,0,22,22,22,22,22,22,22,22,22,22,22,22,22,22,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,22,22,22,22,22,22,22,22,22,22,0,22,22,22,22,22,22,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,22,22,0,0,22,0,22,22,0,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22,22
 </data>
