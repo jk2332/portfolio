@@ -1163,7 +1163,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTRPos.get(ii).x);
             y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y);
+            //board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y);
             board.setBlocked((int) wallTRPos.get(ii).x, (int) wallTRPos.get(ii).y+1);
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallTRTexture, 0, offset);
@@ -1176,7 +1176,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallTLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTLPos.get(ii).x);
             y = board.boardToScreenY((int) wallTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y);
+            //board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y);
             board.setBlocked((int) wallTLPos.get(ii).x, (int) wallTLPos.get(ii).y+1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1191,7 +1191,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBRPos.get(ii).x);
             y = board.boardToScreenY((int) wallBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
+            //board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
             board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y+1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1202,7 +1202,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallBLPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBLPos.get(ii).x);
             y = board.boardToScreenY((int) wallBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
+            //board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
             board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y+1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1213,7 +1213,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallERPos.size(); ii++) {
             x = board.boardToScreenX((int) wallERPos.get(ii).x);
             y = board.boardToScreenY((int) wallERPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallERPos.get(ii).x, (int) wallERPos.get(ii).y);
+            //board.setBlocked((int) wallERPos.get(ii).x, (int) wallERPos.get(ii).y);
             board.setBlocked((int) wallERPos.get(ii).x, (int) wallERPos.get(ii).y+1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1224,7 +1224,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallELPos.size(); ii++) {
             x = board.boardToScreenX((int) wallELPos.get(ii).x);
             y = board.boardToScreenY((int) wallELPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallELPos.get(ii).x, (int) wallELPos.get(ii).y);
+            //board.setBlocked((int) wallELPos.get(ii).x, (int) wallELPos.get(ii).y);
             board.setBlocked((int) wallELPos.get(ii).x, (int) wallELPos.get(ii).y+1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1658,7 +1658,7 @@ public class FloorController extends WorldController implements ContactListener 
                     //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
                     if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
                         gotHit=ticks;
-//                        avatar.decrHP();
+                        avatar.decrHP();
                         avatar.setRed(true);
                         SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                     }
