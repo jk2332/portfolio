@@ -66,7 +66,6 @@ public class EnemyModel extends CharacterModel {
 
     // TODO figure out what these functions do
 
-
     public void resetAttackAniFrame(){
         attackAnimationFrame=0;
     }

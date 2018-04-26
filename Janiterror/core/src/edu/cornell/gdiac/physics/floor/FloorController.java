@@ -186,13 +186,13 @@ public class FloorController extends WorldController implements ContactListener 
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** Attack total time frames*timerperframe for mop */
-    private static final float ATTACK_DURATION_MOP = 0.4f;
+    private static final float ATTACK_DURATION_MOP = 0.2f;
     /** Attack total time frames*timerperframe for lid */
     private static final float ATTACK_DURATION_LID = 0.2f;
     /** Attack total time frames*timerperframe for spray */
-    private static final float ATTACK_DURATION_SPRAY= 0.8f;
+    private static final float ATTACK_DURATION_SPRAY= 0.4f;
     /** Attack total time frames*timerperframe for vacuum */
-    private static final float ATTACK_DURATION_VACUUM= 0.5f;
+    private static final float ATTACK_DURATION_VACUUM= 0.4f;
     private static final float DEATH_ANIMATION_TIME = 0.8f;
     /** The timer for animations*/
     private float stateTimer;
@@ -688,25 +688,25 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopRTexture,i*192,0,192,64));
         }
-        joeMopR = new Animation<TextureRegion>(0.1f, frames);
+        joeMopR = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopLTexture,i*192,0,192,64));
         }
-        joeMopL = new Animation<TextureRegion>(0.1f, frames);
+        joeMopL = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopUTexture,i*64,0,64,192));
         }
-        joeMopU = new Animation<TextureRegion>(0.1f, frames);
+        joeMopU = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
             frames.add (new TextureRegion(avatarMopDTexture,i*64,0,64,192));
         }
-        joeMopD = new Animation<TextureRegion>(0.1f, frames);
+        joeMopD = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
@@ -736,49 +736,49 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayRTexture,i*320,0,320,64));
         }
-        joeSprayR = new Animation<TextureRegion>(0.1f, frames);
+        joeSprayR = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayLTexture,i*320,0,320,64));
         }
-        joeSprayL = new Animation<TextureRegion>(0.1f, frames);
+        joeSprayL = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayUTexture,i*64,0,64,320));
         }
-        joeSprayU = new Animation<TextureRegion>(0.1f, frames);
+        joeSprayU = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(avatarSprayDTexture,i*64,0,64,320));
         }
-        joeSprayD = new Animation<TextureRegion>(0.1f, frames);
+        joeSprayD = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumRTexture,i*64,0,64,64));
         }
-        joeVacuumR = new Animation<TextureRegion>(0.5f, frames);
+        joeVacuumR = new Animation<TextureRegion>(0.4f, frames);
         frames.clear();
 
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumLTexture,i*64,0,64,64));
         }
-        joeVacuumL = new Animation<TextureRegion>(0.5f, frames);
+        joeVacuumL = new Animation<TextureRegion>(0.4f, frames);
         frames.clear();
 
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumUTexture,i*64,0,64,64));
         }
-        joeVacuumU = new Animation<TextureRegion>(0.5f, frames);
+        joeVacuumU = new Animation<TextureRegion>(0.4f, frames);
         frames.clear();
 
         for (int i=0; i <= 0; i++){
             frames.add (new TextureRegion(avatarVacuumDTexture,i*64,0,64,64));
         }
-        joeVacuumD = new Animation<TextureRegion>(0.5f, frames);
+        joeVacuumD = new Animation<TextureRegion>(0.4f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -1658,7 +1658,7 @@ public class FloorController extends WorldController implements ContactListener 
                     //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
                     if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
                         gotHit=ticks;
-                        avatar.decrHP();
+//                        avatar.decrHP();
                         avatar.setRed(true);
                         SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                     }
