@@ -399,6 +399,13 @@ public class FloorController extends WorldController implements ContactListener 
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
 
+        //scientistPos = new ArrayList<Vector2>();
+        //slimePos = new ArrayList<Vector2>();
+        //slimeTurretPos = new ArrayList<Vector2>();
+        //slimeTurretDirections = new ArrayList<Vector2>();
+        //robotPos = new ArrayList<Vector2>();
+        //lizardPos = level.getLizardPos();
+
         scientistPatrol = level.getScientistPatrol();
         slimePatrol = level.getSlimePatrol();
         slimeTurretPatrol = level.getSlimeTurretPatrol(); //this actually shouldn't do anything
@@ -1610,27 +1617,35 @@ public class FloorController extends WorldController implements ContactListener 
      * @param action action to be performed
      */
     private void performAction(EnemyModel s, int action) {
+        int sx = this.board.screenToBoardX(s.getX());
+        int sy = this.board.screenToBoardY(s.getY());
+        int tx = this.board.screenToBoardX(avatar.getX());
+        int ty = this.board.screenToBoardY(avatar.getY());
+
+        AIController ai = controls[s.getId()];
+        float vel = s.getName()=="lizard" && ai.getState()== AIController.FSMState.CHASE &&
+                s.canHitTargetFrom(sx, sy, tx, ty, 2, 2, 2) ? 2.5f : s.getVelocity();
         if (action == CONTROL_NO_ACTION) {
             s.setMovementY(0);
             s.setMovementX(0);
         }
         if (action == CONTROL_MOVE_DOWN) {
-            s.setMovementY(-s.getVelocity());
+            s.setMovementY(-vel);
             s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_LEFT) {
-            s.setMovementX(-s.getVelocity());
+            s.setMovementX(-vel);
             s.setMovementY(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_UP) {
-            s.setMovementY(s.getVelocity());
+            s.setMovementY(vel);
             s.setMovementX(0);
             s.resetAttackAniFrame();
         }
         if (action == CONTROL_MOVE_RIGHT) {
-            s.setMovementX(s.getVelocity());
+            s.setMovementX(vel);
             s.setMovementY(0);
             s.resetAttackAniFrame();
 
@@ -2844,12 +2859,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            System.out.println("slime attacking left");
+            //System.out.println("slime attacking left");
             return StateSlime.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            System.out.println("slime attacking right");
+            //System.out.println("slime attacking right");
             return StateSlime.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
@@ -2934,12 +2949,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            System.out.println("slime attacking left");
+            //System.out.println("slime attacking left");
             return StateTurret.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            System.out.println("slime attacking right");
+            //System.out.println("slime attacking right");
             return StateTurret.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){

@@ -40,25 +40,34 @@ public class AIController {
         this.target = target;
         double tmp = Math.random();
         patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
-        chaseDist=9;
-        if (ship.getName()=="slime" || ship.getName()=="turret") chaseDist=16;
+        //chaseDist=9;
+        //if (ship.getName()=="slime" || ship.getName()=="turret") chaseDist=16;
         patrolSeq=0;
         leftRange = rightRange = ship.getAttackRange();
         vertiRange = ship.getAttackRange()+1;
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
     }
 
+    private void rangeReset(){
+        vertiRange = ship.getAttackRange()+1;
+        leftRange = rightRange= ship.getAttackRange();
+    }
+
     public int getAction() {
         ++this.ticks;
-        //System.out.println(this.target.getX()+"/"+this.target.getY());
+        rangeReset();
         if (((long)this.ship.getId() + this.ticks) % 20L == 0L) {
+            if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
+                leftRange++;
+            }
+            else if (board.screenToBoardX(target.getX()+0.3f) == board.screenToBoardX(target.getX())+1){
+                rightRange++;
+            }
             this.changeStateIfApplicable();
             this.markGoalTiles();
             this.move = this.getMoveAlongPathToGoalTile();
         }
-
         int action = this.move;
-//        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -70,7 +79,7 @@ public class AIController {
         return (y0-y1)/(x0-x1)*(x-x0)+y0;
     }
 
-    private boolean canSeeJoe(){
+    public boolean canSeeJoe(){
         Vector2 shipPos = new Vector2(ship.getX(), ship.getY());
         Vector2 tarPos = new Vector2(target.getX(), target.getY());
 
@@ -113,14 +122,14 @@ public class AIController {
     }
 
     private void changeStateIfApplicable() {
-        Random rand = new Random();
         int sx = this.board.screenToBoardX(this.ship.getX());
         int sy = this.board.screenToBoardY(this.ship.getY());
         int tx;
         int ty;
+        int dist;
         switch(state) {
             case SPAWN:
-                if (canSeeJoe()) {
+                if (canSeeJoe() && !target.isRemoved()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
@@ -137,30 +146,24 @@ public class AIController {
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    int dist = this.manhattan(sx, sy, tx, ty);
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
-                        this.wx = -1;
-                    } else if (dist <= chaseDist) {
+                        //this.wx = -1;
+                    } else {
                         this.state = FSMState.CHASE;
-                        this.wx = -1;
+                        //this.wx = -1;
                     }
                 }
+                /**
                 if (this.wx == sx && this.wy == sy) {
                     this.wx = -1;
                     this.wy = -1;
-                }
+                }**/
                 break;
             case CHASE:
-                if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
-                    leftRange++;
-                }
-                else if (board.screenToBoardX(target.getX()+0.3f) == board.screenToBoardX(target.getX())+1){
-                    rightRange++;
-                }
+                tx = this.board.screenToBoardX(this.target.getX());
+                ty = this.board.screenToBoardY(this.target.getY());
                 if (!target.isRemoved() && canSeeJoe()) {
-                    tx = this.board.screenToBoardX(this.target.getX());
-                    ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state =FSMState.ATTACK;
                     }
@@ -169,12 +172,6 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
-                    leftRange++;
-                }
-                else if (board.screenToBoardX(target.getX()+0.3f) == board.screenToBoardX(target.getX())+1){
-                    rightRange++;
-                }
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
@@ -236,6 +233,8 @@ public class AIController {
         int manDown;
         int manUp;
         int manRight;
+        //int leftRange = ship.getAttackRange();
+        //int rightRange = ship.getAttackRange();
         boolean b;
         int fin =-1;
         int temp = Integer.MAX_VALUE;
@@ -362,7 +361,8 @@ public class AIController {
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 if (ship.canHitTargetFrom(sx, sy, tx, ty, vertiRange, leftRange, rightRange) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
-                    state=FSMState.ATTACK; break;
+                    state=FSMState.ATTACK;
+                    break;
                 }
 
                 dx = Math.abs(sx-tx);
@@ -400,7 +400,7 @@ public class AIController {
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 if (ship.canHitTargetFrom(sx, sy, tx, ty, vertiRange, leftRange, rightRange) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
-                    state=FSMState.ATTACK; break;
+                    break;
                 }
 
                 dx = Math.abs(sx-tx);
@@ -516,6 +516,14 @@ public class AIController {
         return 0;
     }
 
+    public FSMState getState() {
+        return state;
+    }
+
+    public int getVertiRange(){return vertiRange;}
+    public int getLeftRange() {return leftRange;}
+    public int getRightRange() {return rightRange;}
+
     private boolean choosePriority(PathNode curr) {
         boolean horiz = true;
         if (this.state == FSMState.CHASE) {
@@ -536,7 +544,7 @@ public class AIController {
         return Math.abs(x1 - x0) + Math.abs(y1 - y0);
     }
 
-    private static enum FSMState {
+    public static enum FSMState {
         SPAWN,
         WANDER,
         CHASE,
