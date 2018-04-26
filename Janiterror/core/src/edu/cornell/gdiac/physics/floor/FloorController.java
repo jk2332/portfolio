@@ -393,9 +393,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-        //slimePos = level.getSlimePos();
+        slimePos = level.getSlimePos();
         slimeTurretPos = level.getSlimeTurretPos();
-        //robotPos = level.getRobotPos();
+        robotPos = level.getRobotPos();
         scientistPatrol = level.getScientistPatrol();
         slimePos = level.getSlimePos();
         slimePatrol = level.getSlimePatrol();
@@ -410,10 +410,10 @@ public class FloorController extends WorldController implements ContactListener 
         lizardPatrol = level.getLizardPatrol();
 
         //Make empty arrays if you don't want the enemies to appear
-        robotPos = new ArrayList<Vector2>();
-        //lizardPos = new ArrayList<Vector2>();
-        slimePos = new ArrayList<Vector2>();
-        //scientistPos=new ArrayList<Vector2>();
+//        robotPos = new ArrayList<Vector2>();
+//        lizardPos = new ArrayList<Vector2>();
+//        slimePos = new ArrayList<Vector2>();
+//        scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -1971,20 +1971,22 @@ public class FloorController extends WorldController implements ContactListener 
             if (spray.getDurability() >= 0) {
                 SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
                 for (EnemyModel s : enemies) {
-                    int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                    int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                    boolean case1 = Math.abs(horiGap) <= spray.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
-                    boolean case2 = Math.abs(horiGap) <= spray.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
-                    boolean case3 = Math.abs(vertiGap) <= spray.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
-                    boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
+                    if (!s.isRemoved()) {
+                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                        boolean case1 = Math.abs(horiGap) <= spray.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                        boolean case2 = Math.abs(horiGap) <= spray.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                        boolean case3 = Math.abs(vertiGap) <= spray.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                        boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
-                    if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
-                        if (s instanceof RobotModel){
-                            System.out.println("was robot");
-                            s.setStunned(true);
-                            s.decrHP();
-                        } else {
-                            s.setStunned(true);
+                        if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
+                            if (s instanceof RobotModel){
+                                System.out.println("was robot");
+                                s.setStunned(true);
+                                s.decrHP();
+                            } else {
+                                s.setStunned(true);
+                            }
                         }
                     }
                 }
@@ -2020,37 +2022,39 @@ public class FloorController extends WorldController implements ContactListener 
                     }
                 }
                 for (EnemyModel s : enemies){
-                    if (!(s instanceof RobotModel)) {
-                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
-                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <=1;
-                        boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <=1;
-                        boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <=1;
-                        boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <=1;
-                        if ((case1)) {
-                            knockbackForce.set(30f,0f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
+                    if (!s.isRemoved()) {
+                        if (!(s instanceof RobotModel)) {
+                            int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
+                            int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
+                            boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
+                            boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <= 1;
+                            boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <= 1;
+                            boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <= 1;
+                            if ((case1)) {
+                                knockbackForce.set(30f, 0f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
 
-                        }
-                        if ((case2)) {
-                            knockbackForce.set(-30f,0f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
-                        }
-                        if ((case3)) {
-                            knockbackForce.set(0f,30f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
-                        }
-                        if ((case4)) {
-                            knockbackForce.set(0f,-30f);
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            s.setStunned(true);
+                            }
+                            if ((case2)) {
+                                knockbackForce.set(-30f, 0f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
+                            if ((case3)) {
+                                knockbackForce.set(0f, 30f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
+                            if ((case4)) {
+                                knockbackForce.set(0f, -30f);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                s.setStunned(true);
+                            }
                         }
                     }
                 }
