@@ -395,25 +395,21 @@ public class FloorController extends WorldController implements ContactListener 
         scientistPos = level.getScientistPos();
         slimePos = level.getSlimePos();
         slimeTurretPos = level.getSlimeTurretPos();
-        robotPos = level.getRobotPos();
-        scientistPatrol = level.getScientistPatrol();
-        slimePos = level.getSlimePos();
-        slimePatrol = level.getSlimePatrol();
-        slimeTurretPos = level.getSlimeTurretPos();
         slimeTurretDirections = level.getSlimeTurretDirections();
-        slimeTurretPatrol = level.getSlimeTurretPatrol();
-
-            //this actually shouldn't do anything
         robotPos = level.getRobotPos();
-        robotPatrol = level.getRobotPatrol();
         lizardPos = level.getLizardPos();
+
+        scientistPatrol = level.getScientistPatrol();
+        slimePatrol = level.getSlimePatrol();
+        slimeTurretPatrol = level.getSlimeTurretPatrol(); //this actually shouldn't do anything
+        robotPatrol = level.getRobotPatrol();
         lizardPatrol = level.getLizardPatrol();
 
         //Make empty arrays if you don't want the enemies to appear
+//        scientistPos=new ArrayList<Vector2>();
+//        slimePos = new ArrayList<Vector2>();
 //        robotPos = new ArrayList<Vector2>();
 //        lizardPos = new ArrayList<Vector2>();
-//        slimePos = new ArrayList<Vector2>();
-//        scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
@@ -1344,6 +1340,7 @@ public class FloorController extends WorldController implements ContactListener 
                 ticks % 30==0L){ //adjust this later
             //-1 so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
+//            avatar.setRed(true); //this might cause some bugs because of below else statement
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
         else {
@@ -1641,9 +1638,15 @@ public class FloorController extends WorldController implements ContactListener 
         if (s.canAttack()) {
             if (action==CONTROL_FIRE){
 
-                if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
-                    gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
-                    SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
+                if (!(s instanceof SlimeModel) && !(s instanceof TurretModel)) {
+                    //only do this for melee enemies
+                    //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
+                    if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
+                        gotHit=ticks;
+                        avatar.decrHP();
+                        avatar.setRed(true);
+                        SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
+                    }
                 }
                 enemyAttack(s);
             }
