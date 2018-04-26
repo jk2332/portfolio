@@ -58,7 +58,7 @@ public class AIController {
         }
 
         int action = this.move;
-        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
+//        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -152,10 +152,10 @@ public class AIController {
                 }
                 break;
             case CHASE:
-                if (board.screenToBoardX(target.getX()-0.4f) == board.screenToBoardX(target.getX())-1){
+                if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
                     leftRange++;
                 }
-                else if (board.screenToBoardX(target.getX()+0.4f) == board.screenToBoardX(target.getX())+1){
+                else if (board.screenToBoardX(target.getX()+0.3f) == board.screenToBoardX(target.getX())+1){
                     rightRange++;
                 }
                 if (!target.isRemoved() && canSeeJoe()) {
@@ -169,10 +169,10 @@ public class AIController {
                 }
                 break;
             case ATTACK:
-                if (board.screenToBoardX(target.getX()-0.4f) == board.screenToBoardX(target.getX())-1){
+                if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
                     leftRange++;
                 }
-                else if (board.screenToBoardX(target.getX()+0.4f) == board.screenToBoardX(target.getX())+1){
+                else if (board.screenToBoardX(target.getX()+0.3f) == board.screenToBoardX(target.getX())+1){
                     rightRange++;
                 }
                 if (!target.isRemoved() && canSeeJoe()) {

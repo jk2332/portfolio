@@ -31,6 +31,7 @@ public class LevelEditorParser {
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
     private ArrayList<Vector2> lizardPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimeTurretPos = new ArrayList<Vector2>();
+    private ArrayList<String> slimeTurretDirections = new ArrayList<String>();
     private ArrayList<ArrayList<Vector2>> scientistPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> robotPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> slimePatrol = new ArrayList<ArrayList<Vector2>>();
@@ -274,7 +275,9 @@ public class LevelEditorParser {
                 lizardPos.add(new Vector2(x, y));
             } else if (type.equals("turret-slime")) {
                 Element p = character.getChild(0).getChildrenByName("property").get(0);
+                Element p2 = character.getChild(0).getChildrenByName("property").get(1);
                 slimeTurretPatrol.add(patrolStrToArr(p.getAttribute("value")));
+                slimeTurretDirections.add(p2.getAttribute("value"));
                 slimeTurretPos.add(new Vector2(x, y));
             }
         }
@@ -609,6 +612,10 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getSlimeTurretPos() {
         return slimeTurretPos;
+    }
+
+    public ArrayList<String> getSlimeTurretDirections() {
+        return slimeTurretDirections;
     }
 
     public ArrayList<ArrayList<Vector2>> getSlimeTurretPatrol() {
