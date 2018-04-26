@@ -1582,18 +1582,18 @@ public class FloorController extends WorldController implements ContactListener 
                 }
 
                 performAction(s, action);
-            }
-
-            if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
-                    && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
-                //System.out.println("Enemy is on a hazard tile");
-                s.decrHP();
+                if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
+                        && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
+                    //System.out.println("Enemy is on a hazard tile");
+                    s.decrHP();
 
 //                if (s.getHP() <= 0) {
 //                    controls[s.getId()]=null;
 //                    s.markRemoved(true);
 //                }
+                }
             }
+
         }
     }
     private void clearEnemy (float dt) {
