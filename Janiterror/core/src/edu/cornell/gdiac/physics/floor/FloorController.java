@@ -47,7 +47,9 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String POP_FILE = "floor/plop.mp3";
     /** The sound file for a reload */
     private static final String RELOAD_FILE = "floor/reload.mp3";
-    /** The sound file for a reload */
+    /** The sound file for out of weapon */
+    private static final String NO_WEAPON_FILE = "floor/no_weapon.mp3";
+    /** The sound file for getting hurt */
     private static final String OUCH_FILE = "floor/ouch.mp3";
 
     private static final int TILE_SIZE = 32;
@@ -71,9 +73,6 @@ public class FloorController extends WorldController implements ContactListener 
 
     private static final float OBJ_OFFSET_X = 1f;
     private static final float OBJ_OFFSET_Y = 1f;
-
-    /** Offset for the UI on the screen */
-    private static final float UI_OFFSET   = 5.0f;
 
     public static int CONTROL_NO_ACTION = 0;
     public static int CONTROL_MOVE_LEFT = 1;
@@ -131,6 +130,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(POP_FILE);
         manager.load(RELOAD_FILE, Sound.class);
         assets.add(RELOAD_FILE);
+        manager.load(NO_WEAPON_FILE, Sound.class);
+        assets.add(NO_WEAPON_FILE);
         manager.load(OUCH_FILE, Sound.class);
         assets.add(OUCH_FILE);
 
@@ -158,6 +159,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
         sounds.allocate(manager, RELOAD_FILE);
+        sounds.allocate(manager, NO_WEAPON_FILE);
         sounds.allocate(manager, OUCH_FILE);
 
         super.loadContent(manager);
@@ -1909,7 +1911,8 @@ public class FloorController extends WorldController implements ContactListener 
             return;
         } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
-            if (mop.getDurability() == 0){
+            if (mop.getDurability() == 0) {
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
                 mop.decrDurability(); // just quick fix for animations while keeping ui correct for alpha present
             }
             if (mop.getDurability() > 0) {
@@ -1949,8 +1952,10 @@ public class FloorController extends WorldController implements ContactListener 
                     mop.decrDurability();
                 }
             }
+            else {
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
+            }
         } else if (wep instanceof SprayModel) {
-
             SprayModel spray = (SprayModel) wep;
             spray.decrDurability();//hot fix for animations
             if (spray.getDurability() >= 0) {
@@ -1974,12 +1979,14 @@ public class FloorController extends WorldController implements ContactListener 
                     }
                 }
             }
+            else {
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
+            }
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
             vacuum.decrDurability(); //hotfix for animations
             if (vacuum.getDurability() >= 0){
 //                    System.out.println("vacuum");
-
                 for  (Obstacle obj : objects) {
                     if (obj.getName() == "lid") {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
@@ -2038,15 +2045,22 @@ public class FloorController extends WorldController implements ContactListener 
                     }
                 }
             }
+            else {
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
+            }
         } else if (wep instanceof LidModel) {
             LidModel lid = (LidModel) wep;
             if (lid.getDurability() == 0 ){
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
                 lid.decrDurability();
             }
             if (lid.getDurability() > 0 && avatar.getHasLid()) {
                 lid.decrDurability();
 //               avatar.setHasLid(false);
                 createBullet(avatar);
+            }
+            else {
+                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
             }
         }
     }
