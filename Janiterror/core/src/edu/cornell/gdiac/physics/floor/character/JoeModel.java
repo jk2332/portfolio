@@ -305,6 +305,15 @@ public class JoeModel extends CharacterModel {
         alive = true;
         isRed = false;
     }
+    public float getX(){
+        if (!this.isAlive()) {assert false;}
+        return this.getBody().getWorldCenter().x;
+    }
+
+    public float getY(){
+        if (!this.isAlive()) {assert false;}
+        return this.getBody().getWorldCenter().y;
+    }
 
     /**
      * Updates the object's physics state (NOT GAME LOGIC).

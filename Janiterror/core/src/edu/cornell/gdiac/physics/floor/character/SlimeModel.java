@@ -23,8 +23,6 @@ public class SlimeModel extends EnemyModel {
     float slimeballSpeed;
     public FloorController.StateSlime state;
     public FloorController.StateSlime previousState;
-    private boolean turret;
-    private int direction; //direction: -1-not a turret (no need for direction), 0-left, 1-right, 2-up, 3-down
 
 
     /**
@@ -45,13 +43,9 @@ public class SlimeModel extends EnemyModel {
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;
-        turret=false;
 
     }
 
-    public void setTurret (boolean b) {turret=b;}
-    public boolean getTurret(){return turret;}
-    public int getDirection() {return direction;}
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
         return tx == x && Math.abs(ty - y) <= getAttackRange() || ty == y && Math.abs(tx - x) <= getAttackRange();

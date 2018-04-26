@@ -385,15 +385,15 @@ public class FloorController extends WorldController implements ContactListener 
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
-        slimePos = level.getSlimePos();
+        //slimePos = level.getSlimePos();
         slimeTurretPos = level.getSlimeTurretPos();
-        robotPos = level.getRobotPos();
+        //robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
-        //robotPos = new ArrayList<Vector2>();
+        robotPos = new ArrayList<Vector2>();
         //lizardPos = new ArrayList<Vector2>();
-        //slimePos = new ArrayList<Vector2>();
+        slimePos = new ArrayList<Vector2>();
         //scientistPos=new ArrayList<Vector2>();
 
         wallLeftPos = level.getWallLeftPos();
@@ -1319,56 +1319,6 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
-
-        if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
-            avatar.setRed(false);
-            gotHit = -1;
-        }
-
-        float playerPosX = avatar.getX() * 32;
-        //getX only gets the tile #, multiply by 32 to get the pixel number
-        float playerPosY = avatar.getY() * 32;
-        cameraX = playerPosX;
-        cameraY = playerPosY;
-
-        float rayCameraX = playerPosX;
-        if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
-            //if player is inside clamped sections, center camera on player
-            cameraX = playerPosX;
-        }
-        else {
-            //if it is going to show outside of level, set camera to clamp
-            if (playerPosX < LEFT_SCROLL_CLAMP) { cameraX = LEFT_SCROLL_CLAMP; }
-            else if (playerPosX > RIGHT_SCROLL_CLAMP) { cameraX = RIGHT_SCROLL_CLAMP; }
-        }
-        if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
-            //if player is inside clamped sections, center camera on player
-            cameraY = playerPosY;
-        }
-        else {
-            //if it is going to show outside of level, set camera to clamp
-            if (playerPosY > TOP_SCROLL_CLAMP) { cameraY = TOP_SCROLL_CLAMP; }
-            else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
-        }
-        canvas.setCameraPosition(cameraX, cameraY);
-
-        if (InputController.getInstance().getDidLighting()) {
-            toggleLighting();
-        }
-
-//        System.out.println(playerPosX / 32);
-//        System.out.println(playerPosY / 32);
-
-//        raycamera.position.set(10, 10, 0);
-//        raycamera.update();
-//        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
-
-        raycamera.position.set(cameraX, cameraY, 0);
-        raycamera.update();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
-
         ticks ++;
         if(avatar.getHP()<=0) {
             System.out.println("died");
@@ -1376,62 +1326,111 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.markRemoved(true);
             setFailure(true);
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
-                ticks % 30==0L){ //adjust this later
-            avatar.decrHP();
-            SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
-        }
         else {
-            // Process actions in object model
-            avatar.setMovementX(InputController.getInstance().getHorizontal() *avatar.getVelocity());
-            avatar.setMovementY(InputController.getInstance().getVertical() *avatar.getVelocity());
-            avatar.setSwapping(InputController.getInstance().didTertiary());
-            avatar.setAllSwapping(InputController.getInstance().didQKey());
+            if (gotHit > 0 && avatar.isRed() && gotHit + 30 == ticks && avatar.isAlive()) {
+                avatar.setRed(false);
+                gotHit = -1;
+            }
 
-            avatar.setLeft(InputController.getInstance().didLeftArrow());
-            avatar.setRight(InputController.getInstance().didRightArrow());
-            avatar.setUp(InputController.getInstance().didUpArrow());
-            avatar.setDown(InputController.getInstance().didDownArrow());
+            float playerPosX = avatar.getX() * 32;
+            //getX only gets the tile #, multiply by 32 to get the pixel number
+            float playerPosY = avatar.getY() * 32;
+            cameraX = playerPosX;
+            cameraY = playerPosY;
 
-
-            if (avatar.isAtMopCart()) {
-                joeAtMopCartUpdate();
+            float rayCameraX = playerPosX;
+            if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
+                //if player is inside clamped sections, center camera on player
+                cameraX = playerPosX;
             } else {
-                joeNotAtMopCartUpdate();
+                //if it is going to show outside of level, set camera to clamp
+                if (playerPosX < LEFT_SCROLL_CLAMP) {
+                    cameraX = LEFT_SCROLL_CLAMP;
+                } else if (playerPosX > RIGHT_SCROLL_CLAMP) {
+                    cameraX = RIGHT_SCROLL_CLAMP;
+                }
             }
-            if (attackTimer == 0) {
-                avatar.setVelocity();
+            if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
+                //if player is inside clamped sections, center camera on player
+                cameraY = playerPosY;
+            } else {
+                //if it is going to show outside of level, set camera to clamp
+                if (playerPosY > TOP_SCROLL_CLAMP) {
+                    cameraY = TOP_SCROLL_CLAMP;
+                } else if (playerPosY < BOTTOM_SCROLL_CLAMP) {
+                    cameraY = BOTTOM_SCROLL_CLAMP;
+                }
             }
-            else {
-                avatar.setMovementX(0.0f);
-                avatar.setMovementY(0.0f);
-                avatar.setVelocity();
-            }
-            avatar.setTexture(getFrameJoe(dt));
+            canvas.setCameraPosition(cameraX, cameraY);
 
-        }
-        lidRange(dt);
-        enemyUpdate();
-        for (EnemyModel s: enemies){
-            if (s.getName() == "scientist"){
-                s.setTexture(getFrameScientist(dt,s));
+            if (InputController.getInstance().getDidLighting()) {
+                toggleLighting();
             }
-            else if (s.getName() == "robot"){
-                s.setTexture(getFrameRobot(dt,s));
-            }
-            else if (s.getName() == "slime"){
-                s.setTexture(getFrameSlime(dt,s));
-            }
-            else if (s.getName() == "turret"){
-                s.setTexture(getFrameTurret(dt,s));
-            }
-            else if (s.getName() == "lizard"){
-                s.setTexture(getFrameLizard(dt,s));
-            }
-        }
-        clearEnemy(dt);
 
-        SoundController.getInstance().update();
+            //        System.out.println(playerPosX / 32);
+            //        System.out.println(playerPosY / 32);
+
+            //        raycamera.position.set(10, 10, 0);
+            //        raycamera.update();
+            //        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
+
+            raycamera.position.set(cameraX, cameraY, 0);
+            raycamera.update();
+            if (rayhandler != null) {
+                rayhandler.update();
+            }
+
+            if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY())) &&
+                    ticks % 30 == 0L) { //adjust this later
+                avatar.decrHP();
+                SoundController.getInstance().play(OUCH_FILE, OUCH_FILE, false, EFFECT_VOLUME);
+            } else {
+                // Process actions in object model
+                avatar.setMovementX(InputController.getInstance().getHorizontal() * avatar.getVelocity());
+                avatar.setMovementY(InputController.getInstance().getVertical() * avatar.getVelocity());
+                avatar.setSwapping(InputController.getInstance().didTertiary());
+                avatar.setAllSwapping(InputController.getInstance().didQKey());
+
+                avatar.setLeft(InputController.getInstance().didLeftArrow());
+                avatar.setRight(InputController.getInstance().didRightArrow());
+                avatar.setUp(InputController.getInstance().didUpArrow());
+                avatar.setDown(InputController.getInstance().didDownArrow());
+
+
+                if (avatar.isAtMopCart()) {
+                    joeAtMopCartUpdate();
+                } else {
+                    joeNotAtMopCartUpdate();
+                }
+                if (attackTimer == 0) {
+                    avatar.setVelocity();
+                } else {
+                    avatar.setMovementX(0.0f);
+                    avatar.setMovementY(0.0f);
+                    avatar.setVelocity();
+                }
+                avatar.setTexture(getFrameJoe(dt));
+
+            }
+            lidRange(dt);
+            enemyUpdate();
+            for (EnemyModel s : enemies) {
+                if (s.getName() == "scientist") {
+                    s.setTexture(getFrameScientist(dt, s));
+                } else if (s.getName() == "robot") {
+                    s.setTexture(getFrameRobot(dt, s));
+                } else if (s.getName() == "slime") {
+                    s.setTexture(getFrameSlime(dt, s));
+                } else if (s.getName() == "turret") {
+                    s.setTexture(getFrameTurret(dt, s));
+                } else if (s.getName() == "lizard") {
+                    s.setTexture(getFrameLizard(dt, s));
+                }
+            }
+            clearEnemy(dt);
+
+            SoundController.getInstance().update();
+        }
     }
 
     private void toggleLighting() {
@@ -1596,9 +1595,9 @@ public class FloorController extends WorldController implements ContactListener 
      * @param action action to be performed
      */
     private void performAction(EnemyModel s, int action) {
-        if (action==CONTROL_NO_ACTION) {
-            s.setMovementX(0);
+        if (action == CONTROL_NO_ACTION) {
             s.setMovementY(0);
+            s.setMovementX(0);
         }
         if (action == CONTROL_MOVE_DOWN) {
             s.setMovementY(-s.getVelocity());
@@ -1623,6 +1622,11 @@ public class FloorController extends WorldController implements ContactListener 
         }
         if (s.canAttack()) {
             if (action==CONTROL_FIRE){
+
+                if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
+                    gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
+                    SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
+                }
                 enemyAttack(s);
             }
         } else {
@@ -1646,10 +1650,7 @@ public class FloorController extends WorldController implements ContactListener 
         s.startAttackCooldown();
         if (s instanceof ScientistModel || s instanceof RobotModel || s instanceof LizardModel) {
             s.incrAttackAniFrame();
-            if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
-                gotHit=ticks; avatar.decrHP(); avatar.setRed(true);
-                SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
-            }
+
             if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
                 s.resetAttackAniFrame();
             }
@@ -2620,12 +2621,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == true){
-            System.out.println("attack right" + "" + scientistMovedLeft);
+            //System.out.println("attack right" + "" + scientistMovedLeft);
             return StateMad.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == false){
-            System.out.println("attack left" + "" + scientistMovedLeft);
+            //System.out.println("attack left" + "" + scientistMovedLeft);
             return StateMad.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){

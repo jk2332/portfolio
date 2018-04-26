@@ -16,7 +16,6 @@ public class AIController {
     //private static final int ATTACK_DIST = 1; //not used - moved to scientistmodel/robotmodel
     private EnemyModel ship;
     private Board board;
-    private EnemyModel[] fleet;
     private AIController.FSMState state;
     private JoeModel target;
     private int move;
@@ -27,11 +26,14 @@ public class AIController {
     private PatrolPath patrolPath;
     private int chaseDist;
     private int TILE_SIZE = 1;
+    //int horiRange;
+    int vertiRange;
+    int leftRange;
+    int rightRange;
 
     public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
-        this.fleet = ships;
         this.state = FSMState.SPAWN;
         this.move = 0;
         this.ticks = 0L;
@@ -39,12 +41,16 @@ public class AIController {
         double tmp = Math.random();
         patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
         chaseDist=9;
-        if (ship.getName()=="slime") chaseDist=16;
+        if (ship.getName()=="slime" || ship.getName()=="turret") chaseDist=16;
         patrolSeq=0;
+        leftRange = rightRange = ship.getAttackRange();
+        vertiRange = ship.getAttackRange()+1;
+        if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
     }
 
     public int getAction() {
         ++this.ticks;
+        //System.out.println(this.target.getX()+"/"+this.target.getY());
         if (((long)this.ship.getId() + this.ticks) % 20L == 0L) {
             this.changeStateIfApplicable();
             this.markGoalTiles();
@@ -56,7 +62,7 @@ public class AIController {
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
-
+        leftRange = rightRange =ship.getAttackRange();
         return action;
     }
 
@@ -117,7 +123,7 @@ public class AIController {
                 if (canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state = FSMState.ATTACK;
                     } else {
                         this.state = FSMState.CHASE;
@@ -132,7 +138,7 @@ public class AIController {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
                     int dist = this.manhattan(sx, sy, tx, ty);
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy,tx,ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                         this.wx = -1;
                     } else if (dist <= chaseDist) {
@@ -146,10 +152,16 @@ public class AIController {
                 }
                 break;
             case CHASE:
+                if (board.screenToBoardX(target.getX()-0.4f) == board.screenToBoardX(target.getX())-1){
+                    leftRange++;
+                }
+                else if (board.screenToBoardX(target.getX()+0.4f) == board.screenToBoardX(target.getX())+1){
+                    rightRange++;
+                }
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state =FSMState.ATTACK;
                     }
                 } else {
@@ -157,10 +169,16 @@ public class AIController {
                 }
                 break;
             case ATTACK:
+                if (board.screenToBoardX(target.getX()-0.4f) == board.screenToBoardX(target.getX())-1){
+                    leftRange++;
+                }
+                else if (board.screenToBoardX(target.getX()+0.4f) == board.screenToBoardX(target.getX())+1){
+                    rightRange++;
+                }
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty) && hasNoHazardBetw(sx, sy, tx, ty))) {
+                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty))) {
                         this.state =FSMState.CHASE;
                     }
                 } else {
@@ -180,7 +198,7 @@ public class AIController {
 
         int tx = this.board.screenToBoardX(this.target.getX());
         int ty = this.board.screenToBoardY(this.target.getY());
-        return this.ship.canHitTargetFrom(x,y,tx,ty);
+        return this.ship.canHitTargetFrom(x,y,tx,ty, vertiRange, leftRange, rightRange);
     }
 
     private boolean canShootTarget() {
@@ -208,12 +226,16 @@ public class AIController {
     private void markGoalTiles() {
         this.board.clearMarks();
         boolean setGoal = false;
-        int tx;
-        int ty;
-        int sy;
-        int sx;
+        int sx = this.board.screenToBoardX(ship.getX());
+        int sy = this.board.screenToBoardY(ship.getY());
+        int tx ;
+        int ty ;
         int dx;
         int dy;
+        int manLeft;
+        int manDown;
+        int manUp;
+        int manRight;
         boolean b;
         int fin =-1;
         int temp = Integer.MAX_VALUE;
@@ -223,9 +245,6 @@ public class AIController {
                 setGoal = false;
                 break;
             case WANDER:
-                sx = this.board.screenToBoardX(ship.getX());
-                sy = this.board.screenToBoardY(ship.getY());
-                //System.out.println("WANDER");
                 if (patrolPath == PatrolPath.HORIZONTAL){
                     if (this.patrolSeq<=2) {
                         b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
@@ -283,80 +302,136 @@ public class AIController {
                         if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
                     }
                 }
+                /**
+                 if (ship.getName()=="scientist"){
+                 Vector2 tile = level.getScientistPatrol().get(indexArray).get(indexTile);
+                 indexTile++;
+                 if (indexTile>level.getScientistPatrol().get(indexArray).size()-1) {
+                 indexTile=0;
+                 indexArray++;
+                 if (indexArray > level.getScientistPatrol().size()-1) indexArray=0;
+                 }
+                 board.setGoal((int) tile.x, (int) tile.y);
+                 }
+                 if (ship.getName()=="slime"){
+                 //System.out.println("indexArray: "+indexArray);
+                 //System.out.println("indexTile: "+indexTile);
+                 Vector2 tile = level.getSlimePatrol().get(indexArray).get(indexTile);
+                 indexTile++;
+                 if (indexTile > level.getSlimePatrol().get(indexArray).size()-1) {
+                 indexTile=0;
+                 indexArray++;
+                 if (indexArray > level.getSlimePatrol().size()-1) indexArray=0;
+                 }
+                 board.setGoal((int) tile.x, (int) tile.y);
+                 }
+                 if (ship.getName()=="turret"){
+                 Vector2 tile = level.getSlimeTurretPatrol().get(indexArray).get(indexTile);
+                 indexTile++;
+                 if (indexTile>level.getSlimeTurretPatrol().get(indexArray).size()-1) {
+                 indexTile=0;
+                 indexArray++;
+                 if (indexArray > level.getSlimeTurretPatrol().size()-1) indexArray=0;
+                 }
+                 board.setGoal((int) tile.x, (int) tile.y);
+                 }
+                 if (ship.getName()=="lizard"){
+                 Vector2 tile = level.getLizardPatrol().get(indexArray).get(indexTile);
+                 indexTile++;
+                 if (indexTile>level.getLizardPatrol().get(indexArray).size()-1) {
+                 indexTile=0;
+                 indexArray++;
+                 if (indexArray > level.getLizardPatrol().size()-1) indexArray=0;
+                 }
+                 board.setGoal((int) tile.x, (int) tile.y);
+                 }
+                 if (ship.getName()=="robot"){
+                 Vector2 tile = level.getRobotPatrol().get(indexArray).get(indexTile);
+                 indexTile++;
+                 if (indexTile>level.getRobotPatrol().get(indexArray).size()-1) {
+                 indexTile=0;
+                 indexArray++;
+                 if (indexArray > level.getRobotPatrol().size()-1) indexArray=0;
+                 }
+                 board.setGoal((int) tile.x, (int) tile.y);
+                 }
+                 setGoal=true;
+                 **/
                 break;
             case CHASE:
-                sx = this.board.screenToBoardX(ship.getX());
-                sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
-                    System.out.println("here"); break;
+                if (ship.canHitTargetFrom(sx, sy, tx, ty, vertiRange, leftRange, rightRange) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                    state=FSMState.ATTACK; break;
                 }
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
                 attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
-                int manLeft = manhattan(sx, sy, tx-attackRange, ty);
-                int manRight = manhattan(sx, sy, tx+attackRange, ty);
-                int manUp =  manhattan(sx, sy, tx, ty+attackRange);
-                int manDown =  manhattan(sx, sy, tx, ty-attackRange);
+                manLeft = manhattan(sx, sy, tx-leftRange, ty);
+                manRight = manhattan(sx, sy, tx+rightRange, ty);
+                manUp =  manhattan(sx, sy, tx, ty+vertiRange);
+                manDown =  manhattan(sx, sy, tx, ty-vertiRange);
 
-                if (board.isSuperSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx-attackRange, ty, tx, ty) &&
+                if (board.isSuperSafeAt(tx-leftRange, ty) && hasNoWallBetw(tx-leftRange, ty, tx, ty) &&
                         hasNoHazardBetw(sx, sy, tx-attackRange, ty)){
                     fin = 0; temp=manLeft;
                 }
-                if (board.isSuperSafeAt(tx+attackRange, ty) && manRight<temp && hasNoWallBetw(tx+attackRange, ty, tx, ty)
+                if (board.isSuperSafeAt(tx+rightRange, ty) && manRight<temp && hasNoWallBetw(tx+rightRange, ty, tx, ty)
                         && hasNoHazardBetw(sx, sy,tx+attackRange, ty)) {
                     fin=1; temp=manRight;
                 }
-                if (board.isSuperSafeAt(tx , ty+attackRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
+                if (board.isSuperSafeAt(tx , ty+vertiRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+vertiRange)
                         && hasNoHazardBetw(sx, sy, tx, ty+attackRange)) {
                     fin=2; temp=manUp;
                 }
-                if (board.isSuperSafeAt(tx , ty-attackRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
+                if (board.isSuperSafeAt(tx , ty-vertiRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-vertiRange)
                         && hasNoHazardBetw(sx, sy, tx, ty-attackRange)) {
                     fin=3;
                 }
                 if (fin < 0) break;
-                markGoalHelper(tx, ty, fin, attackRange);
+                if (fin==0) markGoalHelper(tx, ty, fin, leftRange);
+                else if (fin==1) markGoalHelper(tx, ty, fin, rightRange);
+                else markGoalHelper(tx, ty, fin, vertiRange);
                 setGoal=true;
                 break;
             case ATTACK:
-                sx = this.board.screenToBoardX(ship.getX());
-                sy = this.board.screenToBoardY(ship.getY());
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) &&
-                        hasNoHazardBetw(sx, sy, tx, ty)) break;
+                if (ship.canHitTargetFrom(sx, sy, tx, ty, vertiRange, leftRange, rightRange) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                    state=FSMState.ATTACK; break;
+                }
 
                 dx = Math.abs(sx-tx);
                 dy = Math.abs(sy-ty);
                 attackRange = dx >=1 && dx < attackRange && dy <= dx ? dx : (dy < attackRange && dy >= 1 && dx < dy ? dy : attackRange);
 
-                int manhLeft = manhattan(sx, sy, tx-attackRange, ty);
-                int manhRight = manhattan(sx, sy, tx+attackRange, ty);
-                int manhUp =  manhattan(sx, sy, tx, ty+attackRange);
-                int manhDown =  manhattan(sx, sy, tx, ty-attackRange);
+                manLeft = manhattan(sx, sy, tx-leftRange, ty);
+                manRight = manhattan(sx, sy, tx+rightRange, ty);
+                manUp =  manhattan(sx, sy, tx, ty+vertiRange);
+                manDown =  manhattan(sx, sy, tx, ty-vertiRange);
 
-                if (board.isSuperSafeAt(tx-attackRange, ty) && hasNoWallBetw(tx, ty, tx-attackRange, ty) &&
-                        hasNoHazardBetw(sx, sy,tx-attackRange, ty)){
-                    fin=0; temp=manhLeft;
+                if (board.isSuperSafeAt(tx-leftRange, ty) && hasNoWallBetw(tx-leftRange, ty, tx, ty) &&
+                        hasNoHazardBetw(sx, sy, tx-attackRange, ty)){
+                    fin = 0; temp=manLeft;
                 }
-                if (board.isSuperSafeAt(tx+attackRange, ty) && manhRight<temp && hasNoWallBetw(tx, ty, tx+attackRange, ty)
+                if (board.isSuperSafeAt(tx+rightRange, ty) && manRight<temp && hasNoWallBetw(tx+rightRange, ty, tx, ty)
                         && hasNoHazardBetw(sx, sy,tx+attackRange, ty)) {
-                    fin=1; temp=manhRight;
+                    fin=1; temp=manRight;
                 }
-                if (board.isSuperSafeAt(tx, ty+attackRange) && manhUp<temp && hasNoWallBetw(tx, ty, tx, ty+attackRange)
-                        && hasNoHazardBetw(sx,sy, tx, ty+attackRange)) {
-                    fin=2; temp=manhUp;
+                if (board.isSuperSafeAt(tx , ty+vertiRange) && manUp<temp && hasNoWallBetw(tx, ty, tx, ty+vertiRange)
+                        && hasNoHazardBetw(sx, sy, tx, ty+attackRange)) {
+                    fin=2; temp=manUp;
                 }
-                if (board.isSuperSafeAt(tx, ty-attackRange) && manhDown<temp && hasNoWallBetw(tx, ty, tx, ty-attackRange)
+                if (board.isSuperSafeAt(tx , ty-vertiRange) && manDown<temp && hasNoWallBetw(tx, ty, tx, ty-vertiRange)
                         && hasNoHazardBetw(sx, sy, tx, ty-attackRange)) {
                     fin=3;
                 }
                 if (fin < 0) break;
-                markGoalHelper(tx, ty, fin, attackRange);
+                if (fin==0) markGoalHelper(tx, ty, fin, leftRange);
+                else if (fin==1) markGoalHelper(tx, ty, fin, rightRange);
+                else markGoalHelper(tx, ty, fin, vertiRange);
                 setGoal=true;
                 break;
         }
