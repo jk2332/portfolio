@@ -2040,10 +2040,9 @@ public class FloorController extends WorldController implements ContactListener 
             }
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
-            SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
             vacuum.decrDurability(); //hotfix for animations
             if (vacuum.getDurability() >= 0){
-//                    System.out.println("vacuum");
+                SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
                 for  (Obstacle obj : objects) {
                     if (obj.getName() == "lid") {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
@@ -2381,28 +2380,16 @@ public class FloorController extends WorldController implements ContactListener 
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
-        if (durability1 == 0) {
-            //draw X-d out icon
-
-        }
-        else {
-            canvas.draw(wep1Textures[maxDurability1 - durability1],
-                    (cameraX - 490), (cameraY + 140));
-        }
+        canvas.draw(wep1Textures[maxDurability1 - durability1],
+                (cameraX - 490), (cameraY + 140));
 
 
         TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
         int maxDurability2 = avatar.getWep2().getMaxDurability();
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
-        if (durability2 == 0) {
-            //draw X-d out icon
-
-        }
-        else {
-            canvas.draw(wep2Textures[maxDurability2 - durability2],
-                    (cameraX - 450), (cameraY + 90));
-        }
+        canvas.draw(wep2Textures[maxDurability2 - durability2],
+                (cameraX - 450), (cameraY + 90));
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
