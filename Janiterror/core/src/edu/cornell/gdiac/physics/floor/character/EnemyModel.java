@@ -3,7 +3,11 @@
  */
 package edu.cornell.gdiac.physics.floor.character;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.util.LevelEditorParser;
+
+import java.util.ArrayList;
 
 /**
  * Model class for all enemies in the game
@@ -22,6 +26,7 @@ public class EnemyModel extends CharacterModel {
     private float stateTimer;
     private int attackRange;
     private Board board;
+    LevelEditorParser level;
 
 
     /**

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.physics.Board;
 import edu.cornell.gdiac.physics.floor.character.EnemyModel;
 import edu.cornell.gdiac.physics.floor.character.JoeModel;
+import edu.cornell.gdiac.physics.floor.character.TurretModel;
 import edu.cornell.gdiac.util.LevelEditorParser;
 import javafx.scene.layout.Priority;
 import javafx.scene.shape.Path;
@@ -22,16 +23,20 @@ public class AIController {
     private long ticks;
     private int wx = 0;
     private int wy = 0;
-    private int patrolSeq;
-    private PatrolPath patrolPath;
-    private int chaseDist;
+    //private int patrolSeq;
+    //private PatrolPath patrolPath;
     private int TILE_SIZE = 1;
     //int horiRange;
     int vertiRange;
     int leftRange;
     int rightRange;
+    int indexTile;
+    int indexArray;
+    ArrayList<ArrayList<Vector2>> patrol;
 
-    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
+    LevelEditorParser level;
+
+    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target, ArrayList<ArrayList<Vector2>> patrol) {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.state = FSMState.SPAWN;
@@ -39,13 +44,13 @@ public class AIController {
         this.ticks = 0L;
         this.target = target;
         double tmp = Math.random();
-        patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
-        //chaseDist=9;
-        //if (ship.getName()=="slime" || ship.getName()=="turret") chaseDist=16;
-        patrolSeq=0;
+        //patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
+        //patrolSeq=0;
         leftRange = rightRange = ship.getAttackRange();
         vertiRange = ship.getAttackRange()+1;
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
+        indexTile = indexArray =0;
+        this.patrol= patrol;
     }
 
     private void rangeReset(){
@@ -56,6 +61,9 @@ public class AIController {
     public int getAction() {
         ++this.ticks;
         rangeReset();
+        if (this.ship.getName()=="turret") {
+            return FloorController.CONTROL_FIRE;
+        }
         if (((long)this.ship.getId() + this.ticks) % 20L == 0L) {
             if (board.screenToBoardX(target.getX()-0.3f) == board.screenToBoardX(target.getX())-1){
                 leftRange++;
@@ -244,118 +252,20 @@ public class AIController {
                 setGoal = false;
                 break;
             case WANDER:
-                if (patrolPath == PatrolPath.HORIZONTAL){
-                    if (this.patrolSeq<=2) {
-                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
-                                hasNoHazardBetw(sx, sy, sx-1, sy);
-                        patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
-                    }
-                    else {
-                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
-                                hasNoHazardBetw(sx, sy, sx+1, sy);
-                        if (patrolSeq==5) patrolSeq=0;
-                        else patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
-                    }
-                }
-                else if (patrolPath == PatrolPath.VERTICAL) {
-                    if (this.patrolSeq<=2){
-                        b = board.isSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
-                                hasNoHazardBetw(sx, sy, sx, sy+1);
-                        patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
-                    }
-                    else {
-                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
-                                hasNoHazardBetw(sx, sy, sx, sy-1);
-                        if (patrolSeq==5) patrolSeq=0;
-                        else patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
-                    }
+                if (patrol.get(indexArray).get(indexTile)==null) break;
+                Vector2 tile = patrol.get(indexArray).get(indexTile);
+                if (indexTile <= patrol.get(indexArray).size()-2) {
+                    indexTile++;
                 }
                 else {
-                    if (this.patrolSeq < 1 || (patrolSeq>=7)){
-                        b = board.isSuperSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
-                                hasNoHazardBetw(sx, sy, sx, sy+1);
-                        if (patrolSeq==7) patrolSeq=0;
-                        else patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
+                    indexTile=0;
+                    if (indexArray<=patrol.size()-2) {
+                        indexArray++;
                     }
-                    else if (patrolSeq <=2) {
-                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
-                                hasNoHazardBetw(sx, sy, sx-1, sy);
-                        patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
-                    }
-                    else if (patrolSeq <=4){
-                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
-                                hasNoHazardBetw(sx, sy, sx, sy-1);
-                        patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
-                    }
-                    else if (patrolSeq <=6) {
-                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
-                                hasNoHazardBetw(sx, sy, sx+1, sy);
-                        patrolSeq++;
-                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
-                    }
+                    else {indexArray=0;}
                 }
-                /**
-                 if (ship.getName()=="scientist"){
-                 Vector2 tile = level.getScientistPatrol().get(indexArray).get(indexTile);
-                 indexTile++;
-                 if (indexTile>level.getScientistPatrol().get(indexArray).size()-1) {
-                 indexTile=0;
-                 indexArray++;
-                 if (indexArray > level.getScientistPatrol().size()-1) indexArray=0;
-                 }
-                 board.setGoal((int) tile.x, (int) tile.y);
-                 }
-                 if (ship.getName()=="slime"){
-                 //System.out.println("indexArray: "+indexArray);
-                 //System.out.println("indexTile: "+indexTile);
-                 Vector2 tile = level.getSlimePatrol().get(indexArray).get(indexTile);
-                 indexTile++;
-                 if (indexTile > level.getSlimePatrol().get(indexArray).size()-1) {
-                 indexTile=0;
-                 indexArray++;
-                 if (indexArray > level.getSlimePatrol().size()-1) indexArray=0;
-                 }
-                 board.setGoal((int) tile.x, (int) tile.y);
-                 }
-                 if (ship.getName()=="turret"){
-                 Vector2 tile = level.getSlimeTurretPatrol().get(indexArray).get(indexTile);
-                 indexTile++;
-                 if (indexTile>level.getSlimeTurretPatrol().get(indexArray).size()-1) {
-                 indexTile=0;
-                 indexArray++;
-                 if (indexArray > level.getSlimeTurretPatrol().size()-1) indexArray=0;
-                 }
-                 board.setGoal((int) tile.x, (int) tile.y);
-                 }
-                 if (ship.getName()=="lizard"){
-                 Vector2 tile = level.getLizardPatrol().get(indexArray).get(indexTile);
-                 indexTile++;
-                 if (indexTile>level.getLizardPatrol().get(indexArray).size()-1) {
-                 indexTile=0;
-                 indexArray++;
-                 if (indexArray > level.getLizardPatrol().size()-1) indexArray=0;
-                 }
-                 board.setGoal((int) tile.x, (int) tile.y);
-                 }
-                 if (ship.getName()=="robot"){
-                 Vector2 tile = level.getRobotPatrol().get(indexArray).get(indexTile);
-                 indexTile++;
-                 if (indexTile>level.getRobotPatrol().get(indexArray).size()-1) {
-                 indexTile=0;
-                 indexArray++;
-                 if (indexArray > level.getRobotPatrol().size()-1) indexArray=0;
-                 }
-                 board.setGoal((int) tile.x, (int) tile.y);
-                 }
+                board.setGoal((int) tile.x, (int) tile.y);
                  setGoal=true;
-                 **/
                 break;
             case CHASE:
                 tx = this.board.screenToBoardX(this.target.getX());
