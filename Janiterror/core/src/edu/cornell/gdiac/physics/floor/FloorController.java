@@ -51,6 +51,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String NO_WEAPON_FILE = "floor/no_weapon.mp3";
     /** The sound file for getting hurt */
     private static final String OUCH_FILE = "floor/ouch.mp3";
+    /** The sound file for vacuum attack */
+    private static final String VACUUM_FILE = "floor/vacuum.mp3";
 
     private static final int TILE_SIZE = 32;
 
@@ -134,6 +136,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(NO_WEAPON_FILE);
         manager.load(OUCH_FILE, Sound.class);
         assets.add(OUCH_FILE);
+        manager.load(VACUUM_FILE, Sound.class);
+        assets.add(VACUUM_FILE);
 
         super.preLoadContent(manager);
     }
@@ -161,6 +165,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, RELOAD_FILE);
         sounds.allocate(manager, NO_WEAPON_FILE);
         sounds.allocate(manager, OUCH_FILE);
+        sounds.allocate(manager, VACUUM_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -512,9 +517,6 @@ public class FloorController extends WorldController implements ContactListener 
         point.setSoft(false);
         light = point;
         light.setActive(false);
-
-
-
 
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
@@ -1413,7 +1415,7 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setMovementX(InputController.getInstance().getHorizontal() * avatar.getVelocity());
                 avatar.setMovementY(InputController.getInstance().getVertical() * avatar.getVelocity());
                 avatar.setSwapping(InputController.getInstance().didTertiary());
-                avatar.setAllSwapping(InputController.getInstance().didQKey());
+                avatar.setPrimarySwapping(InputController.getInstance().didQKey());
 
                 avatar.setLeft(InputController.getInstance().didLeftArrow());
                 avatar.setRight(InputController.getInstance().didRightArrow());
@@ -1508,7 +1510,7 @@ public class FloorController extends WorldController implements ContactListener 
             if (mopcart_index == 0) { mopcart_index = 1; }
         }
         // swapping weapon
-        if (avatar.isSwapping()) {
+        if (avatar.isPrimarySwapping()) {
             //get weapon at index
             String swapping_weapon_name = mopcart_menu[mopcart_index];
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
@@ -1525,28 +1527,20 @@ public class FloorController extends WorldController implements ContactListener 
             }
         }
         // swapping all weapons
-        if (avatar.isAllSwapping()) {
-            //get all weapons in cart
-            String swapping_weapon_name1 = mopcart_menu[0];
-            String swapping_weapon_name2 = mopcart_menu[1];
+        if (avatar.isSwapping()) {
+            //get weapon in cart
+            String swapping_weapon_name = mopcart_menu[mopcart_index];
+            WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
+            //get old secondary weapon
+            WeaponModel old_secondary = avatar.getWep2();
+            //set new weapons
+            avatar.setWep2(swapping_weapon);
+            mopcart_menu[mopcart_index] = old_secondary.name;
 
-            WeaponModel swapping_weapon1 = wep_to_model.get(swapping_weapon_name1);
-            WeaponModel swapping_weapon2 = wep_to_model.get(swapping_weapon_name2);
-
-            //set all new weapons
-            WeaponModel old_primary1 = avatar.getWep1();
-            WeaponModel old_primary2 = avatar.getWep2();
-
-            avatar.setWep1(swapping_weapon1);
-            avatar.setWep2(swapping_weapon2);
-
-            mopcart_menu[0] = old_primary1.name;
-            mopcart_menu[1] = old_primary2.name;
-
-            if (swapping_weapon_name1 == "lid" || swapping_weapon_name2 == "lid") {
+            if (swapping_weapon_name == "lid") {
                 avatar.setHasLid(true);
             }
-            if (old_primary1.name == "lid" || old_primary2.name == "lid") {
+            if (old_secondary.name == "lid") {
                 avatar.setHasLid(false);
             }
         }
@@ -1658,7 +1652,7 @@ public class FloorController extends WorldController implements ContactListener 
                     //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
                     if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
                         gotHit=ticks;
-                        avatar.decrHP();
+//                        avatar.decrHP();
                         avatar.setRed(true);
                         SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                     }
@@ -2014,6 +2008,7 @@ public class FloorController extends WorldController implements ContactListener 
             }
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
+            SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
             vacuum.decrDurability(); //hotfix for animations
             if (vacuum.getDurability() >= 0){
 //                    System.out.println("vacuum");
@@ -2680,9 +2675,18 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateMad getStateMad(EnemyModel s) {
+        double verticalAttackBoundary = 0.5;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;
             return StateMad.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateMad.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateMad.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == true){
@@ -2693,12 +2697,6 @@ public class FloorController extends WorldController implements ContactListener 
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == false){
             //System.out.println("attack left" + "" + scientistMovedLeft);
             return StateMad.ATTACKL;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
-            return StateMad.ATTACKU;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
-            return StateMad.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
             scientistMovedLeft = false;
@@ -2768,9 +2766,18 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateRobot getStateRobot(EnemyModel s) {
+        double verticalAttackBoundary = 0.5;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;
             return StateRobot.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateRobot.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateRobot.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& robotMovedLeft == true){
@@ -2779,12 +2786,6 @@ public class FloorController extends WorldController implements ContactListener 
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& robotMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& robotMovedLeft == false){
             return StateRobot.ATTACKR;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
-            return StateRobot.ATTACKU;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
-            return StateRobot.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
             robotMovedLeft = false;
@@ -2853,9 +2854,18 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateSlime getStateSlime(EnemyModel s) {
+        double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;
             return StateSlime.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateSlime.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary) {
+            return StateSlime.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
@@ -2866,12 +2876,6 @@ public class FloorController extends WorldController implements ContactListener 
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
             //System.out.println("slime attacking right");
             return StateSlime.ATTACKL;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
-            return StateSlime.ATTACKU;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
-            return StateSlime.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
 //            System.out.println("Slime run right");
@@ -2943,9 +2947,18 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     public StateTurret getStateTurret(EnemyModel s) {
+        double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;
             return StateTurret.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+            return StateTurret.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+            return StateTurret.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
@@ -2956,12 +2969,6 @@ public class FloorController extends WorldController implements ContactListener 
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
             //System.out.println("slime attacking right");
             return StateTurret.ATTACKL;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
-            return StateTurret.ATTACKU;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
-            return StateTurret.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
             System.out.println("Slime run right");
@@ -3032,9 +3039,18 @@ public class FloorController extends WorldController implements ContactListener 
         return region;
     }
     public StateLizard getStateLizard(EnemyModel s) {
+        double verticalAttackBoundary = 0.8;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;
             return StateLizard.DEATH;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+            return StateLizard.ATTACKU;
+        }
+        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
+                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+            return StateLizard.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true){
@@ -3043,12 +3059,6 @@ public class FloorController extends WorldController implements ContactListener 
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == false){
             return StateLizard.ATTACKL;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
-            return StateLizard.ATTACKU;
-        }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() ){
-            return StateLizard.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
             lizardMovedLeft = false;
