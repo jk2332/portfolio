@@ -227,16 +227,19 @@ public class FloorController extends WorldController implements ContactListener 
     LevelEditorParser level;
 
     ArrayList<Vector2> scientistPos;
-    ArrayList<ArrayList<Vector2>> scientistPatrol;
+    ArrayList<Vector2> robotPos;
+    ArrayList<Vector2> lizardPos;
     ArrayList<Vector2> slimePos;
-    ArrayList<ArrayList<Vector2>> slimePatrol;
     ArrayList<Vector2> slimeTurretPos;
     ArrayList<String> slimeTurretDirections;
+    ArrayList<Integer> slimeTurretDelays;
+
+    ArrayList<ArrayList<Vector2>> scientistPatrol;
+    ArrayList<ArrayList<Vector2>> slimePatrol;
     ArrayList<ArrayList<Vector2>> slimeTurretPatrol;
-    ArrayList<Vector2> robotPos;
     ArrayList<ArrayList<Vector2>> robotPatrol;
-    ArrayList<Vector2> lizardPos;
     ArrayList<ArrayList<Vector2>> lizardPatrol;
+
     ArrayList<Vector2> wallRightPos;
     ArrayList<Vector2> wallLeftPos;
     ArrayList<Vector2> wallMidPos;
@@ -401,27 +404,21 @@ public class FloorController extends WorldController implements ContactListener 
         slimePos = level.getSlimePos();
         slimeTurretPos = level.getSlimeTurretPos();
         slimeTurretDirections = level.getSlimeTurretDirections();
+        slimeTurretDelays = level.getSlimeTurretDelays();
         robotPos = level.getRobotPos();
         lizardPos = level.getLizardPos();
-
-        //scientistPos = new ArrayList<Vector2>();
-        //slimePos = new ArrayList<Vector2>();
-        //slimeTurretPos = new ArrayList<Vector2>();
-        //slimeTurretDirections = new ArrayList<Vector2>();
-        //robotPos = new ArrayList<Vector2>();
-        //lizardPos = level.getLizardPos();
-
-        scientistPatrol = level.getScientistPatrol();
-        slimePatrol = level.getSlimePatrol();
-        slimeTurretPatrol = level.getSlimeTurretPatrol(); //this actually shouldn't do anything
-        robotPatrol = level.getRobotPatrol();
-        lizardPatrol = level.getLizardPatrol();
 
         //Make empty arrays if you don't want the enemies to appear
 //        scientistPos=new ArrayList<Vector2>();
 //        slimePos = new ArrayList<Vector2>();
 //        robotPos = new ArrayList<Vector2>();
 //        lizardPos = new ArrayList<Vector2>();
+
+        scientistPatrol = level.getScientistPatrol();
+        slimePatrol = level.getSlimePatrol();
+        slimeTurretPatrol = level.getSlimeTurretPatrol(); //this actually shouldn't do anything
+        robotPatrol = level.getRobotPatrol();
+        lizardPatrol = level.getLizardPatrol();
 
         wallLeftPos = level.getWallLeftPos();
         wallRightPos = level.getWallRightPos();
