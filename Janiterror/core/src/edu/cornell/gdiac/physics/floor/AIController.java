@@ -52,7 +52,7 @@ public class AIController {
         }
 
         int action = this.move;
-        System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
+        //System.out.println(this.ship.getName()+"/state: "+state+"/action: "+action);
         if (this.state ==FSMState.ATTACK && this.canShootTarget()) {
             action = FloorController.CONTROL_FIRE;
         }
@@ -290,7 +290,8 @@ public class AIController {
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
                 if (ship.canHitTargetFrom(sx, sy, tx, ty) && hasNoWallBetw(sx, sy, tx, ty) && hasNoHazardBetw(sx, sy, tx, ty)) {
-                    System.out.println("here"); break;
+                    //System.out.println("here");
+                    break;
                 }
 
                 dx = Math.abs(sx-tx);

@@ -475,7 +475,7 @@ public class FloorController extends WorldController implements ContactListener 
         initLighting();
 
         float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] pos = {0f, 0f};
+        float[] pos = {bounds.width/2.0f, bounds.height/2.0f};
         float dist  = 7f;
         int rays = 512;
 
@@ -546,14 +546,16 @@ public class FloorController extends WorldController implements ContactListener 
         addCharacters();
 
 
-        light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
+        //light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
 //        light.attachToBody(avatar.getBody());
 //        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
     }
 
 
     private void initLighting() {
-        raycamera = new OrthographicCamera(bounds.width,bounds.height);
+        /*raycamera = new OrthographicCamera(canvas.getWidth(),canvas.getHeight());*/
+        /*raycamera.position.set(canvas.getWidth()/2.0f, canvas.getHeight()/2.0f, 0);*/
+        raycamera = new OrthographicCamera(bounds.width, bounds.height);
         raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
         raycamera.update();
 
@@ -1319,27 +1321,47 @@ public class FloorController extends WorldController implements ContactListener 
         float playerPosX = avatar.getX() * 32;
             //getX only gets the tile #, multiply by 32 to get the pixel number
         float playerPosY = avatar.getY() * 32;
+
+        float lightX;
+        float lightY;
+
         cameraX = playerPosX;
         cameraY = playerPosY;
+        lightX = bounds.width/2.0f;
+        lightY = bounds.height/2.0f;
 
-        float rayCameraX = playerPosX;
         if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
             //if player is inside clamped sections, center camera on player
             cameraX = playerPosX;
+            lightX = bounds.width/2.0f;
+
         }
         else {
             //if it is going to show outside of level, set camera to clamp
-            if (playerPosX < LEFT_SCROLL_CLAMP) { cameraX = LEFT_SCROLL_CLAMP; }
-            else if (playerPosX > RIGHT_SCROLL_CLAMP) { cameraX = RIGHT_SCROLL_CLAMP; }
+            if (playerPosX < LEFT_SCROLL_CLAMP) {
+                cameraX = LEFT_SCROLL_CLAMP;
+                lightX = playerPosX/32.0f;
+            }
+            else if (playerPosX > RIGHT_SCROLL_CLAMP) {
+                cameraX = RIGHT_SCROLL_CLAMP;
+                lightX = playerPosX/32.0f;
+            }
         }
         if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
             //if player is inside clamped sections, center camera on player
             cameraY = playerPosY;
+            lightY = bounds.height/2.0f;
         }
         else {
             //if it is going to show outside of level, set camera to clamp
-            if (playerPosY > TOP_SCROLL_CLAMP) { cameraY = TOP_SCROLL_CLAMP; }
-            else if (playerPosY < BOTTOM_SCROLL_CLAMP) { cameraY = BOTTOM_SCROLL_CLAMP; }
+            if (playerPosY > TOP_SCROLL_CLAMP) {
+                cameraY = TOP_SCROLL_CLAMP;
+                lightY = playerPosY/32.0f;
+            }
+            else if (playerPosY < BOTTOM_SCROLL_CLAMP) {
+                cameraY = BOTTOM_SCROLL_CLAMP;
+                lightY = playerPosY/32.0f;
+            }
         }
         canvas.setCameraPosition(cameraX, cameraY);
 
@@ -1357,15 +1379,20 @@ public class FloorController extends WorldController implements ContactListener 
 //        System.out.println(playerPosX / 32);
 //        System.out.println(playerPosY / 32);
 
-        raycamera.position.set(cameraX, cameraY, 0);
+        raycamera.position.set(cameraX/32.0f, cameraY/32.0f, 0);
         raycamera.update();
+
+        light.setPosition(lightX, lightY);
+
+        System.out.println(lightX);
+        System.out.println(lightY);
         if (rayhandler != null) {
             rayhandler.update();
         }
 
         ticks ++;
         if(avatar.getHP()<=0) {
-            System.out.println("died");
+            //System.out.println("died");
             avatar.setAlive(false);
             avatar.markRemoved(true);
             setFailure(true);
@@ -1540,7 +1567,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
-                    System.out.println("stunned");
+                    //System.out.println("stunned");
                     s.incrStunTicks();
                     if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicks(); s.setStunned(false);}
@@ -1833,7 +1860,7 @@ public class FloorController extends WorldController implements ContactListener 
             lid.markRemoved(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
-            System.out.println("was lidded");
+            //System.out.println("was lidded");
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
             enemy.applyImpulse(knockbackForce);
             if (enemy.getHP() <= 0) {
@@ -1905,7 +1932,7 @@ public class FloorController extends WorldController implements ContactListener 
 ////                            s.markRemoved(true);
 ////                            controls[s.getId()]=null;
 //                        } else {
-                            System.out.println("was mopped");
+                            //System.out.println("was mopped");
                             s.decrHP();
 //                        }
                         knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
@@ -1939,7 +1966,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                     if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                         if (s instanceof RobotModel){
-                            System.out.println("was robot");
+                            //System.out.println("was robot");
                             s.setStunned(true);
                             s.decrHP();
                         } else {
@@ -1974,7 +2001,7 @@ public class FloorController extends WorldController implements ContactListener 
                             if ((case4)) {
                                 obj.setVY(-BULLET_SPEED);
                             }
-                            System.out.println("lid sucked in");
+                            //System.out.println("lid sucked in");
                         }
                     }
                     for (EnemyModel s : enemies){
@@ -2126,8 +2153,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
 
-                System.out.println("base hp" + avatar.getBaseHP());
-                System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                //System.out.println("base hp" + avatar.getBaseHP());
+                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
             } else if (bd2 == avatar && bd1 == specialHealth && !upgradedHealthBefore) {
                 upgradedHealthBefore = true;
@@ -2137,8 +2164,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //upgrade max HP by 5 for now for testing
                 avatar.setHP(avatar.getCurrentMaxHP());
 
-                System.out.println("base hp" + avatar.getBaseHP());
-                System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                //System.out.println("base hp" + avatar.getBaseHP());
+                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
             }
 
@@ -2148,8 +2175,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //Perma upgrade player's base HP
                 avatar.setBaseHP(avatar.getCurrentMaxHP());
                 avatar.setCurrentMaxHP(avatar.getBaseHP());
-                System.out.println("base hp" + avatar.getBaseHP());
-                System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                //System.out.println("base hp" + avatar.getBaseHP());
+                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
             }
             if ((bd1 == avatar   && bd2 == mopCart) ||
@@ -2189,10 +2216,10 @@ public class FloorController extends WorldController implements ContactListener 
         if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
             bd1.setVX(lidVel.x);
             bd1.setVY(lidVel.y);
-            System.out.println("set lidvel");
-            System.out.println(bd1.getVX());
-            System.out.println(bd1.getVY());
-            System.out.println("");
+            //System.out.println("set lidvel");
+            //System.out.println(bd1.getVX());
+            //System.out.println(bd1.getVY());
+            //System.out.println("");
 
         }
 
@@ -2200,10 +2227,10 @@ public class FloorController extends WorldController implements ContactListener 
         if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
             bd2.setVX(lidVel.x);
             bd2.setVY(lidVel.y);
-            System.out.println("set lidvel");
+            /*System.out.println("set lidvel");
             System.out.println(bd2.getVX());
             System.out.println(bd2.getVY());
-            System.out.println("");
+            System.out.println("");*/
         }
 
         /*if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -2258,8 +2285,8 @@ public class FloorController extends WorldController implements ContactListener 
             //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
         int times_improved = (avatar.getCurrentMaxHP() - 5);
-        System.out.println(currentHP);
-        System.out.println(maxHP);
+        /*System.out.println(currentHP);
+        System.out.println(maxHP);*/
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
         canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
@@ -2593,12 +2620,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
           else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == false)||
                   (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == true){
-              System.out.println("attack right" + "" + scientistMovedLeft);
+              //System.out.println("attack right" + "" + scientistMovedLeft);
             return StateMad.ATTACKR;
         }
           else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& scientistMovedLeft == true)||
                   (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& scientistMovedLeft == false){
-              System.out.println("attack left" + "" + scientistMovedLeft);
+              //System.out.println("attack left" + "" + scientistMovedLeft);
               return StateMad.ATTACKL;
           }
           else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
@@ -2766,12 +2793,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            System.out.println("slime attacking left");
+            //System.out.println("slime attacking left");
             return StateSlime.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            System.out.println("slime attacking right");
+            //System.out.println("slime attacking right");
             return StateSlime.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
@@ -2781,12 +2808,12 @@ public class FloorController extends WorldController implements ContactListener 
             return StateSlime.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
-            System.out.println("Slime run right");
+            //System.out.println("Slime run right");
             slimeMovedLeft = false;
             return StateSlime.RUNNINGR;
         }
         else if (s.getMovementX() < 0) {
-            System.out.println("Slime run left");
+            //System.out.println("Slime run left");
             slimeMovedLeft = true;
             return StateSlime.RUNNINGR;
         }
@@ -2856,12 +2883,12 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            System.out.println("slime attacking left");
+            //System.out.println("slime attacking left");
             return StateTurret.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            System.out.println("slime attacking right");
+            //System.out.println("slime attacking right");
             return StateTurret.ATTACKL;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY()){
@@ -2871,12 +2898,12 @@ public class FloorController extends WorldController implements ContactListener 
             return StateTurret.ATTACKD;
         }
         else if (s.getMovementX() > 0) {
-            System.out.println("Slime run right");
+            //System.out.println("Slime run right");
             slimeMovedLeft = false;
             return StateTurret.RUNNINGR;
         }
         else if (s.getMovementX() < 0) {
-            System.out.println("Slime run left");
+            //System.out.println("Slime run left");
             slimeMovedLeft = true;
             return StateTurret.RUNNINGR;
         }

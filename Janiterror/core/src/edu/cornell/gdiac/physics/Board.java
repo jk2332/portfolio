@@ -27,8 +27,6 @@ public class Board {
     public Board(int width, int height, int tileSize) {
         this.width = width;
         this.height = height;
-        System.out.println(width);
-        System.out.println(height);
         this.tiles = new Board.TileState[width * height];
         BOARD_WIDTH = width;
         BOARD_HEIGHT = height;
