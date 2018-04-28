@@ -38,8 +38,8 @@ public class SlimeModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public SlimeModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
-                      FloorController.StateSlime state, FloorController.StateSlime previousState) {
-        super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3);
+                      FloorController.StateSlime state, FloorController.StateSlime previousState, short cbit, short mbit) {
+        super(x,y,width, height, "slime", hp, density, velocity, attackRange, id,3, cbit, mbit);
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;

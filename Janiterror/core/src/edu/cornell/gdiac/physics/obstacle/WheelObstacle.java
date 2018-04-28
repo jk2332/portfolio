@@ -117,8 +117,12 @@ public class WheelObstacle extends SimpleObstacle {
 		canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
 	}
 
-	public void setFixtureGroupIndex(short i) {
-	 	fixture.filter.groupIndex = i;
+	public void setCategoryBits(short i) {
+	 	fixture.filter.categoryBits = i;
+	}
+
+	public void setMaskBits (short i) {
+	 	fixture.filter.maskBits = i;
 	}
 
 }

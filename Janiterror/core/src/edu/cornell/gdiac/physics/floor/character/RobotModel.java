@@ -28,8 +28,8 @@ public class RobotModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public RobotModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange,
-                      FloorController.StateRobot state, FloorController.StateRobot previousState) {
-        super(x,y,width, height, "robot", hp, density, velocity, 1, id, 3);
+                      FloorController.StateRobot state, FloorController.StateRobot previousState, short cbit, short mbit) {
+        super(x,y,width, height, "robot", hp, density, velocity, 1, id, 3, cbit, mbit);
         this.previousState = previousState;
         this.state = state;
     }

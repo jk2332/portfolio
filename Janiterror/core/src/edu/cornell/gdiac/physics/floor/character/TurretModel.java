@@ -40,8 +40,8 @@ public class TurretModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public TurretModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
-                      FloorController.StateTurret state, FloorController.StateTurret previousState, int direction, int delay) {
-        super(x,y,width, height, "turret", hp, density, velocity, attackRange, id,3);
+                      FloorController.StateTurret state, FloorController.StateTurret previousState, int direction, int delay, short cbit, short mbit) {
+        super(x,y,width, height, "turret", hp, density, velocity, attackRange, id,3, cbit, mbit);
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;

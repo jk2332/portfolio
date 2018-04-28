@@ -25,8 +25,8 @@ public class ScientistModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public ScientistModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange,
-                          FloorController.StateMad state, FloorController.StateMad previousState) {
-        super(x,y,width, height, "scientist", hp, density, velocity, 1, id, 3);
+                          FloorController.StateMad state, FloorController.StateMad previousState, short cbit, short mbit) {
+        super(x,y,width, height, "scientist", hp, density, velocity, 1, id, 3, cbit, mbit);
         this.previousState = previousState;
         this.state = state;
     }

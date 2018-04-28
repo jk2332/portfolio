@@ -266,7 +266,9 @@ public class FloorController extends WorldController implements ContactListener 
     /** The rayhandler for storing lights, and drawing them (SIGH) */
     protected RayHandler rayhandler;
     /** All of the active lights that we loaded from the JSON file */
-    private LightSource light;
+    private Array<LightSource> lights = new Array<LightSource>();
+
+    private boolean lightIsActive;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -375,6 +377,12 @@ public class FloorController extends WorldController implements ContactListener 
     /** frame in which Joe just got hit by slime balls */
     private long gotHit;
 
+
+    private final class CollideBits {
+        public static final short BIT_ENEMY = 1;
+        public static final short BIT_SLIMEBALL = 2;
+    }
+
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -402,7 +410,7 @@ public class FloorController extends WorldController implements ContactListener 
         sensorFixtures = new ObjectSet<Fixture>();
 
         currentLevel = input_level;
-        LEVEL = "level" + 3 + ".tmx";
+        LEVEL = "level" + input_level + ".tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -453,9 +461,10 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        if (light != null) {
-            light = null;
+        for(LightSource light : lights) {
+            light.remove();
         }
+        lights.clear();
         if (rayhandler != null) {
             rayhandler.dispose();
             rayhandler = null;
@@ -512,18 +521,7 @@ public class FloorController extends WorldController implements ContactListener 
     private void populateLevel() {
 
         initLighting();
-
-        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] pos = {bounds.width/2.0f, bounds.height/2.0f};
-        float dist  = 7f;
-        int rays = 512;
-
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-        point.setColor(color[0],color[1],color[2],color[3]);
-        point.setSoft(false);
-        light = point;
-        light.setActive(false);
-
+        //createHazardLights();
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -584,11 +582,6 @@ public class FloorController extends WorldController implements ContactListener 
         addUIInfo();
         addWalls();
         addCharacters();
-
-
-        //light.attachToBody(avatar.getBody(), light.getX(), light.getY(), light.getDirection());
-//        light.attachToBody(avatar.getBody());
-//        light.attachToBody(avatar.getBody(), avatar.getX(), avatar.getY());
     }
 
 
@@ -603,19 +596,31 @@ public class FloorController extends WorldController implements ContactListener 
         RayHandler.useDiffuseLight(true);
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
-//        System.out.println(Gdx.graphics.getWidth());
-//        System.out.println(Gdx.graphics.getHeight());
-//        System.out.println(level.getBoardWidth());
-//        System.out.println(level.getBoardHeight());
-
 
         float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 3;
         rayhandler.setBlur(blur > 0);
         rayhandler.setBlurNum(blur);
+        lightIsActive = false;
     }
 
+    /*private void createHazardLights() {
+        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
+        float dist  = 1.5f;
+        int rays = 512;
+
+        for (Vector2 hpos : hazardPos) {
+            PointSource point = new PointSource(rayhandler, rays, Color.GREEN, dist, hpos.x + 0.5f, hpos.y + 0.5f);
+            point.setColor(Color.GREEN);
+            point.setSoft(false);
+            lights.add(point);
+        }
+        for(LightSource light : lights) {
+            light.setActive(false);
+        }
+    }
+*/
     private void addUIInfo() {
         /** Pixel Locations of Weapon Icons in Mop Cart*/
         //added on to avatar.getX()
@@ -1098,7 +1103,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, ii, 3, 1.0f, 2.5f, 2,
-                    StateMad.STANDING, StateMad.STANDING);
+                    StateMad.STANDING, StateMad.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(scientistPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("scientist");
@@ -1109,7 +1114,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2,
-                    StateRobot.STANDING, StateRobot.STANDING);
+                    StateRobot.STANDING, StateRobot.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(robotPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("robot");
@@ -1118,7 +1123,8 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f,StateSlime.STANDING,StateSlime.STANDING);
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8,
+                    10.0f,StateSlime.STANDING,StateSlime.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(slimePatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("slime");
@@ -1128,7 +1134,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 4f, 1,
-                    StateLizard.STANDING, StateLizard.STANDING);
+                    StateLizard.STANDING, StateLizard.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("lizard");
@@ -1141,7 +1147,7 @@ public class FloorController extends WorldController implements ContactListener 
                     (sdirec.equals("up") ? 2 : (sdirec.equals("down") ? 3 : -1))));
             EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
-                    StateTurret.STANDING,StateTurret.STANDING, direc, slimeTurretDelays.get(ii));
+                    StateTurret.STANDING,StateTurret.STANDING, direc, slimeTurretDelays.get(ii), CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("turret");
@@ -1404,40 +1410,40 @@ public class FloorController extends WorldController implements ContactListener 
 
             cameraX = playerPosX;
             cameraY = playerPosY;
-            lightX = bounds.width/2.0f;
-            lightY = bounds.height/2.0f;
+            /*lightX = bounds.width/2.0f;
+            lightY = bounds.height/2.0f;*/
 
             if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
                 //if player is inside clamped sections, center camera on player
                 cameraX = playerPosX;
-                lightX = bounds.width/2.0f;
+                /*lightX = bounds.width/2.0f;*/
 
             }
             else {
                 //if it is going to show outside of level, set camera to clamp
                 if (playerPosX < LEFT_SCROLL_CLAMP) {
                     cameraX = LEFT_SCROLL_CLAMP;
-                    lightX = playerPosX/32.0f;
+                    //lightX = playerPosX/32.0f;
                 }
                 else if (playerPosX > RIGHT_SCROLL_CLAMP) {
                     cameraX = RIGHT_SCROLL_CLAMP;
-                    lightX = playerPosX/32.0f;
+                    //lightX = playerPosX/32.0f;
                 }
             }
             if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
                 //if player is inside clamped sections, center camera on player
                 cameraY = playerPosY;
-                lightY = bounds.height/2.0f;
+                //lightY = bounds.height/2.0f;
             }
             else {
                 //if it is going to show outside of level, set camera to clamp
                 if (playerPosY > TOP_SCROLL_CLAMP) {
                     cameraY = TOP_SCROLL_CLAMP;
-                    lightY = playerPosY/32.0f;
+                    //lightY = playerPosY/32.0f;
                 }
                 else if (playerPosY < BOTTOM_SCROLL_CLAMP) {
                     cameraY = BOTTOM_SCROLL_CLAMP;
-                    lightY = playerPosY/32.0f;
+                    //lightY = playerPosY/32.0f;
                 }
             }
             canvas.setCameraPosition(cameraX, cameraY);
@@ -1449,10 +1455,7 @@ public class FloorController extends WorldController implements ContactListener 
             raycamera.position.set(cameraX/32.0f, cameraY/32.0f, 0);
             raycamera.update();
 
-            light.setPosition(lightX, lightY);
-
-            System.out.println(lightX);
-            System.out.println(lightY);
+            //light.setPosition(lightX, lightY);
             if (rayhandler != null) {
                 rayhandler.update();
             }
@@ -1525,11 +1528,14 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     private void toggleLighting() {
-        if (light.isActive()) {
-            light.setActive(false);
-        } else {
-            light.setActive(true);
+        for(LightSource light : lights) {
+            if (light.isActive()) {
+                light.setActive(false);
+            } else {
+                light.setActive(true);
+            }
         }
+        lightIsActive = !lightIsActive;
     }
 
     /**
@@ -1871,7 +1877,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setGravityScale(0);
         bullet.setVX(speedX);
         bullet.setVY(speedY);
-        bullet.setFixtureGroupIndex((short) -1);
+        bullet.setCategoryBits(CollideBits.BIT_SLIMEBALL);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
@@ -1941,7 +1947,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setGravityScale(0);
         bullet.setVX(speedX);
         bullet.setVY(speedY);
-        bullet.setFixtureGroupIndex((short) -1);
+        bullet.setCategoryBits(CollideBits.BIT_SLIMEBALL);
         addQueuedObject(bullet);
 
         SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
@@ -2402,7 +2408,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         canvas.end();
         // Now draw the shadows
-        if (rayhandler != null && light.isActive()) {
+        if (rayhandler != null && lightIsActive) {
             rayhandler.render();
         }
         canvas.begin();

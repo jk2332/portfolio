@@ -60,7 +60,7 @@ public class EnemyModel extends CharacterModel {
      * @param height	The object width in physics units
      */
     public EnemyModel(float x, float y, float width, float height, String name, int hp,
-                      float density, float velocity, int attackRange, int id, int maxAniFrame) {
+                      float density, float velocity, int attackRange, int id, int maxAniFrame, short cbit, short mbit) {
         super(x, y, width, height, name, hp, density, velocity, ENEMY_MAX_ATTACK_COOLDOWN);
 
         this.attackRange = attackRange;
@@ -70,7 +70,8 @@ public class EnemyModel extends CharacterModel {
         this.maxAniFrame=maxAniFrame;
         this.knockbackTimer = 0;
         this.id = id;
-        fixture.filter.groupIndex = -1;
+        fixture.filter.categoryBits = cbit;
+        fixture.filter.maskBits = mbit;
     }
 
     // TODO figure out what these functions do
