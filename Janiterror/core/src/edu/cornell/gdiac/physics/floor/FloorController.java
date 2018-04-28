@@ -1082,6 +1082,7 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, ii, 3, 1.0f, 2.5f, 2,
                     StateMad.STANDING, StateMad.STANDING);
+            mon.setPatrol(scientistPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("scientist");
             addObject(mon);
@@ -1092,6 +1093,7 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2,
                     StateRobot.STANDING, StateRobot.STANDING);
+            mon.setPatrol(robotPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("robot");
             addObject(mon);
@@ -1100,6 +1102,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8, 10.0f,StateSlime.STANDING,StateSlime.STANDING);
+            mon.setPatrol(slimePatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("slime");
             addObject(mon);
@@ -1109,6 +1112,7 @@ public class FloorController extends WorldController implements ContactListener 
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 4f, 1,
                     StateLizard.STANDING, StateLizard.STANDING);
+            mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("lizard");
             addObject(mon);
@@ -1120,21 +1124,15 @@ public class FloorController extends WorldController implements ContactListener 
                     (sdirec.equals("up") ? 2 : (sdirec.equals("down") ? 3 : -1))));
             EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
-                    StateTurret.STANDING,StateTurret.STANDING, direc);
+                    StateTurret.STANDING,StateTurret.STANDING, direc, slimeTurretDelays.get(ii));
+            mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("turret");
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii]=mon;
         }
         for (EnemyModel s: enemies){
-            ArrayList<ArrayList<Vector2>> temp = new ArrayList<ArrayList<Vector2>>();
-            if (s.getName()=="scientist") temp=scientistPatrol;
-            if (s.getName()=="lizard") temp=lizardPatrol;
-            if (s.getName()=="slime") temp=slimePatrol;
-            if (s.getName()=="turret") temp=slimeTurretPatrol;
-            if (s.getName()=="robot") temp=robotPatrol;
-            System.out.println(s.getName()+"/"+temp);
-            if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar, temp);}
+            if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
     }
 
@@ -1709,7 +1707,7 @@ public class FloorController extends WorldController implements ContactListener 
             if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
                 createBullet2((TurretModel)s);
             }
-            if (s.getAttackAnimationFrame()==4 && avatar.isAlive()){
+            if (s.getAttackAnimationFrame()==((TurretModel) s).getDelay() && avatar.isAlive()){
                 s.resetAttackAniFrame();
             }
         }

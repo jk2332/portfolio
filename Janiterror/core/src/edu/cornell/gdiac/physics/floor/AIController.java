@@ -31,12 +31,13 @@ public class AIController {
     int leftRange;
     int rightRange;
     int indexTile;
-    int indexArray;
-    ArrayList<ArrayList<Vector2>> patrol;
+    int indexPatrol;
+    //int indexArray;
+    //ArrayList<Vector2> patrol;
 
     LevelEditorParser level;
 
-    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target, ArrayList<ArrayList<Vector2>> patrol) {
+    public AIController(int id, Board board, EnemyModel[] ships, JoeModel target) {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.state = FSMState.SPAWN;
@@ -49,8 +50,8 @@ public class AIController {
         leftRange = rightRange = ship.getAttackRange();
         vertiRange = ship.getAttackRange()+1;
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
-        indexTile = indexArray =0;
-        this.patrol= patrol;
+        indexTile =0;
+        indexPatrol=0;
     }
 
     private void rangeReset(){
@@ -252,19 +253,11 @@ public class AIController {
                 setGoal = false;
                 break;
             case WANDER:
-                if (patrol.get(indexArray).get(indexTile)==null) break;
-                Vector2 tile = patrol.get(indexArray).get(indexTile);
-                if (indexTile <= patrol.get(indexArray).size()-2) {
-                    indexTile++;
-                }
-                else {
-                    indexTile=0;
-                    if (indexArray<=patrol.size()-2) {
-                        indexArray++;
-                    }
-                    else {indexArray=0;}
-                }
-                board.setGoal((int) tile.x, (int) tile.y);
+                if (ship.getPatrol()==null) break;
+                 Vector2 tile = ship.getPatrol().get(indexPatrol);
+                 indexPatrol++;
+                 if (indexPatrol==ship.getPatrol().size()) indexPatrol=0;
+                 board.setGoal((int) tile.x, (int) tile.y);
                  setGoal=true;
                 break;
             case CHASE:

@@ -26,7 +26,8 @@ public class EnemyModel extends CharacterModel {
     private float stateTimer;
     private int attackRange;
     private Board board;
-    LevelEditorParser level;
+    ArrayList<Vector2> patrol = null;
+
 
 
     /**
@@ -42,6 +43,9 @@ public class EnemyModel extends CharacterModel {
      * @return id of the enemy
      */
     public int getId() {return this.id;}
+
+    public void setPatrol(ArrayList<Vector2> path) {patrol=path;}
+    public ArrayList<Vector2> getPatrol(){return patrol;}
 
     /**
      * Creates a new dude avatar at the given position.
