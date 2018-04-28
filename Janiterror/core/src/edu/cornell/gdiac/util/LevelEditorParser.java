@@ -31,6 +31,9 @@ public class LevelEditorParser {
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
     private ArrayList<Vector2> lizardPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimeTurretPos = new ArrayList<Vector2>();
+    private ArrayList<String> slimeTurretDirections = new ArrayList<String>();
+    private ArrayList<Integer> slimeTurretDelays = new ArrayList<Integer>();
+
     private ArrayList<ArrayList<Vector2>> scientistPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> robotPatrol = new ArrayList<ArrayList<Vector2>>();
     private ArrayList<ArrayList<Vector2>> slimePatrol = new ArrayList<ArrayList<Vector2>>();
@@ -39,7 +42,8 @@ public class LevelEditorParser {
 
     private Vector2 joePos;
     private Vector2 goalDoorPos;
-    private Vector2 mopCartPos;
+    private ArrayList<Vector2> mopCartPos = new ArrayList<Vector2>();
+    private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
 
    /* private int robotAttackRange;
@@ -90,8 +94,8 @@ public class LevelEditorParser {
     private int boardWidth;
     private int boardHeight;
 
-
     public LevelEditorParser(String levelPath) {
+        System.out.println(levelPath);
         Element level = new XmlReader().parse(Gdx.files.internal(levelPath));
 
         Array<Element> layers = level.getChildrenByName("layer");
@@ -135,8 +139,16 @@ public class LevelEditorParser {
                 tiles[i][j] = tiles[i][j] - tilegid + 1;
             }
         }
-        Element mopCartElement = objects.get(0).getChild(0);
-        mopCartPos = new Vector2(mopCartElement.getFloatAttribute("x"),bh - mopCartElement.getFloatAttribute("y"));
+        Array<Element> mopCartElements = objects.get(0).getChildrenByName("object");
+        for (int i = 0; i < mopCartElements.size; i++) {
+            Element mopCartElement = mopCartElements.get(i);
+            Vector2 mopCartVector = new Vector2(mopCartElement.getFloatAttribute("x"),
+                    bh - mopCartElement.getFloatAttribute("y"));
+            mopCartPos.add(mopCartVector);
+            boolean reloaded = Boolean.parseBoolean(mopCartElement.getChild(0).getChildrenByName("property").get(0).getAttribute("value"));
+            mopCartVisitedBefore.add(reloaded);
+        }
+
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),bh - goalDoorElement.getFloatAttribute("y"));
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
@@ -264,8 +276,10 @@ public class LevelEditorParser {
                 lizardPatrol.add(patrolStrToArr(p.getAttribute("value")));
                 lizardPos.add(new Vector2(x, y));
             } else if (type.equals("turret-slime")) {
-                Element p = character.getChild(0).getChildrenByName("property").get(0);
-                slimeTurretPatrol.add(patrolStrToArr(p.getAttribute("value")));
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                slimeTurretPatrol.add(patrolStrToArr(ps.get(0).getAttribute("value")));
+                slimeTurretDelays.add(Integer.parseInt(ps.get(1).getAttribute("value")));
+                slimeTurretDirections.add(ps.get(2).getAttribute("value"));
                 slimeTurretPos.add(new Vector2(x, y));
             }
         }
@@ -330,8 +344,6 @@ public class LevelEditorParser {
             }
         }
     }
-
-
 
     private ArrayList<Vector2> patrolStrToArr(String s) {
         String[] coordList = s.split(",");
@@ -431,20 +443,19 @@ public class LevelEditorParser {
         return wallERPos;
     }
 
+    public ArrayList<Vector2> getMopCartPos() {
+        return mopCartPos;
+    }
+    public ArrayList<Boolean> getMopCartVisitedBefore() {
+        return mopCartVisitedBefore;
+    }
+
     public float getGoalDoorX() {
         return goalDoorPos.x;
     }
 
     public float getGoalDoorY() {
         return goalDoorPos.y;
-    }
-
-    public float getMopCartX() {
-        return mopCartPos.x;
-    }
-
-    public float getMopCartY() {
-        return mopCartPos.y;
     }
 
     public float getJoePosX() {
@@ -603,6 +614,12 @@ public class LevelEditorParser {
         return slimeTurretPos;
     }
 
+    public ArrayList<String> getSlimeTurretDirections() {
+        return slimeTurretDirections;
+    }
+    public ArrayList<Integer> getSlimeTurretDelays() {
+        return slimeTurretDelays;
+    }
     public ArrayList<ArrayList<Vector2>> getSlimeTurretPatrol() {
         return slimeTurretPatrol;
     }

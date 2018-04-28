@@ -26,7 +26,7 @@ public class LizardModel extends EnemyModel {
      */
     public LizardModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange,
                        FloorController.StateLizard state, FloorController.StateLizard previousState) {
-        super(x,y,width, height, "lizard", hp, density, velocity, attackRange, id, 3);
+        super(x,y,width, height, "lizard", hp, density, 4f, attackRange, id, 3);
         this.previousState = previousState;
         this.state = state;
     }

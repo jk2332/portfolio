@@ -23,6 +23,8 @@ public class TurretModel extends EnemyModel {
     float slimeballSpeed;
     public FloorController.StateTurret state;
     public FloorController.StateTurret previousState;
+    int direction; //0 for auto, 1 for left, 2 for right, 3 for up, 4 for down
+    int delay;
 
 
     /**
@@ -38,12 +40,18 @@ public class TurretModel extends EnemyModel {
      * @param height	The object width in physics units
      */
     public TurretModel(float x, float y, float width, float height, int id, int hp, float density, float velocity, int attackRange, float slimeballSpeed,
-                      FloorController.StateTurret state, FloorController.StateTurret previousState) {
+                      FloorController.StateTurret state, FloorController.StateTurret previousState, int direction, int delay) {
         super(x,y,width, height, "turret", hp, density, velocity, attackRange, id,3);
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;
+        this.direction=direction;
+        this.delay = delay;
     }
+
+    public int getDelay(){return delay;}
+
+    public int getDirection(){return direction;}
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
         return tx == x && Math.abs(ty - y) <= getAttackRange() || ty == y && Math.abs(tx - x) <= getAttackRange();

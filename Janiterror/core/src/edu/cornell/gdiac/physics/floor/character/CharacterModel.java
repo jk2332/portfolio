@@ -38,7 +38,7 @@ public class CharacterModel extends CapsuleObstacle {
     /** Whether the character is facing right or not */
     public boolean faceRight;
     /** Whether the character is facing up or not */
-    private boolean faceUp;
+    public boolean faceUp;
     /** How long until the can attack again */
     private int attackCooldown;
     /** The maximum cooldown of the character */
@@ -239,12 +239,6 @@ public class CharacterModel extends CapsuleObstacle {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
     }**/
-
-    public void drawAttacked(GameCanvas canvas) {
-        System.out.println("attacked");
-        float effect = faceRight ? 1.0f : -1.0f;
-        canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-    }
 
     /**
      * Draws the outline of the physics body.

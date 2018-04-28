@@ -3,7 +3,11 @@
  */
 package edu.cornell.gdiac.physics.floor.character;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.util.LevelEditorParser;
+
+import java.util.ArrayList;
 
 /**
  * Model class for all enemies in the game
@@ -21,6 +25,9 @@ public class EnemyModel extends CharacterModel {
     private int maxAniFrame;
     private float stateTimer;
     private int attackRange;
+    private Board board;
+    ArrayList<Vector2> patrol = null;
+
 
 
     /**
@@ -36,6 +43,9 @@ public class EnemyModel extends CharacterModel {
      * @return id of the enemy
      */
     public int getId() {return this.id;}
+
+    public void setPatrol(ArrayList<Vector2> path) {patrol=path;}
+    public ArrayList<Vector2> getPatrol(){return patrol;}
 
     /**
      * Creates a new dude avatar at the given position.
@@ -64,7 +74,6 @@ public class EnemyModel extends CharacterModel {
     }
 
     // TODO figure out what these functions do
-
 
     public void resetAttackAniFrame(){
         attackAnimationFrame=0;
@@ -122,12 +131,20 @@ public class EnemyModel extends CharacterModel {
      */
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? 1.0f : -1.0f;
-        if (getAttackAnimationFrame()>=3){
-            canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
-        else {
+        //if (getAttackAnimationFrame()>=3){
+        //    canvas.draw(texture,Color.RED,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        //}
+        //else {
             canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
+        //}
+    }
+
+    public float getX(){
+        return this.getBody().getWorldCenter().x;
+    }
+
+    public float getY(){
+        return this.getBody().getWorldCenter().y;
     }
 
     /** Returns true if enemy can hit the target from a position.
@@ -140,12 +157,22 @@ public class EnemyModel extends CharacterModel {
      * @param ty    Targets y coordinate in tiles
      * @return true if enemy can hit the target from a position and false otherwise
      */
-    public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
+    public boolean canHitTargetFrom(int x, int y, int tx, int ty, int vertiRange, int leftRange, int rightRange) {
         int dx = tx > x ? tx - x : x - tx;
         int dy = ty > y ? ty - y : y - ty;
         //boolean power = this.board.isPowerTileAt(x, y);
-        boolean canhit = dx <= 1 && dy == 0;
-        canhit |= dx == 0 && dy <= 1;
+        boolean canhit = tx >= x && dx <= leftRange && dy == 0;
+        canhit |= tx==x && dy <= vertiRange;
+        canhit |= tx < x && dx <= rightRange && dy == 0;
+        //canhit |= power && dx == dy && dx <= 3;
+        return canhit;
+        /* TODO look over this again to make sure its right*/
+    }
+    public boolean canHitTargetFrom(float fx, float fy, float ftx, float fty, int x, int y, int tx, int ty) {
+        float dx = Math.abs(fx-ftx);
+        //boolean power = this.board.isPowerTileAt(x, y);
+        boolean canhit = dx <= 1.5 && y==ty;
+        canhit |= x==tx && Math.abs(ty-y)<=2;
         //canhit |= power && dx == dy && dx <= 3;
         return canhit;
         /* TODO look over this again to make sure its right*/

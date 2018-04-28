@@ -43,7 +43,9 @@ public class SlimeModel extends EnemyModel {
         this.slimeballSpeed = slimeballSpeed;
         this.state = state;
         this.previousState = previousState;
+
     }
+
 
     public boolean canHitTargetFrom(int x, int y, int tx, int ty) {
         return tx == x && Math.abs(ty - y) <= getAttackRange() || ty == y && Math.abs(tx - x) <= getAttackRange();

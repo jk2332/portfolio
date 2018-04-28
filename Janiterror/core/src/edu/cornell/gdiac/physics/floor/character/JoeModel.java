@@ -29,7 +29,7 @@ public class JoeModel extends CharacterModel {
 
     /** Whether we are actively swapping */
     private boolean isSwapping;
-    private boolean isAllSwapping;
+    private boolean isPrimarySwapping;
 
     //TODO rename?
     /** Whether we are looking at wep1 in cart */
@@ -50,6 +50,7 @@ public class JoeModel extends CharacterModel {
 
     /** Whether Joe is at the mop cart or not */
     private boolean atMopCart;
+    private int whichMopCart;
 
     /** Whether Joe is holding the lid weapon or not */
     private boolean hasLid;
@@ -145,8 +146,8 @@ public class JoeModel extends CharacterModel {
      *
      * @return true if Joe is actively swapping.
      */
-    public boolean isAllSwapping() {
-        return isAllSwapping ;
+    public boolean isPrimarySwapping() {
+        return isPrimarySwapping ;
     }
 
     /**
@@ -154,8 +155,8 @@ public class JoeModel extends CharacterModel {
      *
      * @param value whether the dude is actively swapping.
      */
-    public void setAllSwapping(boolean value) {
-        isAllSwapping = value;
+    public void setPrimarySwapping(boolean value) {
+        isPrimarySwapping = value;
     }
 
     /**
@@ -234,8 +235,9 @@ public class JoeModel extends CharacterModel {
      * Sets whether Joe is at the mop cart
      * @param value whether or not Joe is at the mop cart
      */
-    public void setAtMopCart(boolean value) {
+    public void setAtMopCart(boolean value, int which_mopcart) {
         atMopCart = value;
+        whichMopCart = which_mopcart;
     }
 
     /**
@@ -245,6 +247,10 @@ public class JoeModel extends CharacterModel {
     public boolean isAtMopCart( ) {
         return atMopCart;
     }
+    public int isAtWhichMopCart( ) {
+        return whichMopCart;
+    }
+        //returns index of current mopcart in mopcart list
 
     /**
      * Sets whether Joe is holding the lid weapon
@@ -288,7 +294,7 @@ public class JoeModel extends CharacterModel {
         super(x,y,width,height,"joe", hp,density,velocity,JOE_MAX_ATTACK_COOLDOWN);
 
         isSwapping = false;
-        isAllSwapping = false;
+        isPrimarySwapping = false;
         isUp = false;
         isDown = false;
         isRight = false;
@@ -298,6 +304,15 @@ public class JoeModel extends CharacterModel {
         hasLid = false;
         alive = true;
         isRed = false;
+    }
+    public float getX(){
+        if (!this.isAlive()) {assert false;}
+        return this.getBody().getWorldCenter().x;
+    }
+
+    public float getY(){
+        if (!this.isAlive()) {assert false;}
+        return this.getBody().getWorldCenter().y;
     }
 
     /**

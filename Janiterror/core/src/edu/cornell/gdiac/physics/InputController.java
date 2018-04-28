@@ -187,10 +187,7 @@ public class InputController {
 		return downArrowPressed && !downArrowPrevious;
 	}
 
-	public boolean didQKey() {
-//		System.out.println("q key pressed");
-		return qKeyPressed && !qKeyPrevious;
-	}
+	public boolean didQKey() { return qKeyPressed && !qKeyPrevious; }
 
 
 	/**

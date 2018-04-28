@@ -85,9 +85,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[2] = new FloorController(3);
 
 		//
-		//CHANGE LEVEL HERE
+		//CHANGE FIRST LEVEL LOADED HERE
 //		controllers[0] = new FloorController(1);
-		//CHANGE LEVEL HERE
+		//CHANGE FIRST LEVEL LOADED HERE
 		//
 
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -167,5 +167,4 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.app.exit();
 		}
 	}
-
 }
