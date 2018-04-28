@@ -105,6 +105,7 @@ public abstract class WorldController implements Screen {
     private static final String JANITOR_VACUUML_FILE  = "floor/janitor-attack-L-vacuum.png";
     private static final String JANITOR_VACUUMU_FILE  = "floor/janitor-attack-U-vacuum.png";
     private static final String JANITOR_VACUUMD_FILE  = "floor/janitor-attack-D-vacuum.png";
+	private static final String JANITOR_DEATH_FILE  = "floor/janitor-death.png";
 	/** The texture files for mad scientist */
 	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
 	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
@@ -231,6 +232,7 @@ public abstract class WorldController implements Screen {
     protected TextureRegion avatarVacuumLTexture;
     protected TextureRegion avatarVacuumUTexture;
     protected TextureRegion avatarVacuumDTexture;
+	protected TextureRegion avatarDeathTexture;
 	/** Texture assets for mad scientist */
 	protected TextureRegion scientistTexture;
 	protected TextureRegion scientistAttackRTexture;
@@ -412,6 +414,9 @@ public abstract class WorldController implements Screen {
         assets.add(JANITOR_VACUUMU_FILE);
         manager.load(JANITOR_VACUUMD_FILE, Texture.class);
         assets.add(JANITOR_VACUUMD_FILE);
+		manager.load(JANITOR_DEATH_FILE, Texture.class);
+		assets.add(JANITOR_DEATH_FILE);
+
 		manager.load(SCIENTIST_FILE, Texture.class);
 		assets.add(SCIENTIST_FILE);
 		manager.load(MAD_ATTACKR_FILE, Texture.class);
@@ -637,6 +642,8 @@ public abstract class WorldController implements Screen {
         avatarVacuumLTexture = createTexture(manager,JANITOR_VACUUML_FILE,false);
         avatarVacuumUTexture = createTexture(manager,JANITOR_VACUUMU_FILE,false);
         avatarVacuumDTexture = createTexture(manager,JANITOR_VACUUMD_FILE,false);
+		avatarDeathTexture = createTexture(manager,JANITOR_DEATH_FILE,false);
+
 		scientistAttackRTexture = createTexture(manager,MAD_ATTACKR_FILE,false);
 		scientistAttackLTexture = createTexture(manager,MAD_ATTACKL_FILE,false);
 		scientistAttackUTexture = createTexture(manager,MAD_ATTACKU_FILE,false);
