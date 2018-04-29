@@ -105,22 +105,12 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="9" type="slime" gid="22" x="610.936" y="319.48" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
   <object id="10" type="slime" gid="22" x="674.753" y="443.687" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
   <object id="11" type="slime" gid="22" x="323.273" y="446.33" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="17" name="lizard3" type="lizard" gid="25" x="286.009" y="1250.41" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
