@@ -120,11 +120,6 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="17" name="lizard3" type="lizard" gid="25" x="286.009" y="1250.41" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
   <object id="18" name="lizard3" type="lizard" gid="25" x="686.977" y="1252.13" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
