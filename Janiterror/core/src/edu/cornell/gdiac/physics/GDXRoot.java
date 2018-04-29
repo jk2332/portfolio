@@ -45,6 +45,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
 
+	private ScoreMode[] scores;
+
 	/**
 	 * Creates a new game from the configuration settings.
 	 *
@@ -90,8 +92,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		//CHANGE FIRST LEVEL LOADED HERE
 		//
 
+		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(manager);
+			scores[ii] = new ScoreMode(canvas);
+			//scores[ii].setScreenListener(this);
 		}
 		current = 0;
 		loading.setScreenListener(this);
@@ -105,10 +110,15 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void dispose() {
 		// Call dispose on our children
+		loading.dispose();
+		loading = null;
+
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].unloadContent(manager);
 			controllers[ii].dispose();
+
+			scores[ii].dispose();
 		}
 
 		canvas.dispose();
@@ -148,20 +158,30 @@ public class GDXRoot extends Game implements ScreenListener {
 				controllers[ii].loadContent(manager);
 				controllers[ii].setScreenListener(this);
 				controllers[ii].setCanvas(canvas);
+
+				scores[ii].setScreenListener(this);
 			}
 			controllers[current].reset();
 			setScreen(controllers[current]);
 			
-			loading.dispose();
-			loading = null;
-		} else if (exitCode == WorldController.EXIT_NEXT) {
-			current = (current+1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_PREV) {
+
+		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
+			System.out.println("load next score" + current);
+			scores[current].reset();
+			setScreen(scores[current]);
+		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_PREV) {
 			current = (current+controllers.length-1) % controllers.length;
 			controllers[current].reset();
 			setScreen(controllers[current]);
+		} else if (screen instanceof ScoreMode && exitCode == WorldController.EXIT_NEXT) {
+			current = (current+1) % controllers.length;
+
+			System.out.println("load next level" + current);
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		}  else if (screen instanceof ScoreMode && exitCode == 0) {
+			// main menu
+			setScreen(loading);
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
