@@ -23,8 +23,8 @@ public class AIController {
     private long ticks;
     private int wx = 0;
     private int wy = 0;
-    //private int patrolSeq;
-    //private PatrolPath patrolPath;
+    private int patrolSeq;
+    private PatrolPath patrolPath;
     private int TILE_SIZE = 1;
     //int horiRange;
     int vertiRange;
@@ -45,8 +45,8 @@ public class AIController {
         this.ticks = 0L;
         this.target = target;
         double tmp = Math.random();
-        //patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
-        //patrolSeq=0;
+        patrolPath = tmp <= 0.4d ? PatrolPath.SQUARE : (tmp <= 0.7d ? PatrolPath.HORIZONTAL : PatrolPath.VERTICAL);
+        patrolSeq=0;
         leftRange = rightRange = ship.getAttackRange();
         vertiRange = ship.getAttackRange()+1;
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
@@ -152,6 +152,7 @@ public class AIController {
                 }
                 break;
             case WANDER:
+
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
@@ -253,11 +254,69 @@ public class AIController {
                 setGoal = false;
                 break;
             case WANDER:
+                /**
                 if (ship.getPatrol()==null) break;
                  Vector2 tile = ship.getPatrol().get(indexPatrol);
                  indexPatrol++;
                  if (indexPatrol==ship.getPatrol().size()) indexPatrol=0;
-                 board.setGoal((int) tile.x, (int) tile.y);
+                 board.setGoal((int) tile.x, (int) tile.y);**/
+                if (patrolPath == PatrolPath.HORIZONTAL){
+                    if (this.patrolSeq<=2) {
+                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
+                                hasNoHazardBetw(sx, sy, sx-1, sy);
+                        patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
+                    }
+                    else {
+                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
+                                hasNoHazardBetw(sx, sy, sx+1, sy);
+                        if (patrolSeq==5) patrolSeq=0;
+                        else patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
+                    }
+                }
+                else if (patrolPath == PatrolPath.VERTICAL) {
+                    if (this.patrolSeq<=2){
+                        b = board.isSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
+                                hasNoHazardBetw(sx, sy, sx, sy+1);
+                        patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
+                    }
+                    else {
+                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
+                                hasNoHazardBetw(sx, sy, sx, sy-1);
+                        if (patrolSeq==5) patrolSeq=0;
+                        else patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
+                    }
+                }
+                else {
+                    if (this.patrolSeq < 1 || (patrolSeq>=7)){
+                        b = board.isSuperSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
+                                hasNoHazardBetw(sx, sy, sx, sy+1);
+                        if (patrolSeq==7) patrolSeq=0;
+                        else patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
+                    }
+                    else if (patrolSeq <=2) {
+                        b = board.isSuperSafeAt(sx-1, sy) && !board.isBlocked(sx-1, sy) &&
+                                hasNoHazardBetw(sx, sy, sx-1, sy);
+                        patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 0, 1); setGoal=true; break;}
+                    }
+                    else if (patrolSeq <=4){
+                        b = board.isSuperSafeAt(sx, sy-1) && !board.isBlocked(sx, sy-1) &&
+                                hasNoHazardBetw(sx, sy, sx, sy-1);
+                        patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 3, 1); setGoal=true; break;}
+                    }
+                    else if (patrolSeq <=6) {
+                        b = board.isSuperSafeAt(sx+1, sy) && !board.isBlocked(sx+1, sy) &&
+                                hasNoHazardBetw(sx, sy, sx+1, sy);
+                        patrolSeq++;
+                        if (b) {markGoalHelper(sx, sy, 1, 1); setGoal=true; break;}
+                    }
+                }
                  setGoal=true;
                 break;
             case CHASE:
