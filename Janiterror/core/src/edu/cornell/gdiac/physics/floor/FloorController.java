@@ -820,14 +820,18 @@ public class FloorController extends WorldController implements ContactListener 
         madRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+//        LONG SCIENTIST ANIMATIONS
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackRTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(scientistAttackRTexture,i*96 - 16,0,96,64));
+            // No clue why I subtract 16 from x but it looks like it works sort of
+
         }
         madAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackLTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(scientistAttackLTexture,i*96 - 16,0,96,64));
+            // No clue why I subtract 16 from x but it looks like it works sort of
         }
         madAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -839,7 +843,8 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackDTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(scientistAttackDTexture,i*64,-16,64,96));
+            // No clue why I subtract 16 from y but it looks like it works sort of
         }
         madAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1650,13 +1655,11 @@ public class FloorController extends WorldController implements ContactListener 
 
                 int action = this.controls[s.getId()].getAction();
                 if (s.getStunned()) {
-                    //System.out.println("stunned");
                     s.incrStunTicks();
                     if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
                 else if (s.getStunnedVacuum()) {
-                    //maybe need to create own vacuum stunned ticks
                     s.incrStunTicksVacuum();
                     if (s.getStunTicksVacuum()<=75) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false);}

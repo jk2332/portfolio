@@ -107,10 +107,15 @@ public abstract class WorldController implements Screen {
     private static final String JANITOR_VACUUMD_FILE  = "floor/janitor-attack-D-vacuum.png";
 	private static final String JANITOR_DEATH_FILE  = "floor/janitor-death.png";
 	/** The texture files for mad scientist */
-	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
-	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
+//	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
+//	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
+//	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
+//	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
+	private static final String MAD_ATTACKR_FILE  = "floor/enemy_long/mad-attack-side.png";
+	private static final String MAD_ATTACKL_FILE  = "floor/enemy_long/mad-attack-side-long-flip.png";
 	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
-	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
+	private static final String MAD_ATTACKD_FILE  = "floor/enemy_long/mad-attack-front-long.png";
+
 	private static final String MAD_WALKR_FILE  = "floor/mad-walk-side-v2.png";
 	private static final String MAD_WALKU_FILE  = "floor/mad-walk-back-v2.png";
 	private static final String MAD_WALKD_FILE  = "floor/mad-walk-front-v2.png";
