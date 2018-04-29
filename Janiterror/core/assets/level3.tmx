@@ -187,11 +187,6 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="33" type="scientist" gid="28" x="834.667" y="770.564" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
   <object id="34" type="scientist" gid="28" x="893.641" y="770.564" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
