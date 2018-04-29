@@ -277,7 +277,7 @@ public class AIController {
                 }
                 else if (patrolPath == PatrolPath.VERTICAL) {
                     if (this.patrolSeq<=2){
-                        b = board.isSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
+                        b = board.isSuperSafeAt(sx, sy+1) && !board.isBlocked(sx, sy+1) &&
                                 hasNoHazardBetw(sx, sy, sx, sy+1);
                         patrolSeq++;
                         if (b) {markGoalHelper(sx, sy, 2, 1); setGoal=true; break;}
