@@ -69,7 +69,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		canvas  = new GameCanvas();
-		loading = new LoadingMode(canvas,manager,1);
+		loading = new LoadingMode(canvas,manager,14);
 
 		/*
 		// Initialize the three game worlds

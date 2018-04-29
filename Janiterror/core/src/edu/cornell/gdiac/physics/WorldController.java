@@ -812,7 +812,8 @@ public abstract class WorldController implements Screen {
 	/** Exit code for jumping back to previous level */
 	public static final int EXIT_PREV = 2;
     /** How many frames after winning/losing do we continue? */
-	public static final int EXIT_COUNT = 120;
+	public static final int COMPLETE_EXIT_COUNT = 10;
+	public static final int FAILURE_EXIT_COUNT = 60;
 
 	/** The amount of time for a physics engine step. */
 	public static final float WORLD_STEP = 1/60.0f;
@@ -900,7 +901,7 @@ public abstract class WorldController implements Screen {
 	 */
 	public void setComplete(boolean value) {
 		if (value) {
-			countdown = EXIT_COUNT;
+			countdown = COMPLETE_EXIT_COUNT;
 		}
 		complete = value;
 	}
@@ -925,7 +926,7 @@ public abstract class WorldController implements Screen {
 	 */
 	public void setFailure(boolean value) {
 		if (value) {
-			countdown = EXIT_COUNT;
+			countdown = FAILURE_EXIT_COUNT;
 		}
 		failed = value;
 	}
