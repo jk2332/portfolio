@@ -1379,9 +1379,11 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setMovementY(0.0f);
             avatar.setVelocity();
             if (joeDeathTimer <= 0 ) {
-                System.out.println("deathtimerset");
+                //System.out.println("deathtimerset");
                 avatar.markRemoved(true);
-                setFailure(true);
+                if (!isFailure()) {
+                    setFailure(true);
+                }
             }
             else {
                 joeDeathTimer -= dt;
@@ -2542,7 +2544,7 @@ public class FloorController extends WorldController implements ContactListener 
     public StateJoe getStateJoe(){
 
         if (avatar.getHP() <= 0){
-            System.out.println("joedeath");
+            //System.out.println("joedeath");
             if (joeDeathTimer == 0) {
                 joeDeathTimer = DEATH_ANIMATION_TIME;
             }
