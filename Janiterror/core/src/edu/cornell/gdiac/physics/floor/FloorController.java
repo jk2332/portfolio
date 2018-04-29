@@ -198,7 +198,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float ATTACK_DURATION_SPRAY= 0.4f;
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.4f;
-    private static final float DEATH_ANIMATION_TIME = 0.8f;
+    private static final float DEATH_ANIMATION_TIME = 2f;
     /** The timer for animations*/
     private float stateTimer;
     private float stateTimerM;
@@ -799,7 +799,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 24; i++){
             frames.add (new TextureRegion(avatarDeathTexture,i*64,0,64,64));
         }
-        joeDeath = new Animation<TextureRegion>(0.05f, frames);
+        joeDeath = new Animation<TextureRegion>(0.075f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
@@ -1380,7 +1380,6 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setVelocity();
             if (joeDeathTimer <= 0 ) {
                 //System.out.println("deathtimerset");
-                avatar.markRemoved(true);
                 if (!isFailure()) {
                     setFailure(true);
                 }
@@ -1391,8 +1390,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         }
         else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()) - 1) &&
-                ticks % 30==0L){ //adjust this later
-            //-1 so that it deals if your feet are on the tile but not your head
+                ticks % 30==0L) { //adjust this later
+            //-1 on Y so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
 //            avatar.setRed(true); //this might cause some bugs because of below else statement
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
@@ -1656,17 +1655,18 @@ public class FloorController extends WorldController implements ContactListener 
                     if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
+                else if (s.getStunnedVacuum()) {
+                    //maybe need to create own vacuum stunned ticks
+                    s.incrStunTicksVacuum();
+                    if (s.getStunTicksVacuum()<=75) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
+                    else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false);}
+                }
 
                 performAction(s, action);
-                if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY()))
+                if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY() - 1))
                         && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
-                    //System.out.println("Enemy is on a hazard tile");
+                    //-1 so if they step feet on it they lose health
                     s.decrHP();
-
-//                if (s.getHP() <= 0) {
-//                    controls[s.getId()]=null;
-//                    s.markRemoved(true);
-//                }
                 }
             }
 
@@ -1675,8 +1675,8 @@ public class FloorController extends WorldController implements ContactListener 
     private void clearEnemy (float dt) {
         for (EnemyModel s : enemies) {
             if (s.getHP() <= 0 && deathTimer <= 0) {
-                s.markRemoved(true);
                 deathTimer = DEATH_ANIMATION_TIME;
+                s.markRemoved(true);
             } else if (s.getHP() <= 0 && deathTimer > 0) {
                 deathTimer -= dt;
             }
@@ -1728,10 +1728,17 @@ public class FloorController extends WorldController implements ContactListener 
                 if (!(s instanceof SlimeModel) && !(s instanceof TurretModel)) {
                     //only do this for melee enemies
                     //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
-                    if (s.getAttackAnimationFrame()==0 && avatar.isAlive()) {
+                    if (s.getAttackAnimationFrame()==0 && avatar.isAlive() && avatar.getHP() > 1) {
                         gotHit=ticks;
                         avatar.decrHP();
                         avatar.setRed(true);
+                        SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
+                    }
+                    else if (s.getAttackAnimationFrame()==0 && avatar.isAlive() && avatar.getHP() <= 1) {
+                        //don't set red on last shot
+                        gotHit=ticks;
+                        avatar.decrHP();
+                        avatar.setRed(false);
                         SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                     }
                 }
@@ -2164,26 +2171,25 @@ public class FloorController extends WorldController implements ContactListener 
                                 knockbackForce.set(30f, 0f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
-                                s.setStunned(true);
-
+                                s.setStunnedVacuum(true);
                             }
                             if ((case2)) {
                                 knockbackForce.set(-30f, 0f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
-                                s.setStunned(true);
+                                s.setStunnedVacuum(true);
                             }
                             if ((case3)) {
                                 knockbackForce.set(0f, 30f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
-                                s.setStunned(true);
+                                s.setStunnedVacuum(true);
                             }
                             if ((case4)) {
                                 knockbackForce.set(0f, -30f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
-                                s.setStunned(true);
+                                s.setStunnedVacuum(true);
                             }
                         }
                     }
@@ -2273,11 +2279,11 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd1.getName().equals("slimeball") && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
                     gotHit=ticks;
+                    if (avatar.getHP() <= 1) { avatar.setRed(false); } //don't be red when dying
+                    else { avatar.setRed(true); }
                     avatar.decrHP();
-                    avatar.setRed(true);
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
-
                 }
             } else if (bd1.getName().equals("slimeball") && bd2.getName() == "mopCart") {
                 //maybe combine this in below if statement, be careful of order or might break
@@ -2289,9 +2295,10 @@ public class FloorController extends WorldController implements ContactListener 
             if (bd2.getName().equals("slimeball") && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
                     gotHit = ticks;
-                    removeBullet(bd2);
-                    avatar.setRed(true);
+                    if (avatar.getHP() <= 1) { avatar.setRed(false); } //don't be red when dying
+                    else { avatar.setRed(true); }
                     avatar.decrHP();
+                    removeBullet(bd2);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
             } else if (bd2.getName().equals("slimeball") && bd1.getName() == "mopCart") {
@@ -2853,7 +2860,7 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateMad.DEATH;
         }
-        else if (s.getStunned() == true) {
+        else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateMad.STUN;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
@@ -2945,7 +2952,7 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateRobot.DEATH;
         }
-        else if (s.getStunned() == true) {
+        else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateRobot.STUN;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
@@ -3034,7 +3041,7 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateSlime.DEATH;
         }
-        else if (s.getStunned() == true) {
+        else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateSlime.STUN;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
@@ -3127,7 +3134,7 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateTurret.DEATH;
         }
-        else if (s.getStunned() == true) {
+        else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateTurret.STUN;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
@@ -3219,7 +3226,7 @@ public class FloorController extends WorldController implements ContactListener 
             controls[s.getId()]=null;
             return StateLizard.DEATH;
         }
-        else if (s.getStunned() == true) {
+        else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateLizard.STUN;
         }
         else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&

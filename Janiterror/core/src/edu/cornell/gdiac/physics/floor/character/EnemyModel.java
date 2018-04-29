@@ -19,7 +19,9 @@ public class EnemyModel extends CharacterModel {
 
     private int id;
     private long stunTicks;
+    private long stunTicksVacuum;
     private boolean stunned;
+    private boolean stunnedVacuum;
     private int knockbackTimer;
     private int attackAnimationFrame;
     private int maxAniFrame;
@@ -65,7 +67,9 @@ public class EnemyModel extends CharacterModel {
 
         this.attackRange = attackRange;
         this.stunTicks=0;
+        this.stunTicksVacuum=0;
         this.stunned=false;
+        this.stunnedVacuum=false;
         this.attackAnimationFrame=0;
         this.maxAniFrame=maxAniFrame;
         this.knockbackTimer = 0;
@@ -87,22 +91,18 @@ public class EnemyModel extends CharacterModel {
     public boolean getStunned(){
         return this.stunned;
     }
+    public void resetStunTicks(){ stunTicks=0; }
+    public void setStunned(boolean b){ this.stunned=b; }
+    public void incrStunTicks(){ if (this.stunned) stunTicks++; }
+    public long getStunTicks(){ return this.stunTicks; }
 
-    public void resetStunTicks(){
-        stunTicks=0;
-    }
+    public boolean getStunnedVacuum(){ return this.stunnedVacuum; }
+    public void resetStunTicksVacuum(){ stunTicksVacuum=0; }
+    public void setStunnedVacuum(boolean b){this.stunnedVacuum = b;}
+    public void incrStunTicksVacuum(){ if (this.stunnedVacuum) stunTicksVacuum++; }
+    public long getStunTicksVacuum(){ return this.stunTicksVacuum; }
 
-    public void setStunned(boolean b){
-        this.stunned=b;
-    }
 
-    public void incrStunTicks(){
-        if (this.stunned) stunTicks++;
-    }
-
-    public long getStunTicks(){
-        return this.stunTicks;
-    }
 
     public void setKnockbackTimer(int knockbackTimer) {
         this.knockbackTimer = knockbackTimer;
