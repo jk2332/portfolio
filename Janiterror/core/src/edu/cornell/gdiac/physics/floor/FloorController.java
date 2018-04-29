@@ -1366,7 +1366,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
-
+        System.out.println(avatar.getHasLid());
         if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
             avatar.setRed(false);
             gotHit = -1;
@@ -2093,10 +2093,10 @@ public class FloorController extends WorldController implements ContactListener 
                     if (!s.isRemoved()) {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
-                        boolean case1 = Math.abs(horiGap) <= spray.getRange() && horiGap >= 0 && !avatar.isFacingRight() && Math.abs(vertiGap)<= 1;
-                        boolean case2 = Math.abs(horiGap) <= spray.getRange() && horiGap <= 0 && avatar.isFacingRight() && Math.abs(vertiGap)<= 1;
-                        boolean case3 = Math.abs(vertiGap) <= spray.getRange() && vertiGap >= 0 && !avatar.isFacingUp() && Math.abs(horiGap)<= 1;
-                        boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isFacingUp() && Math.abs(horiGap)<= 1;
+                        boolean case1 = Math.abs(horiGap) <= spray.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap)<= 1;
+                        boolean case2 = Math.abs(horiGap) <= spray.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap)<= 1;
+                        boolean case3 = Math.abs(vertiGap) <= spray.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap)<= 1;
+                        boolean case4 = Math.abs(vertiGap) <= spray.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 
                         if (!s.isRemoved() && (case1 || case2 || case3 || case4)) {
                             if (s instanceof RobotModel){
@@ -2187,14 +2187,13 @@ public class FloorController extends WorldController implements ContactListener 
                 SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
                 lid.decrDurability();
             }
-            if (lid.getDurability() > 0 && avatar.getHasLid()) {
-                lid.decrDurability();
-//               avatar.setHasLid(false);
-                createBullet(avatar);
-            }
-            else {
-                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
-            }
+//            if (lid.getDurability() > 0 && avatar.getHasLid()) {
+//                System.out.println("create bullet");
+//
+//            }
+//            else {
+////                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
+//            }
         }
     }
 
@@ -2597,8 +2596,11 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getWep1().durability >= 0 && avatar.getHasLid())){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
+                avatar.getWep1().decrDurability();
+                createBullet(avatar);
+                avatar.setHasLid(false);
             }
-            avatar.setHasLid(false);
+
             return StateJoe.LIDR;
         }
         else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
@@ -2610,24 +2612,30 @@ public class FloorController extends WorldController implements ContactListener 
                         && avatar.getHasLid())){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
+                avatar.getWep1().decrDurability();
+                createBullet(avatar);
+                avatar.setHasLid(false);
             }
-            avatar.setHasLid(false);
             return StateJoe.LIDL;
         }
         else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
+                avatar.getWep1().decrDurability();
+                createBullet(avatar);
+                avatar.setHasLid(false);
             }
-            avatar.setHasLid(false);
             return StateJoe.LIDU;
         }
         else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
                 && avatar.getWep1().durability >= 0 && avatar.getHasLid()){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
+                avatar.getWep1().decrDurability();
+                createBullet(avatar);
+                avatar.setHasLid(false);
             }
-            avatar.setHasLid(false);
             return StateJoe.LIDD;
         }
         else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
