@@ -32,6 +32,7 @@ public class AIController {
     int rightRange;
     int indexTile;
     int indexPatrol;
+    EnemyModel[] fleet;
     //int indexArray;
     //ArrayList<Vector2> patrol;
 
@@ -41,6 +42,7 @@ public class AIController {
         this.ship =  (EnemyModel) Array.get(ships, id);
         this.board = board;
         this.state = FSMState.SPAWN;
+        this.fleet=ships;
         this.move = 0;
         this.ticks = 0L;
         this.target = target;
@@ -73,7 +75,15 @@ public class AIController {
                 rightRange++;
             }
             this.changeStateIfApplicable();
+            for (EnemyModel s: fleet){
+                if (!s.isRemoved()) {
+                    int sx = board.screenToBoardX(s.getX());
+                    int sy = board.screenToBoardY(s.getY());
+                    if (s != ship) board.setStanding(sx, sy);
+                }
+            }
             this.markGoalTiles();
+            board.resetStanding();
             this.move = this.getMoveAlongPathToGoalTile();
         }
         int action = this.move;

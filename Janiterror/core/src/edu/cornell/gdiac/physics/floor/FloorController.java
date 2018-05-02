@@ -23,6 +23,7 @@ import edu.cornell.gdiac.physics.floor.character.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Gameplay specific controller for the platformer game.
@@ -1398,6 +1399,8 @@ public class FloorController extends WorldController implements ContactListener 
                 ticks % 30==0L) { //adjust this later
             //-1 on Y so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
+            gotHit = ticks;
+            avatar.setRed(true);
 //            avatar.setRed(true); //this might cause some bugs because of below else statement
             SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
         }
@@ -1650,10 +1653,12 @@ public class FloorController extends WorldController implements ContactListener 
      * Update function for enemies
      */
     private void enemyUpdate() {
+        //HashSet<Vector2> hs = new HashSet<Vector2>();
         for (EnemyModel s : enemies) {
             if (this.controls[s.getId()] != null) {
-
+                //hs.add(new Vector2(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY())));
                 int action = this.controls[s.getId()].getAction();
+                //board.setStanding(board.getGoal().x, board.getGoal().y);
                 if (s.getStunned()) {
                     s.incrStunTicks();
                     if (s.getStunTicks()<=150) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
@@ -1670,9 +1675,9 @@ public class FloorController extends WorldController implements ContactListener 
                         && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                     //-1 so if they step feet on it they lose health
                     s.decrHP();
+                    if (s.getHP()<0) {controls[s.getId()]=null;}
                 }
             }
-
         }
     }
     private void clearEnemy (float dt) {
@@ -1995,6 +2000,7 @@ public class FloorController extends WorldController implements ContactListener 
             lid.markRemoved(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
+            if (enemy.getHP()<0) {controls[enemy.getId()]=null;}
             //System.out.println("was lidded");
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
             enemy.applyImpulse(knockbackForce);
@@ -2077,6 +2083,7 @@ public class FloorController extends WorldController implements ContactListener 
 //                        } else {
                             //System.out.println("was mopped");
                             s.decrHP();
+                            if (s.getHP()<0) {controls[s.getId()]=null;}
 //                        }
                             knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
                             //knockbackForce.nor();
@@ -2118,6 +2125,7 @@ public class FloorController extends WorldController implements ContactListener 
                                 System.out.println("was robot");
                                 s.setStunned(true);
                                 s.decrHP();
+                                if (s.getHP()<0) {controls[s.getId()]=null;}
                             } else {
                                 s.setStunned(true);
                             }
