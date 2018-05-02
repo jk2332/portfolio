@@ -412,6 +412,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
+        LEVEL = "level3.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1792,10 +1793,10 @@ public class FloorController extends WorldController implements ContactListener 
             //System.out.println("shoot1");
             s.incrAttackAniFrame();
 
-            if (s.getAttackAnimationFrame()==1 && avatar.isAlive()) {
+            if (s.getAttackAnimationFrame()==((TurretModel) s).getDelay() && avatar.isAlive()) {
                 createBullet2((TurretModel)s);
             }
-            if (s.getAttackAnimationFrame()==((TurretModel) s).getDelay() && avatar.isAlive()){
+            if (s.getAttackAnimationFrame()==5 && avatar.isAlive()){
                 s.resetAttackAniFrame();
             }
         }
