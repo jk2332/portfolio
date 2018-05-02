@@ -28,6 +28,7 @@ public class EnemyModel extends CharacterModel {
     private float stateTimer;
     private int attackRange;
     private Board board;
+    private boolean attacked;
     ArrayList<Vector2> patrol = null;
 
 
@@ -70,6 +71,7 @@ public class EnemyModel extends CharacterModel {
         this.stunTicksVacuum=0;
         this.stunned=false;
         this.stunnedVacuum=false;
+        this.attacked = false;
         this.attackAnimationFrame=0;
         this.maxAniFrame=maxAniFrame;
         this.knockbackTimer = 0;
@@ -91,8 +93,12 @@ public class EnemyModel extends CharacterModel {
     public boolean getStunned(){
         return this.stunned;
     }
+    public boolean getAttacked(){
+        return this.attacked;
+    }
     public void resetStunTicks(){ stunTicks=0; }
     public void setStunned(boolean b){ this.stunned=b; }
+    public void setAttacked(boolean b){ this.attacked=b; }
     public void incrStunTicks(){ if (this.stunned) stunTicks++; }
     public long getStunTicks(){ return this.stunTicks; }
 
