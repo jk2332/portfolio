@@ -134,7 +134,6 @@ public class LevelEditorParser {
             if (hazardgid == 0) {
                 hazardgid = 1000;
             }
-
             if (tilegid == 0) {
                 tilegid = 1000;
             }
@@ -143,6 +142,15 @@ public class LevelEditorParser {
             }
             if (wallhgid == 0) {
                 wallhgid = 1000;
+            }
+            if (computergid == 0) {
+                computergid = 1000;
+            }
+            if (plantgid == 0) {
+                plantgid = 1000;
+            }
+            if (beakergid == 0) {
+                beakergid = 1000;
             }
         }
         tiles = layerToList(layers.get(0));
@@ -167,20 +175,6 @@ public class LevelEditorParser {
 
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),bh - goalDoorElement.getFloatAttribute("y"));
-        Array<Element> extraElement = objects.get(4).getChildrenByName("object");
-        for (int i = 0; i < extraElement.size; i++) {
-            Element extra = extraElement.get(i);
-            int gid = extra.getIntAttribute("gid");
-            float x = extra.getFloatAttribute("x");
-            float y = bh - extra.getFloatAttribute("y");
-            if (gid == beakergid) {
-                beakerPos.add(new Vector2(x,y));
-            } else if (gid == computergid) {
-                computerPos.add(new Vector2(x,y));
-            } else if (gid == plantgid) {
-                plantPos.add(new Vector2(x,y));
-            }
-        }
 
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
         for (int i = 0; i < charactersElement.size; i++) {
@@ -330,8 +324,23 @@ public class LevelEditorParser {
         }
 
         int[][] horiWalls = layerToList(layers.get(1));
-        int[][] vertiWalls = layerToList(layers.get(2));
-        int [][] hazardTiles = layerToList(layers.get(3));
+        int[][] vertiWalls = layerToList(layers.get(3));
+        int [][] hazardTiles = layerToList(layers.get(4));
+
+        int [][] extraTiles = layerToList(layers.get(2));
+
+        for (int i = 0; i < extraTiles.length; i++) {
+            for (int j = 0; j < extraTiles[0].length; j++) {
+                if (extraTiles[i][j] == computergid) {
+                    computerPos.add(new Vector2(j, i));
+                } else if (extraTiles[i][j] == beakergid) {
+                    beakerPos.add(new Vector2(j, i));
+                } else if (extraTiles[i][j] == plantgid) {
+                    plantPos.add(new Vector2(j, i));
+                }
+            }
+        }
+
 
         for (int i = 0; i < vertiWalls.length; i++) {
             for (int j = 0; j < vertiWalls[0].length; j++) {
