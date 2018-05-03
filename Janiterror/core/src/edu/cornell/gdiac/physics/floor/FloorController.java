@@ -2192,24 +2192,28 @@ public class FloorController extends WorldController implements ContactListener 
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
                                 s.setStunnedVacuum(true);
+                                s.setAttacked(true);
                             }
                             if ((case2)&& s.getAttacked() == false) {
                                 knockbackForce.set(-30f, 0f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
                                 s.setStunnedVacuum(true);
+                                s.setAttacked(true);
                             }
                             if ((case3)&& s.getAttacked() == false) {
                                 knockbackForce.set(0f, 30f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
                                 s.setStunnedVacuum(true);
+                                s.setAttacked(true);
                             }
                             if ((case4)&& s.getAttacked() == false) {
                                 knockbackForce.set(0f, -30f);
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
                                 s.setStunnedVacuum(true);
+                                s.setAttacked(true);
                             }
                         }
                     }
