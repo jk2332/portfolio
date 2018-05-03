@@ -255,6 +255,9 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallERPos;
     ArrayList<Vector2> hazardPos;
     ArrayList<Vector2> specialHealthPos;
+    ArrayList<Vector2> plantPos;
+    ArrayList<Vector2> computerPos;
+    ArrayList<Vector2> beakerPos;
 
     ArrayList<Vector2> mopCartPos;
     ArrayList<Boolean> mopCartVisitedBefore;
@@ -445,6 +448,10 @@ public class FloorController extends WorldController implements ContactListener 
         wallELPos = level.getWallELPos();
         wallERPos = level.getWallERPos();
 
+        computerPos = level.getComputerPos();
+        plantPos = level.getPlantPos();
+        beakerPos = level.getBeakerPos();
+
         hazardPos = level.getHazardPos();
         specialHealthPos = level.getSpecialHealthPos();
         mopCartPos = level.getMopCartPos();
@@ -558,19 +565,6 @@ public class FloorController extends WorldController implements ContactListener 
         // Add special elements (power ups)
         float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
         float specialHealthHeight = specialHealthTile.getRegionHeight()/scale.y;
-        for (int ii=0; ii<specialHealthPos.size(); ii++) {
-            Vector2 vec = specialHealthPos.get(ii);
-            specialHealth = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialHealthWidth, specialHealthHeight);
-            specialHealth.setBodyType(BodyDef.BodyType.StaticBody);
-            specialHealth.setDensity(0.0f);
-            specialHealth.setFriction(0.0f);
-            specialHealth.setRestitution(0.0f);
-            specialHealth.setSensor(true);
-            specialHealth.setDrawScale(scale);
-            specialHealth.setTexture(specialHealthTile);
-            specialHealth.setName("specialHealth");
-            addObject(specialHealth);
-        }
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -581,6 +575,51 @@ public class FloorController extends WorldController implements ContactListener 
         setHazardTiles();
         addUIInfo();
         addWalls();
+
+        for (int ii=0; ii<plantPos.size(); ii++) {
+            Vector2 vec = plantPos.get(ii);
+            BoxObstacle plant = new BoxObstacle(vec.x/32+0.5f, vec.y/32+0.5f,mopwidth/2,mopheight/2);
+            plant.setBodyType(BodyDef.BodyType.StaticBody);
+            plant.setDensity(ii);
+            //save the index of the mop cart for checking specific mop carts
+            plant.setFriction(0.0f);
+            plant.setRestitution(0.0f);
+            plant.setSensor(true);
+            plant.setDrawScale(scale);
+            plant.setTexture(plantTile);
+            plant.setName("plant");
+            addObject(plant);
+        }
+
+        for (int ii=0; ii<computerPos.size(); ii++) {
+            Vector2 vec = computerPos.get(ii);
+            BoxObstacle computer = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
+            computer.setBodyType(BodyDef.BodyType.StaticBody);
+            computer.setDensity(ii);
+            //save the index of the mop cart for checking specific mop carts
+            computer.setFriction(0.0f);
+            computer.setRestitution(0.0f);
+            computer.setSensor(true);
+            computer.setDrawScale(scale);
+            computer.setTexture(computerTile);
+            computer.setName("computer");
+            addObject(computer);
+        }
+
+        for (int ii=0; ii<beakerPos.size(); ii++) {
+            Vector2 vec = beakerPos.get(ii);
+            BoxObstacle beaker = new BoxObstacle(vec.x/32+0.5f, vec.y/32+0.5f,mopwidth/2,mopheight/2);
+            beaker.setBodyType(BodyDef.BodyType.StaticBody);
+            beaker.setDensity(ii);
+            //save the index of the mop cart for checking specific mop carts
+            beaker.setFriction(0.0f);
+            beaker.setRestitution(0.0f);
+            beaker.setSensor(true);
+            beaker.setDrawScale(scale);
+            beaker.setTexture(beakerTile);
+            beaker.setName("beaker");
+            addObject(beaker);
+        }
         addCharacters();
     }
 

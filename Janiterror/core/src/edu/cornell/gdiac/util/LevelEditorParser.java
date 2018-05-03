@@ -46,6 +46,10 @@ public class LevelEditorParser {
     private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
 
+    private ArrayList<Vector2> beakerPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> plantPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> computerPos = new ArrayList<Vector2>();
+
    /* private int robotAttackRange;
     private float robotDensity;
     private int robotHP;
@@ -90,6 +94,9 @@ public class LevelEditorParser {
     private int wallhgid;
     private int tilegid;
     private int hazardgid;
+    private int beakergid;
+    private int computergid;
+    private int plantgid;
 
     private int boardWidth;
     private int boardHeight;
@@ -114,6 +121,12 @@ public class LevelEditorParser {
                 tilegid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("hazard.tsx")) {
                 hazardgid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("beaker-table.tsx")) {
+                beakergid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("computer.tsx")) {
+                computergid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("plant.tsx")) {
+                plantgid = ts.getIntAttribute("firstgid");
             }
             if (hazardgid == 0) {
                 hazardgid = 1000;
@@ -151,6 +164,21 @@ public class LevelEditorParser {
 
         Element goalDoorElement = objects.get(1).getChild(0);
         goalDoorPos = new Vector2(goalDoorElement.getFloatAttribute("x"),bh - goalDoorElement.getFloatAttribute("y"));
+        Array<Element> extraElement = objects.get(4).getChildrenByName("object");
+        for (int i = 0; i < extraElement.size; i++) {
+            Element extra = extraElement.get(i);
+            int gid = extra.getIntAttribute("gid");
+            float x = extra.getFloatAttribute("x");
+            float y = bh - extra.getFloatAttribute("y");
+            if (gid == beakergid) {
+                beakerPos.add(new Vector2(x,y));
+            } else if (gid == computergid) {
+                computerPos.add(new Vector2(x,y));
+            } else if (gid == plantgid) {
+                plantPos.add(new Vector2(x,y));
+            }
+        }
+
         Array<Element> charactersElement = objects.get(2).getChildrenByName("object");
         for (int i = 0; i < charactersElement.size; i++) {
             Element character = charactersElement.get(i);
@@ -622,5 +650,17 @@ public class LevelEditorParser {
     }
     public ArrayList<ArrayList<Vector2>> getSlimeTurretPatrol() {
         return slimeTurretPatrol;
+    }
+
+    public ArrayList<Vector2> getBeakerPos() {
+        return beakerPos;
+    }
+
+    public ArrayList<Vector2> getComputerPos() {
+        return computerPos;
+    }
+
+    public ArrayList<Vector2> getPlantPos() {
+        return plantPos;
     }
 }

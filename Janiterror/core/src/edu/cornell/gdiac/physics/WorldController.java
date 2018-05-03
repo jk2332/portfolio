@@ -173,6 +173,10 @@ public abstract class WorldController implements Screen {
 	private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
 	private static final String LID_FILE  = "floor/ui-lid.png";
 
+	private static final String BEAKER_FILE = "shared/beaker-table.png";
+	private static final String COMPUTER_FILE = "shared/computer.png";
+	private static final String PLANT_FILE = "shared/plant.png";
+
 	/** The texture files for the UI icons */
 	private static final String HEALTH_BAR_FILE  = "floor/ui-bar-health.png";
 	private static final String HEALTH_BAR_FILE2  = "floor/ui-bar-health-upgrade1.png";
@@ -334,6 +338,10 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion specialHealthTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
+
+	protected TextureRegion beakerTile;
+	protected TextureRegion computerTile;
+	protected TextureRegion plantTile;
 
 	/**
 	 * Preloads the assets for this controller.
@@ -578,6 +586,13 @@ public abstract class WorldController implements Screen {
 		manager.load(HAZARD_TILE_FILE, Texture.class);
 		assets.add(HAZARD_TILE_FILE);
 
+		manager.load(BEAKER_FILE, Texture.class);
+		assets.add(BEAKER_FILE);
+		manager.load(COMPUTER_FILE, Texture.class);
+		assets.add(COMPUTER_FILE);
+		manager.load(PLANT_FILE, Texture.class);
+		assets.add(PLANT_FILE);
+
 		manager.load(GOAL_FILE,Texture.class);
 		assets.add(GOAL_FILE);
 		manager.load(MOP_CART_FILE,Texture.class);
@@ -700,6 +715,9 @@ public abstract class WorldController implements Screen {
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
+		beakerTile = createTexture(manager,BEAKER_FILE,false);
+		computerTile = createTexture(manager,COMPUTER_FILE,false);
+		plantTile = createTexture(manager,PLANT_FILE,false);
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);
 		sprayTexture = new Texture(SPRAY_FILE);
