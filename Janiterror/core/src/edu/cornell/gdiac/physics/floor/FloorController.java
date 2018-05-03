@@ -2002,7 +2002,7 @@ public class FloorController extends WorldController implements ContactListener 
             lid.markRemoved(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
-            if (enemy.getHP()<0) {controls[enemy.getId()]=null;}
+            //if (enemy.getHP()<0) {controls[enemy.getId()]=null;}
             //System.out.println("was lidded");
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
             enemy.applyImpulse(knockbackForce);
