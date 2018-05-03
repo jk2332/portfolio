@@ -412,7 +412,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        LEVEL = "level3.tmx";
+        LEVEL = "level2.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1151,7 +1151,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii< slimeTurretPos.size(); ii++){
             String sdirec = slimeTurretDirections.get(ii);
             int direc = sdirec.equals("auto") ? 0 : (sdirec.equals("left") ? 1 : (sdirec.equals("right") ? 2 :
-                    (sdirec.equals("up") ? 2 : (sdirec.equals("down") ? 3 : -1))));
+                    (sdirec.equals("up") ? 3 : (sdirec.equals("down") ? 4 : -1))));
             EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
                     StateTurret.STANDING,StateTurret.STANDING, direc, slimeTurretDelays.get(ii), CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
