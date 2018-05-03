@@ -45,6 +45,9 @@ public class LevelEditorParser {
     private ArrayList<Vector2> mopCartPos = new ArrayList<Vector2>();
     private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
+//    private ArrayList<Vector2> specialDurabilityPos = new ArrayList<Vector2>();
+//    private ArrayList<Vector2> specialDamagePos = new ArrayList<Vector2>();
+//    private ArrayList<Vector2> specialSpeedPos = new ArrayList<Vector2>();
 
     private ArrayList<Vector2> beakerPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> plantPos = new ArrayList<Vector2>();

@@ -107,10 +107,15 @@ public abstract class WorldController implements Screen {
     private static final String JANITOR_VACUUMD_FILE  = "floor/janitor-attack-D-vacuum.png";
 	private static final String JANITOR_DEATH_FILE  = "floor/janitor-death.png";
 	/** The texture files for mad scientist */
-	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
-	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
+//	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
+//	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
+//	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
+//	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
+	private static final String MAD_ATTACKR_FILE  = "floor/enemy_long/mad-attack-side.png";
+	private static final String MAD_ATTACKL_FILE  = "floor/enemy_long/mad-attack-side-long-flip.png";
 	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
-	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
+	private static final String MAD_ATTACKD_FILE  = "floor/enemy_long/mad-attack-front-long.png";
+
 	private static final String MAD_WALKR_FILE  = "floor/mad-walk-side-v2.png";
 	private static final String MAD_WALKU_FILE  = "floor/mad-walk-back-v2.png";
 	private static final String MAD_WALKD_FILE  = "floor/mad-walk-front-v2.png";
@@ -342,6 +347,10 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion beakerTile;
 	protected TextureRegion computerTile;
 	protected TextureRegion plantTile;
+
+	/** Camera coordinates to draw Victory or Failure */
+	protected float cameraX;
+	protected float cameraY;
 
 	/**
 	 * Preloads the assets for this controller.
@@ -925,12 +934,22 @@ public abstract class WorldController implements Screen {
 	}
 
 	/**
-	 * Returns true if the level is failed.
-	 *
-	 * If true, the level will reset after a countdown
-	 *
-	 * @return true if the level is failed.
-	 */
+	 * Set Camera Value for Failure
+	 * */
+	public void setCameraX(float value) {
+		cameraX = value;
+	}
+	public void setCameraY(float value) {
+		cameraY = value;
+	}
+
+		/**
+         * Returns true if the level is failed.
+         *
+         * If true, the level will reset after a countdown
+         *
+         * @return true if the level is failed.
+         */
 	public boolean isFailure( ) {
 		return failed;
 	}
@@ -1218,12 +1237,17 @@ public abstract class WorldController implements Screen {
 		if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
+			canvas.drawText("VICTORY!", displayFont, cameraX - 80, cameraY + 20);
+//			canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+			System.out.println("drawing");
+			System.out.println(cameraX);
+			System.out.println(cameraY);
+			canvas.drawText("FAILURE!", displayFont, cameraX - 100, cameraY + 20);
+//			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
 			canvas.end();
 		}
 	}
