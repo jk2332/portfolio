@@ -582,10 +582,6 @@ public class FloorController extends WorldController implements ContactListener 
             BoxObstacle plant = new BoxObstacle(vec.x/32+0.5f, vec.y/32+0.5f,mopwidth/2,mopheight/2);
             plant.setBodyType(BodyDef.BodyType.StaticBody);
             plant.setDensity(ii);
-            //save the index of the mop cart for checking specific mop carts
-            plant.setFriction(0.0f);
-            plant.setRestitution(0.0f);
-            plant.setSensor(true);
             plant.setDrawScale(scale);
             plant.setTexture(plantTile);
             plant.setName("plant");
@@ -597,10 +593,6 @@ public class FloorController extends WorldController implements ContactListener 
             BoxObstacle computer = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
             computer.setBodyType(BodyDef.BodyType.StaticBody);
             computer.setDensity(ii);
-            //save the index of the mop cart for checking specific mop carts
-            computer.setFriction(0.0f);
-            computer.setRestitution(0.0f);
-            computer.setSensor(true);
             computer.setDrawScale(scale);
             computer.setTexture(computerTile);
             computer.setName("computer");
@@ -612,10 +604,6 @@ public class FloorController extends WorldController implements ContactListener 
             BoxObstacle beaker = new BoxObstacle(vec.x/32+0.5f, vec.y/32+0.5f,mopwidth/2,mopheight/2);
             beaker.setBodyType(BodyDef.BodyType.StaticBody);
             beaker.setDensity(ii);
-            //save the index of the mop cart for checking specific mop carts
-            beaker.setFriction(0.0f);
-            beaker.setRestitution(0.0f);
-            beaker.setSensor(true);
             beaker.setDrawScale(scale);
             beaker.setTexture(beakerTile);
             beaker.setName("beaker");
