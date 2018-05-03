@@ -2095,13 +2095,13 @@ public class FloorController extends WorldController implements ContactListener 
 //                        boolean case3 = Math.abs(vertiGap)<= mop.getRange() && vertiGap>=0 && avatar.isDown() && Math.abs(horiGap)<= 1;
 //                        boolean case4 = Math.abs(vertiGap)<= mop.getRange() && vertiGap<=0 && avatar.isUp() && Math.abs(horiGap)<= 1;
 //
-                        boolean case1 = avatar.isLeft() && avatar.getX() >= s.getX() && avatar.getX() - s.getX() <= 2.5f &&
+                        boolean case1 = avatar.isLeft() && avatar.getX() >= s.getX() && avatar.getX() - s.getX() <= 3f &&
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
-                        boolean case2 = avatar.isRight() && avatar.getX() <= s.getX() && s.getX() - avatar.getX() <= 2.5f &&
+                        boolean case2 = avatar.isRight() && avatar.getX() <= s.getX() && s.getX() - avatar.getX() <= 3f &&
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
-                        boolean case3 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 2.5f &&
+                        boolean case3 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 3f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
-                        boolean case4 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 2.5f &&
+                        boolean case4 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 3f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
                         if ((case1 || case2 || case3 || case4)&& s.getAttacked() == false) {
                             enemy_hit = true;
