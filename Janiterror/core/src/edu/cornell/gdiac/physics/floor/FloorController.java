@@ -412,7 +412,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        LEVEL = "level2.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1389,6 +1388,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //System.out.println("deathtimerset");
                 if (!isFailure()) {
                     setFailure(true);
+                    setCameraX(cameraX);
+                    setCameraY(cameraY);
                 }
             }
             else {
@@ -2368,6 +2369,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //System.out.println("base hp" + avatar.getBaseHP());
                 //System.out.println("current max hp" + avatar.getCurrentMaxHP());
                 setComplete(true);
+                setCameraX(cameraX);
+                setCameraY(cameraY);
             }
             //Check if player is at mop cart
             if (bd1 == avatar   && bd2.getName() == "mopCart") {
@@ -3159,6 +3162,8 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     public StateTurret getStateTurret(EnemyModel s) {
+        //USE THE TURRET DIRECTIONS ARRAY LIST TO GET REAL DIRECTIONS IN THE FUTURE
+
         double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
             controls[s.getId()]=null;

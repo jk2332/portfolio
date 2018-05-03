@@ -114,7 +114,7 @@ public class Board {
         return inBounds(x, y) && !this.getTileState(x, y).blocked;
     }
 
-    public boolean isSuperSafeAt(int x, int y){ return isSafeAt(x, y) && !isHazard(x, y) && !isStanding(x, y);}
+    public boolean isSuperSafeAt(int x, int y){ return isSafeAt(x, y) && !isHazard(x, y-1) && !isStanding(x, y);}
     // -1 on y to make it look like if their feet hit, take damage
 
     public void setBlocked(int x, int y){
