@@ -82,6 +82,7 @@ public class AIController {
                     if (s != ship) board.setStanding(sx, sy);
                 }
             }
+            board.setStanding(board.screenToBoardX(target.getX()), board.screenToBoardY(target.getY()));
             this.markGoalTiles();
             board.resetStanding();
             this.move = this.getMoveAlongPathToGoalTile();
@@ -119,15 +120,15 @@ public class AIController {
 
     private boolean hasNoWallBetw(int x, int y, int tx, int ty){
         if (y==ty){
-            for (int i=Math.min(x, tx); i<=Math.max(x, tx); i++){
-                if (board.isBlocked(i, y)) {
+            for (int i=Math.min(x, tx)+1; i<Math.max(x, tx); i++){
+                if (board.isBlocked(i, y) || board.isStanding(i, y)) {
                     return false;
                 }
             }
         }
         if (tx==x){
-            for (int j=Math.min(y, ty); j<=Math.max(y, ty); j++){
-                if (board.isBlocked(x, j)) {
+            for (int j=Math.min(y, ty)+1; j<Math.max(y, ty); j++){
+                if (board.isBlocked(x, j) || board.isStanding(x, j)) {
                     return false;
                 }
             }
