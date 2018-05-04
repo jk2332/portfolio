@@ -580,6 +580,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<plantPos.size(); ii++) {
             Vector2 vec = plantPos.get(ii);
             BoxObstacle plant = new BoxObstacle(vec.x+0.5f, vec.y+0.5f,mopwidth/2,mopheight/2);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
             plant.setBodyType(BodyDef.BodyType.StaticBody);
             plant.setDensity(ii);
             plant.setDrawScale(scale);
@@ -590,6 +591,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<computerPos.size(); ii++) {
             Vector2 vec = computerPos.get(ii);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
+            board.setBlocked(board.screenToBoardX(vec.x+1), board.screenToBoardY(vec.y));
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y)+1);
+            board.setBlocked(board.screenToBoardX(vec.x)+1, board.screenToBoardY(vec.y)+1);
+
             BoxObstacle computer = new BoxObstacle(vec.x+OBJ_OFFSET_X, vec.y+OBJ_OFFSET_X,mopwidth,mopheight);
             computer.setBodyType(BodyDef.BodyType.StaticBody);
             computer.setDensity(ii);
@@ -602,6 +608,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<beakerPos.size(); ii++) {
             Vector2 vec = beakerPos.get(ii);
             BoxObstacle beaker = new BoxObstacle(vec.x+0.5f, vec.y+0.5f,mopwidth/2,mopheight/2);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
             beaker.setBodyType(BodyDef.BodyType.StaticBody);
             beaker.setDensity(ii);
             beaker.setDrawScale(scale);
