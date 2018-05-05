@@ -92,8 +92,9 @@ public abstract class WorldController implements Screen {
 	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
-	/** File to texture for the mop cart */
+	/** File to texture for power-ups */
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
+	private static final String SPECIAL_DURABILITY_FILE = "shared/duct-tape.png";
 	/** Retro font for displaying messages */
 	private static final String FONT_FILE = "shared/RetroGame.ttf";
 	private static final int FONT_SIZE = 32;
@@ -363,6 +364,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion mopTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
+	protected TextureRegion specialDurabilityTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
 
@@ -663,6 +665,8 @@ public abstract class WorldController implements Screen {
 		//Load Special Power Up Tiles
 		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
 		assets.add(SPECIAL_HEALTH_FILE);
+		manager.load(SPECIAL_DURABILITY_FILE,Texture.class);
+		assets.add(SPECIAL_DURABILITY_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -823,7 +827,10 @@ public abstract class WorldController implements Screen {
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopTile = createTexture(manager,MOP_CART_FILE, true);
+
+		//idk why I made these textureregions
 		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
+		specialDurabilityTile = createTexture(manager,SPECIAL_DURABILITY_FILE, true);
 
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {

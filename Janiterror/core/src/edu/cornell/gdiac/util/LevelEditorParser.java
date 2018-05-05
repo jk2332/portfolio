@@ -54,7 +54,7 @@ public class LevelEditorParser {
     private ArrayList<Vector2> mopCartPos = new ArrayList<Vector2>();
     private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
     private ArrayList<Vector2> specialHealthPos = new ArrayList<Vector2>();
-//    private ArrayList<Vector2> specialDurabilityPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> specialDurabilityPos = new ArrayList<Vector2>();
 //    private ArrayList<Vector2> specialDamagePos = new ArrayList<Vector2>();
 //    private ArrayList<Vector2> specialSpeedPos = new ArrayList<Vector2>();
 
@@ -339,6 +339,7 @@ public class LevelEditorParser {
 
         Array<Element> specialElement = objects.get(3).getChildrenByName("object");
         //get raw locations of special elements (powerups)
+        System.out.println(specialElement);
         for (int i = 0; i < specialElement.size; i++) {
             Element special = specialElement.get(i);
             String type = special.get("type");
@@ -346,8 +347,8 @@ public class LevelEditorParser {
             float y = bh - special.getFloatAttribute("y");
             if (type.equals("health")) {
                 specialHealthPos.add(new Vector2(x, y));
-            } else if (type.equals("mop")) {
-                //make new position vector for mop powerups
+            } else if (type.equals("durability")) {
+                specialDurabilityPos.add(new Vector2(x, y));
             }
         }
 
@@ -467,6 +468,10 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getSpecialHealthPos() {
         return specialHealthPos;
+    }
+
+    public ArrayList<Vector2> getSpecialDurabilityPos() {
+        return specialDurabilityPos;
     }
 
     public ArrayList<Vector2> getScientistPos() {

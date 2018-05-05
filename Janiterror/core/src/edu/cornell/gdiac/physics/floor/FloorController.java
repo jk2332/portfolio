@@ -100,9 +100,6 @@ public class FloorController extends WorldController implements ContactListener 
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
 
-    private boolean upgradedHealthBefore = false;
-    //I use this because for some reason when you hit the powerup it collides like 2 times even though mark removed
-
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
@@ -265,6 +262,7 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallLightPos;
     ArrayList<Vector2> hazardPos;
     ArrayList<Vector2> specialHealthPos;
+    ArrayList<Vector2> specialDurabilityPos;
     ArrayList<Vector2> plantPos;
     ArrayList<Vector2> computerPos;
     ArrayList<Vector2> beakerPos;
@@ -377,6 +375,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Reference to the special health power up (for collision detection) */
     private BoxObstacle specialHealth;
+    private BoxObstacle specialDurability;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -424,6 +423,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
+        LEVEL = "level15.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -473,6 +473,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         hazardPos = level.getHazardPos();
         specialHealthPos = level.getSpecialHealthPos();
+        specialDurabilityPos = level.getSpecialDurabilityPos();
         mopCartPos = level.getMopCartPos();
         mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
         //make new array because if level restarts we need original level values
@@ -499,8 +500,6 @@ public class FloorController extends WorldController implements ContactListener 
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
         //avatar has never visited mopcart before
         mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
-        //avatar has never upgraded health on this level before
-        upgradedHealthBefore = false;
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -582,8 +581,37 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         // Add special elements (power ups)
-        float specialHealthWidth  = specialHealthTile.getRegionWidth()/scale.x;
-        float specialHealthHeight = specialHealthTile.getRegionHeight()/scale.y;
+        System.out.println(specialHealthPos);
+        System.out.println(specialDurabilityPos);
+
+        float specialWidth  = specialHealthTile.getRegionWidth()/scale.x;
+        float specialHeight = specialHealthTile.getRegionHeight()/scale.y;
+        for (int ii=0; ii<specialHealthPos.size(); ii++) {
+            Vector2 vec = specialHealthPos.get(ii);
+            specialHealth = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialWidth, specialHeight);
+            specialHealth.setBodyType(BodyDef.BodyType.StaticBody);
+            specialHealth.setDensity(0.0f);
+            specialHealth.setFriction(0.0f);
+            specialHealth.setRestitution(0.0f);
+            specialHealth.setSensor(true);
+            specialHealth.setDrawScale(scale);
+            specialHealth.setTexture(specialHealthTile);
+            specialHealth.setName("specialHealth");
+            addObject(specialHealth);
+        }
+        for (int ii=0; ii<specialDurabilityPos.size(); ii++) {
+            Vector2 vec = specialDurabilityPos.get(ii);
+            specialDurability = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_Y, specialWidth, specialHeight);
+            specialDurability.setBodyType(BodyDef.BodyType.StaticBody);
+            specialDurability.setDensity(0.0f);
+            specialDurability.setFriction(0.0f);
+            specialDurability.setRestitution(0.0f);
+            specialDurability.setSensor(true);
+            specialDurability.setDrawScale(scale);
+            specialDurability.setTexture(specialDurabilityTile);
+            specialDurability.setName("specialDurability");
+            addObject(specialDurability);
+        }
 
         Texture[] tileTextures = {null, tileTexture, broken1TileTexture,
                 broken2tileTexture, broken3tileTexture, grateTileTexture,
@@ -598,6 +626,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<plantPos.size(); ii++) {
             Vector2 vec = plantPos.get(ii);
             BoxObstacle plant = new BoxObstacle(vec.x+0.5f, vec.y+0.5f,mopwidth/2,mopheight/2);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
             plant.setBodyType(BodyDef.BodyType.StaticBody);
             plant.setDensity(ii);
             plant.setDrawScale(scale);
@@ -608,6 +637,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<computerPos.size(); ii++) {
             Vector2 vec = computerPos.get(ii);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
+            board.setBlocked(board.screenToBoardX(vec.x+1), board.screenToBoardY(vec.y));
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y)+1);
+            board.setBlocked(board.screenToBoardX(vec.x)+1, board.screenToBoardY(vec.y)+1);
+
             BoxObstacle computer = new BoxObstacle(vec.x+OBJ_OFFSET_X, vec.y+OBJ_OFFSET_X,mopwidth,mopheight);
             computer.setBodyType(BodyDef.BodyType.StaticBody);
             computer.setDensity(ii);
@@ -620,6 +654,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<beakerPos.size(); ii++) {
             Vector2 vec = beakerPos.get(ii);
             BoxObstacle beaker = new BoxObstacle(vec.x+0.5f, vec.y+0.5f,mopwidth/2,mopheight/2);
+            board.setBlocked(board.screenToBoardX(vec.x), board.screenToBoardY(vec.y));
             beaker.setBodyType(BodyDef.BodyType.StaticBody);
             beaker.setDensity(ii);
             beaker.setDrawScale(scale);
@@ -2506,31 +2541,41 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             //Check if avatar has reached a powerup
-            if (bd1 == avatar && bd2 == specialHealth && !upgradedHealthBefore) {
-                upgradedHealthBefore = true;
-                bd2.markRemoved(true);
-
-                avatar.upgradeHP();
-                //upgrade max HP by 5 for now for testing
-                avatar.setHP(avatar.getCurrentMaxHP());
-
-                //System.out.println("base hp" + avatar.getBaseHP());
-                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
-                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
-            } else if (bd2 == avatar && bd1 == specialHealth && !upgradedHealthBefore) {
-                upgradedHealthBefore = true;
-                bd1.markRemoved(true);
-
-                avatar.upgradeHP();
-                //upgrade max HP by 5 for now for testing
-                avatar.setHP(avatar.getCurrentMaxHP());
-
-                //System.out.println("base hp" + avatar.getBaseHP());
-                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
-                SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
+            if (bd1 == avatar && bd2 == specialHealth) {
+                if (avatar.getHP() != avatar.getCurrentMaxHP()) {
+                    bd2.markRemoved(true);
+                    avatar.setHP(avatar.getCurrentMaxHP()); //full heal
+                    SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+                }
+            } else if (bd2 == avatar && bd1 == specialHealth) {
+                if (avatar.getHP() != avatar.getCurrentMaxHP()) {
+                    bd1.markRemoved(true);
+                    avatar.setHP(avatar.getCurrentMaxHP()); //full heal
+                    SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
+                }
             }
 
-            // Check for win / victory condition
+            if (bd1 == avatar && bd2 == specialDurability) {
+                if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
+                    avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
+                    //reload weapons
+                    bd2.markRemoved(true);
+                    avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+                    avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+                    SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+                }
+            } else if (bd2 == avatar && bd1 == specialDurability) {
+                if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
+                    avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
+                    //reload weapons
+                    bd1.markRemoved(true);
+                    avatar.getWep1().durability = avatar.getWep1().getMaxDurability();
+                    avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
+                    SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
+                }
+            }
+
+                // Check for win / victory condition
             if ((bd1 == avatar   && bd2 == goalDoor) ||
                     (bd1 == goalDoor && bd2 == avatar)) {
                 //Perma upgrade player's base HP
@@ -2657,7 +2702,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         /* SHOW HP */
         int currentHP = avatar.getHP();
-        //this is currently 15 because we're setting HP within the character model in Tiled
         int maxHP = avatar.getCurrentMaxHP();
         int times_improved = (avatar.getCurrentMaxHP() - 5);
         if (currentHP < 0){ currentHP = 0; } //prevent array exception
@@ -2667,8 +2711,6 @@ public class FloorController extends WorldController implements ContactListener 
         // DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
-//        Texture wep1Texture = wep_to_texture.get(wep1FileName);
-//        Texture wep2Texture = wep_to_small_texture.get(wep2FileName);
 
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
         int durability1 = avatar.getWep1().getDurability();
@@ -2676,7 +2718,6 @@ public class FloorController extends WorldController implements ContactListener 
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
         canvas.draw(wep1Textures[maxDurability1 - durability1],
                 (cameraX - 490), (cameraY + 140));
-
 
         TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         int durability2 = avatar.getWep2().getDurability();
