@@ -341,6 +341,7 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion mopTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
+	protected TextureRegion specialDurabilityTile;
 	/** The font for giving messages to the player */
 	protected BitmapFont displayFont;
 
@@ -757,7 +758,10 @@ public abstract class WorldController implements Screen {
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopTile = createTexture(manager,MOP_CART_FILE, true);
+
+		//idk why I made these textureregions
 		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
+		specialDurabilityTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
 
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
