@@ -43,7 +43,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="goal door">
+ <objectgroup name="goal door" locked="1">
   <object id="7" type="goal door" gid="10" x="544.742" y="256.442" width="64" height="64"/>
  </objectgroup>
  <objectgroup name="characters">

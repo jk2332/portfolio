@@ -414,6 +414,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
+        LEVEL = "level15.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
