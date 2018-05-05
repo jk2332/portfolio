@@ -254,6 +254,15 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> wallSRPos;
     ArrayList<Vector2> wallELPos;
     ArrayList<Vector2> wallERPos;
+    ArrayList<Vector2> wallSTLPos;
+    ArrayList<Vector2> wallSTRPos;
+    ArrayList<Vector2> wallSBLPos;
+    ArrayList<Vector2> wallSBRPos;
+    ArrayList<Vector2> wallDTLPos;
+    ArrayList<Vector2> wallDTRPos;
+    ArrayList<Vector2> wallDBLPos;
+    ArrayList<Vector2> wallDBRPos;
+    ArrayList<Vector2> wallLightPos;
     ArrayList<Vector2> hazardPos;
     ArrayList<Vector2> specialHealthPos;
     ArrayList<Vector2> plantPos;
@@ -448,6 +457,15 @@ public class FloorController extends WorldController implements ContactListener 
         wallSRPos = level.getWallSRPos();
         wallELPos = level.getWallELPos();
         wallERPos = level.getWallERPos();
+        wallSTLPos = level.getWallSTLPos();
+        wallSTRPos = level.getWallSTRPos();
+        wallSBLPos = level.getWallSBLPos();
+        wallSBRPos = level.getWallSBRPos();
+        wallDTLPos = level.getWallDTLPos();
+        wallDTRPos = level.getWallDTRPos();
+        wallDBLPos = level.getWallDBLPos();
+        wallDBRPos = level.getWallDBRPos();
+        wallLightPos = level.getWallLightPos();
 
         computerPos = level.getComputerPos();
         plantPos = level.getPlantPos();
@@ -1222,6 +1240,16 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
+        for (int ii = 0; ii < wallLightPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallLightPos.get(ii).x);
+            y = board.boardToScreenY((int) wallLightPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallLightPos.get(ii).x, (int) wallLightPos.get(ii).y + 1);
+
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallLightTexture, 0, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
         for (int ii = 0; ii < wallTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallTRPos.get(ii).x);
             y = board.boardToScreenY((int) wallTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1272,6 +1300,117 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
+
+        for (int ii = 0; ii < wallSTRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallSTRPos.get(ii).x) + 0.5f;
+            y = board.boardToScreenY((int) wallSTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallSTRPos.get(ii).x, (int) wallSTRPos.get(ii).y);
+            board.setBlocked((int) wallSTRPos.get(ii).x, (int) wallSTRPos.get(ii).y+1);
+            obj = new BoxObstacle(x - 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallSTRTexture, -TILE_SIZE/2.0f, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+            obj = new BoxObstacle(x+offsetCornerX/32-dwidth * WALL_THICKNESS_SCALE/2, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallSTLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallSTLPos.get(ii).x) + 0.5f;
+            y = board.boardToScreenY((int) wallSTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallSTLPos.get(ii).x, (int) wallSTLPos.get(ii).y);
+            board.setBlocked((int) wallSTLPos.get(ii).x, (int) wallSTLPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x + 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallSTLTexture, TILE_SIZE/2.0f, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x-offsetCornerX/32+dwidth * WALL_THICKNESS_SCALE/2, y-offsetCornerY/32, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallSBRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallSBRPos.get(ii).x) + 0.5f;
+            y = board.boardToScreenY((int) wallSBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            //board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
+            board.setBlocked((int) wallSBRPos.get(ii).x, (int) wallSBRPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x - 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallSBRTexture, -TILE_SIZE/2.0f, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallSBLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallSBLPos.get(ii).x) + 0.5f;
+            y = board.boardToScreenY((int) wallSBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            //board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
+            board.setBlocked((int) wallSBLPos.get(ii).x, (int) wallSBLPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x + 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallSBLTexture, TILE_SIZE/2.0f, offset);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallDTRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallDTRPos.get(ii).x);
+            y = board.boardToScreenY((int) wallDTRPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallDTRPos.get(ii).x, (int) wallDTRPos.get(ii).y);
+            board.setBlocked((int) wallDTRPos.get(ii).x, (int) wallDTRPos.get(ii).y+1);
+            obj = new BoxObstacle(x, y+1.0f-dheight * WALL_THICKNESS_SCALE / 2, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallDTRTexture, 0, offset+TILE_SIZE-dheight * WALL_THICKNESS_SCALE * 16);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+            obj = new BoxObstacle(x+offsetCornerX/32, y-offsetCornerY/32 + dheight*WALL_THICKNESS_SCALE/2, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE / 2 * 3);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallDTLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallDTLPos.get(ii).x);
+            y = board.boardToScreenY((int) wallDTLPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallDTLPos.get(ii).x, (int) wallDTLPos.get(ii).y);
+            board.setBlocked((int) wallDTLPos.get(ii).x, (int) wallDTLPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x, y+1.0f-dheight * WALL_THICKNESS_SCALE / 2, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallDTLTexture, 0, offset+TILE_SIZE-dheight * WALL_THICKNESS_SCALE * 16);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x-offsetCornerX/32, y-offsetCornerY/32 + dheight*WALL_THICKNESS_SCALE/2, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE / 2 * 3);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallDBRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallDBRPos.get(ii).x);
+            y = board.boardToScreenY((int) wallDBRPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
+            //board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
+            board.setBlocked((int) wallDBRPos.get(ii).x, (int) wallDBRPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x, y-1.0f+dheight * WALL_THICKNESS_SCALE, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallDBRTexture, 0, offset-TILE_SIZE+dheight * WALL_THICKNESS_SCALE * 16);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x+offsetCornerX/32, y-offsetCornerY/32+1.0f, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE/2);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+        for (int ii = 0; ii < wallDBLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallDBLPos.get(ii).x);
+            y = board.boardToScreenY((int) wallDBLPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
+            //board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
+            board.setBlocked((int) wallDBLPos.get(ii).x, (int) wallDBLPos.get(ii).y+1);
+
+            obj = new BoxObstacle(x, y-1.0f+dheight * WALL_THICKNESS_SCALE, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallDBLTexture, 0, offset-TILE_SIZE+dheight * WALL_THICKNESS_SCALE * 16);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+
+            obj = new BoxObstacle(x-offsetCornerX/32, y-offsetCornerY/32+1.0f, dwidth * WALL_THICKNESS_SCALE, dheight * WALL_HEIGHT_SCALE / 2);
+            obj.setName(pname+ii);
+            addWallObject(obj);
+        }
+
         for (int ii = 0; ii < wallERPos.size(); ii++) {
             x = board.boardToScreenX((int) wallERPos.get(ii).x);
             y = board.boardToScreenY((int) wallERPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1294,6 +1433,7 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
+
 
         float offsetY = offset;
         offset = (TILE_SIZE * (1 - WALL_THICKNESS_SCALE))/2;

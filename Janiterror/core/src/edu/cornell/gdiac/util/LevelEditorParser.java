@@ -26,6 +26,15 @@ public class LevelEditorParser {
     private ArrayList<Vector2> wallSLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallERPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallELPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallDTRPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallDTLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallDBRPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallDBLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSTRPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSTLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSBRPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallSBLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallLightPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> scientistPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> slimePos = new ArrayList<Vector2>();
@@ -100,6 +109,9 @@ public class LevelEditorParser {
     private int beakergid;
     private int computergid;
     private int plantgid;
+    private int wallsspgid;
+    private int walllightgid;
+    private int walldiagonalgid;
 
     private int boardWidth;
     private int boardHeight;
@@ -130,6 +142,13 @@ public class LevelEditorParser {
                 computergid = ts.getIntAttribute("firstgid");
             } else if (ts.get("source").equals("plant.tsx")) {
                 plantgid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("horizontal-wall-lantern.tsx")) {
+                walllightgid = ts.getIntAttribute("firstgid");
+                System.out.println(walllightgid);
+            } else if (ts.get("source").equals("wallssp.tsx")) {
+                wallsspgid = ts.getIntAttribute("firstgid");
+            } else if (ts.get("source").equals("wallsdiagonal.tsx")) {
+                walldiagonalgid = ts.getIntAttribute("firstgid");
             }
             if (hazardgid == 0) {
                 hazardgid = 1000;
@@ -142,6 +161,15 @@ public class LevelEditorParser {
             }
             if (wallhgid == 0) {
                 wallhgid = 1000;
+            }
+            if (walllightgid == 0) {
+                walllightgid = 1000;
+            }
+            if (walldiagonalgid == 0) {
+                walldiagonalgid = 1000;
+            }
+            if (wallsspgid == 0) {
+                wallsspgid = 1000;
             }
             if (computergid == 0) {
                 computergid = 1000;
@@ -371,6 +399,24 @@ public class LevelEditorParser {
                     wallERPos.add(new Vector2(j, i));
                 } else if (horiWalls[i][j] == wallhgid + 4) {
                     wallELPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == walllightgid) {
+                    wallLightPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallsspgid) {
+                    wallSTLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallsspgid + 1) {
+                    wallSTRPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallsspgid + 2) {
+                    wallSBLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == wallsspgid +3) {
+                    wallSBRPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == walldiagonalgid) {
+                    wallDTLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == walldiagonalgid + 1) {
+                    wallDTRPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == walldiagonalgid + 2) {
+                    wallDBLPos.add(new Vector2(j, i));
+                } else if (horiWalls[i][j] == walldiagonalgid +3) {
+                    wallDBRPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -674,5 +720,41 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getPlantPos() {
         return plantPos;
+    }
+
+    public ArrayList<Vector2> getWallDTLPos() {
+        return wallDTLPos;
+    }
+
+    public ArrayList<Vector2> getWallDTRPos() {
+        return wallDTRPos;
+    }
+
+    public ArrayList<Vector2> getWallDBLPos() {
+        return wallDBLPos;
+    }
+
+    public ArrayList<Vector2> getWallDBRPos() {
+        return wallDBRPos;
+    }
+
+    public ArrayList<Vector2> getWallSBLPos() {
+        return wallSBLPos;
+    }
+
+    public ArrayList<Vector2> getWallSBRPos() {
+        return wallSBRPos;
+    }
+
+    public ArrayList<Vector2> getWallSTLPos() {
+        return wallSTLPos;
+    }
+
+    public ArrayList<Vector2> getWallSTRPos() {
+        return wallSTRPos;
+    }
+
+    public ArrayList<Vector2> getWallLightPos() {
+        return wallLightPos;
     }
 }

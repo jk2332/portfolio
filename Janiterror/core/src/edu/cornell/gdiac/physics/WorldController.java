@@ -75,6 +75,19 @@ public abstract class WorldController implements Screen {
 	private static final String WALL_ER_FILE = "shared/horizontal-wall-rightend.png";
 	private static final String WALL_EL_FILE = "shared/horizontal-wall-leftend.png";
 
+	private static final String WALL_STL_FILE = "shared/corner-top-left-special.png";
+	private static final String WALL_STR_FILE = "shared/corner-top-right-special.png";
+	private static final String WALL_SBR_FILE = "shared/corner-bottom-right-special.png";
+	private static final String WALL_SBL_FILE = "shared/corner-bottom-left-special.png";
+
+	private static final String WALL_DTL_FILE = "shared/horizontal-diagonal-top-left.png";
+	private static final String WALL_DTR_FILE = "shared/horizontal-diagonal-top-right.png";
+	private static final String WALL_DBR_FILE = "shared/horizontal-diagonal-bottom-right.png";
+	private static final String WALL_DBL_FILE = "shared/horizontal-diagonal-bottom-left.png";
+
+	private static final String WALL_LIGHT_FILE = "shared/horizontal-wall-lantern.png";
+
+
 	/** File to texture for the win door */
 	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
@@ -217,10 +230,19 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion wallTRTexture;
 	protected TextureRegion wallBLTexture;
 	protected TextureRegion wallBRTexture;
+	protected TextureRegion wallSTLTexture;
+	protected TextureRegion wallSTRTexture;
+	protected TextureRegion wallSBLTexture;
+	protected TextureRegion wallSBRTexture;
+	protected TextureRegion wallDTLTexture;
+	protected TextureRegion wallDTRTexture;
+	protected TextureRegion wallDBLTexture;
+	protected TextureRegion wallDBRTexture;
     protected TextureRegion wallSLTexture;
     protected TextureRegion wallSRTexture;
 	protected TextureRegion wallELTexture;
 	protected TextureRegion wallERTexture;
+	protected TextureRegion wallLightTexture;
 	protected TextureRegion avatarIdleTexture;
 	protected TextureRegion avatarWalkRTexture;
 	protected TextureRegion avatarWalkUTexture;
@@ -383,6 +405,37 @@ public abstract class WorldController implements Screen {
 		assets.add(WALL_BL_FILE);
 		manager.load(WALL_BR_FILE, Texture.class);
 		assets.add(WALL_BR_FILE);
+
+		manager.load(WALL_STL_FILE, Texture.class);
+		assets.add(WALL_STL_FILE);
+		manager.load(WALL_STR_FILE, Texture.class);
+		assets.add(WALL_STR_FILE);
+		manager.load(WALL_SBL_FILE, Texture.class);
+		assets.add(WALL_SBL_FILE);
+		manager.load(WALL_SBR_FILE, Texture.class);
+		assets.add(WALL_SBR_FILE);
+
+		manager.load(WALL_LIGHT_FILE, Texture.class);
+		assets.add(WALL_LIGHT_FILE);
+
+		manager.load(WALL_DTL_FILE, Texture.class);
+		assets.add(WALL_DTL_FILE);
+		manager.load(WALL_DTR_FILE, Texture.class);
+		assets.add(WALL_DTR_FILE);
+		manager.load(WALL_DBL_FILE, Texture.class);
+		assets.add(WALL_DBL_FILE);
+		manager.load(WALL_DBR_FILE, Texture.class);
+		assets.add(WALL_DBR_FILE);
+
+		manager.load(WALL_TL_FILE, Texture.class);
+		assets.add(WALL_TL_FILE);
+		manager.load(WALL_TR_FILE, Texture.class);
+		assets.add(WALL_TR_FILE);
+		manager.load(WALL_BL_FILE, Texture.class);
+		assets.add(WALL_BL_FILE);
+		manager.load(WALL_BR_FILE, Texture.class);
+		assets.add(WALL_BR_FILE);
+
         manager.load(WALL_SL_FILE, Texture.class);
         assets.add(WALL_SL_FILE);
         manager.load(WALL_SR_FILE, Texture.class);
@@ -646,6 +699,19 @@ public abstract class WorldController implements Screen {
         wallSLTexture = createTexture(manager,WALL_SL_FILE,false);
 		wallERTexture = createTexture(manager,WALL_ER_FILE,false);
 		wallELTexture = createTexture(manager,WALL_EL_FILE,false);
+
+		wallSTRTexture = createTexture(manager,WALL_STR_FILE,false);
+		wallSTLTexture = createTexture(manager,WALL_STL_FILE,false);
+		wallSBRTexture = createTexture(manager,WALL_SBR_FILE,false);
+		wallSBLTexture = createTexture(manager,WALL_SBL_FILE,false);
+
+		wallDTRTexture = createTexture(manager,WALL_DTR_FILE,false);
+		wallDTLTexture = createTexture(manager,WALL_DTL_FILE,false);
+		wallDBRTexture = createTexture(manager,WALL_DBR_FILE,false);
+		wallDBLTexture = createTexture(manager,WALL_DBL_FILE,false);
+
+		wallLightTexture = createTexture(manager,WALL_LIGHT_FILE,false);
+
 		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
