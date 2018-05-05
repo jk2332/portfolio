@@ -589,7 +589,7 @@ public class FloorController extends WorldController implements ContactListener 
             specialDurability.setRestitution(0.0f);
             specialDurability.setSensor(true);
             specialDurability.setDrawScale(scale);
-            specialDurability.setTexture(specialHealthTile);
+            specialDurability.setTexture(specialDurabilityTile);
             specialDurability.setName("specialDurability");
             addObject(specialDurability);
         }
