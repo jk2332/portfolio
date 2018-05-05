@@ -423,7 +423,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        LEVEL = "level15.tmx";
+        LEVEL = "level1.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1339,7 +1339,9 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii = 0; ii < wallSTRPos.size(); ii++) {
             x = board.boardToScreenX((int) wallSTRPos.get(ii).x) + 0.5f;
             y = board.boardToScreenY((int) wallSTRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
-            board.setBlocked((int) wallSTRPos.get(ii).x, (int) wallSTRPos.get(ii).y);
+
+            board.setBlocked((int) wallSTRPos.get(ii).x+1, (int) wallSTRPos.get(ii).y);
+            board.setBlocked((int) wallSTRPos.get(ii).x+1, (int) wallSTRPos.get(ii).y+1);
             board.setBlocked((int) wallSTRPos.get(ii).x, (int) wallSTRPos.get(ii).y+1);
             obj = new BoxObstacle(x - 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallSTRTexture, -TILE_SIZE/2.0f, offset);
@@ -1353,6 +1355,7 @@ public class FloorController extends WorldController implements ContactListener 
             x = board.boardToScreenX((int) wallSTLPos.get(ii).x) + 0.5f;
             y = board.boardToScreenY((int) wallSTLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
             board.setBlocked((int) wallSTLPos.get(ii).x, (int) wallSTLPos.get(ii).y);
+            board.setBlocked((int) wallSTLPos.get(ii).x+1, (int) wallSTLPos.get(ii).y+1);
             board.setBlocked((int) wallSTLPos.get(ii).x, (int) wallSTLPos.get(ii).y+1);
 
             obj = new BoxObstacle(x + 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
@@ -1369,6 +1372,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallSBRPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
             //board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
             board.setBlocked((int) wallSBRPos.get(ii).x, (int) wallSBRPos.get(ii).y+1);
+            board.setBlocked((int) wallSBRPos.get(ii).x + 1, (int) wallSBRPos.get(ii).y+1);
 
             obj = new BoxObstacle(x - 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallSBRTexture, -TILE_SIZE/2.0f, offset);
@@ -1380,6 +1384,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallSBLPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
             //board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
             board.setBlocked((int) wallSBLPos.get(ii).x, (int) wallSBLPos.get(ii).y+1);
+            board.setBlocked((int) wallSBLPos.get(ii).x+1, (int) wallSBLPos.get(ii).y+1);
 
             obj = new BoxObstacle(x + 0.5f, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallSBLTexture, TILE_SIZE/2.0f, offset);
@@ -1392,6 +1397,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallDTRPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
             board.setBlocked((int) wallDTRPos.get(ii).x, (int) wallDTRPos.get(ii).y);
             board.setBlocked((int) wallDTRPos.get(ii).x, (int) wallDTRPos.get(ii).y+1);
+            board.setBlocked((int) wallDTRPos.get(ii).x, (int) wallDTRPos.get(ii).y+2);
             obj = new BoxObstacle(x, y+1.0f-dheight * WALL_THICKNESS_SCALE / 2, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallDTRTexture, 0, offset+TILE_SIZE-dheight * WALL_THICKNESS_SCALE * 16);
             obj.setName(pname+ii);
@@ -1405,6 +1411,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallDTLPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
             board.setBlocked((int) wallDTLPos.get(ii).x, (int) wallDTLPos.get(ii).y);
             board.setBlocked((int) wallDTLPos.get(ii).x, (int) wallDTLPos.get(ii).y+1);
+            board.setBlocked((int) wallDTLPos.get(ii).x, (int) wallDTLPos.get(ii).y+2);
 
             obj = new BoxObstacle(x, y+1.0f-dheight * WALL_THICKNESS_SCALE / 2, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallDTLTexture, 0, offset+TILE_SIZE-dheight * WALL_THICKNESS_SCALE * 16);
@@ -1420,6 +1427,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallDBRPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
             //board.setBlocked((int) wallBRPos.get(ii).x, (int) wallBRPos.get(ii).y);
             board.setBlocked((int) wallDBRPos.get(ii).x, (int) wallDBRPos.get(ii).y+1);
+            board.setBlocked((int) wallDBRPos.get(ii).x, (int) wallDBRPos.get(ii).y+2);
 
             obj = new BoxObstacle(x, y-1.0f+dheight * WALL_THICKNESS_SCALE, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallDBRTexture, 0, offset-TILE_SIZE+dheight * WALL_THICKNESS_SCALE * 16);
@@ -1435,6 +1443,7 @@ public class FloorController extends WorldController implements ContactListener 
             y = board.boardToScreenY((int) wallDBLPos.get(ii).y) + offset/32 + 1.0f; //added 0.5f for offset due to wall dimensions
             //board.setBlocked((int) wallBLPos.get(ii).x, (int) wallBLPos.get(ii).y);
             board.setBlocked((int) wallDBLPos.get(ii).x, (int) wallDBLPos.get(ii).y+1);
+            board.setBlocked((int) wallDBLPos.get(ii).x, (int) wallDBLPos.get(ii).y+2);
 
             obj = new BoxObstacle(x, y-1.0f+dheight * WALL_THICKNESS_SCALE, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
             obj.setTexture(wallDBLTexture, 0, offset-TILE_SIZE+dheight * WALL_THICKNESS_SCALE * 16);
