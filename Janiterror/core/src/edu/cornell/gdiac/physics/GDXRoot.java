@@ -84,10 +84,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		controllers = new WorldController[3];
+		controllers = new WorldController[4];
 		controllers[0] = new FloorController(1);
 		controllers[1] = new FloorController(2);
 		controllers[2] = new FloorController(3);
+		controllers[3] = new FloorController(4);
 
 		levelNames = new String[3];
 		levelNames[0] = "BAD PUN HERE";

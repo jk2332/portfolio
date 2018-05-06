@@ -424,7 +424,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        //LEVEL = "level1.tmx";
+//        LEVEL = "level16.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -2357,7 +2357,6 @@ public class FloorController extends WorldController implements ContactListener 
 
                         if (!s.isRemoved() && (case1 || case2 || case3 || case4) && s.getAttacked() == false) {
                             if (s instanceof RobotModel){
-                                System.out.println("was robot");
                                 s.setStunned(true);
                                 s.decrHP();
                                 if (s.getHP()<0) {controls[s.getId()]=null;}

@@ -126,7 +126,7 @@ public abstract class WorldController implements Screen {
 //	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
 //	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
 	private static final String MAD_ATTACKR_FILE  = "floor/enemy_long/mad-attack-side.png";
-	private static final String MAD_ATTACKL_FILE  = "floor/enemy_long/mad-attack-side-long-flip.png";
+	private static final String MAD_ATTACKL_FILE  = "floor/enemy_long/mad-attack-side-flip.png";
 	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
 	private static final String MAD_ATTACKD_FILE  = "floor/enemy_long/mad-attack-front-long.png";
 
