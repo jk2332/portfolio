@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.physics.floor.weapon.*;
+import edu.cornell.gdiac.physics.lights.ConeSource;
 import edu.cornell.gdiac.physics.lights.LightSource;
 import edu.cornell.gdiac.physics.lights.PointSource;
 import edu.cornell.gdiac.util.*;
@@ -423,7 +424,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        LEVEL = "level1.tmx";
+        //LEVEL = "level1.tmx";
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -546,7 +547,7 @@ public class FloorController extends WorldController implements ContactListener 
     private void populateLevel() {
 
         initLighting();
-        //createHazardLights();
+        createLights();
         // Add level goal
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
@@ -667,10 +668,10 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     private void initLighting() {
-        /*raycamera = new OrthographicCamera(canvas.getWidth(),canvas.getHeight());*/
-        /*raycamera.position.set(canvas.getWidth()/2.0f, canvas.getHeight()/2.0f, 0);*/
-        raycamera = new OrthographicCamera(bounds.width, bounds.height);
-        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+        raycamera = new OrthographicCamera(canvas.getWidth(),canvas.getHeight());
+        raycamera.position.set(canvas.getWidth()/2.0f, canvas.getHeight()/2.0f, 0);
+        /*raycamera = new OrthographicCamera(bounds.width, bounds.height);
+        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);*/
         raycamera.update();
 
         RayHandler.setGammaCorrection(true);
@@ -686,14 +687,31 @@ public class FloorController extends WorldController implements ContactListener 
         lightIsActive = false;
     }
 
-    /*private void createHazardLights() {
-        float[] color = {1.0f, 1.0f, 1.0f, 1.0f};
-        float dist  = 1.5f;
-        int rays = 512;
+    private void createLights() {
+        float[] color = {0.2f, 0.5f, 1.0f, 1.0f};
+        float dist  = 3.0f  * 32;
+        int rays = 256;
 
-        for (Vector2 hpos : hazardPos) {
-            PointSource point = new PointSource(rayhandler, rays, Color.GREEN, dist, hpos.x + 0.5f, hpos.y + 0.5f);
-            point.setColor(Color.GREEN);
+        for (Vector2 hpos : wallLightPos) {
+            /*ConeSource point = new ConeSource(rayhandler, rays, Color.YELLOW, dist, (hpos.x + 0.5f) * 32, (hpos.y - 0.1f)*32, 90f, 90f);
+            */
+            ConeSource point = new ConeSource(rayhandler, rays, Color.YELLOW, dist, (hpos.x + 0.5f) * 32, (hpos.y + 1.2f)*32, 270f, 50f);
+            point.setColor(Color.YELLOW);
+            point.setSoft(false);
+            lights.add(point);
+        }
+
+        dist = 1.0f  * 32;
+        rays = 256;
+
+        for (Vector2 hpos : computerPos) {
+            PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist - 0.2f * 32, (hpos.x + 0.4f) * 32, (hpos.y + 0.4f)*32);
+            point.setColor(color[0], color[1], color[2], color[3]);
+            point.setSoft(false);
+            lights.add(point);
+
+            point = new PointSource(rayhandler, rays, Color.WHITE, dist, (hpos.x + 1.2f) * 32, (hpos.y + 1.2f)*32);
+            point.setColor(color[0], color[1], color[2], color[3]);
             point.setSoft(false);
             lights.add(point);
         }
@@ -701,7 +719,7 @@ public class FloorController extends WorldController implements ContactListener 
             light.setActive(false);
         }
     }
-*/
+
     private void addUIInfo() {
         /** Pixel Locations of Weapon Icons in Mop Cart*/
         //added on to avatar.getX()
@@ -1631,40 +1649,40 @@ public class FloorController extends WorldController implements ContactListener 
 
             cameraX = playerPosX;
             cameraY = playerPosY;
-            /*lightX = bounds.width/2.0f;
-            lightY = bounds.height/2.0f;*/
+            lightX = canvas.getWidth()/2.0f;
+            lightY = canvas.getHeight()/2.0f;
 
             if (playerPosX >= LEFT_SCROLL_CLAMP && playerPosX <= RIGHT_SCROLL_CLAMP) {
                 //if player is inside clamped sections, center camera on player
                 cameraX = playerPosX;
-                /*lightX = bounds.width/2.0f;*/
+                lightX = canvas.getWidth()/2.0f;
 
             }
             else {
                 //if it is going to show outside of level, set camera to clamp
                 if (playerPosX < LEFT_SCROLL_CLAMP) {
                     cameraX = LEFT_SCROLL_CLAMP;
-                    //lightX = playerPosX/32.0f;
+                    lightX = playerPosX;
                 }
                 else if (playerPosX > RIGHT_SCROLL_CLAMP) {
                     cameraX = RIGHT_SCROLL_CLAMP;
-                    //lightX = playerPosX/32.0f;
+                    lightX = playerPosX;
                 }
             }
             if (playerPosY <= TOP_SCROLL_CLAMP && playerPosY >= BOTTOM_SCROLL_CLAMP) {
                 //if player is inside clamped sections, center camera on player
                 cameraY = playerPosY;
-                //lightY = bounds.height/2.0f;
+                lightY = canvas.getHeight()/2.0f;
             }
             else {
                 //if it is going to show outside of level, set camera to clamp
                 if (playerPosY > TOP_SCROLL_CLAMP) {
                     cameraY = TOP_SCROLL_CLAMP;
-                    //lightY = playerPosY/32.0f;
+                    lightY = playerPosY;
                 }
                 else if (playerPosY < BOTTOM_SCROLL_CLAMP) {
                     cameraY = BOTTOM_SCROLL_CLAMP;
-                    //lightY = playerPosY/32.0f;
+                    lightY = playerPosY;
                 }
             }
             canvas.setCameraPosition(cameraX, cameraY);
@@ -1673,7 +1691,7 @@ public class FloorController extends WorldController implements ContactListener 
                 toggleLighting();
             }
 
-            raycamera.position.set(cameraX/32.0f, cameraY/32.0f, 0);
+            raycamera.position.set(lightX, lightY, 0);
             raycamera.update();
 
             //light.setPosition(lightX, lightY);
