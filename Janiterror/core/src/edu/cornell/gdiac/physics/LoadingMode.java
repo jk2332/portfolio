@@ -49,11 +49,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String PROGRESS_FILE = "shared/progressbar.png";
 	private static final String PLAY_BTN_FILE = "shared/play-button.png";
+	private static final String SELECT_BTN_FILE = "shared/play-button.png";
 	
 	/** Background texture for start-up */
 	private Texture background;
 	/** Play button to display when done */
 	private Texture playButton;
+
+	private Texture selectButton;
 	/** Texture atlas to support a progress bar */
 	private Texture statusBar;
 	
@@ -89,6 +92,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static int PROGRESS_MIDDLE = 200;
 	/** Amount to scale the play button */
 	private static float BUTTON_SCALE  = 0.75f;
+
+	private static float OFFSET_X_RATIO = 0.15f;
 	
 	/** Start button for XBox controller on Windows */
 	private static int WINDOWS_START = 7;
@@ -108,6 +113,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private int centerY;
 	/** The x-coordinate of the center of the progress bar */
 	private int centerX;
+
+	private int centerXPlay;
+
+	private int centerXSelect;
 	/** The height of the canvas window (necessary since sprite origin != screen origin) */
 	private int heightY;
 	/** Scaling factor for when the student changes the resolution. */
@@ -160,6 +169,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public boolean isReady() {
 		return pressState == 2;
 	}
+
+	public boolean isSelect() {
+		return pressState == 4;
+	}
 	
 	/**
 	 * Creates a LoadingMode with the default budget, size and position.
@@ -191,6 +204,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 		// Load the next two images immediately.
 		playButton = null;
+		selectButton = null;
 		background = new Texture(BACKGROUND_FILE);
 		statusBar  = new Texture(PROGRESS_FILE);
 		
@@ -238,6 +252,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			 playButton.dispose();
 			 playButton = null;
 		 }
+		if (selectButton != null) {
+			selectButton.dispose();
+			selectButton = null;
+		}
 	}
 	
 	/**
@@ -250,13 +268,16 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	private void update(float delta) {
-		if (playButton == null) {
+		if (playButton == null && selectButton == null) {
 			manager.update(budget);
 			this.progress = manager.getProgress();
 			if (progress >= 1.0f) {
 				this.progress = 1.0f;
 				playButton = new Texture(PLAY_BTN_FILE);
 				playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+				selectButton = new Texture(SELECT_BTN_FILE);
+				selectButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			}
 		}
 	}
@@ -271,14 +292,18 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private void draw() {
 		canvas.begin();
 		canvas.draw(background, 0, 0);
-		if (playButton == null) {
+		if (playButton == null && selectButton == null) {
 			drawProgress(canvas);
 		} else {
 			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
-						centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+						centerXPlay, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 //			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
 //					centerX, centerY + 160, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+
+			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			canvas.draw(selectButton, tint, selectButton.getWidth()/2, selectButton.getHeight()/2,
+					centerXSelect, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 		}
 		canvas.end();
 	}
@@ -307,6 +332,12 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		}
 	}
 
+	public void reset() {
+		pressState = 0;
+		active = false;
+		Gdx.input.setInputProcessor(this);
+	}
+
 	// ADDITIONAL SCREEN METHODS
 	/**
 	 * Called when the Screen should render itself.
@@ -324,6 +355,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			// We are are ready, notify our listener
 			if (isReady() && listener != null) {
 				listener.exitScreen(this, 0);
+			} else if (isSelect() && listener != null) {
+				listener.exitScreen(this, 1);
 			}
 		}
 	}
@@ -346,7 +379,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
 		centerX = width/2;
+		centerXPlay = (int) (width/2 - width * OFFSET_X_RATIO);
+		centerXSelect = (int) (width/2 + width * OFFSET_X_RATIO);
 		heightY = height;
+
 	}
 
 	/**
@@ -409,7 +445,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @return whether to hand the event to other listeners. 
 	 */
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (playButton == null || pressState == 2) {
+		if (playButton == null || pressState == 2 || pressState == 4) {
 			return true;
 		}
 		
@@ -419,10 +455,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		// TODO: Fix scaling
 		// Play button is a circle.
 		float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
-		float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
+		float dist = (screenX-centerXPlay)*(screenX-centerXPlay)+(screenY-centerY)*(screenY-centerY);
 		if (dist < radius*radius) {
 			pressState = 1;
 		}
+
+		radius = BUTTON_SCALE*scale*selectButton.getWidth()/2.0f;
+		dist = (screenX-centerXSelect)*(screenX-centerXSelect)+(screenY-centerY)*(screenY-centerY);
+		if (dist < radius*radius) {
+			pressState = 3;
+		}
+
 		return false;
 	}
 	
@@ -440,6 +483,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) { 
 		if (pressState == 1) {
 			pressState = 2;
+			return false;
+		}
+
+		if (pressState == 3) {
+			pressState = 4;
 			return false;
 		}
 		return true;

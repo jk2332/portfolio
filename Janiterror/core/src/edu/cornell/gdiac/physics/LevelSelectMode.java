@@ -13,57 +13,51 @@ import com.badlogic.gdx.controllers.*;
 import edu.cornell.gdiac.util.*;
 
 /**
- * Class that provides a score screen for the state of the game.
+ * Class that provides a level select screen for the game
  */
-public class ScoreMode implements Screen, InputProcessor, ControllerListener {
+public class LevelSelectMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/loading.png";
-    private static final String PROGRESS_FILE = "shared/progressbar.png";
-    private static final String PLAY_BTN_FILE = "shared/play-button.png";
-    private static final String MAIN_BTN_FILE = "shared/play-button.png";
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 800;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 700;
-    /** Amount to scale the play button */
-    private static float BUTTON_SCALE  = 0.75f;
 
-    /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
+    private static float OFFSET_X_RATIO = 0.25f;
 
-    private static float OFFSET_X_RATIO = 0.15f;
+    private static int NUM_ROWS = 4;
 
-    /** The y-coordinate of the center of the progress bar */
-    private int centerY;
     /** The x-coordinate of the center of the progress bar */
-    private int centerX;
+    private int centerXLeft;
 
-    private int centerXMain;
+    private int centerXRight;
+
+    private int marginY;
+
     /** Background texture for start-up */
     private Texture background;
-    /** Play button to display when done */
-    private Texture playButton;
 
-    private Texture mainButton;
+    private String[] levelNames;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
     /** Start button for XBox controller on Mac OS X */
     private static int MAC_OS_X_START = 4;
 
-    /** Exit code for main menu */
-    public static final int EXIT_MENU = 0;
-    /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
+    /** Exit code */
+    public int exit;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
+
+    GlyphLayout layout = new GlyphLayout();
 
 
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
@@ -73,8 +67,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
     /** The current state of the play button */
     private int   pressState;
-    /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
-    private int   budget;
     /** Support for the X-Box start button in place of play button */
     private int   startButton;
     /** Whether or not this player mode is still active */
@@ -90,22 +82,21 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         return pressState == 2;
     }
 
-    public boolean isMain() { return pressState == 4;}
-
     /**
      * Creates a ScoreMode with the default size and position
      *
      */
-    public ScoreMode(GameCanvas canvas) {
+    public LevelSelectMode(GameCanvas canvas, String[] levelNames) {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
+        this.levelNames = levelNames;
         // Load the next two images immediately.
-        playButton = new Texture(PLAY_BTN_FILE);
-        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        mainButton = new Texture(MAIN_BTN_FILE);
-        mainButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        displayFont = new BitmapFont();
+
+        displayFont.getData().setScale(scale);
 
         background = new Texture(BACKGROUND_FILE);
 
@@ -130,14 +121,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
         background.dispose();
         background = null;
-        if (playButton != null) {
-            playButton.dispose();
-            playButton = null;
-        }
-        if (mainButton != null) {
-            mainButton.dispose();
-            mainButton = null;
-        }
     }
 
     /**
@@ -163,13 +146,42 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0);
-        Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        Color color;
 
-        tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
-                centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        int centerX;
+        int centerY;
+
+        int radiusX;
+        int radiusY;
+
+        String s;
+
+        layout.setText(displayFont, "MAIN MENU");
+        radiusX = (int) (layout.width / 2.0f);
+        radiusY = (int) (layout.height / 2.0f);
+        color = (pressState == 1 && exit == 0 ? Color.YELLOW: Color.WHITE);
+        displayFont.setColor(color);
+        canvas.drawText("MAIN MENU", displayFont, centerXLeft - radiusX, 4 * marginY - radiusY);
+
+        for (int i = 1; i <= levelNames.length; i++) {
+            if (i < NUM_ROWS) {
+                centerX = centerXLeft;
+            } else {
+                centerX = centerXRight;
+            }
+
+            s = "LVL " + i + ": " + levelNames[i - 1];
+            centerY = (NUM_ROWS - (i % NUM_ROWS)) * marginY;
+            color = (pressState == 1 && exit == i ? Color.YELLOW: Color.WHITE);
+            displayFont.setColor(color);
+            layout.setText(displayFont, s);
+            radiusX = (int) (layout.width / 2.0f);
+            radiusY = (int) (layout.height / 2.0f);
+            canvas.drawText(s, displayFont, centerX - radiusX, centerY - radiusY);
+        }
+
+        /*canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+                centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);*/
 
         canvas.end();
     }
@@ -187,12 +199,12 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         if (active) {
             update(delta);
             draw();
+            System.out.println("" + isReady() + pressState);
 
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
-                listener.exitScreen(this, EXIT_NEXT);
-            } else if (listener != null && isMain()) {
-                listener.exitScreen(this, EXIT_MENU);
+                System.out.println("isReady");
+                listener.exitScreen(this, exit);
             }
         }
     }
@@ -208,16 +220,15 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
+        /*float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
+        scale = (sx < sy ? sx : sy);*/
+        scale = 2;
         heightY = height;
 
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = (int) (width/2 + width * OFFSET_X_RATIO);
-        heightY = height;
-
-        centerXMain = (int) (width/2 - width * OFFSET_X_RATIO);
+        centerXRight = (int) (width/2 + width * OFFSET_X_RATIO);
+        centerXLeft = (int) (width/2 - width * OFFSET_X_RATIO);
+        marginY = (int) (height /  (NUM_ROWS + 1.0f));
     }
 
     /**
@@ -280,7 +291,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (playButton == null || pressState == 2 || pressState == 4) {
+        if (pressState == 2) {
             return true;
         }
 
@@ -289,16 +300,42 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
         // TODO: Fix scaling
         // Play button is a circle.
-        float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
-        float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
-        if (dist < radius*radius) {
+        float distX;
+        float distY;
+        float radiusX;
+        float radiusY;
+        float centerX;
+        float centerY;
+
+
+
+        layout.setText(displayFont, "MAIN MENU");
+        radiusX = layout.width / 2.0f;
+        radiusY = layout.height / 2.0f;
+        distX = Math.abs(screenX - centerXLeft + radiusX);
+        distY = Math.abs(screenY - 4 * marginY + radiusY);
+        if (distX <= radiusX && distY <= radiusY) {
             pressState = 1;
+            exit = 0;
         }
 
-        radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
-        dist = (screenX-centerXMain)*(screenX-centerXMain)+(screenY-centerY)*(screenY-centerY);
-        if (dist < radius*radius) {
-            pressState = 3;
+        for (int i = 1; i <= levelNames.length; i++) {
+            if (i < NUM_ROWS) {
+                centerX = centerXLeft;
+            } else {
+                centerX = centerXRight;
+            }
+            centerY = (NUM_ROWS - (i % NUM_ROWS)) * marginY;
+
+            distX = Math.abs(screenX - centerX + radiusX);
+            distY = Math.abs(screenY - centerY + radiusY);
+            layout.setText(displayFont, "LVL " + i + ": " + levelNames[i - 1]);
+            radiusX = layout.width / 2.0f;
+            radiusY = layout.height / 2.0f;
+            if (distX <= radiusX * 1.2f && distY <= radiusY * 1.5f) {
+                pressState = 1;
+                exit = i;
+            }
         }
         return false;
     }
@@ -317,11 +354,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (pressState == 1) {
             pressState = 2;
-            return false;
-        }
-
-        if (pressState == 3) {
-            pressState = 4;
             return false;
         }
         return true;

@@ -1600,7 +1600,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
-        System.out.println(avatar.getWep1().getDurability());
+        //System.out.println(avatar.getWep1().getDurability());
         if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
             avatar.setRed(false);
             gotHit = -1;
