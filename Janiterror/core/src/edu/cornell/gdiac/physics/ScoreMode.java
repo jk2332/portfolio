@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -21,6 +22,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/play-button.png";
     private static final String MAIN_BTN_FILE = "shared/play-button.png";
+
+    private static final String JOE_NEXT_FILE = "floor/janitor-level-complete.png";
+    private static final String JOE_MAIN_FILE = "floor/janitor-sleeping.png";
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -35,6 +39,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     /** Ration of the bar height to the screen */
     private static float BAR_HEIGHT_RATIO = 0.25f;
 
+    private static float JOE_HEIGHT_RATIO = 0.5f;
+
     private static float OFFSET_X_RATIO = 0.15f;
 
     /** The y-coordinate of the center of the progress bar */
@@ -43,6 +49,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private int centerX;
 
     private int centerXMain;
+    private int centerXNext;
+
+    private int centerYJoe;
     /** Background texture for start-up */
     private Texture background;
     /** Play button to display when done */
@@ -80,6 +89,13 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     /** Whether or not this player mode is still active */
     private boolean active;
 
+    private Animation <TextureRegion> joeNext;
+    private Animation <TextureRegion> joeMain;
+
+    float stateTimer;
+
+    TextureRegion current;
+
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
@@ -100,6 +116,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
+
+        stateTimer = 0.0f;
         // Load the next two images immediately.
         playButton = new Texture(PLAY_BTN_FILE);
         playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -110,10 +128,27 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         background = new Texture(BACKGROUND_FILE);
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
+
+        Texture joeMainT = new Texture(JOE_MAIN_FILE);
+        Texture joeNextT = new Texture(JOE_NEXT_FILE);
+        TextureRegion joeMainTexture = new TextureRegion(joeMainT, joeMainT.getWidth(), joeMainT.getHeight());
+        TextureRegion joeNextTexture = new TextureRegion(joeNextT, joeNextT.getWidth(), joeNextT.getHeight());
         // Let ANY connected controller start the game.
         /*for(Controller controller : Controllers.getControllers()) {
             controller.addListener(this);
         }*/
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i=0; i <= joeNextT.getWidth()/64; i++){
+            frames.add (new TextureRegion(joeNextTexture,i*64,0,64,64));
+        }
+        joeNext = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= joeMainT.getWidth()/64; i++){
+            frames.add (new TextureRegion(joeMainTexture,i*64,0,64,64));
+        }
+        joeMain = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
 
     }
 
@@ -150,7 +185,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
+        current = getFrameJoe(delta);
     }
 
     /**
@@ -165,12 +202,13 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         canvas.draw(background, 0, 0);
         Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
         canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+                centerXNext, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
         tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
         canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
+        canvas.draw(current, centerX, centerYJoe);
         canvas.end();
     }
 
@@ -214,10 +252,12 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         heightY = height;
 
         centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = (int) (width/2 + width * OFFSET_X_RATIO);
+        centerX = width/2;
+        centerXNext = (int) (width/2 + width * OFFSET_X_RATIO);
         heightY = height;
 
         centerXMain = (int) (width/2 - width * OFFSET_X_RATIO);
+        centerYJoe = (int) (JOE_HEIGHT_RATIO*height);
     }
 
     /**
@@ -290,7 +330,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         // TODO: Fix scaling
         // Play button is a circle.
         float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
-        float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
+        float dist = (screenX-centerXNext)*(screenX-centerXNext)+(screenY-centerY)*(screenY-centerY);
         if (dist < radius*radius) {
             pressState = 1;
         }
@@ -521,6 +561,46 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      */
     public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
         return true;
+    }
+
+    public enum StateJoe {MAIN, NEXT}
+
+    public StateJoe currentState;
+    public StateJoe previousState;
+
+    public StateJoe getStateJoe(){
+        float screenX = Gdx.input.getX();
+        float screenY = Gdx.input.getY();
+
+        screenY = heightY-screenY;
+
+        float radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
+        float dist = (screenX-centerXMain)*(screenX-centerXMain)+(screenY-centerY)*(screenY-centerY);
+        if (dist < radius*radius) {
+            return StateJoe.MAIN;
+        }
+
+        return StateJoe.NEXT;
+    }
+
+    public TextureRegion getFrameJoe (float dt){
+        currentState = getStateJoe();
+        TextureRegion region;
+        switch (currentState){
+            case MAIN:
+                region = joeMain.getKeyFrame(stateTimer,true);
+                break;
+            case NEXT:
+                region = joeNext.getKeyFrame(stateTimer, true);
+                break;
+            default:
+                region = joeNext.getKeyFrame(stateTimer, true);
+                break;
+        }
+
+        stateTimer = currentState == previousState ? stateTimer + dt : 0;
+        previousState = currentState;
+        return region;
     }
 
 }

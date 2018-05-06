@@ -180,6 +180,7 @@ public class LevelEditorParser {
             if (beakergid == 0) {
                 beakergid = 1000;
             }
+            System.out.println("tilegid" + tilegid);
         }
         tiles = layerToList(layers.get(0));
 
