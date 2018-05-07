@@ -21,7 +21,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private static final String BACKGROUND_FILE = "shared/loading.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/play-button.png";
-    private static final String MAIN_BTN_FILE = "shared/play-button.png";
+    private static final String MAIN_BTN_FILE = "shared/menu-button.png";
 
     private static final String JOE_NEXT_FILE = "floor/janitor-level-complete.png";
     private static final String JOE_MAIN_FILE = "floor/janitor-sleeping.png";
