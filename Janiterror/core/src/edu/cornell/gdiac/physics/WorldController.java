@@ -133,10 +133,10 @@ public abstract class WorldController implements Screen {
 	private static final String MAD_DEATH_FILE  = "floor/enemy_long/mad-death.png";
 	private static final String MAD_STUN_FILE  = "floor/mad-stunned.png";
 	/** The texture files for robot */
-	private static final String ROBOT_ATTACKL_FILE  = "floor/robot-attack-left.png";
-	private static final String ROBOT_ATTACKR_FILE  = "floor/robot-attack-right.png";
-	private static final String ROBOT_ATTACKU_FILE  = "floor/robot-attack-back-recolor.png";
-	private static final String ROBOT_ATTACKD_FILE  = "floor/robot-attack-front-recolor.png";
+	private static final String ROBOT_ATTACKL_FILE  = "floor/enemy_long/robot-attack-left.png";
+	private static final String ROBOT_ATTACKR_FILE  = "floor/enemy_long/robot-attack-right.png";
+	private static final String ROBOT_ATTACKU_FILE  = "floor/enemy_long/robot-attack-up.png";
+	private static final String ROBOT_ATTACKD_FILE  = "floor/enemy_long/robot-attack-down.png";
 	private static final String ROBOT_WALKR_FILE  = "floor/robot-walk-side-recolor.png";
 	private static final String ROBOT_WALKU_FILE  = "floor/robot-walk-back-recolor.png";
 	private static final String ROBOT_WALKD_FILE  = "floor/robot-walk-front-recolor.png";
@@ -166,7 +166,7 @@ public abstract class WorldController implements Screen {
 	private static final String LIZARD_ATTACKL_FILE  = "floor/enemy_long/lizard-attack-left.png";
 	private static final String LIZARD_ATTACKR_FILE  = "floor/enemy_long/lizard-attack-right.png";
 	private static final String LIZARD_ATTACKU_FILE  = "floor/enemy_long/lizard-attack-up.png";
-	private static final String LIZARD_ATTACKD_FILE  = "floor/L-attack-front.png";
+	private static final String LIZARD_ATTACKD_FILE  = "floor/enemy_long/lizard-attack-down.png";
 	private static final String LIZARD_WALKR_FILE  = "floor/L-walk-side.png";
 	private static final String LIZARD_WALKU_FILE  = "floor/L-walk-back.png";
 	private static final String LIZARD_WALKD_FILE  = "floor/L-walk-front.png";

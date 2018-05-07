@@ -994,26 +994,26 @@ public class FloorController extends WorldController implements ContactListener 
         robotRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackLTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackLTexture,i*128,0,128,64));
         }
         robotAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackRTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackRTexture,i*128,0,128,64));
         }
         robotAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackUTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackUTexture,i*64,0,64,128));
         }
         robotAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackDTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackDTexture,i*64,0,64,128));
         }
         robotAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1175,7 +1175,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i < 6; i++){
-            frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,128));
         }
         lizardAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -2304,7 +2304,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                 boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
-                    if (s.isActive()) {
+                    if (s.isActive() && s.getHP() > 0) {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
 //                        //implement isWallInWay method that says if wall is in way of gap and where that wall is
@@ -2728,16 +2728,16 @@ public class FloorController extends WorldController implements ContactListener 
         for (EnemyModel s : enemies) {
             if (!(s.isRemoved())) {
                 int enemy_hp = s.getHP();
-                if (enemy_hp < 0) {enemy_hp = 0;}
-
-                if (s instanceof RobotModel) {
-                    //draw 5 hp for robots, 3 for everyone else
-                    canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
-                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
-                }
-                else {
-                    canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
-                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                if (enemy_hp > 0) {
+                    if (s instanceof RobotModel) {
+                        //draw 5 hp for robots, 3 for everyone else
+                        canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
+                                (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                    }
+                    else {
+                        canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
+                                (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                    }
                 }
             }
         }
