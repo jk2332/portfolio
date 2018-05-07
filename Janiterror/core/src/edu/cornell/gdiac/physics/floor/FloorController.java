@@ -91,7 +91,7 @@ public class FloorController extends WorldController implements ContactListener 
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
-    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
+    private HashMap<String, TextureRegion[]> wep_to_smallbartexture = new HashMap<String, TextureRegion[]>();
     private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
 
     private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
@@ -742,11 +742,17 @@ public class FloorController extends WorldController implements ContactListener 
         TextureRegion[][] lidTextures = lidBarTexture.split(100, 64);
         TextureRegion[][] noLidTextures = noLidBarTexture.split(100, 64);
 
+        TextureRegion[][] mopSmallTextures = mopBarSmallTexture.split(75, 48);
+        TextureRegion[][] spraySmallTextures = sprayBarSmallTexture.split(75, 48);
+        TextureRegion[][] vacuumSmallTextures = vacuumBarSmallTexture.split(75, 48);
+        TextureRegion[][] lidSmallTextures = lidBarSmallTexture.split(75, 48);
+        TextureRegion[][] noLidSmallTextures = noLidBarSmallTexture.split(75, 48);
+
         //for temporary use to add to allHeartTextures
         TextureRegion[] heartTextures = healthBarTexture.split(100, 64)[0];
-//        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
         allHeartTextures[0] = heartTextures;
-//        allHeartTextures[1] = heartTextures2;
+        //TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        //allHeartTextures[1] = heartTextures2;
 
         //for temporary use to add to allEnemyHeartTextures
         TextureRegion[] enemyBar1 = enemyHealth3Texture.split(64, 64)[0];
@@ -754,12 +760,18 @@ public class FloorController extends WorldController implements ContactListener 
         allEnemyHeartTextures[0] = enemyBar1;
         allEnemyHeartTextures[1] = enemyBar2;
 
+        /** Load name -> bartexture dictionary */
         wep_to_bartexture.put("mop", mopTextures[0]);
         wep_to_bartexture.put("spray", sprayTextures[0]);
         wep_to_bartexture.put("vacuum", vacuumTextures[0]);
         wep_to_bartexture.put("lid", lidTextures[0]);
         wep_to_bartexture.put("no lid", noLidTextures[0]);
-
+        /** Load name -> smallbartexture dictionary */
+        wep_to_smallbartexture.put("mop", mopSmallTextures[0]);
+        wep_to_smallbartexture.put("spray", spraySmallTextures[0]);
+        wep_to_smallbartexture.put("vacuum", vacuumSmallTextures[0]);
+        wep_to_smallbartexture.put("lid", lidSmallTextures[0]);
+        wep_to_smallbartexture.put("no lid", noLidSmallTextures[0]);
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
@@ -924,53 +936,47 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
 //        LONG SCIENTIST ANIMATIONS
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackRTexture,i*96 - 16,0,96,64));
-            // No clue why I subtract 16 from x but it looks like it works sort of
-
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackRTexture,i*128,0,128,64));
         }
-        madAttackR = new Animation<TextureRegion>(0.1f, frames);
+        madAttackR = new Animation<TextureRegion>(0.08f, frames);
+        frames.clear();
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackLTexture,i*128,0,128,64));
+        }
+        madAttackL = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackLTexture,i*96 - 16,0,96,64));
-            // No clue why I subtract 16 from x but it looks like it works sort of
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,128));
         }
-        madAttackL = new Animation<TextureRegion>(0.1f, frames);
+        madAttackU = new Animation<TextureRegion>(0.08f, frames);
+        frames.clear();
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackDTexture,i*64,0,64,128));
+        }
+        madAttackD = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,64));
-        }
-        madAttackU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackDTexture,i*64,-16,64,96));
-            // No clue why I subtract 16 from y but it looks like it works sort of
-        }
-        madAttackD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(scientistIdleTexture,i*64,0,64,64));
         }
-        madStand = new Animation<TextureRegion>(0.1f, frames);
+        madStand = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 12; i++){
             frames.add (new TextureRegion(scientistDeathTexture,i*64,0,64,64));
         }
-        madDeath = new Animation<TextureRegion>(0.1f, frames);
+        madDeath = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(scientistStunTexture,i*64,0,64,64));
         }
         madStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(robotWalkRTexture,i*64,0,64,64));
         }
         robotRunR = new Animation<TextureRegion>(0.1f, frames);
@@ -1021,13 +1027,13 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotDeathTexture,i*64,0,64,64));
         }
-        robotDeath = new Animation<TextureRegion>(0.1f, frames);
+        robotDeath = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotStunTexture,i*64,0,64,64));
         }
-        robotStun = new Animation<TextureRegion>(0.25f, frames);
+        robotStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
@@ -1150,25 +1156,25 @@ public class FloorController extends WorldController implements ContactListener 
         lizardRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackLTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackLTexture,i*128,0,128,64));
         }
         lizardAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackRTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackRTexture,i*128,0,128,64));
         }
         lizardAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackUTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackUTexture,i*64,0,64,128));
         }
         lizardAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
+        for (int i=0; i < 6; i++){
             frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,64));
         }
         lizardAttackD = new Animation<TextureRegion>(0.1f, frames);
@@ -2749,10 +2755,10 @@ public class FloorController extends WorldController implements ContactListener 
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
 
-        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
+        TextureRegion[] wep2Textures = wep_to_smallbartexture.get(wep2FileName);
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
         if (wep2FileName == "lid" && !(avatar.getHasLid())) {
-            wep2Textures = wep_to_bartexture.get("no lid");
+            wep2Textures = wep_to_smallbartexture.get("no lid");
         }
         else if (wep1FileName == "lid" && !(avatar.getHasLid())) {
             System.out.println("no lid");
@@ -2763,9 +2769,7 @@ public class FloorController extends WorldController implements ContactListener 
         int maxDurability2 = avatar.getWep2().getMaxDurability();
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
         canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (cameraX - 460), (cameraY + 100));
-//        canvas.draw(wep2Textures[maxDurability2 - durability2], Color.WHITE,
-//               50, 50, (cameraX - 420), (cameraY + 160), 0, 0.9f, 0.9f);
+                (cameraX - 450), (cameraY + 100));
 
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
@@ -3535,11 +3539,14 @@ public class FloorController extends WorldController implements ContactListener 
             return StateLizard.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == false)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true){
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true) {
+            System.out.println("attack left");
             return StateLizard.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == false){
+                //why would you ever attack in the second case here
+            System.out.println("attack right");
             return StateLizard.ATTACKL;
         }
         else if (s.getMovementX() > 0) {
