@@ -1192,7 +1192,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                5, 200f, 5.0f);
+                5, 1, 5.0f);
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
