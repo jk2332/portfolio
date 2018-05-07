@@ -268,6 +268,10 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> computerPos;
     ArrayList<Vector2> beakerPos;
 
+
+    /** Reference to the mopCart (for collision detection) */
+    //List of all mopcarts in level, should check if each one was used or not
+    private ArrayList<BoxObstacle> mopCartList = new ArrayList<BoxObstacle>();
     ArrayList<Vector2> mopCartPos;
     ArrayList<Boolean> mopCartVisitedBefore;
 
@@ -369,10 +373,6 @@ public class FloorController extends WorldController implements ContactListener 
     private Board board;
     /** ticks for update loop */
     private long ticks;
-
-    /** Reference to the mopCart (for collision detection) */
-    //List of all mopcarts in level, should check if each one was used or not
-    private ArrayList<BoxObstacle> mopCartList = new ArrayList<BoxObstacle>();
 
     /** Reference to the special health power up (for collision detection) */
     private BoxObstacle specialHealth;
@@ -489,6 +489,12 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        //reset mop cart list
+        mopCartList = new ArrayList<BoxObstacle>();
+        //avatar has never visited mopcart before
+        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
+
         for(LightSource light : lights) {
             light.remove();
         }
@@ -497,10 +503,6 @@ public class FloorController extends WorldController implements ContactListener 
             rayhandler.dispose();
             rayhandler = null;
         }
-
-        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
-        //avatar has never visited mopcart before
-        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -563,8 +565,8 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(goalDoor);
 
         // Add mopcart
-        float mopwidth  = mopTile.getRegionWidth()/scale.x;
-        float mopheight= mopTile.getRegionHeight()/scale.y;
+        float mopwidth = mopCartTile.getRegionWidth()/scale.x;
+        float mopheight = mopCartTile.getRegionHeight()/scale.y;
         for (int ii=0; ii<mopCartPos.size(); ii++) {
             Vector2 vec = mopCartPos.get(ii);
             BoxObstacle mopCart = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
@@ -575,7 +577,7 @@ public class FloorController extends WorldController implements ContactListener 
             mopCart.setRestitution(0.0f);
             mopCart.setSensor(true);
             mopCart.setDrawScale(scale);
-            mopCart.setTexture(mopTile);
+            mopCart.setTexture(mopCartTile);
             mopCart.setName("mopCart");
             addObject(mopCart);
             mopCartList.add(mopCart);
@@ -734,16 +736,17 @@ public class FloorController extends WorldController implements ContactListener 
         mopcart_menu[1] = "lid";
         /** Load name -> texture dictionary */
 
-        TextureRegion[][] mopTextures = mopBarTexture.split(164, 64);
-        TextureRegion[][] sprayTextures = sprayBarTexture.split(114, 64);
-        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
-        TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
+        TextureRegion[][] mopTextures = mopBarTexture.split(100, 64);
+        TextureRegion[][] sprayTextures = sprayBarTexture.split(100, 64);
+        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(100, 64);
+        TextureRegion[][] lidTextures = lidBarTexture.split(100, 64);
+        TextureRegion[][] noLidTextures = noLidBarTexture.split(100, 64);
 
         //for temporary use to add to allHeartTextures
-        TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
-        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        TextureRegion[] heartTextures = healthBarTexture.split(100, 64)[0];
+//        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
         allHeartTextures[0] = heartTextures;
-        allHeartTextures[1] = heartTextures2;
+//        allHeartTextures[1] = heartTextures2;
 
         //for temporary use to add to allEnemyHeartTextures
         TextureRegion[] enemyBar1 = enemyHealth3Texture.split(64, 64)[0];
@@ -755,6 +758,7 @@ public class FloorController extends WorldController implements ContactListener 
         wep_to_bartexture.put("spray", sprayTextures[0]);
         wep_to_bartexture.put("vacuum", vacuumTextures[0]);
         wep_to_bartexture.put("lid", lidTextures[0]);
+        wep_to_bartexture.put("no lid", noLidTextures[0]);
 
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
@@ -1868,7 +1872,6 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setWep2(current_wep1);
         }
         // attack
-
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
                 && avatar.getWep1().getDurability() < 0  && attackTimer == 0) {
             SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
@@ -1876,6 +1879,17 @@ public class FloorController extends WorldController implements ContactListener 
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
                 && avatar.getWep1().getDurability() == 0  && attackTimer == 0) {
             avatar.getWep1().decrDurability();
+        }
+        //update all mopcart sprites
+        System.out.println(mopCartList);
+        System.out.println(mopCartVisitedBefore);
+        for (int i=0; i < mopCartList.size(); i++) {
+            BoxObstacle mc = mopCartList.get(i);
+            System.out.println(i);
+            if (mopCartVisitedBefore.get(i)) {
+                mc.setTexture(emptyMopCartTile);
+                System.out.println("changed");
+            }
         }
     }
 
@@ -2734,23 +2748,31 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
 
-        // DRAW ACTIVE WEAPON UI
+        //DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
 
+        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
+        if (wep2FileName == "lid" && !(avatar.getHasLid())) {
+            wep2Textures = wep_to_bartexture.get("no lid");
+        }
+        else if (wep1FileName == "lid" && !(avatar.getHasLid())) {
+            System.out.println("no lid");
+            wep1Textures = wep_to_bartexture.get("no lid");
+        }
+
+        int durability2 = avatar.getWep2().getDurability();
+        int maxDurability2 = avatar.getWep2().getMaxDurability();
+        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
+        canvas.draw(wep2Textures[maxDurability2 - durability2],
+                (cameraX - 460), (cameraY + 100));
+
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
         canvas.draw(wep1Textures[maxDurability1 - durability1],
                 (cameraX - 490), (cameraY + 140));
-
-        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
-        int durability2 = avatar.getWep2().getDurability();
-        int maxDurability2 = avatar.getWep2().getMaxDurability();
-        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
-        canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (cameraX - 450), (cameraY + 90));
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
