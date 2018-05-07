@@ -1259,6 +1259,7 @@ public class FloorController extends WorldController implements ContactListener 
             mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("turret");
+            mon.setMass(ii);
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii]=mon;
         }
@@ -1881,14 +1882,10 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.getWep1().decrDurability();
         }
         //update all mopcart sprites
-        System.out.println(mopCartList);
-        System.out.println(mopCartVisitedBefore);
         for (int i=0; i < mopCartList.size(); i++) {
             BoxObstacle mc = mopCartList.get(i);
-            System.out.println(i);
             if (mopCartVisitedBefore.get(i)) {
                 mc.setTexture(emptyMopCartTile);
-                System.out.println("changed");
             }
         }
     }
@@ -2767,6 +2764,8 @@ public class FloorController extends WorldController implements ContactListener 
         if (durability2 < 0){ durability2 = 0; } //fix for negative durability
         canvas.draw(wep2Textures[maxDurability2 - durability2],
                 (cameraX - 460), (cameraY + 100));
+//        canvas.draw(wep2Textures[maxDurability2 - durability2], Color.WHITE,
+//               50, 50, (cameraX - 420), (cameraY + 160), 0, 0.9f, 0.9f);
 
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
@@ -3422,6 +3421,10 @@ public class FloorController extends WorldController implements ContactListener 
 
     public StateTurret getStateTurret(EnemyModel s) {
         //USE THE TURRET DIRECTIONS ARRAY LIST TO GET REAL DIRECTIONS IN THE FUTURE
+        int index = (int)s.getMass();
+        System.out.println(index);
+        String attack_direction = slimeTurretDirections.get(index);
+        System.out.println(slimeTurretDirections);
 
         double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
@@ -3431,24 +3434,25 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateTurret.STUN;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
-                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("up")){
             return StateTurret.ATTACKU;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
-                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("down")){
             return StateTurret.ATTACKD;
         }
-        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            //System.out.println("slime attacking left");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
+            System.out.println("slime attacking left");
             return StateTurret.ATTACKR;
         }
-        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            //System.out.println("slime attacking right");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("right")) {
+            System.out.println("slime attacking right");
             return StateTurret.ATTACKL;
         }
+//        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()) && slimeMovedLeft == true)||
+//                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX()) && slimeMovedLeft == false){
+//            //System.out.println("slime attacking right");
+//            return StateTurret.ATTACKL;
+//        }
         else if (s.getMovementX() > 0) {
             //System.out.println("Slime run right");
             slimeMovedLeft = false;
@@ -3467,7 +3471,6 @@ public class FloorController extends WorldController implements ContactListener 
         else {
             return StateTurret.STANDING;
         }
-
     }
     public TextureRegion getFrameTurret(float dt , EnemyModel s){
         stateTimerT = s.getStateTimer();
