@@ -277,13 +277,14 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
             color = (pressState == 1 && exit == (i + 1) ? Color.YELLOW: Color.WHITE);
             displayFont.setColor(color);
+            displayFont.getData().setScale(scale * 1.5f);
             layout.setText(displayFont, i + 1 + "");
             radiusX = (int) (layout.width / 2.0f);
             radiusY = (int) (layout.height / 2.0f);
             levelButton = hoverIndex == i ? levelFrames.get(2) : levelFrames.get(0);
             canvas.draw(levelButton, Color.WHITE, levelFrames.get(0).getRegionWidth()/2,
                     levelFrames.get(0).getRegionHeight()/2, centerX, centerY, 0, 1.0f, 1.0f);
-            canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY - radiusY);
+            canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY + radiusY);
         }
 
         color = (pressState == 3 ? Color.YELLOW: Color.WHITE);

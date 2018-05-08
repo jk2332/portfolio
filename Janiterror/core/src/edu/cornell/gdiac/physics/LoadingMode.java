@@ -100,7 +100,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private float buttonSelectScale  = 0.75f;
 	private float buttonOptionScale  = 0.75f;
 
-	private static float OFFSET_Y_RATIO = 0.15f;
+	private static float OFFSET_Y_RATIO = 0.12f;
 	
 	/** Start button for XBox controller on Windows */
 	private static int WINDOWS_START = 7;
@@ -300,7 +300,38 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				optionsButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			}
 		} else {
+			float screenX = Gdx.input.getX();
+			float screenY = heightY - Gdx.input.getY();
+			float radiusX = buttonPlayScale*scale*playButton.getWidth()/2.0f;
+			float distX = Math.abs(screenX-centerX);
+			float distY = Math.abs(screenY-centerYPlay);
+			float radiusY =  buttonPlayScale*scale*playButton.getHeight()/2.0f;
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonPlayScale = 0.85f;
+			} else {
+				buttonPlayScale = 0.75f;
+			}
 
+
+			radiusY = buttonSelectScale*scale*selectButton.getHeight()/2.0f;
+			radiusX = buttonSelectScale*scale*selectButton.getWidth()/2.0f;
+			distX = Math.abs(screenX-centerX);
+			distY = Math.abs(screenY-centerYSelect);
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonSelectScale = 0.85f;
+			} else {
+				buttonSelectScale = 0.75f;
+			}
+
+			radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
+			radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
+			distX = screenX-centerX;
+			distY =screenY-centerYOptions;
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonOptionScale = 0.85f;
+			} else {
+				buttonOptionScale = 0.75f;
+			}
 		}
 	}
 
@@ -383,6 +414,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				listener.exitScreen(this, 0);
 			} else if (isSelect() && listener != null) {
 				listener.exitScreen(this, 1);
+			} else if (isOptions() && listener != null) {
+				listener.exitScreen(this, 2);
 			}
 		}
 	}
@@ -481,21 +514,27 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		
 		// TODO: Fix scaling
 		// Play button is a circle.
-		float radius = buttonPlayScale*scale*playButton.getWidth()/2.0f;
-		float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerYPlay)*(screenY-centerYPlay);
-		if (dist < radius*radius) {
+		float radiusX = buttonPlayScale*scale*playButton.getWidth()/2.0f;
+		float distX = Math.abs(screenX-centerX);
+		float distY = Math.abs(screenY-centerYPlay);
+		float radiusY =  buttonPlayScale*scale*playButton.getHeight()/2.0f;
+		if (distX <= radiusX && distY <= radiusY) {
 			pressState = 1;
 		}
 
-		radius = buttonSelectScale*scale*selectButton.getWidth()/2.0f;
-		dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerYSelect)*(screenY-centerYSelect);
-		if (dist < radius*radius) {
+		radiusY = buttonSelectScale*scale*selectButton.getHeight()/2.0f;
+		radiusX = buttonSelectScale*scale*selectButton.getWidth()/2.0f;
+		distX = Math.abs(screenX-centerX);
+		distY = Math.abs(screenY-centerYSelect);
+		if (distX <= radiusX && distY <= radiusY) {
 			pressState = 3;
 		}
 
-		radius = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
-		dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerYOptions)*(screenY-centerYOptions);
-		if (dist < radius*radius) {
+		radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
+		radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
+		distX = screenX-centerX;
+		distY =screenY-centerYOptions;
+		if (distX <= radiusX && distY <= radiusY) {
 			pressState = 5;
 		}
 
