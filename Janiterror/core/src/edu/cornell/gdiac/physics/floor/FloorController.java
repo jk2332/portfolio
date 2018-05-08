@@ -425,9 +425,6 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        if (input_level == 1) {
-            LEVEL = "tlevel5.tmx";
-        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -735,15 +732,14 @@ public class FloorController extends WorldController implements ContactListener 
         list_of_weapons[1] = "spray";
         list_of_weapons[2] = "vacuum";
         list_of_weapons[3] = "lid";
-        mopcart_menu[0] = "vacuum";
-        mopcart_menu[1] = "lid";
-        /** Load name -> texture dictionary */
 
+        /** Load name -> texture dictionary */
         TextureRegion[][] mopTextures = mopBarTexture.split(100, 64);
         TextureRegion[][] sprayTextures = sprayBarTexture.split(100, 64);
         TextureRegion[][] vacuumTextures = vacuumBarTexture.split(100, 64);
         TextureRegion[][] lidTextures = lidBarTexture.split(100, 64);
         TextureRegion[][] noLidTextures = noLidBarTexture.split(100, 64);
+        TextureRegion[][] noWeaponTextures = noneBarTexture.split(100, 64);
 
         TextureRegion[][] mopSmallTextures = mopBarSmallTexture.split(75, 48);
         TextureRegion[][] spraySmallTextures = sprayBarSmallTexture.split(75, 48);
@@ -769,27 +765,32 @@ public class FloorController extends WorldController implements ContactListener 
         wep_to_bartexture.put("vacuum", vacuumTextures[0]);
         wep_to_bartexture.put("lid", lidTextures[0]);
         wep_to_bartexture.put("no lid", noLidTextures[0]);
+        wep_to_bartexture.put("none", noWeaponTextures[0]);
         /** Load name -> smallbartexture dictionary */
         wep_to_smallbartexture.put("mop", mopSmallTextures[0]);
         wep_to_smallbartexture.put("spray", spraySmallTextures[0]);
         wep_to_smallbartexture.put("vacuum", vacuumSmallTextures[0]);
         wep_to_smallbartexture.put("lid", lidSmallTextures[0]);
         wep_to_smallbartexture.put("no lid", noLidSmallTextures[0]);
+        wep_to_smallbartexture.put("none", noWeaponTextures[0]);
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
         wep_to_texture.put("vacuum", vacuumTexture);
         wep_to_texture.put("lid", lidTexture);
+        wep_to_texture.put("none", noneTexture);
         /** Load name -> model dictionary */
         wep_to_model.put("mop", new MopModel(10, 2, 15));
         wep_to_model.put("spray", new SprayModel(5, 4, 150));
         wep_to_model.put("vacuum", new VacuumModel(10, 10));
         wep_to_model.put("lid", new LidModel(10, 10));
+        wep_to_model.put("none", new NoWeaponModel(10, 10));
         /** Load name -> in use dictionary */
-        wep_in_use.put("mop", true);
-        wep_in_use.put("spray", true);
+        wep_in_use.put("mop", false);
+        wep_in_use.put("spray", false);
         wep_in_use.put("vacuum", false);
         wep_in_use.put("lid", false);
+        wep_in_use.put("none", false);
     }
 
     private void addCharacters() {
@@ -972,7 +973,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
         madDeath = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
-
         for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(scientistStunTexture,i*64,0,64,64));
         }
@@ -1206,14 +1206,39 @@ public class FloorController extends WorldController implements ContactListener 
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
                 5, 1, 5.0f);
-        avatar.setWep1(wep_to_model.get("mop"));
-        avatar.setWep2(wep_to_model.get("spray"));
+
+        //get default weapons
+        String default1 = level.getJoeDefaults().get(0);
+        String default2 = level.getJoeDefaults().get(1);
+        avatar.setWep1(wep_to_model.get(default1));
+        avatar.setWep2(wep_to_model.get(default2));
+        if (default1.equals("lid") || default2.equals("lid")) { avatar.setHasLid(true); }
+
+        wep_in_use.put(default1, true);
+        wep_in_use.put(default2, true);
+        if (default2.equals("none")) {
+            mopcart_menu[0] = "spray";
+            mopcart_menu[1] = "none";
+        }
+        else {
+            //go through and find the other two weapons
+            System.out.println("hi");
+            System.out.println(default2);
+            System.out.println(default1);
+            int add_index = 0;
+            for (String wep: list_of_weapons) {
+                if (!(wep_in_use.get(wep))) {
+                    mopcart_menu[add_index] = wep;
+                    add_index += 1;
+                }
+            }
+        }
+
+
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
         avatar.setName("joe");
-        //remove all hp bonuses gained during this level
-        //TODO: Avatar in level only has 15 health because set in Tiled, however, we need to change the HP dynamically
-        //depending on what the player has from the last level
+        //set upgraded HP
         avatar.setCurrentMaxHP(avatar.getBaseHP());
         addObject(avatar);
 
@@ -1833,7 +1858,7 @@ public class FloorController extends WorldController implements ContactListener 
         //move mop cart index
         if (avatar.isLeft()) {
             if (mopcart_index == 1) { mopcart_index = 0; }
-        } else if (avatar.isRight()) {
+        } else if (avatar.isRight() && !(mopcart_menu[1].equals("none")) ) {
             if (mopcart_index == 0) { mopcart_index = 1; }
         }
         // swapping weapon
@@ -1853,7 +1878,7 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setHasLid(false);
             }
         }
-        // swapping all weapons
+        // swapping secondary weapon
         if (avatar.isSwapping()) {
             //get weapon in cart
             String swapping_weapon_name = mopcart_menu[mopcart_index];
@@ -1881,8 +1906,11 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isSwapping()) {
             WeaponModel current_wep1 = avatar.getWep1();
             WeaponModel current_wep2 = avatar.getWep2();
-            avatar.setWep1(current_wep2);
-            avatar.setWep2(current_wep1);
+            //can't swap if you only have 1 weapon
+            if (!current_wep2.name.equals("none")) {
+                avatar.setWep1(current_wep2);
+                avatar.setWep2(current_wep1);
+            }
         }
         // attack
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
@@ -2797,6 +2825,8 @@ public class FloorController extends WorldController implements ContactListener 
                                 (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
                     }
                 }
+                //DRAW DIALOGUE BOX
+                //s.getState()
             }
         }
         displayFont.getData().setScale(1.0f);
@@ -2815,11 +2845,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         TextureRegion[] wep2Textures = wep_to_smallbartexture.get(wep2FileName);
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
+
+        //check if one is lid and holding it
         if (wep2FileName == "lid" && !(avatar.getHasLid())) {
             wep2Textures = wep_to_smallbartexture.get("no lid");
         }
         else if (wep1FileName == "lid" && !(avatar.getHasLid())) {
-            System.out.println("no lid");
             wep1Textures = wep_to_bartexture.get("no lid");
         }
 
