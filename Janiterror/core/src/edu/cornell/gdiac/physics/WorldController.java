@@ -97,7 +97,7 @@ public abstract class WorldController implements Screen {
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
 	private static final String SPECIAL_DURABILITY_FILE = "shared/duct-tape.png";
 	/** Retro font for displaying messages */
-	private static final String FONT_FILE = "shared/RetroGame.ttf";
+	private static final String FONT_FILE = "shared/Syntax_e11.ttf";
 	private static final int FONT_SIZE = 32;
 	/** The texture files for characters/attacks */
 	private static final String JANITOR_IDLE_FILE  = "floor/janitor-idle.png";

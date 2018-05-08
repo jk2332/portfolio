@@ -185,6 +185,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else if (exitCode == 1) {
 				select.reset();
 				setScreen(select);
+			} else if (exitCode == 2) {
+				Gdx.app.exit();
 			}
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
 			System.out.println("load next score" + current);
