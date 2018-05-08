@@ -55,6 +55,19 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String OUCH_FILE = "floor/ouch.mp3";
     /** The sound file for vacuum attack */
     private static final String VACUUM_FILE = "floor/vacuum.mp3";
+    /** The sound file for spray stun */
+    private static final String BUBBLE_FILE = "floor/bubble.mp3";
+
+    /** The sound file for mad scientist attack */
+    private static final String SPARK_FILE = "floor/spark.mp3";
+    /** The sound file for mad scientist death */
+    private static final String DROP_FILE = "floor/drop.mp3";
+    /** The sound file for lizard attack */
+    private static final String SLASH_FILE = "floor/slash.mp3";
+    /** The sound file for robot attack */
+    private static final String CLAMP_FILE = "floor/clamp.mp3";
+    /** The sound file for robot death */
+    private static final String EXPLOSION_FILE = "floor/explosion.mp3";
 
     private static final int TILE_SIZE = 32;
 
@@ -137,6 +150,20 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(OUCH_FILE);
         manager.load(VACUUM_FILE, Sound.class);
         assets.add(VACUUM_FILE);
+        manager.load(BUBBLE_FILE, Sound.class);
+        assets.add(BUBBLE_FILE);
+
+        manager.load(SPARK_FILE, Sound.class);
+        assets.add(SPARK_FILE);
+        manager.load(SLASH_FILE, Sound.class);
+        assets.add(SLASH_FILE);
+        manager.load(CLAMP_FILE, Sound.class);
+        assets.add(CLAMP_FILE);
+
+        manager.load(DROP_FILE, Sound.class);
+        assets.add(DROP_FILE);
+        manager.load(EXPLOSION_FILE, Sound.class);
+        assets.add(EXPLOSION_FILE);
 
         super.preLoadContent(manager);
     }
@@ -165,6 +192,14 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, NO_WEAPON_FILE);
         sounds.allocate(manager, OUCH_FILE);
         sounds.allocate(manager, VACUUM_FILE);
+        sounds.allocate(manager, BUBBLE_FILE);
+
+        sounds.allocate(manager, SPARK_FILE);
+        sounds.allocate(manager, SLASH_FILE);
+        sounds.allocate(manager, CLAMP_FILE);
+
+        sounds.allocate(manager, EXPLOSION_FILE);
+        sounds.allocate(manager, DROP_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -1222,9 +1257,6 @@ public class FloorController extends WorldController implements ContactListener 
         }
         else {
             //go through and find the other two weapons
-            System.out.println("hi");
-            System.out.println(default2);
-            System.out.println(default1);
             int add_index = 0;
             for (String wep: list_of_weapons) {
                 if (!(wep_in_use.get(wep))) {
@@ -1233,7 +1265,6 @@ public class FloorController extends WorldController implements ContactListener 
                 }
             }
         }
-
 
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarIdleTexture);
@@ -1965,6 +1996,16 @@ public class FloorController extends WorldController implements ContactListener 
     private void clearEnemy (float dt) {
         for (EnemyModel s : enemies) {
             if (s.getHP() <= 0 && deathTimer <= 0) {
+
+                //enemy death sounds (repeats because they're not gone yet)
+                //put this where they are about to die
+//                if (s.getHP() == 0 && s instanceof ScientistModel) {
+//                    SoundController.getInstance().play(DROP_FILE, DROP_FILE, false, 0.5f);
+//                }
+//                if (s.getHP() == 0 && s instanceof RobotModel) {
+//                    SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE, false, 0.5f);
+//                }
+
                 deathTimer = DEATH_ANIMATION_TIME;
                 s.markRemoved(true);
             } else if (s.getHP() <= 0 && deathTimer > 0) {
@@ -2019,6 +2060,17 @@ public class FloorController extends WorldController implements ContactListener 
                     //only do this for melee enemies
                     //can't be slime model otherwise lose health when slimes shoot (not when hit by bullet)
                     if (s.getAttackAnimationFrame()==0 && avatar.isAlive() && avatar.getHP() > 1) {
+
+                        if (s instanceof ScientistModel) {
+                            SoundController.getInstance().play(SPARK_FILE, SPARK_FILE, false, 0.5f);
+                        }
+                        if (s instanceof LizardModel) {
+                            SoundController.getInstance().play(SLASH_FILE, SLASH_FILE, false, 0.5f);
+                        }
+                        if (s instanceof RobotModel) {
+                            SoundController.getInstance().play(CLAMP_FILE, CLAMP_FILE, false, 0.5f);
+                        }
+
                         gotHit=ticks;
                         avatar.decrHP();
                         avatar.setRed(true);
@@ -2409,11 +2461,13 @@ public class FloorController extends WorldController implements ContactListener 
 
                         if (!s.isRemoved() && (case1 || case2 || case3 || case4) && s.getAttacked() == false) {
                             if (s instanceof RobotModel){
+                                SoundController.getInstance().play(SPARK_FILE, SPARK_FILE, false, 0.5f);
                                 s.setStunned(true);
                                 s.decrHP();
                                 if (s.getHP()<0) {controls[s.getId()]=null;}
                                 s.setAttacked(true);
                             } else {
+                                SoundController.getInstance().play(BUBBLE_FILE, BUBBLE_FILE, false, 0.5f);
                                 s.setStunned(true);
                                 s.setAttacked(true);
                             }
@@ -2812,21 +2866,34 @@ public class FloorController extends WorldController implements ContactListener 
         //Draw Enemy Health
         displayFont.getData().setScale(0.5f);
         for (EnemyModel s : enemies) {
-            if (!(s.isRemoved())) {
+            if (!(s.isRemoved()) && (s.isActive())) {
                 int enemy_hp = s.getHP();
                 if (enemy_hp > 0) {
+                    //DRAW ENEMY HP
                     if (s instanceof RobotModel) {
-                        //draw 5 hp for robots, 3 for everyone else
+                        //draw 5 health for robot, 3 for everyone else
                         canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
                                 (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
-                    }
-                    else {
+                    } else {
                         canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
                                 (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
                     }
+
+                    //DRAW STATE EMOTICON
+                    String state = controls[s.getId()].getState().toString();
+                    if (!(s instanceof TurretModel)) {
+                        //don't draw state for turrets
+                        if (state.equals("CHASE") || state.equals("ATTACK")) {
+                            canvas.draw(emoticonExclamationTexture,
+                                    (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
+                            //might want to scale this and put next to hp
+                        }
+                        else {
+                            canvas.draw(emoticonQuestionTexture,
+                                    (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
+                        }
+                    }
                 }
-                //DRAW DIALOGUE BOX
-                //s.getState()
             }
         }
         displayFont.getData().setScale(1.0f);

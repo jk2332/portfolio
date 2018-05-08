@@ -211,6 +211,8 @@ public abstract class WorldController implements Screen {
 
 	private static final String ENEMY_HEALTH_3_FILE  = "floor/enemy-health-3.png";
     private static final String ENEMY_HEALTH_5_FILE  = "floor/enemy-health-5.png";
+	private static final String EMOTICON_EXCLAMATION_FILE  = "floor/emoticon-exclamation.png";
+	private static final String EMOTICON_QUESTION_FILE  = "floor/emoticon-question.png";
 
 	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 	private static final String BACKGROUND_FILE = "shared/loading.png";
@@ -345,6 +347,8 @@ public abstract class WorldController implements Screen {
 
     protected TextureRegion enemyHealth3Texture;
     protected TextureRegion enemyHealth5Texture;
+	protected Texture emoticonExclamationTexture;
+	protected Texture emoticonQuestionTexture;
 
     protected TextureRegion mopBarTexture;
 	protected TextureRegion sprayBarTexture;
@@ -639,6 +643,10 @@ public abstract class WorldController implements Screen {
         assets.add(ENEMY_HEALTH_3_FILE);
         manager.load(ENEMY_HEALTH_5_FILE, Texture.class);
         assets.add(ENEMY_HEALTH_5_FILE);
+		manager.load(EMOTICON_EXCLAMATION_FILE, Texture.class);
+		assets.add(EMOTICON_EXCLAMATION_FILE);
+		manager.load(EMOTICON_QUESTION_FILE, Texture.class);
+		assets.add(EMOTICON_QUESTION_FILE);
 
 		manager.load(MOP_BAR_FILE, Texture.class);
 		assets.add(MOP_BAR_FILE);
@@ -848,8 +856,10 @@ public abstract class WorldController implements Screen {
 
         enemyHealth3Texture = createTexture(manager,ENEMY_HEALTH_3_FILE,false);
         enemyHealth5Texture = createTexture(manager,ENEMY_HEALTH_5_FILE,false);
+		emoticonExclamationTexture = new Texture(EMOTICON_EXCLAMATION_FILE);
+		emoticonQuestionTexture = new Texture(EMOTICON_QUESTION_FILE);
 
-        mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
+		mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
 		vacuumBarTexture = createTexture(manager,VACUUM_BAR_FILE,false);
 		lidBarTexture = createTexture(manager,LID_BAR_FILE,false);
