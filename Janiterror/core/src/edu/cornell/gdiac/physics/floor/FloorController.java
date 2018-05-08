@@ -91,7 +91,7 @@ public class FloorController extends WorldController implements ContactListener 
     private HashMap<String, WeaponModel> wep_to_model = new HashMap<String, WeaponModel>();
     private HashMap<String, Boolean> wep_in_use = new HashMap<String, Boolean>();
     private HashMap<String, Texture> wep_to_texture = new HashMap<String, Texture>();
-    private HashMap<String, Texture> wep_to_small_texture = new HashMap<String, Texture>();
+    private HashMap<String, TextureRegion[]> wep_to_smallbartexture = new HashMap<String, TextureRegion[]>();
     private HashMap<String, TextureRegion[]> wep_to_bartexture = new HashMap<String, TextureRegion[]>();
 
     private TextureRegion[][] allHeartTextures = new TextureRegion[2][];
@@ -268,6 +268,10 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> computerPos;
     ArrayList<Vector2> beakerPos;
 
+
+    /** Reference to the mopCart (for collision detection) */
+    //List of all mopcarts in level, should check if each one was used or not
+    private ArrayList<BoxObstacle> mopCartList = new ArrayList<BoxObstacle>();
     ArrayList<Vector2> mopCartPos;
     ArrayList<Boolean> mopCartVisitedBefore;
 
@@ -370,10 +374,6 @@ public class FloorController extends WorldController implements ContactListener 
     /** ticks for update loop */
     private long ticks;
 
-    /** Reference to the mopCart (for collision detection) */
-    //List of all mopcarts in level, should check if each one was used or not
-    private ArrayList<BoxObstacle> mopCartList = new ArrayList<BoxObstacle>();
-
     /** Reference to the special health power up (for collision detection) */
     private BoxObstacle specialHealth;
     private BoxObstacle specialDurability;
@@ -424,7 +424,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-//        LEVEL = "level16.tmx";
+        if (input_level == 1) {
+            LEVEL = "tlevel5.tmx";
+        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -436,7 +438,7 @@ public class FloorController extends WorldController implements ContactListener 
         lizardPos = level.getLizardPos();
 
         //Make empty arrays if you don't want the enemies to appear
-//        scientistPos=new ArrayList<Vector2>();
+        //scientistPos=new ArrayList<Vector2>();
 //        slimePos = new ArrayList<Vector2>();
 //        robotPos = new ArrayList<Vector2>();
 //        lizardPos = new ArrayList<Vector2>();
@@ -489,6 +491,12 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        //reset mop cart list
+        mopCartList = new ArrayList<BoxObstacle>();
+        //avatar has never visited mopcart before
+        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
+
         for(LightSource light : lights) {
             light.remove();
         }
@@ -497,10 +505,6 @@ public class FloorController extends WorldController implements ContactListener 
             rayhandler.dispose();
             rayhandler = null;
         }
-
-        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
-        //avatar has never visited mopcart before
-        mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
 
         Vector2 gravity = new Vector2(world.getGravity() );
 
@@ -563,8 +567,8 @@ public class FloorController extends WorldController implements ContactListener 
         addObject(goalDoor);
 
         // Add mopcart
-        float mopwidth  = mopTile.getRegionWidth()/scale.x;
-        float mopheight= mopTile.getRegionHeight()/scale.y;
+        float mopwidth = mopCartTile.getRegionWidth()/scale.x;
+        float mopheight = mopCartTile.getRegionHeight()/scale.y;
         for (int ii=0; ii<mopCartPos.size(); ii++) {
             Vector2 vec = mopCartPos.get(ii);
             BoxObstacle mopCart = new BoxObstacle(vec.x/32+OBJ_OFFSET_X, vec.y/32+OBJ_OFFSET_X,mopwidth,mopheight);
@@ -575,7 +579,7 @@ public class FloorController extends WorldController implements ContactListener 
             mopCart.setRestitution(0.0f);
             mopCart.setSensor(true);
             mopCart.setDrawScale(scale);
-            mopCart.setTexture(mopTile);
+            mopCart.setTexture(mopCartTile);
             mopCart.setName("mopCart");
             addObject(mopCart);
             mopCartList.add(mopCart);
@@ -734,16 +738,23 @@ public class FloorController extends WorldController implements ContactListener 
         mopcart_menu[1] = "lid";
         /** Load name -> texture dictionary */
 
-        TextureRegion[][] mopTextures = mopBarTexture.split(164, 64);
-        TextureRegion[][] sprayTextures = sprayBarTexture.split(114, 64);
-        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(164, 64);
-        TextureRegion[][] lidTextures = lidBarTexture.split(164, 64);
+        TextureRegion[][] mopTextures = mopBarTexture.split(100, 64);
+        TextureRegion[][] sprayTextures = sprayBarTexture.split(100, 64);
+        TextureRegion[][] vacuumTextures = vacuumBarTexture.split(100, 64);
+        TextureRegion[][] lidTextures = lidBarTexture.split(100, 64);
+        TextureRegion[][] noLidTextures = noLidBarTexture.split(100, 64);
+
+        TextureRegion[][] mopSmallTextures = mopBarSmallTexture.split(75, 48);
+        TextureRegion[][] spraySmallTextures = sprayBarSmallTexture.split(75, 48);
+        TextureRegion[][] vacuumSmallTextures = vacuumBarSmallTexture.split(75, 48);
+        TextureRegion[][] lidSmallTextures = lidBarSmallTexture.split(75, 48);
+        TextureRegion[][] noLidSmallTextures = noLidBarSmallTexture.split(75, 48);
 
         //for temporary use to add to allHeartTextures
-        TextureRegion[] heartTextures = healthBarTexture.split(114, 64)[0];
-        TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        TextureRegion[] heartTextures = healthBarTexture.split(100, 64)[0];
         allHeartTextures[0] = heartTextures;
-        allHeartTextures[1] = heartTextures2;
+        //TextureRegion[] heartTextures2 = healthBarTexture2.split(124, 64)[0];
+        //allHeartTextures[1] = heartTextures2;
 
         //for temporary use to add to allEnemyHeartTextures
         TextureRegion[] enemyBar1 = enemyHealth3Texture.split(64, 64)[0];
@@ -751,11 +762,18 @@ public class FloorController extends WorldController implements ContactListener 
         allEnemyHeartTextures[0] = enemyBar1;
         allEnemyHeartTextures[1] = enemyBar2;
 
+        /** Load name -> bartexture dictionary */
         wep_to_bartexture.put("mop", mopTextures[0]);
         wep_to_bartexture.put("spray", sprayTextures[0]);
         wep_to_bartexture.put("vacuum", vacuumTextures[0]);
         wep_to_bartexture.put("lid", lidTextures[0]);
-
+        wep_to_bartexture.put("no lid", noLidTextures[0]);
+        /** Load name -> smallbartexture dictionary */
+        wep_to_smallbartexture.put("mop", mopSmallTextures[0]);
+        wep_to_smallbartexture.put("spray", spraySmallTextures[0]);
+        wep_to_smallbartexture.put("vacuum", vacuumSmallTextures[0]);
+        wep_to_smallbartexture.put("lid", lidSmallTextures[0]);
+        wep_to_smallbartexture.put("no lid", noLidSmallTextures[0]);
         /** Load name -> texture dictionary */
         wep_to_texture.put("mop", mopTexture);
         wep_to_texture.put("spray", sprayTexture);
@@ -920,53 +938,47 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
 //        LONG SCIENTIST ANIMATIONS
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackRTexture,i*96 - 16,0,96,64));
-            // No clue why I subtract 16 from x but it looks like it works sort of
-
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackRTexture,i*128,0,128,64));
         }
-        madAttackR = new Animation<TextureRegion>(0.1f, frames);
+        madAttackR = new Animation<TextureRegion>(0.08f, frames);
+        frames.clear();
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackLTexture,i*128,0,128,64));
+        }
+        madAttackL = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackLTexture,i*96 - 16,0,96,64));
-            // No clue why I subtract 16 from x but it looks like it works sort of
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,128));
         }
-        madAttackL = new Animation<TextureRegion>(0.1f, frames);
+        madAttackU = new Animation<TextureRegion>(0.08f, frames);
+        frames.clear();
+        for (int i=0; i < 8; i++){
+            frames.add (new TextureRegion(scientistAttackDTexture,i*64,0,64,128));
+        }
+        madAttackD = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,64));
-        }
-        madAttackU = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(scientistAttackDTexture,i*64,-16,64,96));
-            // No clue why I subtract 16 from y but it looks like it works sort of
-        }
-        madAttackD = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
-
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(scientistIdleTexture,i*64,0,64,64));
         }
-        madStand = new Animation<TextureRegion>(0.1f, frames);
+        madStand = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 12; i++){
             frames.add (new TextureRegion(scientistDeathTexture,i*64,0,64,64));
         }
-        madDeath = new Animation<TextureRegion>(0.1f, frames);
+        madDeath = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(scientistStunTexture,i*64,0,64,64));
         }
         madStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 7; i++){
+        for (int i=0; i < 8; i++){
             frames.add (new TextureRegion(robotWalkRTexture,i*64,0,64,64));
         }
         robotRunR = new Animation<TextureRegion>(0.1f, frames);
@@ -984,26 +996,26 @@ public class FloorController extends WorldController implements ContactListener 
         robotRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackLTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackLTexture,(i*128) + 1,0,128,64));
         }
         robotAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackRTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackRTexture,(i*128) + 1,0,128,64));
         }
         robotAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackUTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackUTexture,(i*64) + 1,0,64,128));
         }
         robotAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(robotAttackDTexture,i*64,0,64,64));
+        for (int i=0; i < 5; i++){
+            frames.add (new TextureRegion(robotAttackDTexture,(i*64) + 1,0,64,128));
         }
         robotAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1017,13 +1029,13 @@ public class FloorController extends WorldController implements ContactListener 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotDeathTexture,i*64,0,64,64));
         }
-        robotDeath = new Animation<TextureRegion>(0.1f, frames);
+        robotDeath = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
             frames.add (new TextureRegion(robotStunTexture,i*64,0,64,64));
         }
-        robotStun = new Animation<TextureRegion>(0.25f, frames);
+        robotStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 3; i++){
@@ -1129,43 +1141,43 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkRTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkRTexture,(i*64) + 1,0,64,64));
         }
         lizardRunR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkUTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkUTexture,(i*64) + 1,0,64,64));
         }
         lizardRunU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkDTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkDTexture,(i*64) + 1,0,64,64));
         }
         lizardRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackLTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackLTexture,(i*128) + 1,0,128,64));
         }
         lizardAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackRTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackRTexture,(i*128) + 1,0,128,64));
         }
         lizardAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackUTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackUTexture,(i*64) + 1,0,64,128));
         }
         lizardAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= 3; i++){
-            frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,64));
+        for (int i=0; i < 6; i++){
+            frames.add (new TextureRegion(lizardAttackDTexture,(i*64) + 1,0,64,128));
         }
         lizardAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1192,7 +1204,7 @@ public class FloorController extends WorldController implements ContactListener 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
-                5, 200f, 5.0f);
+                5, 1, 5.0f);
         avatar.setWep1(wep_to_model.get("mop"));
         avatar.setWep2(wep_to_model.get("spray"));
         avatar.setDrawScale(scale);
@@ -1255,6 +1267,7 @@ public class FloorController extends WorldController implements ContactListener 
             mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("turret");
+            mon.setTurretDirection(sdirec);
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii]=mon;
         }
@@ -1625,7 +1638,8 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()) - 1) &&
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()),
+                board.screenToBoardY(avatar.getY()) - 1) &&
                 ticks % 30==0L) { //adjust this later
             //-1 on Y so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
@@ -1756,6 +1770,7 @@ public class FloorController extends WorldController implements ContactListener 
                     s.setTexture(getFrameSlime(dt, s));
                 } else if (s.getName() == "turret") {
                     s.setTexture(getFrameTurret(dt, s));
+                    System.out.println(s.getId());
                 } else if (s.getName() == "lizard") {
                     s.setTexture(getFrameLizard(dt, s));
                 }
@@ -1868,7 +1883,6 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setWep2(current_wep1);
         }
         // attack
-
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
                 && avatar.getWep1().getDurability() < 0  && attackTimer == 0) {
             SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
@@ -1876,6 +1890,13 @@ public class FloorController extends WorldController implements ContactListener 
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
                 && avatar.getWep1().getDurability() == 0  && attackTimer == 0) {
             avatar.getWep1().decrDurability();
+        }
+        //update all mopcart sprites
+        for (int i=0; i < mopCartList.size(); i++) {
+            BoxObstacle mc = mopCartList.get(i);
+            if (mopCartVisitedBefore.get(i)) {
+                mc.setTexture(emptyMopCartTile);
+            }
         }
     }
 
@@ -1901,7 +1922,8 @@ public class FloorController extends WorldController implements ContactListener 
                 }
 
                 performAction(s, action);
-                if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY() ))
+                if (board.isHazard(board.screenToBoardX(s.getX()),
+                        board.screenToBoardY(s.getY()-1))
                         && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                     //-1 so if they step feet on it they lose health
                     s.decrHP();
@@ -2193,7 +2215,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setName("slimeball");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
-        bullet.setTexture(slimeballTexture);
+        bullet.setTexture(turretSlimeballTexture);
         bullet.setBullet(true);
         bullet.setGravityScale(0);
         bullet.setVX(speedX);
@@ -2287,7 +2309,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                 boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
-                    if (s.isActive()) {
+                    if (s.isActive() && s.getHP() > 0) {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                         int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
 //                        //implement isWallInWay method that says if wall is in way of gap and where that wall is
@@ -2567,21 +2589,20 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             //Check if avatar has reached a powerup
-            if (bd1 == avatar && bd2 == specialHealth) {
+            if (bd1 == avatar && bd2.getName() == "specialHealth") {
                 if (avatar.getHP() != avatar.getCurrentMaxHP()) {
                     bd2.markRemoved(true);
                     avatar.setHP(avatar.getCurrentMaxHP()); //full heal
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2 == avatar && bd1 == specialHealth) {
+            } else if (bd2 == avatar && bd1.getName() == "specialHealth") {
                 if (avatar.getHP() != avatar.getCurrentMaxHP()) {
                     bd1.markRemoved(true);
                     avatar.setHP(avatar.getCurrentMaxHP()); //full heal
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
                 }
             }
-
-            if (bd1 == avatar && bd2 == specialDurability) {
+            if (bd1 == avatar && bd2.getName() == "specialDurability") {
                 if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
                     avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
                     //reload weapons
@@ -2590,7 +2611,7 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2 == avatar && bd1 == specialDurability) {
+            } else if (bd2 == avatar && bd1.getName() == "specialDurability") {
                 if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
                     avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
                     //reload weapons
@@ -2711,16 +2732,16 @@ public class FloorController extends WorldController implements ContactListener 
         for (EnemyModel s : enemies) {
             if (!(s.isRemoved())) {
                 int enemy_hp = s.getHP();
-                if (enemy_hp < 0) {enemy_hp = 0;}
-
-                if (s instanceof RobotModel) {
-                    //draw 5 hp for robots, 3 for everyone else
-                    canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
-                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
-                }
-                else {
-                    canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
-                            (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                if (enemy_hp > 0) {
+                    if (s instanceof RobotModel) {
+                        //draw 5 hp for robots, 3 for everyone else
+                        canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
+                                (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                    }
+                    else {
+                        canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
+                                (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                    }
                 }
             }
         }
@@ -2734,23 +2755,31 @@ public class FloorController extends WorldController implements ContactListener 
         canvas.draw(allHeartTextures[times_improved][(maxHP - currentHP)],
                 (cameraX - 490), (cameraY + 210));
 
-        // DRAW ACTIVE WEAPON UI
+        //DRAW ACTIVE WEAPON UI
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
 
+        TextureRegion[] wep2Textures = wep_to_smallbartexture.get(wep2FileName);
         TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
+        if (wep2FileName == "lid" && !(avatar.getHasLid())) {
+            wep2Textures = wep_to_smallbartexture.get("no lid");
+        }
+        else if (wep1FileName == "lid" && !(avatar.getHasLid())) {
+            System.out.println("no lid");
+            wep1Textures = wep_to_bartexture.get("no lid");
+        }
+
+        int durability2 = avatar.getWep2().getDurability();
+        int maxDurability2 = avatar.getWep2().getMaxDurability();
+        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
+        canvas.draw(wep2Textures[maxDurability2 - durability2],
+                (cameraX - 450), (cameraY + 100));
+
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
         canvas.draw(wep1Textures[maxDurability1 - durability1],
                 (cameraX - 490), (cameraY + 140));
-
-        TextureRegion[] wep2Textures = wep_to_bartexture.get(wep2FileName);
-        int durability2 = avatar.getWep2().getDurability();
-        int maxDurability2 = avatar.getWep2().getMaxDurability();
-        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
-        canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (cameraX - 450), (cameraY + 90));
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
@@ -3399,7 +3428,10 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     public StateTurret getStateTurret(EnemyModel s) {
-        //USE THE TURRET DIRECTIONS ARRAY LIST TO GET REAL DIRECTIONS IN THE FUTURE
+        String attack_direction = s.getTurretDirection();
+
+        //THIS ONLY HAPPENS IF THE THE SLIME IS NOT AUTO
+        //IF THE SLIME IS AUTO, DO SHIT NORMALLY
 
         double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
@@ -3409,24 +3441,23 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateTurret.STUN;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() > s.getY() &&
-                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("up")){
             return StateTurret.ATTACKU;
         }
-        else if (s.getAttackAnimationFrame() > 0 && avatar.getY() < s.getY() &&
-                Math.abs(avatar.getX() - s.getX()) < verticalAttackBoundary){
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("down")){
             return StateTurret.ATTACKD;
         }
-        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == false)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == true){
-            //System.out.println("slime attacking left");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("right")) {
             return StateTurret.ATTACKR;
         }
-        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& slimeMovedLeft == true)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& slimeMovedLeft == false){
-            //System.out.println("slime attacking right");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
             return StateTurret.ATTACKL;
         }
+//        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()) && slimeMovedLeft == true)||
+//                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX()) && slimeMovedLeft == false){
+//            //System.out.println("slime attacking right");
+//            return StateTurret.ATTACKL;
+//        }
         else if (s.getMovementX() > 0) {
             //System.out.println("Slime run right");
             slimeMovedLeft = false;
@@ -3445,7 +3476,6 @@ public class FloorController extends WorldController implements ContactListener 
         else {
             return StateTurret.STANDING;
         }
-
     }
     public TextureRegion getFrameTurret(float dt , EnemyModel s){
         stateTimerT = s.getStateTimer();
@@ -3510,11 +3540,14 @@ public class FloorController extends WorldController implements ContactListener 
             return StateLizard.ATTACKD;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == false)||
-                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true){
+                (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == true) {
+            System.out.println("attack left");
             return StateLizard.ATTACKR;
         }
         else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX())&& lizardMovedLeft == true)||
                 (s.getAttackAnimationFrame() > 0 && avatar.getX() < s.getX())&& lizardMovedLeft == false){
+                //why would you ever attack in the second case here
+            System.out.println("attack right");
             return StateLizard.ATTACKL;
         }
         else if (s.getMovementX() > 0) {

@@ -92,6 +92,7 @@ public abstract class WorldController implements Screen {
 	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
+	private static final String EMPTY_MOP_CART_FILE = "shared/mop-cart-empty.png";
 	/** File to texture for power-ups */
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
 	private static final String SPECIAL_DURABILITY_FILE = "shared/duct-tape.png";
@@ -121,32 +122,27 @@ public abstract class WorldController implements Screen {
     private static final String JANITOR_VACUUMD_FILE  = "floor/janitor-attack-D-vacuum.png";
 	private static final String JANITOR_DEATH_FILE  = "floor/janitor-death.png";
 	/** The texture files for mad scientist */
-//	private static final String MAD_ATTACKR_FILE  = "floor/mad-attack-side-v2.png";
-//	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
-//	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
-//	private static final String MAD_ATTACKD_FILE  = "floor/mad-attack-front-v2.png";
-	private static final String MAD_ATTACKR_FILE  = "floor/enemy_long/mad-attack-side.png";
-	private static final String MAD_ATTACKL_FILE  = "floor/mad-attack-side-flip.png";
-	private static final String MAD_ATTACKU_FILE  = "floor/mad-attack-back-v2.png";
-	private static final String MAD_ATTACKD_FILE  = "floor/enemy_long/mad-attack-front-long.png";
-
+	private static final String MAD_ATTACKR_FILE  = "floor/enemy_long/mad-attack-right.png";
+	private static final String MAD_ATTACKL_FILE  = "floor/enemy_long/mad-attack-left.png";
+	private static final String MAD_ATTACKU_FILE  = "floor/enemy_long/mad-attack-up.png";
+	private static final String MAD_ATTACKD_FILE  = "floor/enemy_long/mad-attack-down.png";
 	private static final String MAD_WALKR_FILE  = "floor/mad-walk-side-v2.png";
 	private static final String MAD_WALKU_FILE  = "floor/mad-walk-back-v2.png";
 	private static final String MAD_WALKD_FILE  = "floor/mad-walk-front-v2.png";
 	private static final String MAD_IDLE_FILE  = "floor/mad-idle.png";
-	private static final String MAD_DEATH_FILE  = "floor/mad-death-v2.png";
+	private static final String MAD_DEATH_FILE  = "floor/enemy_long/mad-death.png";
 	private static final String MAD_STUN_FILE  = "floor/mad-stunned.png";
 	/** The texture files for robot */
-	private static final String ROBOT_ATTACKL_FILE  = "floor/robot-attack-left.png";
-	private static final String ROBOT_ATTACKR_FILE  = "floor/robot-attack-right.png";
-	private static final String ROBOT_ATTACKU_FILE  = "floor/robot-attack-back-recolor.png";
-	private static final String ROBOT_ATTACKD_FILE  = "floor/robot-attack-front-recolor.png";
+	private static final String ROBOT_ATTACKL_FILE  = "floor/enemy_long/robot-attack-left.png";
+	private static final String ROBOT_ATTACKR_FILE  = "floor/enemy_long/robot-attack-right.png";
+	private static final String ROBOT_ATTACKU_FILE  = "floor/enemy_long/robot-attack-up.png";
+	private static final String ROBOT_ATTACKD_FILE  = "floor/enemy_long/robot-attack-down.png";
 	private static final String ROBOT_WALKR_FILE  = "floor/robot-walk-side-recolor.png";
 	private static final String ROBOT_WALKU_FILE  = "floor/robot-walk-back-recolor.png";
 	private static final String ROBOT_WALKD_FILE  = "floor/robot-walk-front-recolor.png";
 	private static final String ROBOT_IDLE_FILE  = "floor/robot-idle-v2.png";
 	private static final String ROBOT_DEATH_FILE  = "floor/R-death.png";
-	private static final String ROBOT_STUN_FILE  = "floor/R-stunned.png";
+	private static final String ROBOT_STUN_FILE  = "floor/enemy_long/robot-stunned.png";
 	/** The texture files for slime */
 	private static final String SLIME_ATTACKL_FILE  = "floor/slime-attack-L.png";
 	private static final String SLIME_ATTACKR_FILE  = "floor/slime-attack-R.png";
@@ -167,10 +163,10 @@ public abstract class WorldController implements Screen {
 	private static final String TURRET_DEATH_FILE  = "floor/turret-slime-dead.png";
 	private static final String TURRET_STUN_FILE  = "floor/turret-slime-stunned.png";
 	/** The texture files for lizardman */
-	private static final String LIZARD_ATTACKL_FILE  = "floor/L-attack-L.png";
-	private static final String LIZARD_ATTACKR_FILE  = "floor/L-attack-R.png";
-	private static final String LIZARD_ATTACKU_FILE  = "floor/L-attack-back.png";
-	private static final String LIZARD_ATTACKD_FILE  = "floor/L-attack-front.png";
+	private static final String LIZARD_ATTACKL_FILE  = "floor/enemy_long/lizard-attack-left.png";
+	private static final String LIZARD_ATTACKR_FILE  = "floor/enemy_long/lizard-attack-right.png";
+	private static final String LIZARD_ATTACKU_FILE  = "floor/enemy_long/lizard-attack-up.png";
+	private static final String LIZARD_ATTACKD_FILE  = "floor/enemy_long/lizard-attack-down.png";
 	private static final String LIZARD_WALKR_FILE  = "floor/L-walk-side.png";
 	private static final String LIZARD_WALKU_FILE  = "floor/L-walk-back.png";
 	private static final String LIZARD_WALKD_FILE  = "floor/L-walk-front.png";
@@ -178,37 +174,44 @@ public abstract class WorldController implements Screen {
 	private static final String LIZARD_DEATH_FILE  = "floor/L-death.png";
 	private static final String LIZARD_STUN_FILE  = "floor/L-stunned.png";
 
-
 	private static final String SCIENTIST_FILE  = "floor/scientist.png";
 	private static final String SLIME_FILE  = "floor/slime.png";
 	private static final String LIZARD_FILE  = "floor/lizard.png";
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
+	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/turret-slimeball.png";
 
-	/** The texture files for the UI icons */
-	private static final String MOP_FILE  = "floor/ui-mop.png";
-	private static final String SPRAY_FILE  = "floor/ui-spray.png";
-	private static final String VACUUM_FILE  = "floor/ui-vacuum.png";
-	private static final String LID_FILE  = "floor/ui-lid.png";
+	/** The texture files for the Mop Cart UI icons */
+	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
+	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
+	private static final String VACUUM_FILE  = "floor/old_ui/ui-vacuum.png";
+	private static final String LID_FILE  = "floor/old_ui/ui-lid.png";
 
 	private static final String BEAKER_FILE = "shared/beaker-table.png";
 	private static final String COMPUTER_FILE = "shared/computer.png";
 	private static final String PLANT_FILE = "shared/plant.png";
 
 	/** The texture files for the UI icons */
-	private static final String HEALTH_BAR_FILE  = "floor/ui-bar-health.png";
-	private static final String HEALTH_BAR_FILE2  = "floor/ui-bar-health-upgrade1.png";
+	//	private static final String HEALTH_BAR_FILE2  = "floor/ui-bar-health-upgrade1.png";
+	private static final String HEALTH_BAR_FILE  = "floor/ui-health.png";
+	private static final String MOP_BAR_FILE  = "floor/ui-mop.png";
+	private static final String SPRAY_BAR_FILE  = "floor/ui-spray.png";
+	private static final String VACUUM_BAR_FILE  = "floor/ui-vacuum.png";
+	private static final String LID_BAR_FILE  = "floor/ui-lid.png";
+	private static final String NO_LID_BAR_FILE  = "floor/ui-lid-empty.png";
 
-    private static final String ENEMY_HEALTH_3_FILE  = "floor/enemy-health-3.png";
+//	private static final String HEALTH_BAR_SMALL_FILE  = "floor/ui-health.png";
+	private static final String MOP_BAR_SMALL_FILE  = "floor/ui-mop-small.png";
+	private static final String SPRAY_BAR_SMALL_FILE  = "floor/ui-spray-small.png";
+	private static final String VACUUM_BAR_SMALL_FILE  = "floor/ui-vacuum-small.png";
+	private static final String LID_BAR_SMALL_FILE  = "floor/ui-lid-small.png";
+	private static final String NO_LID_BAR_SMALL_FILE  = "floor/ui-lid-empty-small.png";
+
+	private static final String ENEMY_HEALTH_3_FILE  = "floor/enemy-health-3.png";
     private static final String ENEMY_HEALTH_5_FILE  = "floor/enemy-health-5.png";
 
-    private static final String MOP_BAR_FILE  = "floor/ui-bar-mop.png";
-	private static final String SPRAY_BAR_FILE  = "floor/ui-bar-spray.png";
-	private static final String VACUUM_BAR_FILE  = "floor/ui-bar-vacuum.png";
-	private static final String LID_BAR_FILE  = "floor/ui-bar-lid.png";
 	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
-
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String MOPCART_BACKGROUND_FILE = "shared/mop-cart-ui.png";
 	private static final String TILE_FILE = "shared/basic-tile-32.png";
@@ -326,6 +329,7 @@ public abstract class WorldController implements Screen {
 
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
+	protected TextureRegion turretSlimeballTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -344,6 +348,13 @@ public abstract class WorldController implements Screen {
 	protected TextureRegion sprayBarTexture;
 	protected TextureRegion vacuumBarTexture;
 	protected TextureRegion lidBarTexture;
+	protected TextureRegion noLidBarTexture;
+
+	protected TextureRegion mopBarSmallTexture;
+	protected TextureRegion sprayBarSmallTexture;
+	protected TextureRegion vacuumBarSmallTexture;
+	protected TextureRegion lidBarSmallTexture;
+	protected TextureRegion noLidBarSmallTexture;
 
 	/** Texture Asset for tiles */
 	protected Texture tileTexture;
@@ -361,7 +372,8 @@ public abstract class WorldController implements Screen {
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The texture for the mop cart*/
-	protected TextureRegion mopTile;
+	protected TextureRegion mopCartTile;
+	protected TextureRegion emptyMopCartTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
 	protected TextureRegion specialDurabilityTile;
@@ -599,6 +611,8 @@ public abstract class WorldController implements Screen {
 		assets.add(BULLET_FILE);
 		manager.load(SLIMEBALL_FILE, Texture.class);
 		assets.add(SLIMEBALL_FILE);
+		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
+		assets.add(TURRET_SLIMEBALL_FILE);
 
 		//UI Icons
 		manager.load(MOP_FILE, Texture.class);
@@ -614,8 +628,8 @@ public abstract class WorldController implements Screen {
 
 		manager.load(HEALTH_BAR_FILE, Texture.class);
 		assets.add(HEALTH_BAR_FILE);
-		manager.load(HEALTH_BAR_FILE2, Texture.class);
-		assets.add(HEALTH_BAR_FILE2);
+//		manager.load(HEALTH_BAR_FILE2, Texture.class);
+//		assets.add(HEALTH_BAR_FILE2);
 
         manager.load(ENEMY_HEALTH_3_FILE, Texture.class);
         assets.add(ENEMY_HEALTH_3_FILE);
@@ -630,6 +644,19 @@ public abstract class WorldController implements Screen {
 		assets.add(VACUUM_BAR_FILE);
 		manager.load(LID_BAR_FILE, Texture.class);
 		assets.add(LID_BAR_FILE);
+		manager.load(NO_LID_BAR_FILE, Texture.class);
+		assets.add(NO_LID_BAR_FILE);
+
+		manager.load(MOP_BAR_SMALL_FILE, Texture.class);
+		assets.add(MOP_BAR_SMALL_FILE);
+		manager.load(SPRAY_BAR_SMALL_FILE, Texture.class);
+		assets.add(SPRAY_BAR_SMALL_FILE);
+		manager.load(VACUUM_BAR_SMALL_FILE, Texture.class);
+		assets.add(VACUUM_BAR_SMALL_FILE);
+		manager.load(LID_BAR_SMALL_FILE, Texture.class);
+		assets.add(LID_BAR_SMALL_FILE);
+		manager.load(NO_LID_BAR_SMALL_FILE, Texture.class);
+		assets.add(NO_LID_BAR_SMALL_FILE);
 
 		manager.load(TILE_FILE, Texture.class);
 		assets.add(TILE_FILE);
@@ -661,6 +688,8 @@ public abstract class WorldController implements Screen {
 		assets.add(GOAL_FILE);
 		manager.load(MOP_CART_FILE,Texture.class);
 		assets.add(MOP_CART_FILE);
+		manager.load(EMPTY_MOP_CART_FILE,Texture.class);
+		assets.add(EMPTY_MOP_CART_FILE);
 
 		//Load Special Power Up Tiles
 		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
@@ -791,12 +820,14 @@ public abstract class WorldController implements Screen {
 		lizardStunTexture = createTexture(manager,LIZARD_STUN_FILE,false);
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
+		turretSlimeballTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
 		beakerTile = createTexture(manager,BEAKER_FILE,false);
 		computerTile = createTexture(manager,COMPUTER_FILE,false);
 		plantTile = createTexture(manager,PLANT_FILE,false);
+
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);
 		sprayTexture = new Texture(SPRAY_FILE);
@@ -804,7 +835,7 @@ public abstract class WorldController implements Screen {
 		lidTexture = new Texture(LID_FILE);
 
 		healthBarTexture = createTexture(manager,HEALTH_BAR_FILE,false);
-		healthBarTexture2 = createTexture(manager,HEALTH_BAR_FILE2,false);
+//		healthBarTexture2 = createTexture(manager,HEALTH_BAR_FILE2,false);
 
         enemyHealth3Texture = createTexture(manager,ENEMY_HEALTH_3_FILE,false);
         enemyHealth5Texture = createTexture(manager,ENEMY_HEALTH_5_FILE,false);
@@ -813,8 +844,15 @@ public abstract class WorldController implements Screen {
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
 		vacuumBarTexture = createTexture(manager,VACUUM_BAR_FILE,false);
 		lidBarTexture = createTexture(manager,LID_BAR_FILE,false);
-        mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
+		noLidBarTexture = createTexture(manager,NO_LID_BAR_FILE,false);
 
+		mopBarSmallTexture = createTexture(manager,MOP_BAR_SMALL_FILE,false);
+		sprayBarSmallTexture = createTexture(manager,SPRAY_BAR_SMALL_FILE,false);
+		vacuumBarSmallTexture = createTexture(manager,VACUUM_BAR_SMALL_FILE,false);
+		lidBarSmallTexture = createTexture(manager,LID_BAR_SMALL_FILE,false);
+		noLidBarSmallTexture = createTexture(manager,NO_LID_BAR_SMALL_FILE,false);
+
+		mopcartIndexTexture = new Texture(MOPCART_INDEX_FILE);
         tileTexture = new Texture(TILE_FILE);
 		broken1TileTexture = new Texture(BROKEN1_TILE_FILE);
 		broken2tileTexture = new Texture(BROKEN2_TILE_FILE);
@@ -826,7 +864,8 @@ public abstract class WorldController implements Screen {
 		hazardTileTexture = new Texture(HAZARD_TILE_FILE);
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
-		mopTile = createTexture(manager,MOP_CART_FILE, true);
+		mopCartTile = createTexture(manager,MOP_CART_FILE, true);
+		emptyMopCartTile = createTexture(manager,EMPTY_MOP_CART_FILE, true);
 
 		//idk why I made these textureregions
 		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);

@@ -102,12 +102,6 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		select = new LevelSelectMode(canvas, levelNames);
 
-		//
-		//CHANGE FIRST LEVEL LOADED HERE
-//		controllers[0] = new FloorController(1);
-		//CHANGE FIRST LEVEL LOADED HERE
-		//
-
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(manager);
