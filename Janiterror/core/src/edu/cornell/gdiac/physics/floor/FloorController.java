@@ -995,25 +995,25 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i < 5; i++){
-            frames.add (new TextureRegion(robotAttackLTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(robotAttackLTexture,(i*128) + 1,0,128,64));
         }
         robotAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 5; i++){
-            frames.add (new TextureRegion(robotAttackRTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(robotAttackRTexture,(i*128) + 1,0,128,64));
         }
         robotAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 5; i++){
-            frames.add (new TextureRegion(robotAttackUTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(robotAttackUTexture,(i*64) + 1,0,64,128));
         }
         robotAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 5; i++){
-            frames.add (new TextureRegion(robotAttackDTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(robotAttackDTexture,(i*64) + 1,0,64,128));
         }
         robotAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1139,43 +1139,43 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkRTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkRTexture,(i*64) + 1,0,64,64));
         }
         lizardRunR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkUTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkUTexture,(i*64) + 1,0,64,64));
         }
         lizardRunU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardWalkDTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardWalkDTexture,(i*64) + 1,0,64,64));
         }
         lizardRunD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 6; i++){
-            frames.add (new TextureRegion(lizardAttackLTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(lizardAttackLTexture,(i*128) + 1,0,128,64));
         }
         lizardAttackL = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 6; i++){
-            frames.add (new TextureRegion(lizardAttackRTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(lizardAttackRTexture,(i*128) + 1,0,128,64));
         }
         lizardAttackR = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 6; i++){
-            frames.add (new TextureRegion(lizardAttackUTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(lizardAttackUTexture,(i*64) + 1,0,64,128));
         }
         lizardAttackU = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
         for (int i=0; i < 6; i++){
-            frames.add (new TextureRegion(lizardAttackDTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(lizardAttackDTexture,(i*64) + 1,0,64,128));
         }
         lizardAttackD = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1265,7 +1265,7 @@ public class FloorController extends WorldController implements ContactListener 
             mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
             mon.setName("turret");
-            mon.setMass(ii);
+            mon.setTurretDirection(sdirec);
             addObject(mon);
             enemies[scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii]=mon;
         }
@@ -1767,6 +1767,7 @@ public class FloorController extends WorldController implements ContactListener 
                     s.setTexture(getFrameSlime(dt, s));
                 } else if (s.getName() == "turret") {
                     s.setTexture(getFrameTurret(dt, s));
+                    System.out.println(s.getId());
                 } else if (s.getName() == "lizard") {
                     s.setTexture(getFrameLizard(dt, s));
                 }
@@ -3424,11 +3425,10 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     public StateTurret getStateTurret(EnemyModel s) {
-        //USE THE TURRET DIRECTIONS ARRAY LIST TO GET REAL DIRECTIONS IN THE FUTURE
-        int index = (int)s.getMass();
-        System.out.println(index);
-        String attack_direction = slimeTurretDirections.get(index);
-        System.out.println(slimeTurretDirections);
+        String attack_direction = s.getTurretDirection();
+
+        //THIS ONLY HAPPENS IF THE THE SLIME IS NOT AUTO
+        //IF THE SLIME IS AUTO, DO SHIT NORMALLY
 
         double verticalAttackBoundary = 1;
         if (s.getHP()<= 0) {
@@ -3444,12 +3444,10 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("down")){
             return StateTurret.ATTACKD;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
-            System.out.println("slime attacking left");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("right")) {
             return StateTurret.ATTACKR;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("right")) {
-            System.out.println("slime attacking right");
+        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
             return StateTurret.ATTACKL;
         }
 //        else if (((s.getAttackAnimationFrame() > 0 && avatar.getX() > s.getX()) && slimeMovedLeft == true)||

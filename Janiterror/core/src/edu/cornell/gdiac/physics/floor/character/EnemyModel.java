@@ -29,6 +29,7 @@ public class EnemyModel extends CharacterModel {
     private int attackRange;
     private Board board;
     private boolean attacked;
+    private String turretDirection;
     ArrayList<Vector2> patrol = null;
 
 
@@ -46,6 +47,14 @@ public class EnemyModel extends CharacterModel {
      * @return id of the enemy
      */
     public int getId() {return this.id;}
+
+    /**
+     * Returns the turret direction (only for Slime Turrets)
+     *
+     * @return turret direction
+     */
+    public void setTurretDirection(String s) {this.turretDirection = s;}
+    public String getTurretDirection() {return this.turretDirection;}
 
     public void setPatrol(ArrayList<Vector2> path) {patrol=path;}
     public ArrayList<Vector2> getPatrol(){return patrol;}

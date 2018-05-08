@@ -176,7 +176,7 @@
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>
-    <property name="attack_direction" value="auto"/>
+    <property name="attack_direction" value="up"/>
    </properties>
   </object>
   <object id="31" type="scientist" gid="28" x="832.103" y="826.974" width="64" height="64">
