@@ -940,23 +940,23 @@ public class FloorController extends WorldController implements ContactListener 
 
 //        LONG SCIENTIST ANIMATIONS
         for (int i=0; i < 8; i++){
-            frames.add (new TextureRegion(scientistAttackRTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(scientistAttackRTexture,(i*128) + 1,0,128,64));
         }
         madAttackR = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
         for (int i=0; i < 8; i++){
-            frames.add (new TextureRegion(scientistAttackLTexture,i*128,0,128,64));
+            frames.add (new TextureRegion(scientistAttackLTexture,(i*128) + 1,0,128,64));
         }
         madAttackL = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
 
         for (int i=0; i < 8; i++){
-            frames.add (new TextureRegion(scientistAttackUTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(scientistAttackUTexture,(i*64) + 1,0,64,128));
         }
         madAttackU = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
         for (int i=0; i < 8; i++){
-            frames.add (new TextureRegion(scientistAttackDTexture,i*64,0,64,128));
+            frames.add (new TextureRegion(scientistAttackDTexture,(i*64) + 1,0,64,128));
         }
         madAttackD = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
