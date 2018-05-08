@@ -84,11 +84,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		controllers = new WorldController[4];
-		controllers[0] = new FloorController(1);
-		controllers[1] = new FloorController(2);
-		controllers[2] = new FloorController(3);
-		controllers[3] = new FloorController(4);
+		int number_of_levels = 5;
+		controllers = new WorldController[number_of_levels];
+		for (int i = 0; i < number_of_levels; i++) {
+			controllers[i] = new FloorController(i);
+		}
 
 		levelNames = new String[3];
 		levelNames[0] = "BAD PUN HERE";
@@ -96,12 +96,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		levelNames[2] = "BAD PUN HERE";
 
 		select = new LevelSelectMode(canvas, levelNames);
-
-		//
-		//CHANGE FIRST LEVEL LOADED HERE
-//		controllers[0] = new FloorController(1);
-		//CHANGE FIRST LEVEL LOADED HERE
-		//
 
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
