@@ -92,7 +92,7 @@ public class AIController {
             action = FloorController.CONTROL_FIRE;
         }
         leftRange = rightRange =ship.getAttackRange();
-        System.out.println(ship.getName()+"/state:"+state+"/action:"+action);
+//        System.out.println(ship.getName()+"/state:"+state+"/action:"+action);
         return action;
     }
 
