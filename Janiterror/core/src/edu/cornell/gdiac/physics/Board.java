@@ -114,7 +114,9 @@ public class Board {
         return inBounds(x, y) && !this.getTileState(x, y).blocked;
     }
 
-    public boolean isSuperSafeAt(int x, int y){ return isSafeAt(x, y) && !isHazard(x, y) && !isStanding(x, y);}
+    public boolean isSuperSafeAt(int x, int y){ return isSafeAt(x, y) && !isHazard(x, y) && !isHazard(x, y-1) &&
+            !isStanding(x, y) && !isStanding(x, y+1) && !isStanding(x, y-1) && !isBlocked(x, y) && !isBlocked(x, y+1)
+            && !isBlocked(x, y-1); }
     // -1 on y to make it look like if their feet hit, take damage
 
     public void setBlocked(int x, int y){
@@ -162,7 +164,10 @@ public class Board {
         if (isSafeAt(x, y)) getTileState(x, y).standing=true;
     }
 
-    public boolean isStanding(int x, int y){return getTileState(x,y).standing;}
+    public boolean isStanding(int x, int y){
+        if (isSafeAt(x, y)) return getTileState(x,y).standing;
+        else return false;
+    }
 
     public class TileState {
         public boolean goal;
@@ -249,12 +254,12 @@ public class Board {
 
         // Draw
         //canvas.drawTile(tileMesh, sx, sy, 0, 0);
-        /*if (isGoal(x, y)){
-            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
-                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
+//        if (isGoal(x, y)){
+//            canvas.draw(tileTexture, Color.RED, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
+//                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
             //canvas.draw(tileTexture, Color.WHITE, tileTexture.getWidth()/2, tialeTexture.getHeight()/2,
             //        1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
-        }*/
+//        }
 //        else if (getTileState(x,y).blocked){
 //            canvas.draw(tileTexture, Color.BLUE, tileTexture.getWidth()/2, tileTexture.getHeight()/2,
 //                    1024/width * (x + 0.5f), 576/height * (y + 0.5f), 0, 1.0f, 1.0f);
