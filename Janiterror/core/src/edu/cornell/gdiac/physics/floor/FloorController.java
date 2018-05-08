@@ -425,7 +425,7 @@ public class FloorController extends WorldController implements ContactListener 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
         if (input_level == 1) {
-            LEVEL = "tlevel4.tmx";
+            LEVEL = "tlevel2.tmx";
         }
 
         level = new LevelEditorParser(LEVEL);
@@ -2589,21 +2589,20 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             //Check if avatar has reached a powerup
-            if (bd1 == avatar && bd2 == specialHealth) {
+            if (bd1 == avatar && bd2.getName() == "specialHealth") {
                 if (avatar.getHP() != avatar.getCurrentMaxHP()) {
                     bd2.markRemoved(true);
                     avatar.setHP(avatar.getCurrentMaxHP()); //full heal
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2 == avatar && bd1 == specialHealth) {
+            } else if (bd2 == avatar && bd1.getName() == "specialHealth") {
                 if (avatar.getHP() != avatar.getCurrentMaxHP()) {
                     bd1.markRemoved(true);
                     avatar.setHP(avatar.getCurrentMaxHP()); //full heal
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE, false, EFFECT_VOLUME);
                 }
             }
-
-            if (bd1 == avatar && bd2 == specialDurability) {
+            if (bd1 == avatar && bd2.getName() == "specialDurability") {
                 if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
                     avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
                     //reload weapons
@@ -2612,7 +2611,7 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.getWep2().durability = avatar.getWep2().getMaxDurability();
                     SoundController.getInstance().play(RELOAD_FILE, RELOAD_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2 == avatar && bd1 == specialDurability) {
+            } else if (bd2 == avatar && bd1.getName() == "specialDurability") {
                 if (avatar.getWep1().getDurability() != avatar.getWep1().getMaxDurability() ||
                     avatar.getWep2().getDurability() != avatar.getWep2().getMaxDurability()) {
                     //reload weapons
