@@ -424,7 +424,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-//        LEVEL = "level16.tmx";
+        if (input_level == 1) {
+            LEVEL = "tlevel4.tmx";
+        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1636,7 +1638,8 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
         }
-        else if (board.isHazard(board.screenToBoardX(avatar.getX()), board.screenToBoardY(avatar.getY()) - 1) &&
+        else if (board.isHazard(board.screenToBoardX(avatar.getX()),
+                board.screenToBoardY(avatar.getY()) - 1) &&
                 ticks % 30==0L) { //adjust this later
             //-1 on Y so that it deals if your feet are on the tile but not your head
             avatar.decrHP();
@@ -1919,7 +1922,8 @@ public class FloorController extends WorldController implements ContactListener 
                 }
 
                 performAction(s, action);
-                if (board.isHazard(board.screenToBoardX(s.getX()), board.screenToBoardY(s.getY() ))
+                if (board.isHazard(board.screenToBoardX(s.getX()),
+                        board.screenToBoardY(s.getY()) - 1)
                         && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                     //-1 so if they step feet on it they lose health
                     s.decrHP();
@@ -2211,7 +2215,7 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setName("slimeball");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
-        bullet.setTexture(slimeballTexture);
+        bullet.setTexture(turretSlimeballTexture);
         bullet.setBullet(true);
         bullet.setGravityScale(0);
         bullet.setVX(speedX);

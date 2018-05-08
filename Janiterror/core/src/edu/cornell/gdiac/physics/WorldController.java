@@ -180,6 +180,7 @@ public abstract class WorldController implements Screen {
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
+	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/turret-slimeball.png";
 
 	/** The texture files for the Mop Cart UI icons */
 	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
@@ -328,6 +329,7 @@ public abstract class WorldController implements Screen {
 
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
+	protected TextureRegion turretSlimeballTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -609,6 +611,8 @@ public abstract class WorldController implements Screen {
 		assets.add(BULLET_FILE);
 		manager.load(SLIMEBALL_FILE, Texture.class);
 		assets.add(SLIMEBALL_FILE);
+		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
+		assets.add(TURRET_SLIMEBALL_FILE);
 
 		//UI Icons
 		manager.load(MOP_FILE, Texture.class);
@@ -816,6 +820,7 @@ public abstract class WorldController implements Screen {
 		lizardStunTexture = createTexture(manager,LIZARD_STUN_FILE,false);
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
+		turretSlimeballTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
