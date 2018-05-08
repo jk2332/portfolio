@@ -84,16 +84,21 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		controllers = new WorldController[4];
+		controllers = new WorldController[6];
 		controllers[0] = new FloorController(1);
 		controllers[1] = new FloorController(2);
 		controllers[2] = new FloorController(3);
 		controllers[3] = new FloorController(4);
+        controllers[4] = new FloorController(1);
+        controllers[5] = new FloorController(1);
 
-		levelNames = new String[3];
-		levelNames[0] = "BAD PUN HERE";
-		levelNames[1] = "BAD PUN HERE";
-		levelNames[2] = "BAD PUN HERE";
+		levelNames = new String[6];
+		levelNames[0] = "BAD PUN HERE 1";
+		levelNames[1] = "BAD PUN HERE 2";
+		levelNames[2] = "BAD PUN HERE 3";
+        levelNames[3] = "BAD PUN HERE 4";
+        levelNames[4] = "BAD PUN HERE 5";
+        levelNames[5] = "BAD PUN HERE 6";
 
 		select = new LevelSelectMode(canvas, levelNames);
 

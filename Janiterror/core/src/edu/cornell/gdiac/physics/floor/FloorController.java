@@ -679,7 +679,7 @@ public class FloorController extends WorldController implements ContactListener 
         rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
-        float[] color = {0.75f, 0.75f, 0.75f, 0.75f};
+        float[] color = {0.70f, 0.70f, 0.70f, 0.70f};
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 3;
         rayhandler.setBlur(blur > 0);

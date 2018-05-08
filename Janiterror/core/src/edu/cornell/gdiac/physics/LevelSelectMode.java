@@ -4,45 +4,68 @@
 package edu.cornell.gdiac.physics;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.*;
 
 /**
  * Class that provides a level select screen for the game
  */
 public class LevelSelectMode implements Screen, InputProcessor, ControllerListener {
+
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String BACKGROUND_FILE = "shared/inter-menu-v2.png";
+
+    private static final String FONT_FILE = "shared/Syntax_e11.ttf";
+
+    private static final String LEVEL_FILE = "shared/mop-bucket-menu.png";
+
+    private static final String MAIN_BTN_FILE = "shared/menu-button.png";
+
+    private static final int FONT_SIZE = 30;
+
+    /** Standard window size (for scaling) */
+    private static int STANDARD_WIDTH  = 1024;
+    /** Standard window height (for scaling) */
+    private static int STANDARD_HEIGHT = 576;
+    /** Amount to scale the play button */
+    private static float BUTTON_SCALE  = 0.75f;
+
+    private static float CENTER_X_RATIO = 0.67f;
+
+    private static float TITLE_Y_RATIO = 0.07f;
+
+    private static float MENU_Y_RATIO = 0.1f;
+
+    private static float OFFSET_RATIO = 0.20f;
+
+    private static int NUM_ROWS = 5;
+
+    /** The x-coordinate of the center of the progress bar */
+    private int centerX;
+
+    private int centerYUp;
+    private int centerYDown;
+
+    private int titleY;
+
+    private int menuY;
+
+    private int marginX;
+
+    private String[] levelNames;
+
+    private Texture mainButton;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
-    public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
-
-    /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 800;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 700;
-
-    private static float OFFSET_X_RATIO = 0.25f;
-
-    private static int NUM_ROWS = 4;
-
-    /** The x-coordinate of the center of the progress bar */
-    private int centerXLeft;
-
-    private int centerXRight;
-
-    private int marginY;
-
-    /** Background texture for start-up */
-    private Texture background;
-
-    private String[] levelNames;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -57,7 +80,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
-    GlyphLayout layout = new GlyphLayout();
+    private GlyphLayout layout = new GlyphLayout();
 
 
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
@@ -69,8 +92,27 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private int   pressState;
     /** Support for the X-Box start button in place of play button */
     private int   startButton;
+
+    private TextureRegion levelButton;
+
+    private Animation <TextureRegion> bgAnimation;
+    private Array<TextureRegion> levelFrames;
+
+    private TextureRegion bg;
+
+    private float stateTimer;
+
     /** Whether or not this player mode is still active */
     private boolean active;
+
+    private String subtitle;
+
+    private static final String TITLE = "LEVEL SELECT";
+
+    private static final String DEFAULT_SUBTITLE = "SELECT A LEVEL";
+
+    private int hoverIndex;
+
 
 
     /**
@@ -81,6 +123,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     public boolean isReady() {
         return pressState == 2;
     }
+
 
     /**
      * Creates a ScoreMode with the default size and position
@@ -93,18 +136,38 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         this.levelNames = levelNames;
         // Load the next two images immediately.
 
+        mainButton = new Texture(MAIN_BTN_FILE);
+        mainButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        displayFont = new BitmapFont();
+        stateTimer = 0.0f;
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_FILE));
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.size = FONT_SIZE;
+        displayFont = generator.generateFont(parameter);
+        generator.dispose();
 
         displayFont.getData().setScale(scale);
 
-        background = new Texture(BACKGROUND_FILE);
-
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
-        // Let ANY connected controller start the game.
-        /*for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }*/
+
+        Texture backgroundT = new Texture(BACKGROUND_FILE);
+        Texture levelT = new Texture(LEVEL_FILE);
+        TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
+        TextureRegion levelTexture = new TextureRegion(levelT, levelT.getWidth(), levelT.getHeight());
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i=0; i < backgroundT.getWidth()/1024; i++){
+            frames.add (new TextureRegion(backgroundTexture,i*1024,0,1024,576));
+        }
+        bgAnimation = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        levelFrames = new Array<TextureRegion>();
+        for (int i=0; i < levelT.getWidth()/96; i++){
+            levelFrames.add (new TextureRegion(levelTexture,i*96,0,96,96));
+        }
+
+        subtitle = DEFAULT_SUBTITLE;
 
     }
 
@@ -118,9 +181,13 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * Called when this screen should release all resources.
      */
     public void dispose() {
-
-        background.dispose();
-        background = null;
+        levelFrames.clear();
+        levelFrames = null;
+        bgAnimation = null;
+        bg = null;
+        mainButton.dispose();
+        mainButton = null;
+        levelNames = null;
     }
 
     /**
@@ -134,6 +201,38 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     private void update(float delta) {
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
+        bg = bgAnimation.getKeyFrame(stateTimer,true);
+        stateTimer = stateTimer + delta;
+
+
+        float screenX = Gdx.input.getX();
+        float screenY = heightY - Gdx.input.getY();
+
+        int centerY;
+        int centerX;
+
+        float radius;
+        float dist;
+
+        subtitle = DEFAULT_SUBTITLE;
+        hoverIndex = -1;
+        for (int i = 0; i < levelNames.length; i++) {
+            if (i < NUM_ROWS) {
+                centerY = centerYUp;
+            } else {
+                centerY = centerYDown;
+            }
+
+            //s = "LVL " + i + ": " + levelNames[i - 1];
+            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
+
+            radius = levelFrames.get(0).getRegionWidth()/2.0f;
+            dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
+            if (dist < radius*radius) {
+                subtitle = levelNames[i];
+                hoverIndex = i;
+            }
+        }
     }
 
     /**
@@ -145,7 +244,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        canvas.draw(bg, 0, 0);
         Color color;
 
         int centerX;
@@ -154,34 +253,43 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         int radiusX;
         int radiusY;
 
-        String s;
-
-        layout.setText(displayFont, "MAIN MENU");
+        displayFont.setColor(Color.SKY);
+        displayFont.getData().setScale(scale * 1.8f);
+        layout.setText(displayFont, TITLE);
         radiusX = (int) (layout.width / 2.0f);
         radiusY = (int) (layout.height / 2.0f);
-        color = (pressState == 1 && exit == 0 ? Color.YELLOW: Color.WHITE);
-        displayFont.setColor(color);
-        canvas.drawText("MAIN MENU", displayFont, centerXLeft - radiusX, 4 * marginY - radiusY);
+        canvas.drawText(TITLE, displayFont, this.centerX - radiusX, titleY - radiusY);
+        displayFont.setColor(Color.WHITE);
+        displayFont.getData().setScale(scale);
+        layout.setText(displayFont, subtitle);
+        radiusX = (int) (layout.width / 2.0f);
+        radiusY = (int) (layout.height / 2.0f);
+        canvas.drawText(subtitle, displayFont, this.centerX- radiusX, centerYUp + marginX - radiusY);
 
-        for (int i = 1; i <= levelNames.length; i++) {
+        for (int i = 0; i < levelNames.length; i++) {
             if (i < NUM_ROWS) {
-                centerX = centerXLeft;
+                centerY = centerYUp;
             } else {
-                centerX = centerXRight;
+                centerY = centerYDown;
             }
 
-            s = "LVL " + i + ": " + levelNames[i - 1];
-            centerY = (NUM_ROWS - (i % NUM_ROWS)) * marginY;
-            color = (pressState == 1 && exit == i ? Color.YELLOW: Color.WHITE);
+            //s = "LVL " + i + ": " + levelNames[i - 1];
+            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
+            color = (pressState == 1 && exit == (i + 1) ? Color.YELLOW: Color.WHITE);
             displayFont.setColor(color);
-            layout.setText(displayFont, s);
+            layout.setText(displayFont, i + 1 + "");
             radiusX = (int) (layout.width / 2.0f);
             radiusY = (int) (layout.height / 2.0f);
-            canvas.drawText(s, displayFont, centerX - radiusX, centerY - radiusY);
+            levelButton = hoverIndex == i ? levelFrames.get(2) : levelFrames.get(0);
+            canvas.draw(levelButton, Color.WHITE, levelFrames.get(0).getRegionWidth()/2,
+                    levelFrames.get(0).getRegionHeight()/2, centerX, centerY, 0, 1.0f, 1.0f);
+            canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY - radiusY);
         }
 
-        /*canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);*/
+        color = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+
+        canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
+                STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
         canvas.end();
     }
@@ -199,11 +307,9 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         if (active) {
             update(delta);
             draw();
-            System.out.println("" + isReady() + pressState);
 
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
-                System.out.println("isReady");
                 listener.exitScreen(this, exit);
             }
         }
@@ -220,15 +326,21 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-        /*float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);*/
-        scale = 2;
+        float sx = ((float)width)/800;
+        float sy = ((float)height)/700;
+        scale = (sx < sy ? sx : sy);
         heightY = height;
 
-        centerXRight = (int) (width/2 + width * OFFSET_X_RATIO);
-        centerXLeft = (int) (width/2 - width * OFFSET_X_RATIO);
-        marginY = (int) (height /  (NUM_ROWS + 1.0f));
+        menuY = (int) (height * MENU_Y_RATIO);
+
+        titleY = (int) (height * (1 - TITLE_Y_RATIO));
+
+        centerX = (int) (width * CENTER_X_RATIO);
+
+        centerYDown = (int) (height/2 - height * OFFSET_RATIO /2);
+        centerYUp = (int) (height/2 + height * OFFSET_RATIO/2);
+
+        marginX = (int) (height * OFFSET_RATIO);
     }
 
     /**
@@ -291,6 +403,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
         if (pressState == 2) {
             return true;
         }
@@ -300,41 +413,32 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         // TODO: Fix scaling
         // Play button is a circle.
-        float distX;
-        float distY;
-        float radiusX;
-        float radiusY;
         float centerX;
         float centerY;
 
 
-
-        layout.setText(displayFont, "MAIN MENU");
-        radiusX = layout.width / 2.0f;
-        radiusY = layout.height / 2.0f;
-        distX = Math.abs(screenX - centerXLeft + radiusX);
-        distY = Math.abs(screenY - 4 * marginY + radiusY);
-        if (distX <= radiusX && distY <= radiusY) {
+        float radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
+        float dist = (screenX-STANDARD_WIDTH/2)*(screenX-STANDARD_WIDTH/2)+(screenY-menuY)*(screenY-menuY);
+        if (dist < radius*radius) {
             pressState = 1;
             exit = 0;
         }
 
-        for (int i = 1; i <= levelNames.length; i++) {
+        for (int i = 0; i < levelNames.length; i++) {
             if (i < NUM_ROWS) {
-                centerX = centerXLeft;
+                centerY = centerYUp;
             } else {
-                centerX = centerXRight;
+                centerY = centerYDown;
             }
-            centerY = (NUM_ROWS - (i % NUM_ROWS)) * marginY;
 
-            distX = Math.abs(screenX - centerX + radiusX);
-            distY = Math.abs(screenY - centerY + radiusY);
-            layout.setText(displayFont, "LVL " + i + ": " + levelNames[i - 1]);
-            radiusX = layout.width / 2.0f;
-            radiusY = layout.height / 2.0f;
-            if (distX <= radiusX * 1.2f && distY <= radiusY * 1.5f) {
+            //s = "LVL " + i + ": " + levelNames[i - 1];
+            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
+
+            radius = levelFrames.get(0).getRegionWidth()/2.0f;
+            dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
+            if (dist < radius*radius) {
                 pressState = 1;
-                exit = i;
+                exit = i + 1;
             }
         }
         return false;

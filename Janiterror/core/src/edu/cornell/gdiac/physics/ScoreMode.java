@@ -92,9 +92,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private Animation <TextureRegion> joeNext;
     private Animation <TextureRegion> joeMain;
 
-    float stateTimer;
+    private float stateTimer;
 
-    TextureRegion current;
+    private TextureRegion current;
 
 
     /**
@@ -138,13 +138,13 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             controller.addListener(this);
         }*/
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i=0; i <= joeNextT.getWidth()/64; i++){
+        for (int i=0; i < joeNextT.getWidth()/64; i++){
             frames.add (new TextureRegion(joeNextTexture,i*64,0,64,64));
         }
         joeNext = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= joeMainT.getWidth()/64; i++){
+        for (int i=0; i < joeMainT.getWidth()/64; i++){
             frames.add (new TextureRegion(joeMainTexture,i*64,0,64,64));
         }
         joeMain = new Animation<TextureRegion>(0.1f, frames);
