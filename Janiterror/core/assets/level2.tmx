@@ -36,7 +36,7 @@
 </data>
  </layer>
  <objectgroup name="mop cart">
-  <object id="4" type="mop cart" gid="22" x="735.691" y="303.511" width="64" height="64">
+  <object id="4" type="mop cart" gid="22" x="673.104" y="291.921" width="64" height="64">
    <properties>
     <property name="reloaded_before" type="bool" value="false"/>
    </properties>
@@ -66,7 +66,7 @@
     <property name="Patrol Path" value="10 1"/>
    </properties>
   </object>
-  <object id="6" type="scientist" gid="21" x="992.467" y="223.278" width="64" height="64">
+  <object id="6" type="scientist" gid="21" x="1085.19" y="223.278" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>

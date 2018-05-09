@@ -2022,9 +2022,9 @@ public class FloorController extends WorldController implements ContactListener 
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
                 else if (s.getStunnedVacuum()) {
-                    s.setDensity(1f); //so they don't blowback joe on collision with vacuum
+                    s.setDensity(1f); //so they don't blowback joe on collision222 with vacuum
                     s.incrStunTicksVacuum();
-                    if (s.getStunTicksVacuum()<=75) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
+                    if (s.getStunTicksVacuum()<=90) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
                     else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false); s.setDensity(50f);}
                 }
 
@@ -2505,12 +2505,14 @@ public class FloorController extends WorldController implements ContactListener 
                                     controls[s.getId()] = null;
                                 }
                                 s.setAttacked(true);
-//                        }
+                            }
+
                             //7.5 TIMES THE NORMAL ENEMY DENSITY
                             System.out.println(s.getDensity() * -7.5f);
                             System.out.println(-750f);
-                            knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
-                            //knockbackForce.nor();
+                            if (!(s instanceof RobotModel)) {
+                                knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
+                                //knockbackForce.nor();
 
                                 s.applyImpulse(knockbackForce);
                                 s.setKnockbackTimer(KNOCKBACK_TIMER);
@@ -2523,6 +2525,7 @@ public class FloorController extends WorldController implements ContactListener 
                     mop.decrDurability();
                 }
             }
+        }
             //hotfix xd
 //            if (mop.getDurability() < 0 ){
 //                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
@@ -2531,7 +2534,7 @@ public class FloorController extends WorldController implements ContactListener 
 //                mop.decrDurability();
 //            }
 
-        } else if (wep instanceof SprayModel) {
+        else if (wep instanceof SprayModel) {
             SprayModel spray = (SprayModel) wep;
 //            spray.decrDurability();
             if (spray.getDurability() >= 0) {
