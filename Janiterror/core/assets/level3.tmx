@@ -39,7 +39,7 @@
 </data>
  </layer>
  <objectgroup name="mop cart">
-  <object id="7" type="mop cart" gid="34" x="62.6548" y="224.125" width="64" height="64">
+  <object id="7" type="mop cart" gid="34" x="95.7843" y="320.965" width="64" height="64">
    <properties>
     <property name="reloaded_before" type="bool" value="false"/>
    </properties>
@@ -49,12 +49,7 @@
   <object id="11" type="goal door" gid="35" x="831.029" y="480.249" width="64" height="64"/>
  </objectgroup>
  <objectgroup name="characters">
-  <object id="3" type="scientist" gid="32" x="448.698" y="157.31" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="4" type="scientist" gid="32" x="419.002" y="350.331" width="64" height="64">
+  <object id="4" type="scientist" gid="32" x="478.89" y="224.184" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
@@ -66,8 +61,8 @@
   </object>
   <object id="14" type="joe" gid="29" x="96.0624" y="127.614" width="64" height="64">
    <properties>
-    <property name="default1" value="mop"/>
-    <property name="default2" value="spray"/>
+    <property name="default1" value="none"/>
+    <property name="default2" value="none"/>
    </properties>
   </object>
   <object id="15" type="scientist" gid="32" x="734.518" y="383.739" width="64" height="64">
@@ -112,7 +107,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,30,0,30,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,30,0,0,0,0,0,0,0,0,

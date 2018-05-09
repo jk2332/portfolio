@@ -55,8 +55,8 @@ public class AIController {
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
         indexTile =0;
         indexPatrol=0;
-        chaseDist = 9;
-        if (ship.getName()=="slime") chaseDist = 17;
+        chaseDist = 12;
+        if (ship.getName()=="slime") chaseDist = 12;
     }
 
     private void rangeReset(){
