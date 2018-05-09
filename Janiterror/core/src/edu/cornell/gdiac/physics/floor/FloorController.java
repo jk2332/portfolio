@@ -2453,14 +2453,49 @@ public class FloorController extends WorldController implements ContactListener 
                         boolean case4 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 3f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
                         if ((case1 || case2 || case3 || case4)&& s.getAttacked() == false) {
-                            enemy_hit = true;
-//                        if (s.getHP() == 1) {
-////                            s.markRemoved(true);
-////                            controls[s.getId()]=null;
-//                        } else {
-                            s.decrHP();
-                            if (s.getHP()<0) {controls[s.getId()]=null;}
-                            s.setAttacked(true);
+                            boolean isWall = false;
+                            for (Obstacle obj : objects) {
+                                if (isWall) {
+                                    break;
+                                }
+
+                                if (obj.getName().length() > 4) {
+                                    if (obj.getName().substring(0, 4).equals("wall")) {
+                                        if (case1) {
+                                            if (avatar.getX() > obj.getX() && obj.getX() > s.getX() && obj.getY() > avatar.getY() - .5
+                                                    && obj.getY() < avatar.getY() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case2) {
+                                            if (s.getX() > obj.getX() && obj.getX() > avatar.getX() && obj.getY() > avatar.getY() - .5
+                                                    && obj.getY() < avatar.getY() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case3) {
+                                            if (avatar.getY() > obj.getY() && obj.getY() > s.getY() && obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case4) {
+                                            if (s.getY() > obj.getY() && obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5) {
+                                                System.out.println(obj.getX() + " " + obj.getY());
+                                                isWall = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (!isWall) {
+                                enemy_hit = true;
+                                s.decrHP();
+                                if (s.getHP() < 0) {
+                                    controls[s.getId()] = null;
+                                }
+                                s.setAttacked(true);
 //                        }
                             //7.5 TIMES THE NORMAL ENEMY DENSITY
                             System.out.println(s.getDensity() * -7.5f);
@@ -2468,9 +2503,10 @@ public class FloorController extends WorldController implements ContactListener 
                             knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
                             //knockbackForce.nor();
 
-                            s.applyImpulse(knockbackForce);
-                            s.setKnockbackTimer(KNOCKBACK_TIMER);
-                            //System.out.println(knockbackForce);
+                                s.applyImpulse(knockbackForce);
+                                s.setKnockbackTimer(KNOCKBACK_TIMER);
+                                //System.out.println(knockbackForce);
+                            }
                         }
                     }
                 }
@@ -2505,13 +2541,49 @@ public class FloorController extends WorldController implements ContactListener 
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
 
                         if (!s.isRemoved() && (case1 || case2 || case3 || case4) && s.getAttacked() == false) {
-                            if (s instanceof RobotModel){
+                            boolean isWall = false;
+                            for (Obstacle obj : objects) {
+                                if (isWall) {
+                                    break;
+                                }
+
+                                if (obj.getName().length() > 4) {
+                                    if (obj.getName().substring(0, 4).equals("wall")) {
+                                        if (case1) {
+                                            if (avatar.getX() > obj.getX() && obj.getX() > s.getX() && obj.getY() > avatar.getY() - .5
+                                                    && obj.getY() < avatar.getY() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case2) {
+                                            if (s.getX() > obj.getX() && obj.getX() > avatar.getX()&& obj.getY() > avatar.getY() - .5
+                                                    && obj.getY() < avatar.getY() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case3) {
+                                            if (avatar.getY() > obj.getY() && obj.getY() > s.getY()&& obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5) {
+                                                isWall = true;
+                                            }
+                                        }
+                                        if (case4) {
+                                            if (s.getY() > obj.getY() && obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5) {
+                                                System.out.println(obj.getX() + " " + obj.getY());
+                                                isWall = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (s instanceof RobotModel && !isWall ){
                                 SoundController.getInstance().play(SPARK_FILE, SPARK_FILE, false, 0.5f);
                                 s.setStunned(true);
                                 s.decrHP();
                                 if (s.getHP()<0) {controls[s.getId()]=null;}
                                 s.setAttacked(true);
-                            } else {
+                            } else if (!isWall){
                                 SoundController.getInstance().play(BUBBLE_FILE, BUBBLE_FILE, false, 0.5f);
                                 s.setStunned(true);
                                 s.setAttacked(true);
@@ -2532,9 +2604,6 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
 //            vacuum.decrDurability();
-//            avatar.setDensity(10000000f);
-//            System.out.println(avatar.getDensity());
-
             if (vacuum.getDurability() >= 0) {
                 SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
                 for (Obstacle obj : objects) {
@@ -2575,7 +2644,6 @@ public class FloorController extends WorldController implements ContactListener 
                                 for (Obstacle obj : objects) {
 
                                     if (isWall) {
-                                        System.out.println("break");
                                         break;
                                     }
 
@@ -2584,21 +2652,18 @@ public class FloorController extends WorldController implements ContactListener 
                                             if (case1) {
                                                 if (avatar.getX() > obj.getX() && obj.getX() > s.getX() && obj.getY() > avatar.getY() - .5
                                                         && obj.getY() < avatar.getY() + .5) {
-                                                    System.out.println("case1");
                                                     isWall = true;
                                                 }
                                             }
                                             if (case2) {
                                                 if (s.getX() > obj.getX() && obj.getX() > avatar.getX()&& obj.getY() > avatar.getY() - .5
                                                         && obj.getY() < avatar.getY() + .5) {
-                                                    System.out.println("case2");
                                                     isWall = true;
                                                 }
                                             }
                                             if (case3) {
                                                 if (avatar.getY() > obj.getY() && obj.getY() > s.getY()&& obj.getX() > avatar.getX() - .5
                                                         && obj.getX() < avatar.getX() + .5) {
-                                                    System.out.println("case3");
                                                     isWall = true;
                                                 }
                                             }
@@ -2647,6 +2712,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                             }
+
                         }
                     }
                     s.setDensity(50f);
