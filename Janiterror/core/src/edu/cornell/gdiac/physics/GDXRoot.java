@@ -41,6 +41,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
 	private LevelSelectMode select;
+	private PauseMenu pause;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -105,6 +106,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		levelNames[6] = "Another One Bites the Dust";
 
 		select = new LevelSelectMode(canvas, levelNames);
+		pause = new PauseMenu(canvas);
 
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -115,6 +117,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		current = 0;
 		loading.setScreenListener(this);
 		select.setScreenListener(this);
+		pause.setScreenListener(this);
 		setScreen(loading);
 	}
 
@@ -130,6 +133,9 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		select.dispose();
 		select = null;
+
+		pause.dispose();
+		pause=null;
 
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -202,7 +208,6 @@ public class GDXRoot extends Game implements ScreenListener {
 			setScreen(controllers[current]);
 		} else if (screen instanceof ScoreMode && exitCode == WorldController.EXIT_NEXT) {
 			current = (current+1) % controllers.length;
-
 			System.out.println("load next level" + current);
 			controllers[current].reset();
 			setScreen(controllers[current]);
@@ -214,6 +219,11 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("main");
 			loading.reset();
 			setScreen(loading);
+		} else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
+			setScreen(controllers[current]);
+		} else if (screen instanceof PauseMenu && exitCode==0){ //return back to main menu
+			loading.reset();
+			setScreen(loading);
 		} else if (screen instanceof LevelSelectMode) {
 			System.out.println("select level" + exitCode);
 			current = exitCode - 1;
@@ -222,6 +232,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
+		} else if (exitCode == WorldController.EXIT_PAUSE) {
+			pause.reset();
+			setScreen(pause);
 		}
 	}
 }
