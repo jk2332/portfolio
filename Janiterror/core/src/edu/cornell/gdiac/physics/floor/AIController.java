@@ -35,6 +35,7 @@ public class AIController {
     EnemyModel[] fleet;
     //int indexArray;
     //ArrayList<Vector2> patrol;
+    int chaseDist;
 
     LevelEditorParser level;
 
@@ -54,6 +55,8 @@ public class AIController {
         if (ship.getName()=="slime" || ship.getName()=="turret") vertiRange = ship.getAttackRange();
         indexTile =0;
         indexPatrol=0;
+        chaseDist = 12;
+        if (ship.getName()=="slime") chaseDist = 12;
     }
 
     private void rangeReset(){
@@ -155,7 +158,7 @@ public class AIController {
                     ty = this.board.screenToBoardY(this.target.getY());
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
                         this.state = FSMState.ATTACK;
-                    } else {
+                    } else if (manhattan(sx, sy, tx, ty) <= chaseDist){
                         this.state = FSMState.CHASE;
                     }
                 }
@@ -171,7 +174,7 @@ public class AIController {
                     if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy,tx,ty)) {
                         this.state =FSMState.ATTACK;
                         //this.wx = -1;
-                    } else {
+                    } else if (manhattan(sx, sy, tx, ty) <= chaseDist){
                         this.state = FSMState.CHASE;
                         //this.wx = -1;
                     }
@@ -185,9 +188,13 @@ public class AIController {
             case CHASE:
                 tx = this.board.screenToBoardX(this.target.getX());
                 ty = this.board.screenToBoardY(this.target.getY());
-                if (!target.isRemoved() && canSeeJoe()) {
-                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)) {
+                if (!target.isRemoved()) {
+                    if (this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty)
+                            && canSeeJoe()) {
                         this.state =FSMState.ATTACK;
+                    }
+                    else if (manhattan(sx, sy, tx, ty) > chaseDist) {
+                        this.state=FSMState.WANDER;
                     }
                 } else {
                     this.state = FSMState.WANDER;
@@ -197,7 +204,8 @@ public class AIController {
                 if (!target.isRemoved() && canSeeJoe()) {
                     tx = this.board.screenToBoardX(this.target.getX());
                     ty = this.board.screenToBoardY(this.target.getY());
-                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty))) {
+                    if (!(this.ship.canHitTargetFrom(sx,sy,tx,ty, vertiRange, leftRange, rightRange) && hasNoHazardBetw(sx, sy, tx, ty))
+                            && manhattan(sx, sy, tx, ty) <= chaseDist) {
                         this.state =FSMState.CHASE;
                     }
                 } else {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="34" height="28" tilewidth="32" tileheight="32" infinite="0" nextobjectid="16">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="34" height="28" tilewidth="32" tileheight="32" infinite="0" nextobjectid="27">
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="9" source="wallsh.tsx"/>
  <tileset firstgid="19" source="wallsv.tsx"/>
@@ -44,9 +44,9 @@
 </data>
  </layer>
  <objectgroup name="mop cart">
-  <object id="10" gid="26" x="993.159" y="125.536" width="64" height="64">
+  <object id="10" gid="26" x="509.41" y="129.315" width="64" height="64">
    <properties>
-    <property name="reloaded_before" type="bool" value="false"/>
+    <property name="reloaded_before" type="bool" value="true"/>
    </properties>
   </object>
   <object id="15" gid="26" x="21.3511" y="368.133" width="64" height="64">
@@ -61,19 +61,8 @@
  <objectgroup name="character">
   <object id="4" type="joe" gid="24" x="66.7538" y="130.238" width="64" height="64">
    <properties>
-    <property name="Density" type="float" value="15"/>
-    <property name="HP" type="int" value="15"/>
-    <property name="Lid Attack Range" type="int" value="10"/>
-    <property name="Lid Durability" type="int" value="10"/>
-    <property name="Mop Attack Range" type="int" value="2"/>
-    <property name="Mop Durability" type="int" value="10"/>
-    <property name="Mop Knockback Timer" type="int" value="15"/>
-    <property name="Spray Attack Range" type="int" value="4"/>
-    <property name="Spray Durability" type="int" value="5"/>
-    <property name="Spray Stun Timer" type="int" value="150"/>
-    <property name="Vacuum Attack Range" type="int" value="10"/>
-    <property name="Vacuum Durability" type="int" value="10"/>
-    <property name="Velocity" type="float" value="5"/>
+    <property name="default1" value="mop"/>
+    <property name="default2" value="spray"/>
    </properties>
   </object>
   <object id="5" type="scientist" gid="25" x="514.439" y="286.791" width="64" height="64">
@@ -81,12 +70,7 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="7" type="scientist" gid="25" x="731.74" y="415.128" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="9" type="scientist" gid="25" x="288.42" y="416.112" width="64" height="64">
+  <object id="9" type="scientist" gid="25" x="322.434" y="416.112" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
@@ -110,6 +94,42 @@
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>
     <property name="attack_direction" value="right"/>
+   </properties>
+  </object>
+  <object id="17" type="turret-slime" gid="28" x="994.077" y="638.824" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="10 1"/>
+    <property name="attack_delay" type="int" value="2"/>
+    <property name="attack_direction" value="left"/>
+   </properties>
+  </object>
+  <object id="20" type="turret-slime" gid="28" x="512.218" y="555.68" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="10 1"/>
+    <property name="attack_delay" type="int" value="1"/>
+    <property name="attack_direction" value="left"/>
+   </properties>
+  </object>
+  <object id="21" type="turret-slime" gid="28" x="510.328" y="687.955" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="10 1"/>
+    <property name="attack_delay" type="int" value="3"/>
+    <property name="attack_direction" value="left"/>
+   </properties>
+  </object>
+  <object id="24" type="slime" gid="27" x="321.364" y="636.934" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="25" type="slime" gid="27" x="801.333" y="572.686" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="26" type="slime" gid="27" x="797.554" y="701.182" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
  </objectgroup>
@@ -219,22 +239,22 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,
-21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,
-0,0,0,0,0,0,0,21,21,0,0,0,0,21,21,0,0,0,0,0,21,21,0,0,0,0,21,21,0,0,0,0,0,0,
-0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,0,
-21,21,21,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,0,
-21,21,21,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,21,21,0,0,0,0,0,0,0,0,0,0,0,0,
+21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,
+21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,
+0,0,0,0,0,0,0,21,21,21,0,0,0,21,21,21,0,0,0,0,21,21,21,0,0,21,21,21,0,0,0,0,0,0,
+0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,0,
+21,21,21,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,0,
+21,21,21,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,21,21,21,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,21,21,21,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
