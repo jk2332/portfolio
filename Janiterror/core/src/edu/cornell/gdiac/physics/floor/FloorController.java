@@ -22,6 +22,7 @@ import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.physics.obstacle.*;
 import edu.cornell.gdiac.physics.floor.character.*;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,17 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String NO_WEAPON_FILE = "floor/no_weapon.mp3";
     /** The sound file for getting hurt */
     private static final String OUCH_FILE = "floor/ouch.mp3";
+
+
+    /** The sound file for vacuum attack */
+    private static final String MOP_FILE1 = "floor/mop1.mp3";
+    /** The sound file for vacuum attack */
+    private static final String MOP_FILE2 = "floor/mop2.mp3";
+    /** The sound file for vacuum attack */
+    private static final String MOP_FILE3 = "floor/mop3.mp3";
+    /** The sound file for vacuum attack */
+    private static String[] MOP_FILE_LIST = { MOP_FILE1, MOP_FILE2, MOP_FILE3 };
+
     /** The sound file for vacuum attack */
     private static final String VACUUM_FILE = "floor/vacuum.mp3";
     /** The sound file for spray stun */
@@ -148,6 +160,14 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(NO_WEAPON_FILE);
         manager.load(OUCH_FILE, Sound.class);
         assets.add(OUCH_FILE);
+
+        manager.load(MOP_FILE1, Sound.class);
+        assets.add(MOP_FILE1);
+        manager.load(MOP_FILE2, Sound.class);
+        assets.add(MOP_FILE2);
+        manager.load(MOP_FILE3, Sound.class);
+        assets.add(MOP_FILE3);
+
         manager.load(VACUUM_FILE, Sound.class);
         assets.add(VACUUM_FILE);
         manager.load(BUBBLE_FILE, Sound.class);
@@ -191,6 +211,10 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, RELOAD_FILE);
         sounds.allocate(manager, NO_WEAPON_FILE);
         sounds.allocate(manager, OUCH_FILE);
+
+        sounds.allocate(manager, MOP_FILE1);
+        sounds.allocate(manager, MOP_FILE2);
+        sounds.allocate(manager, MOP_FILE3);
         sounds.allocate(manager, VACUUM_FILE);
         sounds.allocate(manager, BUBBLE_FILE);
 
@@ -460,6 +484,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
+        if (input_level == 1) {
+            LEVEL = "tlevel1.tmx";
+        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -951,7 +978,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 24; i++){
-            frames.add (new TextureRegion(avatarDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(avatarDeathTexture,(i*64) + 1,0,64,64));
         }
         joeDeath = new Animation<TextureRegion>(0.075f, frames);
         frames.clear();
@@ -1004,7 +1031,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i < 12; i++){
-            frames.add (new TextureRegion(scientistDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(scientistDeathTexture,(i*64) + 1,0,64,64));
         }
         madDeath = new Animation<TextureRegion>(0.05f, frames);
         frames.clear();
@@ -1063,7 +1090,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(robotDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(robotDeathTexture,(i*64) + 1,0,64,64));
         }
         robotDeath = new Animation<TextureRegion>(0.08f, frames);
         frames.clear();
@@ -1123,7 +1150,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(slimeDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(slimeDeathTexture,(i*64) + 1,0,64,64));
         }
         slimeDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1165,7 +1192,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(turretDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(turretDeathTexture,(i*64) + 1,0,64,64));
         }
         turretDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1225,7 +1252,7 @@ public class FloorController extends WorldController implements ContactListener 
         frames.clear();
 
         for (int i=0; i <= 7; i++){
-            frames.add (new TextureRegion(lizardDeathTexture,i*64,0,64,64));
+            frames.add (new TextureRegion(lizardDeathTexture,(i*64) + 1,0,64,64));
         }
         lizardDeath = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -1253,6 +1280,10 @@ public class FloorController extends WorldController implements ContactListener 
         wep_in_use.put(default2, true);
         if (default2.equals("none")) {
             mopcart_menu[0] = "spray";
+            mopcart_menu[1] = "none";
+        }
+        else if (LEVEL.equals("level2.tmx")) {
+            mopcart_menu[0] = "lid";
             mopcart_menu[1] = "none";
         }
         else {
@@ -1996,6 +2027,8 @@ public class FloorController extends WorldController implements ContactListener 
     private void clearEnemy (float dt) {
         for (EnemyModel s : enemies) {
             if (s.getHP() <= 0 && deathTimer <= 0) {
+                s.setDensity(0.01f); //make them super light so they don't get in the way
+                s.setMass(0.01f);
 
                 //enemy death sounds (repeats because they're not gone yet)
                 //put this where they are about to die
@@ -2387,7 +2420,11 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof MopModel) {
             MopModel mop = (MopModel) wep;
             if (mop.getDurability() > 0) {
-                SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
+
+                int randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
+                String randomMopFile = MOP_FILE_LIST[randomNum];
+                SoundController.getInstance().play(randomMopFile, randomMopFile, false, 0.5f);
+                    //this is getting played multiple times since attacked is called multiple times for one attack
 
                 boolean enemy_hit = false;
                 for (EnemyModel s : enemies) {
