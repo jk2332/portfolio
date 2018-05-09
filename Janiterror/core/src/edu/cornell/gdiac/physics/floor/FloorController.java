@@ -43,43 +43,43 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "floor/jump.mp3";
+    private static final String JUMP_FILE = "floor/sound/jump.mp3";
     /** The sound file for a bullet fire */
-    private static final String PEW_FILE = "floor/pew.mp3";
+    private static final String PEW_FILE = "floor/sound/pew.mp3";
     /** The sound file for a bullet collision */
-    private static final String POP_FILE = "floor/plop.mp3";
+    private static final String POP_FILE = "floor/sound/plop.mp3";
     /** The sound file for a reload */
-    private static final String RELOAD_FILE = "floor/reload.mp3";
+    private static final String RELOAD_FILE = "floor/sound/reload.mp3";
     /** The sound file for out of weapon */
-    private static final String NO_WEAPON_FILE = "floor/no_weapon.mp3";
+    private static final String NO_WEAPON_FILE = "floor/sound/no_weapon.mp3";
     /** The sound file for getting hurt */
-    private static final String OUCH_FILE = "floor/ouch.mp3";
+    private static final String OUCH_FILE = "floor/sound/ouch.mp3";
 
 
     /** The sound file for vacuum attack */
-    private static final String MOP_FILE1 = "floor/mop1.mp3";
+    private static final String MOP_FILE1 = "floor/sound/mop1.mp3";
     /** The sound file for vacuum attack */
-    private static final String MOP_FILE2 = "floor/mop2.mp3";
+    private static final String MOP_FILE2 = "floor/sound/mop2.mp3";
     /** The sound file for vacuum attack */
-    private static final String MOP_FILE3 = "floor/mop3.mp3";
+    private static final String MOP_FILE3 = "floor/sound/mop3.mp3";
     /** The sound file for vacuum attack */
     private static String[] MOP_FILE_LIST = { MOP_FILE1, MOP_FILE2, MOP_FILE3 };
 
     /** The sound file for vacuum attack */
-    private static final String VACUUM_FILE = "floor/vacuum.mp3";
+    private static final String VACUUM_FILE = "floor/sound/vacuum.mp3";
     /** The sound file for spray stun */
-    private static final String BUBBLE_FILE = "floor/bubble.mp3";
+    private static final String BUBBLE_FILE = "floor/sound/bubble.mp3";
 
     /** The sound file for mad scientist attack */
-    private static final String SPARK_FILE = "floor/spark.mp3";
+    private static final String SPARK_FILE = "floor/sound/spark.mp3";
     /** The sound file for mad scientist death */
-    private static final String DROP_FILE = "floor/drop.mp3";
+    private static final String DROP_FILE = "floor/sound/drop.mp3";
     /** The sound file for lizard attack */
-    private static final String SLASH_FILE = "floor/slash.mp3";
+    private static final String SLASH_FILE = "floor/sound/slash.mp3";
     /** The sound file for robot attack */
-    private static final String CLAMP_FILE = "floor/clamp.mp3";
+    private static final String CLAMP_FILE = "floor/sound/clamp.mp3";
     /** The sound file for robot death */
-    private static final String EXPLOSION_FILE = "floor/explosion.mp3";
+    private static final String EXPLOSION_FILE = "floor/sound/explosion.mp3";
 
     private static final int TILE_SIZE = 32;
 
@@ -484,9 +484,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        if (input_level == 1) {
-            LEVEL = "tlevel1.tmx";
-        }
+//        if (input_level == 1) {
+//            LEVEL = "tlevel1.tmx";
+//        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1282,7 +1282,7 @@ public class FloorController extends WorldController implements ContactListener 
             mopcart_menu[0] = "spray";
             mopcart_menu[1] = "none";
         }
-        else if (LEVEL.equals("level2.tmx")) {
+        else if (LEVEL.equals("level3.tmx")) {
             mopcart_menu[0] = "lid";
             mopcart_menu[1] = "none";
         }
