@@ -485,7 +485,7 @@ public class FloorController extends WorldController implements ContactListener 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
 //        if (input_level == 1) {
-//            LEVEL = "tlevel1.tmx";
+//            LEVEL = "level16.tmx";
 //        }
 
         level = new LevelEditorParser(LEVEL);
@@ -1272,6 +1272,9 @@ public class FloorController extends WorldController implements ContactListener 
         //get default weapons
         String default1 = level.getJoeDefaults().get(0);
         String default2 = level.getJoeDefaults().get(1);
+        System.out.println(default1);
+        System.out.println(default2);
+
         avatar.setWep1(wep_to_model.get(default1));
         avatar.setWep2(wep_to_model.get(default2));
         if (default1.equals("lid") || default2.equals("lid")) { avatar.setHasLid(true); }
@@ -1290,9 +1293,11 @@ public class FloorController extends WorldController implements ContactListener 
             //go through and find the other two weapons
             int add_index = 0;
             for (String wep: list_of_weapons) {
-                if (!(wep_in_use.get(wep))) {
-                    mopcart_menu[add_index] = wep;
-                    add_index += 1;
+                if (!(wep.equals("none"))) {
+                    if (!(wep_in_use.get(wep))) {
+                        mopcart_menu[add_index] = wep;
+                        add_index += 1;
+                    }
                 }
             }
         }
@@ -2708,11 +2713,15 @@ public class FloorController extends WorldController implements ContactListener 
                 if (bd2.getName().equals("lid") && bd1 == s) {
                     removeLid(bd2,s);
                 }
-                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) && (bd2.getName() != "mopCart") ) {
+                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar)
+                        && (bd2.getName() != "mopCart") && (bd2.getName() != "specialDurability")
+                        && (bd2.getName() != "specialHealth")) {
                     //don't drop at mop cart
                     dropLid(bd1);
                 }
-                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1.getName() != "mopCart") ) {
+                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar)
+                        && (bd1.getName() != "mopCart") && (bd1.getName() != "specialDurability")
+                        && (bd1.getName() != "specialHealth") ) {
                     //don't drop at mop cart
                     dropLid(bd2);
                 }

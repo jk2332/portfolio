@@ -56,7 +56,7 @@ public class AIController {
         indexTile =0;
         indexPatrol=0;
         chaseDist = 12;
-        if (ship.getName()=="slime") chaseDist = 20;
+        if (ship.getName()=="slime") chaseDist = 12;
     }
 
     private void rangeReset(){
