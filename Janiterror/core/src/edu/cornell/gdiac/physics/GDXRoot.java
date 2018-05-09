@@ -219,12 +219,12 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("main");
 			loading.reset();
 			setScreen(loading);
-		} else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
+		} /** else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
 			setScreen(controllers[current]);
 		} else if (screen instanceof PauseMenu && exitCode==0){ //return back to main menu
 			loading.reset();
 			setScreen(loading);
-		} else if (screen instanceof LevelSelectMode) {
+		} **/ else if (screen instanceof LevelSelectMode) {
 			System.out.println("select level" + exitCode);
 			current = exitCode - 1;
 			controllers[current].reset();
@@ -232,9 +232,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
-		} else if (exitCode == WorldController.EXIT_PAUSE) {
-			pause.reset();
-			setScreen(pause);
+		} else if (exitCode == WorldController.EXIT_MENU) {
+			loading.reset();
+			setScreen(loading);
 		}
 	}
 }

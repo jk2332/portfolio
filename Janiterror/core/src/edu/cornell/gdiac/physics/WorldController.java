@@ -19,6 +19,9 @@ package edu.cornell.gdiac.physics;
 import java.util.Iterator;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
@@ -43,7 +46,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
-public abstract class WorldController implements Screen {
+public abstract class WorldController implements Screen, InputProcessor, ControllerListener {
 	/** 
 	 * Tracks the asset state.  Otherwise subclasses will try to load assets 
 	 */
@@ -228,6 +231,21 @@ public abstract class WorldController implements Screen {
 	private static final String HAZARD_TILE_FILE = "shared/hazard-tile.png";
 
 	private static final String PLAY_BTN_FILE = "shared/play.png";
+	private static final String CONTINUE_BTN_FILE = "shared/continue-button.png";
+	//private static final String MAIN_BTN_FILE = "shared/menu-button.png";
+	//private static final String PAUSE_BTN_FILE = "floor/janitor-sleeping.png";
+
+	/** Standard window size (for scaling) */
+	private static int STANDARD_WIDTH  = 800;
+	/** Standard window height (for scaling) */
+	private static int STANDARD_HEIGHT = 700;
+	private static float BUTTON_SCALE  = 0.75f;
+	/** Ration of the bar height to the screen */
+	private static float BAR_HEIGHT_RATIO = 0.25f;
+
+	private static float JOE_HEIGHT_RATIO = 0.5f;
+
+	private static float OFFSET_X_RATIO = 0.15f;
 
 	/** Texture assets for characters/attacks */
 	protected TextureRegion wallRightTexture;
@@ -395,6 +413,8 @@ public abstract class WorldController implements Screen {
 	/** Camera coordinates to draw Victory or Failure */
 	protected float cameraX;
 	protected float cameraY;
+
+	protected int pressState;
 
 	/**
 	 * Preloads the assets for this controller.
@@ -971,7 +991,7 @@ public abstract class WorldController implements Screen {
 	public static final int EXIT_NEXT = 1;
 	/** Exit code for jumping back to previous level */
 	public static final int EXIT_PREV = 2;
-	public static final int EXIT_PAUSE = 3;
+	public static final int EXIT_MENU = 3;
 
 	/** How many frames after winning/losing do we continue? */
 	public static final int COMPLETE_EXIT_COUNT = 10;
@@ -1006,6 +1026,8 @@ public abstract class WorldController implements Screen {
 	protected Rectangle bounds;
 	/** The world scale */
 	protected Vector2 scale;
+	/** Scaling factor for when the student changes the resolution. */
+	private float scale2;
 	
 	/** Whether or not this is an active controller */
 	private boolean active;
@@ -1021,7 +1043,19 @@ public abstract class WorldController implements Screen {
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
-	private PauseMenu pause;
+	private PauseMenu pauseMode;
+	private boolean paused;
+	//private Texture playButton;
+	//private Texture mainButton;
+	/** The y-coordinate of the center of the progress bar */
+	private int centerY;
+	/** The x-coordinate of the center of the progress bar */
+	private int centerX;
+
+	private int centerXMain;
+	private int centerXNext;
+	private int centerYJoe;
+
 
 	/**
 	 * Returns true if debug mode is active.
@@ -1124,7 +1158,55 @@ public abstract class WorldController implements Screen {
 	public GameCanvas getCanvas() {
 		return canvas;
 	}
-	
+
+	public boolean touchDown(int screenX, int screenY, int pointer, int button){
+		return pauseMode.touchDown(screenX, screenY, pointer, button);
+	}
+	public boolean touchUp(int screenX, int screenY, int pointer, int button){
+		return pauseMode.touchUp(screenX, screenY, pointer, button);
+	}
+	public boolean buttonDown(Controller controller, int buttonCode) {
+		return pauseMode.buttonDown(controller, buttonCode);
+	}
+	public boolean buttonUp(Controller controller, int buttonCode){
+		return pauseMode.buttonUp(controller, buttonCode);
+	}
+	public boolean keyDown(int keycode) {
+		return true;
+	}
+	public boolean keyTyped(char character) {
+		return true;
+	}
+	public boolean keyUp(int keycode) {return pauseMode.keyUp(keycode);}
+	public boolean mouseMoved(int screenX, int screenY) {
+		return true;
+	}
+	public boolean scrolled(int amount) {
+		return true;
+	}
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return true;
+	}
+	public void connected (Controller controller) {}
+	public void disconnected (Controller controller) {}
+	public boolean axisMoved (Controller controller, int axisCode, float value) {
+		return true;
+	}
+	public boolean povMoved (Controller controller, int povCode, PovDirection value) {
+		return true;
+	}
+	public boolean xSliderMoved (Controller controller, int sliderCode, boolean value) {
+		return true;
+	}
+	public boolean ySliderMoved (Controller controller, int sliderCode, boolean value) {
+		return true;
+	}
+	public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
+		return true;
+	}
+
+
+
 	/**
 	 * Sets the canvas associated with this controller
 	 *
@@ -1137,6 +1219,8 @@ public abstract class WorldController implements Screen {
 		this.canvas = canvas;
 		this.scale.x = canvas.getWidth()/bounds.getWidth();
 		this.scale.y = canvas.getHeight()/bounds.getHeight();
+		pauseMode = new PauseMenu(canvas);
+
 	}
 	
 	/**
@@ -1177,6 +1261,8 @@ public abstract class WorldController implements Screen {
 	 * @param gravity	The gravitational force on this Box2d world
 	 */
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
+		paused=false;
+		//pressState= pauseMode.getPressState();
 		assets = new Array<String>();
 		world = new World(gravity,false);
 		this.bounds = new Rectangle(bounds);
@@ -1195,6 +1281,7 @@ public abstract class WorldController implements Screen {
 		for(Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+		pauseMode.dispose();
 		objects.clear();
 		addQueue.clear();
 		world.dispose();
@@ -1285,10 +1372,10 @@ public abstract class WorldController implements Screen {
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} else if (input.getDidPause()){
+		} /**else if (input.getDidPause()){
 			listener.exitScreen(this, EXIT_PAUSE);
 			return false;
-		} else if (input.didAdvance()) {
+		} **/else if (input.didAdvance()) {
 			listener.exitScreen(this, EXIT_NEXT);
 			return false;
 		} else if (input.didRetreat()) {
@@ -1353,6 +1440,7 @@ public abstract class WorldController implements Screen {
 			}
 		}
 	}
+
 	
 	/**
 	 * Draw the physics objects to the canvas
@@ -1365,7 +1453,6 @@ public abstract class WorldController implements Screen {
 	 * @param canvas The drawing context
 	 */
 	public void draw(float delta) {
-
 		if (debug) {
 			canvas.beginDebug();
 			for(Obstacle obj : objects) {
@@ -1373,8 +1460,11 @@ public abstract class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
+		if (paused){
+			pauseMode.draw();
+		}
             // Final message
-		if (complete && !failed) {
+		else if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
 			canvas.drawText("VICTORY!", displayFont, cameraX - 80, cameraY + 20);
@@ -1403,7 +1493,28 @@ public abstract class WorldController implements Screen {
 	 */
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
+		float sx = ((float)width)/STANDARD_WIDTH;
+		float sy = ((float)height)/STANDARD_HEIGHT;
+		scale2 = (sx < sy ? sx : sy);
+
+		centerY = (int)(BAR_HEIGHT_RATIO*height);
+		centerX = width/2;
+		centerXNext = (int) (width/2 + width * OFFSET_X_RATIO);
+
+		centerXMain = (int) (width/2 - width * OFFSET_X_RATIO);
+		centerYJoe = (int) (JOE_HEIGHT_RATIO*height);
 	}
+
+	/**
+	 * Returns true if all assets are loaded and the player is ready to go.
+	 *
+	 * @return true if the player is ready to go
+	 */
+	public boolean isReady() {
+		return pressState == 2;
+	}
+
+	public boolean isMain() { return pressState == 4;}
 
 	/**
 	 * Called when the Screen should render itself.
@@ -1415,9 +1526,16 @@ public abstract class WorldController implements Screen {
 	 */
 	public void render(float delta) {
 		if (active) {
-			if (preUpdate(delta)) {
-				update(delta); // This is the one that must be defined.
-				postUpdate(delta);
+			if (!paused) {
+				if (InputController.getInstance().getDidPause()) paused=true;
+				if (preUpdate(delta)) {
+					update(delta); // This is the one that must be defined.
+					postUpdate(delta);
+				}
+			}
+			else {
+				//what to do here?
+				if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {paused=false;}
 			}
 			draw(delta);
 		}

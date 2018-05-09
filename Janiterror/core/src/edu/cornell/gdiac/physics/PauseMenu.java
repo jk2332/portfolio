@@ -25,6 +25,7 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
 
     private static final String JOE_NEXT_FILE = "floor/janitor-level-complete.png";
     private static final String JOE_MAIN_FILE = "floor/janitor-sleeping.png";
+    private static final String CONTINUE_BTN_FILE = "shared/continue-button.png";
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -53,7 +54,7 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
 
     private int centerYJoe;
     /** Background texture for start-up */
-    private Texture background;
+    //private Texture background;
     /** Play button to display when done */
     private Texture playButton;
 
@@ -120,13 +121,13 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
 
         stateTimer = 0.0f;
         // Load the next two images immediately.
-        playButton = new Texture(PLAY_BTN_FILE);
+        playButton = new Texture(CONTINUE_BTN_FILE);
         playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         mainButton = new Texture(MAIN_BTN_FILE);
         mainButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        background = new Texture(BACKGROUND_FILE);
+        //background = new Texture(BACKGROUND_FILE);
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 
@@ -164,8 +165,8 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      */
     public void dispose() {
 
-        background.dispose();
-        background = null;
+        //background.dispose();
+        //background = null;
         if (playButton != null) {
             playButton.dispose();
             playButton = null;
@@ -185,11 +186,13 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      *
      * @param delta Number of seconds since last animation frame
      */
-    private void update(float delta) {
+    public void update(float delta) {
 
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         current = getFrameJoe(delta);
     }
+
+    public int getPressState(){return pressState;}
 
     /**
      * Draw the status of this player mode.
@@ -198,9 +201,9 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
-    private void draw() {
+    public void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        //canvas.draw(background, 0, 0);
         Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
         canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
                 centerXNext, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
@@ -209,7 +212,7 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
         canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-        canvas.draw(current, centerX, centerYJoe);
+        //canvas.draw(current, centerX, centerYJoe);
         canvas.end();
     }
 
@@ -223,18 +226,16 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
+        System.out.println("here");
         if (active) {
             update(delta);
             draw();
-
+            System.out.println("listener:"+listener);
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
-                listener.exitScreen(this, EXIT_CONTINUE);
+                dispose();
             } else if (listener != null && isMain()) {
                 listener.exitScreen(this, EXIT_MENU);
-            }
-            else {
-                listener.exitScreen(this, EXIT_PAUSED);
             }
         }
     }

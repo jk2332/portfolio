@@ -5,7 +5,10 @@
 package edu.cornell.gdiac.physics.floor;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
@@ -128,6 +131,9 @@ public class FloorController extends WorldController implements ContactListener 
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
+
+    /**whether the game has been paused **/
+    private boolean paused ;
 
     /**
      * Preloads the assets for this controller.
@@ -463,6 +469,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public FloorController(int input_level) {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        paused=false;
         currentState = StateJoe.STANDING;
         previousState = StateJoe.STANDING;
         deathTimer = DEATH_ANIMATION_TIME;
@@ -1702,7 +1709,9 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
         //System.out.println(avatar.getWep1().getDurability());
-
+        if (InputController.getInstance().getDidPause()) {
+            paused=true;
+        }
         if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
             avatar.setRed(false);
             gotHit = -1;
@@ -2877,7 +2886,6 @@ public class FloorController extends WorldController implements ContactListener 
             sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
         }*/
     }
-
 
     public void draw(float delta) {
         GameCanvas canvas = super.getCanvas();
