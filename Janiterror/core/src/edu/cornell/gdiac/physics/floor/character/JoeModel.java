@@ -30,6 +30,7 @@ public class JoeModel extends CharacterModel {
     /** Whether we are actively swapping */
     private boolean isSwapping;
     private boolean isPrimarySwapping;
+    private boolean isSecondarySwapping;
 
     //TODO rename?
     /** Whether we are looking at wep1 in cart */
@@ -157,6 +158,22 @@ public class JoeModel extends CharacterModel {
      */
     public void setPrimarySwapping(boolean value) {
         isPrimarySwapping = value;
+    }
+    /**
+     * Returns true if Joe is actively swapping.
+     *
+     * @return true if Joe is actively swapping.
+     */
+    public boolean isSecondarySwapping() {
+        return isSecondarySwapping ;
+    }
+    /**
+     * Sets whether the Joe is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setSecondarySwapping(boolean value) {
+        isSecondarySwapping = value;
     }
 
     /**

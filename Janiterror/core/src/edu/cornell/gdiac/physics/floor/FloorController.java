@@ -132,6 +132,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
+
     /**whether the game has been paused **/
     private boolean paused ;
 
@@ -241,7 +242,8 @@ public class FloorController extends WorldController implements ContactListener 
     /** The density for most physics objects */
     private static final float  BASIC_DENSITY = 0.0f;
     /** The density for a bullet */
-    private static final float  HEAVY_DENSITY = 10.0f;
+    private static final float  HEAVY_DENSITY = 0.0f;
+//    private static final float  HEAVY_DENSITY = 0.0f; //low density so slimeballs don't move joe
     /** Friction of most platforms */
     private static final float  BASIC_FRICTION = 0.4f;
     /** The restitution for all physics objects */
@@ -263,6 +265,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.4f;
     private static final float DEATH_ANIMATION_TIME = 2f;
+    private static final float ENEMY_DEATH_ANIMATION_TIME = 0.5f;
     /** The timer for animations*/
     private float stateTimer;
     private float stateTimerM;
@@ -472,7 +475,7 @@ public class FloorController extends WorldController implements ContactListener 
         paused=false;
         currentState = StateJoe.STANDING;
         previousState = StateJoe.STANDING;
-        deathTimer = DEATH_ANIMATION_TIME;
+        deathTimer = ENEMY_DEATH_ANIMATION_TIME;
         joeDeathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
         stateTimerM = 0.0f;
@@ -588,7 +591,7 @@ public class FloorController extends WorldController implements ContactListener 
         setFailure(false);
         currentState = StateJoe.STANDING;
         previousState = StateJoe.STANDING;
-        deathTimer = DEATH_ANIMATION_TIME;
+        deathTimer = ENEMY_DEATH_ANIMATION_TIME;
         joeDeathTimer = DEATH_ANIMATION_TIME;
         stateTimer = 0.0f;
         stateTimerM = 0.0f;
@@ -1284,6 +1287,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         avatar.setWep1(wep_to_model.get(default1));
         avatar.setWep2(wep_to_model.get(default2));
+
+        System.out.println(avatar.getMass());
+
         if (default1.equals("lid") || default2.equals("lid")) { avatar.setHasLid(true); }
 
         wep_in_use.put(default1, true);
@@ -1822,9 +1828,10 @@ public class FloorController extends WorldController implements ContactListener 
                 SoundController.getInstance().play(OUCH_FILE, OUCH_FILE, false, EFFECT_VOLUME);
             } else {
                 // Process actions in object model
-
                 avatar.setSwapping(InputController.getInstance().didTertiary());
-                avatar.setPrimarySwapping(InputController.getInstance().didQKey());
+                avatar.setPrimarySwapping(InputController.getInstance().didPrimaryKey());
+                avatar.setSecondarySwapping(InputController.getInstance().didSecondaryKey());
+
 //                System.out.println(attackTimer);
 //                System.out.println(dt);
 //
@@ -1955,15 +1962,24 @@ public class FloorController extends WorldController implements ContactListener 
             }
         }
         // swapping secondary weapon
-        if (avatar.isSwapping()) {
+        if (avatar.isSecondarySwapping()) {
             //get weapon in cart
             String swapping_weapon_name = mopcart_menu[mopcart_index];
             WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
             //get old secondary weapon
             WeaponModel old_secondary = avatar.getWep2();
-            //set new weapons
-            avatar.setWep2(swapping_weapon);
-            mopcart_menu[mopcart_index] = old_secondary.name;
+
+            if ((avatar.getWep1().name.equals("none")) && (old_secondary.name.equals("none"))) {
+                //if you're not wielding anything just move it to primary weapon
+                    //literally only for one level (only lid)
+                avatar.setWep1(swapping_weapon);
+                mopcart_menu[mopcart_index] = old_secondary.name;
+            }
+            else {
+                //set new weapons
+                avatar.setWep2(swapping_weapon);
+                mopcart_menu[mopcart_index] = old_secondary.name;
+            }
 
             if (swapping_weapon_name == "lid") {
                 avatar.setHasLid(true);
@@ -2022,10 +2038,9 @@ public class FloorController extends WorldController implements ContactListener 
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
                 else if (s.getStunnedVacuum()) {
-                    s.setDensity(1f); //so they don't blowback joe on collision222 with vacuum
                     s.incrStunTicksVacuum();
                     if (s.getStunTicksVacuum()<=90) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
-                    else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false); s.setDensity(50f);}
+                    else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false); }
                 }
 
                 performAction(s, action);
@@ -2041,12 +2056,14 @@ public class FloorController extends WorldController implements ContactListener 
     }
     private void clearEnemy (float dt) {
         for (EnemyModel s : enemies) {
-            if (s.getHP() <= 0 && deathTimer <= 0) {
-                s.setDensity(0.01f); //make them super light so they don't get in the way
-                s.setMass(0.01f);
+            if (s.isActive()) {
+                if (s.getHP() <= 0 && deathTimer <= 0) {
+                    System.out.println("gone");
+                    s.setDensity(0.01f); //make them super light so they don't get in the way
+                    s.setMass(0.01f);
 
-                //enemy death sounds (repeats because they're not gone yet)
-                //put this where they are about to die
+                    //enemy death sounds (repeats because they're not gone yet)
+                    //put this where they are about to die
 //                if (s.getHP() == 0 && s instanceof ScientistModel) {
 //                    SoundController.getInstance().play(DROP_FILE, DROP_FILE, false, 0.5f);
 //                }
@@ -2054,10 +2071,11 @@ public class FloorController extends WorldController implements ContactListener 
 //                    SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE, false, 0.5f);
 //                }
 
-                deathTimer = DEATH_ANIMATION_TIME;
-                s.markRemoved(true);
-            } else if (s.getHP() <= 0 && deathTimer > 0) {
-                deathTimer -= dt;
+                    deathTimer = ENEMY_DEATH_ANIMATION_TIME;
+                    s.markRemoved(true);
+                } else if (s.getHP() <= 0 && deathTimer > 0) {
+                    deathTimer -= dt;
+                }
             }
         }
     }
@@ -2508,8 +2526,9 @@ public class FloorController extends WorldController implements ContactListener 
                             }
 
                             //7.5 TIMES THE NORMAL ENEMY DENSITY
-                            System.out.println(s.getDensity() * -7.5f);
-                            System.out.println(-750f);
+                            System.out.println(s.getMass());
+                            System.out.println(s.getDensity());
+                            System.out.println(s.getDensity() * -15f);
                             if (!(s instanceof RobotModel)) {
                                 knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
                                 //knockbackForce.nor();
@@ -2615,9 +2634,10 @@ public class FloorController extends WorldController implements ContactListener 
 
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
-//            vacuum.decrDurability();
             if (vacuum.getDurability() >= 0) {
                 SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
+                avatar.setMass(10000f); //RAISE MASS SO ENEMIES DON'T PUSH JOE BACK
+
                 for (Obstacle obj : objects) {
                     if (obj.getName() == "lid") {
                         int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
@@ -2644,7 +2664,9 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     if (!s.isRemoved()) {
                         if (!(s instanceof RobotModel)) {
-                            s.setDensity(1f); //normalize enemy density to prevent pushing joe
+//                            s.setDensity(1f); //normalize enemy density to prevent pushing joe
+//                            s.setMass(2.2293804f);
+
                             int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                             int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
                             boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
@@ -2690,9 +2712,9 @@ public class FloorController extends WorldController implements ContactListener 
                                     }
                                 }
 
-                                //30 TIMES THE NORMAL ENEMY DENSITY, normalized above
+                                //50 TIMES THE NORMAL ENEMY DENSITY
                                 if (case1 && !isWall) {
-                                    knockbackForce.set(30f, 0f);
+                                    knockbackForce.set(s.getDensity() * 50f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2700,7 +2722,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case2 && !isWall)) {
-                                    knockbackForce.set(-30f, 0f);
+                                    knockbackForce.set(s.getDensity() * -50f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2708,7 +2730,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case3 && !isWall)) {
-                                    knockbackForce.set(0f, 30f);
+                                    knockbackForce.set(0f, s.getDensity() * 50f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2716,22 +2738,21 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case4 && !isWall)) {
-                                    knockbackForce.set(0f, -30f);
+                                    knockbackForce.set(0f, s.getDensity() * -50f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
                                     s.setAttacked(true);
-
                                 }
                             }
 
                         }
                     }
-                    s.setDensity(50f);
+                    //hardcoded default values of enemies
+//                    s.setMass(222.93803f);
+//                    s.setDensity(50f);
                 }
             }
-            avatar.setDensity(1f); //this works fine when it's at 100 though
-
             //hotfix xd
 //            if (vacuum.getDurability() < 0 ){
 //                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
@@ -3423,6 +3444,7 @@ public class FloorController extends WorldController implements ContactListener 
             if ((previousState == currentState) && attackTimer > 0) {
                 if (dt > attackTimer) {
                     attackTimer = 0;
+                    avatar.setMass(0f); //RESET MASS OF JOE BECAUSE IT WAS RAISED BY DURING VACUUM
                 }else {
                     attackTimer -= dt;
                 }

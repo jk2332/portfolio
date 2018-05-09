@@ -82,8 +82,10 @@ public class InputController {
 	private boolean downArrowPressed;
 	private boolean downArrowPrevious;
 
-	private boolean qKeyPressed;
-	private boolean qKeyPrevious;
+	private boolean primaryKeyPressed;
+	private boolean primaryKeyPrevious;
+	private boolean secondaryKeyPressed;
+	private boolean secondaryKeyPrevious;
 
 	private boolean lKeyPressed;
 	private boolean lKeyPrevious;
@@ -190,8 +192,8 @@ public class InputController {
 		return downArrowPressed && !downArrowPrevious;
 	}
 
-	public boolean didQKey() { return qKeyPressed && !qKeyPrevious; }
-
+	public boolean didPrimaryKey() { return primaryKeyPressed && !primaryKeyPrevious; }
+	public boolean didSecondaryKey() { return secondaryKeyPressed && !secondaryKeyPrevious; }
 
 	/**
 	 * Returns true if the reset button was pressed.
@@ -281,10 +283,11 @@ public class InputController {
 		upArrowPrevious = upArrowPressed;
 		downArrowPrevious = downArrowPressed;
 
-		qKeyPrevious = qKeyPressed;
 		lKeyPrevious = lKeyPressed;
 		pKeyPrevious = pKeyPressed;
 
+		primaryKeyPrevious = primaryKeyPressed;
+		secondaryKeyPrevious = secondaryKeyPressed;
 
 		// Check to see if a GamePad is connected
 		if (xbox.isConnected()) {
@@ -359,7 +362,9 @@ public class InputController {
 		upArrowPressed  = (secondary && upArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
 		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
 
-		qKeyPressed  = (secondary && qKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
+		primaryKeyPressed  = (secondary && primaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_1));
+		secondaryKeyPressed  = (secondary && secondaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_2));
+
 		lKeyPressed  = (secondary && lKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
 		pKeyPressed = (secondary && pKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
 
