@@ -1218,7 +1218,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii, 3, 1.0f, 2.5f, 2,
+                    dwidth, dheight, ii, 3, 100f, 2.5f, 2,
                     StateMad.STANDING, StateMad.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(scientistPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1229,7 +1229,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+ii, 5, 30.0f, 2.5f, 2,
+                    dwidth, dheight, scientistPos.size()+ii, 5, 500f, 2.5f, 2,
                     StateRobot.STANDING, StateRobot.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(robotPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1239,7 +1239,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<slimePos.size(); ii++){
             EnemyModel mon =new SlimeModel(slimePos.get(ii).x/32+OBJ_OFFSET_X, slimePos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 1.0f, 1.5f, 8,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+ii, 3, 100f, 1.5f, 8,
                     10.0f,StateSlime.STANDING,StateSlime.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(slimePatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1249,7 +1249,7 @@ public class FloorController extends WorldController implements ContactListener 
         }
         for (int ii=0; ii<lizardPos.size(); ii++){
             EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 1.0f, 4f, 1,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 100f, 4f, 1,
                     StateLizard.STANDING, StateLizard.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1262,7 +1262,7 @@ public class FloorController extends WorldController implements ContactListener 
             int direc = sdirec.equals("auto") ? 0 : (sdirec.equals("left") ? 1 : (sdirec.equals("right") ? 2 :
                     (sdirec.equals("up") ? 3 : (sdirec.equals("down") ? 4 : -1))));
             EnemyModel mon =new TurretModel(slimeTurretPos.get(ii).x/32+OBJ_OFFSET_X, slimeTurretPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 1.0f, 0, 8, 5f,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+lizardPos.size()+ii, 3, 100f, 0, 8, 5f,
                     StateTurret.STANDING,StateTurret.STANDING, direc, slimeTurretDelays.get(ii), CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(slimeTurretPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1614,6 +1614,7 @@ public class FloorController extends WorldController implements ContactListener 
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
         //System.out.println(avatar.getWep1().getDurability());
+
         if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
             avatar.setRed(false);
             gotHit = -1;

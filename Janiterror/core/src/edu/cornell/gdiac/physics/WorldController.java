@@ -950,7 +950,9 @@ public abstract class WorldController implements Screen {
 	public static final int EXIT_NEXT = 1;
 	/** Exit code for jumping back to previous level */
 	public static final int EXIT_PREV = 2;
-    /** How many frames after winning/losing do we continue? */
+	public static final int EXIT_PAUSE = 3;
+
+	/** How many frames after winning/losing do we continue? */
 	public static final int COMPLETE_EXIT_COUNT = 10;
 	public static final int FAILURE_EXIT_COUNT = 60;
 
@@ -998,6 +1000,8 @@ public abstract class WorldController implements Screen {
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
+	private PauseMenu pause;
+
 	/**
 	 * Returns true if debug mode is active.
 	 *
@@ -1259,6 +1263,9 @@ public abstract class WorldController implements Screen {
 		// Now it is time to maybe switch screens.
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
+			return false;
+		} else if (input.getDidPause()){
+			listener.exitScreen(this, EXIT_PAUSE);
 			return false;
 		} else if (input.didAdvance()) {
 			listener.exitScreen(this, EXIT_NEXT);

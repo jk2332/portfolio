@@ -87,6 +87,9 @@ public class InputController {
 
 	private boolean lKeyPressed;
 	private boolean lKeyPrevious;
+
+	private boolean pKeyPressed;
+	private boolean pKeyPrevious;
 	/** How much did we move horizontally? */
 	private float horizontal;
 	/** How much did we move vertically? */
@@ -238,6 +241,7 @@ public class InputController {
 
 	public boolean getDidLighting() {return lKeyPressed && !lKeyPrevious;}
 
+	public boolean getDidPause() {return pKeyPressed && !pKeyPrevious;}
 	/**
 	 * Creates a new input controller
 	 *
@@ -279,6 +283,7 @@ public class InputController {
 
 		qKeyPrevious = qKeyPressed;
 		lKeyPrevious = lKeyPressed;
+		pKeyPrevious = pKeyPressed;
 
 
 		// Check to see if a GamePad is connected
@@ -356,6 +361,7 @@ public class InputController {
 
 		qKeyPressed  = (secondary && qKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
 		lKeyPressed  = (secondary && lKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
+		pKeyPressed = (secondary && pKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
