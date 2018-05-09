@@ -2008,9 +2008,10 @@ public class FloorController extends WorldController implements ContactListener 
                     else {s.resetStunTicks(); s.setStunned(false);}
                 }
                 else if (s.getStunnedVacuum()) {
+                    s.setDensity(1f); //so they don't blowback joe on collision with vacuum
                     s.incrStunTicksVacuum();
                     if (s.getStunTicksVacuum()<=75) {action=CONTROL_NO_ACTION; s.setMovementY(0); s.setMovementX(0);} //TODO change to get from sprayModel
-                    else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false);}
+                    else {s.resetStunTicksVacuum(); s.setStunnedVacuum(false); s.setDensity(50f);}
                 }
 
                 performAction(s, action);
@@ -2452,13 +2453,14 @@ public class FloorController extends WorldController implements ContactListener 
 ////                            s.markRemoved(true);
 ////                            controls[s.getId()]=null;
 //                        } else {
-                            //System.out.println("was mopped");
                             s.decrHP();
                             if (s.getHP()<0) {controls[s.getId()]=null;}
                             s.setAttacked(true);
 //                        }
-                            knockbackForce.set(horiGap * -750f, vertiGap * -750f);
-                                //7.5 TIMES THE NORMAL ENEMY DENSITY
+                            //7.5 TIMES THE NORMAL ENEMY DENSITY
+                            System.out.println(s.getDensity() * -7.5f);
+                            System.out.println(-750f);
+                            knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
                             //knockbackForce.nor();
 
                             s.applyImpulse(knockbackForce);
@@ -2525,6 +2527,9 @@ public class FloorController extends WorldController implements ContactListener 
         } else if (wep instanceof VacuumModel) {
             VacuumModel vacuum = (VacuumModel) wep;
 //            vacuum.decrDurability();
+//            avatar.setDensity(10000000f);
+//            System.out.println(avatar.getDensity());
+
             if (vacuum.getDurability() >= 0) {
                 SoundController.getInstance().play(VACUUM_FILE, VACUUM_FILE, false, 0.5f);
                 for (Obstacle obj : objects) {
@@ -2553,6 +2558,7 @@ public class FloorController extends WorldController implements ContactListener 
                 for (EnemyModel s : enemies) {
                     if (!s.isRemoved()) {
                         if (!(s instanceof RobotModel)) {
+                            s.setDensity(1f); //normalize enemy density to prevent pushing joe
                             int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(s.getX());
                             int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(s.getY());
                             boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
@@ -2602,9 +2608,9 @@ public class FloorController extends WorldController implements ContactListener 
                                     }
                                 }
 
-                                //35 TIMES THE NORMAL ENEMY DENSITY
+                                //30 TIMES THE NORMAL ENEMY DENSITY, normalized above
                                 if (case1 && !isWall) {
-                                    knockbackForce.set(3500f, 0f);
+                                    knockbackForce.set(30f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2612,7 +2618,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case2 && !isWall)) {
-                                    knockbackForce.set(-3500f, 0f);
+                                    knockbackForce.set(-30f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2620,7 +2626,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case3 && !isWall)) {
-                                    knockbackForce.set(0f, 3500f);
+                                    knockbackForce.set(0f, 30f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2628,7 +2634,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case4 && !isWall)) {
-                                    knockbackForce.set(0f, -3500f);
+                                    knockbackForce.set(0f, -30f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2636,12 +2642,13 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                             }
-
                         }
                     }
-
+                    s.setDensity(50f);
                 }
             }
+            avatar.setDensity(1f); //this works fine when it's at 100 though
+
             //hotfix xd
 //            if (vacuum.getDurability() < 0 ){
 //                SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
