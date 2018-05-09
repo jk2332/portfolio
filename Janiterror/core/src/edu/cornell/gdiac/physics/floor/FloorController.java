@@ -1278,12 +1278,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         wep_in_use.put(default1, true);
         wep_in_use.put(default2, true);
-        if (default2.equals("none")) {
-            mopcart_menu[0] = "spray";
+        if (LEVEL.equals("level3.tmx")) {
+            mopcart_menu[0] = "lid";
             mopcart_menu[1] = "none";
         }
-        else if (LEVEL.equals("level3.tmx")) {
-            mopcart_menu[0] = "lid";
+        else if (default2.equals("none")) {
+            mopcart_menu[0] = "spray";
             mopcart_menu[1] = "none";
         }
         else {
