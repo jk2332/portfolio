@@ -50,6 +50,7 @@ public class LevelEditorParser {
     private ArrayList<ArrayList<Vector2>> slimeTurretPatrol = new ArrayList<ArrayList<Vector2>>();
 
     private Vector2 joePos;
+    private ArrayList<String> joeDefaults = new ArrayList<String>();
     private Vector2 goalDoorPos;
     private ArrayList<Vector2> mopCartPos = new ArrayList<Vector2>();
     private ArrayList<Boolean> mopCartVisitedBefore = new ArrayList<Boolean>();
@@ -252,6 +253,10 @@ public class LevelEditorParser {
                 robotPatrol.add(patrolStrToArr(p.getAttribute("value")));
                 robotPos.add(new Vector2(x, y));
             } else if (type.equals("joe")) {
+                Array<Element> ps = character.getChild(0).getChildrenByName("property");
+                joeDefaults.add(ps.get(0).getAttribute("value"));
+                joeDefaults.add(ps.get(1).getAttribute("value"));
+
                 /*if (joePos == null) {
                     Array<Element> ps = character.getChild(0).getChildrenByName("property");
                     for (int j = 0; j < ps.size; j++) {
@@ -550,13 +555,13 @@ public class LevelEditorParser {
         return goalDoorPos.y;
     }
 
-    public float getJoePosX() {
-        return joePos.x;
-    }
+    public float getJoePosX() { return joePos.x; }
 
     public float getJoePosY() {
         return joePos.y;
     }
+
+    public ArrayList<String> getJoeDefaults() { return joeDefaults; }
 
     /*public int getJoeHP() {
         return joeHP;

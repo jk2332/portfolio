@@ -50,6 +50,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static final String PROGRESS_FILE = "shared/progressbar.png";
 	private static final String PLAY_BTN_FILE = "shared/play-button.png";
 	private static final String SELECT_BTN_FILE = "shared/levels-button.png";
+	private static final String OPTION_BTN_FILE = "shared/options-button.png";
 	
 	/** Background texture for start-up */
 	private Texture background;
@@ -57,6 +58,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private Texture playButton;
 
 	private Texture selectButton;
+
+
+
+	private Texture optionsButton;
 	/** Texture atlas to support a progress bar */
 	private Texture statusBar;
 	
@@ -91,9 +96,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/** Width of the middle portion in texture atlas */
 	private static int PROGRESS_MIDDLE = 200;
 	/** Amount to scale the play button */
-	private static float BUTTON_SCALE  = 0.75f;
+	private float buttonPlayScale  = 0.75f;
+	private float buttonSelectScale  = 0.75f;
+	private float buttonOptionScale  = 0.75f;
 
-	private static float OFFSET_X_RATIO = 0.15f;
+	private static float OFFSET_Y_RATIO = 0.12f;
 	
 	/** Start button for XBox controller on Windows */
 	private static int WINDOWS_START = 7;
@@ -114,9 +121,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/** The x-coordinate of the center of the progress bar */
 	private int centerX;
 
-	private int centerXPlay;
+	private int centerYPlay;
 
-	private int centerXSelect;
+	private int centerYSelect;
+	private int centerYOptions;
 	/** The height of the canvas window (necessary since sprite origin != screen origin) */
 	private int heightY;
 	/** Scaling factor for when the student changes the resolution. */
@@ -173,6 +181,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public boolean isSelect() {
 		return pressState == 4;
 	}
+
+	public boolean isOptions() {
+		return pressState == 6;
+	}
 	
 	/**
 	 * Creates a LoadingMode with the default budget, size and position.
@@ -205,6 +217,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		// Load the next two images immediately.
 		playButton = null;
 		selectButton = null;
+		optionsButton = null;
 		background = new Texture(BACKGROUND_FILE);
 		statusBar  = new Texture(PROGRESS_FILE);
 		
@@ -256,6 +269,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			selectButton.dispose();
 			selectButton = null;
 		}
+		if (optionsButton != null) {
+			optionsButton.dispose();
+			optionsButton = null;
+		}
 	}
 	
 	/**
@@ -268,7 +285,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	private void update(float delta) {
-		if (playButton == null && selectButton == null) {
+		if (playButton == null && selectButton == null && optionsButton == null) {
 			manager.update(budget);
 			this.progress = manager.getProgress();
 			if (progress >= 1.0f) {
@@ -278,6 +295,42 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 				selectButton = new Texture(SELECT_BTN_FILE);
 				selectButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+				optionsButton = new Texture(OPTION_BTN_FILE);
+				optionsButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			}
+		} else {
+			float screenX = Gdx.input.getX();
+			float screenY = heightY - Gdx.input.getY();
+			float radiusX = buttonPlayScale*scale*playButton.getWidth()/2.0f;
+			float distX = Math.abs(screenX-centerX);
+			float distY = Math.abs(screenY-centerYPlay);
+			float radiusY =  buttonPlayScale*scale*playButton.getHeight()/2.0f;
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonPlayScale = 0.85f;
+			} else {
+				buttonPlayScale = 0.75f;
+			}
+
+
+			radiusY = buttonSelectScale*scale*selectButton.getHeight()/2.0f;
+			radiusX = buttonSelectScale*scale*selectButton.getWidth()/2.0f;
+			distX = Math.abs(screenX-centerX);
+			distY = Math.abs(screenY-centerYSelect);
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonSelectScale = 0.85f;
+			} else {
+				buttonSelectScale = 0.75f;
+			}
+
+			radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
+			radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
+			distX = screenX-centerX;
+			distY =screenY-centerYOptions;
+			if (distX <= radiusX && distY <= radiusY) {
+				buttonOptionScale = 0.85f;
+			} else {
+				buttonOptionScale = 0.75f;
 			}
 		}
 	}
@@ -297,13 +350,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		} else {
 			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
-						centerXPlay, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+						centerX, centerYPlay, 0, buttonPlayScale*scale, buttonPlayScale*scale);
 //			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
 //					centerX, centerY + 160, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
 			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
 			canvas.draw(selectButton, tint, selectButton.getWidth()/2, selectButton.getHeight()/2,
-					centerXSelect, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+					centerX, centerYSelect, 0, buttonSelectScale*scale, buttonSelectScale*scale);
+
+			tint = (pressState == 5 ? Color.YELLOW: Color.WHITE);
+			canvas.draw(optionsButton, tint, optionsButton.getWidth()/2, optionsButton.getHeight()/2,
+					centerX, centerYOptions, 0, buttonOptionScale*scale, buttonOptionScale*scale);
 		}
 		canvas.end();
 	}
@@ -357,6 +414,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				listener.exitScreen(this, 0);
 			} else if (isSelect() && listener != null) {
 				listener.exitScreen(this, 1);
+			} else if (isOptions() && listener != null) {
+				listener.exitScreen(this, 2);
 			}
 		}
 	}
@@ -379,8 +438,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
 		centerX = width/2;
-		centerXPlay = (int) (width/2 - width * OFFSET_X_RATIO);
-		centerXSelect = (int) (width/2 + width * OFFSET_X_RATIO);
+		centerYPlay = (int) (height * BAR_HEIGHT_RATIO + height * OFFSET_Y_RATIO);
+		centerYSelect = (int) (height * BAR_HEIGHT_RATIO);
+		centerYOptions = (int) (height * BAR_HEIGHT_RATIO - height * OFFSET_Y_RATIO);
 		heightY = height;
 
 	}
@@ -445,7 +505,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @return whether to hand the event to other listeners. 
 	 */
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (playButton == null || pressState == 2 || pressState == 4) {
+		if (playButton == null || pressState == 2 || pressState == 4 || pressState == 6) {
 			return true;
 		}
 		
@@ -454,16 +514,28 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		
 		// TODO: Fix scaling
 		// Play button is a circle.
-		float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
-		float dist = (screenX-centerXPlay)*(screenX-centerXPlay)+(screenY-centerY)*(screenY-centerY);
-		if (dist < radius*radius) {
+		float radiusX = buttonPlayScale*scale*playButton.getWidth()/2.0f;
+		float distX = Math.abs(screenX-centerX);
+		float distY = Math.abs(screenY-centerYPlay);
+		float radiusY =  buttonPlayScale*scale*playButton.getHeight()/2.0f;
+		if (distX <= radiusX && distY <= radiusY) {
 			pressState = 1;
 		}
 
-		radius = BUTTON_SCALE*scale*selectButton.getWidth()/2.0f;
-		dist = (screenX-centerXSelect)*(screenX-centerXSelect)+(screenY-centerY)*(screenY-centerY);
-		if (dist < radius*radius) {
+		radiusY = buttonSelectScale*scale*selectButton.getHeight()/2.0f;
+		radiusX = buttonSelectScale*scale*selectButton.getWidth()/2.0f;
+		distX = Math.abs(screenX-centerX);
+		distY = Math.abs(screenY-centerYSelect);
+		if (distX <= radiusX && distY <= radiusY) {
 			pressState = 3;
+		}
+
+		radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
+		radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
+		distX = screenX-centerX;
+		distY =screenY-centerYOptions;
+		if (distX <= radiusX && distY <= radiusY) {
+			pressState = 5;
 		}
 
 		return false;
@@ -488,6 +560,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 		if (pressState == 3) {
 			pressState = 4;
+			return false;
+		}
+
+		if (pressState == 5) {
+			pressState = 6;
 			return false;
 		}
 		return true;

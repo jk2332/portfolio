@@ -85,25 +85,28 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		controllers = new WorldController[4];
+		int number_of_levels = 7;
+
+		controllers = new WorldController[number_of_levels];
 		controllers[0] = new FloorController(1);
 		controllers[1] = new FloorController(2);
 		controllers[2] = new FloorController(3);
 		controllers[3] = new FloorController(4);
+        controllers[4] = new FloorController(5);
+        controllers[5] = new FloorController(6);
+		controllers[6] = new FloorController(1);
 
-		levelNames = new String[3];
-		levelNames[0] = "BAD PUN HERE";
-		levelNames[1] = "BAD PUN HERE";
-		levelNames[2] = "BAD PUN HERE";
+		levelNames = new String[number_of_levels];
+		levelNames[0] = "Taking Out the Trash";
+		levelNames[1] = "Sweeping with the Enemy";
+		levelNames[2] = "Garbage Gladiator";
+        levelNames[3] = "A Slimey Situation";
+        levelNames[4] = "Mr. Clean, Mr. Mean";
+        levelNames[5] = "Spring Cleaning";
+		levelNames[6] = "Another One Bites the Dust";
 
 		select = new LevelSelectMode(canvas, levelNames);
 		pause = new PauseMenu(canvas);
-
-		//
-		//CHANGE FIRST LEVEL LOADED HERE
-//		controllers[0] = new FloorController(1);
-		//CHANGE FIRST LEVEL LOADED HERE
-		//
 
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -192,6 +195,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else if (exitCode == 1) {
 				select.reset();
 				setScreen(select);
+			} else if (exitCode == 2) {
+				Gdx.app.exit();
 			}
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
 			System.out.println("load next score" + current);
