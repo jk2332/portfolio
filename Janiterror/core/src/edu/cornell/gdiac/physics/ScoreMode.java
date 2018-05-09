@@ -18,13 +18,13 @@ import edu.cornell.gdiac.util.*;
  */
 public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String BACKGROUND_FILE = "shared/opacity-block.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
-    private static final String PLAY_BTN_FILE = "shared/play-button.png";
+    private static final String PLAY_BTN_FILE = "shared/continue-button.png";
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
 
-    private static final String JOE_NEXT_FILE = "floor/janitor-level-complete.png";
-    private static final String JOE_MAIN_FILE = "floor/janitor-sleeping.png";
+    private static final String JOE_NEXT_FILE = "shared/janitor-level-complete-3x.png";
+    private static final String JOE_MAIN_FILE = "shared/janitor-sleeping-3x.png";
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -138,14 +138,14 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             controller.addListener(this);
         }*/
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i=0; i < joeNextT.getWidth()/64; i++){
-            frames.add (new TextureRegion(joeNextTexture,i*64,0,64,64));
+        for (int i=0; i < joeNextT.getWidth()/192; i++){
+            frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
         }
         joeNext = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i < joeMainT.getWidth()/64; i++){
-            frames.add (new TextureRegion(joeMainTexture,i*64,0,64,64));
+        for (int i=0; i < joeMainT.getWidth()/192; i++){
+            frames.add (new TextureRegion(joeMainTexture,i*192,0,192,192));
         }
         joeMain = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
@@ -208,7 +208,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-        canvas.draw(current, centerX, centerYJoe);
+        canvas.draw(current, centerX - current.getRegionWidth()/2, centerYJoe - current.getRegionHeight()/2);
         canvas.end();
     }
 

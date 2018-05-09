@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -46,7 +47,7 @@ import edu.cornell.gdiac.util.*;
  */
 public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	// Textures necessary to support the loading screen 
-	private static final String BACKGROUND_FILE = "shared/loading.png";
+	private static final String BACKGROUND_FILE = "shared/title-screen-8frame.png";
 	private static final String PROGRESS_FILE = "shared/progressbar.png";
 	private static final String PLAY_BTN_FILE = "shared/play-button.png";
 	private static final String SELECT_BTN_FILE = "shared/levels-button.png";
@@ -88,7 +89,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/** Ratio of the bar width to the screen */
 	private static float BAR_WIDTH_RATIO  = 0.66f;
 	/** Ration of the bar height to the screen */
-	private static float BAR_HEIGHT_RATIO = 0.25f;	
+	private static float BAR_HEIGHT_RATIO = 0.35f;
 	/** Height of the progress bar */
 	private static int PROGRESS_HEIGHT = 30;
 	/** Width of the rounded cap on left or right */
@@ -140,6 +141,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private int   startButton;
 	/** Whether or not this player mode is still active */
 	private boolean active;
+
+	private Animation <TextureRegion> bgAnimation;
+	private TextureRegion bg;
+	private float stateTimer;
 
 	/**
 	 * Returns the budget for the asset loader.
@@ -218,13 +223,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		playButton = null;
 		selectButton = null;
 		optionsButton = null;
-		background = new Texture(BACKGROUND_FILE);
 		statusBar  = new Texture(PROGRESS_FILE);
 		
 		// No progress so far.		
 		progress   = 0;
 		pressState = 0;
 		active = false;
+
+		stateTimer = 0.0f;
 
 		// Break up the status bar texture into regions
 		statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP,PROGRESS_HEIGHT);
@@ -238,6 +244,16 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 		startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 		Gdx.input.setInputProcessor(this);
+
+		Texture backgroundT = new Texture(BACKGROUND_FILE);
+		TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
+		Array<TextureRegion> frames = new Array<TextureRegion>();
+		for (int i=0; i < backgroundT.getWidth()/1024; i++){
+			frames.add (new TextureRegion(backgroundTexture,i*1024,0,1024,576));
+		}
+		bgAnimation = new Animation<TextureRegion>(0.15f, frames);
+		frames.clear();
+
 		// Let ANY connected controller start the game.
 		for(Controller controller : Controllers.getControllers()) {
 			controller.addListener(this);
@@ -256,8 +272,6 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		 statusFrgLeft = null;
 		 statusFrgRight = null;
 		 statusFrgMiddle = null;
-
-		 background.dispose();
 		 statusBar.dispose();
 		 background = null;
 		 statusBar  = null;
@@ -273,6 +287,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			optionsButton.dispose();
 			optionsButton = null;
 		}
+		bgAnimation = null;
+		bg = null;
 	}
 	
 	/**
@@ -285,6 +301,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	private void update(float delta) {
+		bg = bgAnimation.getKeyFrame(stateTimer,true);
+		stateTimer = stateTimer + delta;
 		if (playButton == null && selectButton == null && optionsButton == null) {
 			manager.update(budget);
 			this.progress = manager.getProgress();
@@ -344,7 +362,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	private void draw() {
 		canvas.begin();
-		canvas.draw(background, 0, 0);
+		canvas.draw(bg, 0, 0);
 		if (playButton == null && selectButton == null) {
 			drawProgress(canvas);
 		} else {

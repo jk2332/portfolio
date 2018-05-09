@@ -418,9 +418,16 @@ public class GameCanvas {
 			return;
 		}
 
+
 		// Unlike Lab 1, we can shortcut without a master drawing method
-    	spriteBatch.setColor(Color.WHITE);
+
+		Color c = spriteBatch.getColor();
+		spriteBatch.setColor(c.r, c.g, c.b, 1f); //set alpha to 1
 		spriteBatch.draw(image, x,  y);
+		//foreground
+		c = spriteBatch.getColor();
+		spriteBatch.setColor(c.r, c.g, c.b, .3f);//set alpha to 0.3
+
 	}
 
 	/**
