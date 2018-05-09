@@ -2814,7 +2814,9 @@ public class FloorController extends WorldController implements ContactListener 
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd1.getName().equals("slimeball") && bd2.getName() == "mopCart") {
+            } else if (bd1.getName().equals("slimeball") &&
+                    (bd2.getName() == "mopCart" ||
+                     bd2.getName() == "specialHealth" || bd2.getName() == "specialDurability")) {
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
@@ -2830,7 +2832,9 @@ public class FloorController extends WorldController implements ContactListener 
                     removeBullet(bd2);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2.getName().equals("slimeball") && bd1.getName() == "mopCart") {
+            } else if (bd2.getName().equals("slimeball") &&
+                    (bd1.getName() == "mopCart" ||
+                     bd1.getName() == "specialHealth" || bd1.getName() == "specialDurability")) {
                 //do nothing, don't remove bullet if mop cart
             } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
