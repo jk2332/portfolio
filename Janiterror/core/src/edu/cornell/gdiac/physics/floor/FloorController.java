@@ -2457,7 +2457,8 @@ public class FloorController extends WorldController implements ContactListener 
                             if (s.getHP()<0) {controls[s.getId()]=null;}
                             s.setAttacked(true);
 //                        }
-                            knockbackForce.set(horiGap * -7.5f, vertiGap * -7.5f);
+                            knockbackForce.set(horiGap * -750f, vertiGap * -750f);
+                                //7.5 TIMES THE NORMAL ENEMY DENSITY
                             //knockbackForce.nor();
 
                             s.applyImpulse(knockbackForce);
@@ -2601,8 +2602,9 @@ public class FloorController extends WorldController implements ContactListener 
                                     }
                                 }
 
+                                //35 TIMES THE NORMAL ENEMY DENSITY
                                 if (case1 && !isWall) {
-                                    knockbackForce.set(30f, 0f);
+                                    knockbackForce.set(3500f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2610,7 +2612,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case2 && !isWall)) {
-                                    knockbackForce.set(-30f, 0f);
+                                    knockbackForce.set(-3500f, 0f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2618,7 +2620,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case3 && !isWall)) {
-                                    knockbackForce.set(0f, 30f);
+                                    knockbackForce.set(0f, 3500f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
@@ -2626,8 +2628,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                                 }
                                 if ((case4 && !isWall)) {
-                                    System.out.println("upvac");
-                                    knockbackForce.set(0f, -30f);
+                                    knockbackForce.set(0f, -3500f);
                                     s.applyImpulse(knockbackForce);
                                     s.setKnockbackTimer(KNOCKBACK_TIMER);
                                     s.setStunnedVacuum(true);
