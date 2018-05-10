@@ -2064,14 +2064,14 @@ public class FloorController extends WorldController implements ContactListener 
 
                     //enemy death sounds (repeats because they're not gone yet)
                     //put this where they are about to die
-//                if (s.getHP() == 0 && s instanceof ScientistModel) {
-//                    SoundController.getInstance().play(DROP_FILE, DROP_FILE, false, 0.5f);
-//                }
-//                if (s.getHP() == 0 && s instanceof RobotModel) {
-//                    SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE, false, 0.5f);
-//                }
+//                    if (s.getHP() == 0 && s instanceof ScientistModel) {
+//                        SoundController.getInstance().play(DROP_FILE, DROP_FILE, false, 0.5f);
+//                    }
+//                    if (s.getHP() == 0 && s instanceof RobotModel) {
+//                        SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE, false, 0.5f);
+//                    }
 
-                    deathTimer = ENEMY_DEATH_ANIMATION_TIME;
+                    deathTimer = ENEMY_DEATH_ANIMATION_TIME; //reset deathTimer?
                     s.markRemoved(true);
                 } else if (s.getHP() <= 0 && deathTimer > 0) {
                     deathTimer -= dt;
