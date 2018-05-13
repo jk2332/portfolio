@@ -18,7 +18,7 @@ import edu.cornell.gdiac.util.*;
 /**
  * Class that provides a level select screen for the game
  */
-public class LevelSelectMode implements Screen, InputProcessor, ControllerListener {
+public class CreditsMode implements Screen, InputProcessor, ControllerListener {
 
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/inter-menu-v2.png";
@@ -28,8 +28,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private static final String LEVEL_FILE = "shared/mop-bucket-menu.png";
 
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
-
-    private static final String ARROW_FILE = "shared/menu-selector.png";
 
     private static final int FONT_SIZE = 30;
 
@@ -47,10 +45,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private static float MENU_Y_RATIO = 0.1f;
 
     private static float OFFSET_RATIO = 0.20f;
-
-    private static int NUM_ROWS = 5;
-
-    private static int LEVELS_PER_PAGE = NUM_ROWS * 2;
 
     /** The x-coordinate of the center of the progress bar */
     private int centerX;
@@ -111,15 +105,11 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     private String subtitle;
 
-    private static final String TITLE = "LEVEL SELECT";
+    private static final String TITLE = "CREDITS";
 
     private static final String DEFAULT_SUBTITLE = "SELECT A LEVEL";
 
     private int hoverIndex;
-
-    private int curr_page;
-
-    private Texture arrowButton;
 
 
 
@@ -137,11 +127,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
      * Creates a ScoreMode with the default size and position
      *
      */
-    public LevelSelectMode(GameCanvas canvas, String[] levelNames) {
+    public CreditsMode(GameCanvas canvas) {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
-        this.levelNames = levelNames;
         // Load the next two images immediately.
 
         mainButton = new Texture(MAIN_BTN_FILE);
@@ -159,7 +148,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 
-        arrowButton = new Texture(ARROW_FILE);
         Texture backgroundT = new Texture(BACKGROUND_FILE);
         Texture levelT = new Texture(LEVEL_FILE);
         TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
@@ -178,14 +166,11 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         subtitle = DEFAULT_SUBTITLE;
 
-        curr_page = 0;
-
     }
 
     public void reset() {
         pressState = 0;
         active = false;
-        hoverIndex = -1;
         Gdx.input.setInputProcessor(this);
     }
 
@@ -215,36 +200,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         bg = bgAnimation.getKeyFrame(stateTimer,true);
         stateTimer = stateTimer + delta;
-
-
-        float screenX = Gdx.input.getX();
-        float screenY = heightY - Gdx.input.getY();
-
-        int centerY;
-        int centerX;
-
-        float radius;
-        float dist;
-
-        subtitle = DEFAULT_SUBTITLE;
-        hoverIndex = -1;
-        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
-            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
-                centerY = centerYUp;
-            } else {
-                centerY = centerYDown;
-            }
-
-            //s = "LVL " + i + ": " + levelNames[i - 1];
-            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
-
-            radius = levelFrames.get(0).getRegionWidth()/2.0f;
-            dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
-            if (dist < radius*radius) {
-                subtitle = levelNames[i];
-                hoverIndex = i;
-            }
-        }
     }
 
     /**
@@ -259,9 +214,6 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         canvas.draw(bg, 0, 0);
         Color color;
 
-        int centerX;
-        int centerY;
-
         int radiusX;
         int radiusY;
 
@@ -271,45 +223,28 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         radiusX = (int) (layout.width / 2.0f);
         radiusY = (int) (layout.height / 2.0f);
         canvas.drawText(TITLE, displayFont, this.centerX - radiusX, titleY - radiusY);
-        displayFont.setColor(Color.WHITE);
+
+        String text ="Eliot Huang, Ziyad Duron, Matt Haro";
         displayFont.getData().setScale(scale);
-        layout.setText(displayFont, subtitle);
+        layout.setText(displayFont, text);
+        displayFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
-        radiusY = (int) (layout.height / 2.0f);
-        canvas.drawText(subtitle, displayFont, this.centerX- radiusX, centerYUp + marginX - radiusY);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 4 * radiusY);
 
-        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
-            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
-                centerY = centerYUp;
-            } else {
-                centerY = centerYDown;
-            }
+        text = "Douglas Lo, Jiwon Kim, Sophie Lan";
+        layout.setText(displayFont, text);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 6 * radiusY);
 
-            //s = "LVL " + i + ": " + levelNames[i - 1];
-            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
-            color = (pressState == 1 && exit == (i + 1) ? Color.YELLOW: Color.WHITE);
-            displayFont.setColor(color);
-            displayFont.getData().setScale(scale * 1.5f);
-            layout.setText(displayFont, i + 1 + "");
-            radiusX = (int) (layout.width / 2.0f);
-            radiusY = (int) (layout.height / 2.0f);
-            levelButton = hoverIndex == i ? levelFrames.get(2) : levelFrames.get(0);
-            canvas.draw(levelButton, Color.WHITE, levelFrames.get(0).getRegionWidth()/2,
-                    levelFrames.get(0).getRegionHeight()/2, centerX, centerY, 0, 1.0f, 1.0f);
-            canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY + radiusY);
-        }
+        text = "SOUNDS";
+        displayFont.setColor(Color.SKY);
+        displayFont.getData().setScale(scale  * 1.2f);
+        layout.setText(displayFont, text);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 8 * radiusY);
 
-        color = (pressState == 1 && exit == 0 ? Color.YELLOW: Color.WHITE);
+        color = (pressState == 1 ? Color.YELLOW: Color.WHITE);
 
-        if (curr_page > 0) {
-            canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
-                     this.centerX - (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, (float) Math.PI, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        }
-
-        if (curr_page < Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) - 1) {
-            canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
-                    this.centerX + (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        }
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
@@ -434,48 +369,12 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         screenY = heightY-screenY;
 
         // TODO: Fix scaling
-        // Play button is a circle.
-        float centerX;
-        float centerY;
 
 
         float radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
         float dist = (screenX-STANDARD_WIDTH/2)*(screenX-STANDARD_WIDTH/2)+(screenY-menuY)*(screenY-menuY);
         if (dist < radius*radius) {
             pressState = 1;
-            exit = 0;
-        }
-
-        radius = BUTTON_SCALE*scale*arrowButton.getWidth()/2.0f;
-        dist = (screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))*(screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))+(screenY-(centerYUp + centerYDown)/2)*(screenY-(centerYUp + centerYDown)/2);
-
-        if (curr_page > 0 && dist < radius * radius) {
-            curr_page--;
-        }
-
-
-        dist = (screenX-(this.centerX + (NUM_ROWS/2 + 0.6f) * marginX))*(screenX-(this.centerX + (NUM_ROWS/2 + 0.6f) * marginX))+(screenY-(centerYUp + centerYDown)/2)*(screenY-(centerYUp + centerYDown)/2);
-
-        if (curr_page < Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) - 1 && dist < radius * radius) {
-            curr_page++;
-        }
-
-        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
-            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
-                centerY = centerYUp;
-            } else {
-                centerY = centerYDown;
-            }
-
-            //s = "LVL " + i + ": " + levelNames[i - 1];
-            centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
-
-            radius = levelFrames.get(0).getRegionWidth()/2.0f;
-            dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
-            if (dist < radius*radius) {
-                pressState = 1;
-                exit = i + 1;
-            }
         }
         return false;
     }
