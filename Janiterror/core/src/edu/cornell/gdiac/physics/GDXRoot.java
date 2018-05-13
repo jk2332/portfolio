@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.floor.*;
 
@@ -47,10 +48,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	private int current;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
-
 	private String[] levelNames;
-
 	private ScoreMode[] scores;
+
+	/** The sound file for background music */
+	private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+	protected Array<String> assets;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -77,6 +80,14 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,14);
+
+
+		//Attempt to play music during loading
+//		manager.load(BACKGROUND_TRACK_FILE, Sound.class);
+//		assets.add(BACKGROUND_TRACK_FILE);
+//		SoundController sounds = SoundController.getInstance();
+//		sounds.allocate(manager, BACKGROUND_TRACK_FILE);
+//		SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
 
 		/*
 		// Initialize the three game worlds

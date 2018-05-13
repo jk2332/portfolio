@@ -91,6 +91,9 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	private static final String WALL_LIGHT_FILE = "shared/horizontal-wall-lantern.png";
 
 
+	/** File to texture for level completion */
+	private static final String VICTORY_FILE = "shared/victory.png";
+
 	/** File to texture for the win door */
 	private static final String GOAL_FILE = "shared/stairs-down.png";
 	/** File to texture for the mop cart */
@@ -268,6 +271,9 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	protected TextureRegion wallELTexture;
 	protected TextureRegion wallERTexture;
 	protected TextureRegion wallLightTexture;
+
+	protected TextureRegion victoryTexture;
+
 	protected TextureRegion avatarIdleTexture;
 	protected TextureRegion avatarWalkRTexture;
 	protected TextureRegion avatarWalkUTexture;
@@ -459,6 +465,9 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 
 		manager.load(WALL_LIGHT_FILE, Texture.class);
 		assets.add(WALL_LIGHT_FILE);
+
+		manager.load(VICTORY_FILE, Texture.class);
+		assets.add(VICTORY_FILE);
 
 		manager.load(WALL_DTL_FILE, Texture.class);
 		assets.add(WALL_DTL_FILE);
@@ -781,6 +790,8 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 
 		wallLightTexture = createTexture(manager,WALL_LIGHT_FILE,false);
 
+		victoryTexture = createTexture(manager,VICTORY_FILE,false);
+
 		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
 		avatarWalkDTexture = createTexture(manager,JANITOR_WALKD_FILE,false);
@@ -994,7 +1005,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	public static final int EXIT_MENU = 3;
 
 	/** How many frames after winning/losing do we continue? */
-	public static final int COMPLETE_EXIT_COUNT = 10;
+	public static final int COMPLETE_EXIT_COUNT = 100;
 	public static final int FAILURE_EXIT_COUNT = 60;
 
 	/** The amount of time for a physics engine step. */
@@ -1467,13 +1478,11 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		else if (complete && !failed) {
 			displayFont.setColor(Color.YELLOW);
 			canvas.begin(); // DO NOT SCALE
-			canvas.drawText("VICTORY!", displayFont, cameraX - 80, cameraY + 20);
-//			canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
+			canvas.draw(victoryTexture, cameraX - 250, cameraY - 220);
 			canvas.end();
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			System.out.println("drawing");
 			System.out.println(cameraX);
 			System.out.println(cameraY);
 			canvas.drawText("FAILURE!", displayFont, cameraX - 100, cameraY + 20);
