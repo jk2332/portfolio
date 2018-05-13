@@ -224,24 +224,49 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         radiusY = (int) (layout.height / 2.0f);
         canvas.drawText(TITLE, displayFont, this.centerX - radiusX, titleY - radiusY);
 
-        String text ="Eliot Huang, Ziyad Duron, Matt Haro";
+        String text ="Eliot Huang...........Project Lead";
         displayFont.getData().setScale(scale);
         layout.setText(displayFont, text);
         displayFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
         canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 4 * radiusY);
-
-        text = "Douglas Lo, Jiwon Kim, Sophie Lan";
+        text ="Douglas Lo...........Programming Lead";
+        displayFont.getData().setScale(scale);
         layout.setText(displayFont, text);
+        displayFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
         canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 6 * radiusY);
+        text ="Ziyad Duron...........Design Lead";
+        displayFont.getData().setScale(scale);
+        layout.setText(displayFont, text);
+        displayFont.setColor(Color.WHITE);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 8 * radiusY);
+        text = "Sophie Lan.........Programmer";
+        layout.setText(displayFont, text);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 10 * radiusY);
+        text = "Jiwon Kim.........Programmer";
+        layout.setText(displayFont, text);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 12 * radiusY);
+        text = "Matt Haro.........Designer";
+        layout.setText(displayFont, text);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 14 * radiusY);
 
         text = "SOUNDS";
         displayFont.setColor(Color.SKY);
         displayFont.getData().setScale(scale  * 1.2f);
         layout.setText(displayFont, text);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 8 * radiusY);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 18 * radiusY);
+        text = "Tharun Sankar.........Music Composition";
+        displayFont.getData().setScale(scale);
+        layout.setText(displayFont, text);
+        displayFont.setColor(Color.WHITE);
+        radiusX = (int) (layout.width / 2.0f);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 20 * radiusY);
 
         color = (pressState == 1 ? Color.YELLOW: Color.WHITE);
 
