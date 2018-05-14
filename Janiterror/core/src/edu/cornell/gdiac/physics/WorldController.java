@@ -1078,6 +1078,13 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int centerXNext;
 	private int centerYJoe;
 
+	public enum StateJoe {MAIN, NEXT}
+
+	public ScoreMode.StateJoe currentState;
+	public ScoreMode.StateJoe previousState;
+
+	private TextureRegion current;
+	private float stateTimer;
 
 	/**
 	 * Returns true if debug mode is active.
@@ -1517,14 +1524,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 		//Gdx.input.setInputProcessor(this);
 	}
 
-	public enum StateJoe {MAIN, NEXT}
-
-	public ScoreMode.StateJoe currentState;
-	public ScoreMode.StateJoe previousState;
-
-	private TextureRegion current;
-	private float stateTimer;
-
 
 	public TextureRegion getFrameJoe (float dt){
 		currentState = getStateJanitor();
@@ -1547,6 +1546,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	}
 
 	public ScoreMode.StateJoe getStateJanitor(){
+		/**
 		float screenX = Gdx.input.getX();
 		float screenY = Gdx.input.getY();
 
@@ -1558,8 +1558,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 			return ScoreMode.StateJoe.MAIN;
 		}
 
+		return ScoreMode.StateJoe.NEXT; **/
 		return ScoreMode.StateJoe.NEXT;
 	}
+
 	/**
 	 * Draw the physics objects to the canvas
 	 *

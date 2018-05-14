@@ -226,9 +226,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             draw();
 
             // We are are ready, notify our listener
-            if (listener != null && isReady()) {
+            if (listener != null && (isReady()) || Gdx.input.isKeyJustPressed(Input.Keys.N)) {
                 listener.exitScreen(this, EXIT_NEXT);
-            } else if (listener != null && isMain()) {
+            } else if (listener != null && (isMain() || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
                 listener.exitScreen(this, EXIT_MENU);
             }
         }
