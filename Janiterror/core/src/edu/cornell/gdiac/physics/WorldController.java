@@ -1292,7 +1292,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		for(Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
-		pauseMode.dispose();
+		//pauseMode.dispose();
 		objects.clear();
 		addQueue.clear();
 		world.dispose();
