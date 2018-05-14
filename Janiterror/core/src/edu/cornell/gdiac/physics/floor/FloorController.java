@@ -335,6 +335,10 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> plantPos;
     ArrayList<Vector2> computerPos;
     ArrayList<Vector2> beakerPos;
+    ArrayList<Vector2> wallBlockedPos;
+
+    BoxObstacle[] wallBlocked;
+
 
 
 
@@ -345,6 +349,9 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Boolean> mopCartVisitedBefore;
 
     int [][] tiles;
+
+    /** number of enemies still alive */
+    private int enemyCount;
 
     /** The camera defining the RayHandler view; scale is in physics coordinates */
     protected OrthographicCamera raycamera;
@@ -539,6 +546,7 @@ public class FloorController extends WorldController implements ContactListener 
         wallDBLPos = level.getWallDBLPos();
         wallDBRPos = level.getWallDBRPos();
         wallLightPos = level.getWallLightPos();
+        wallBlockedPos = level.getWallBlockedPos();
 
         computerPos = level.getComputerPos();
         plantPos = level.getPlantPos();
@@ -562,6 +570,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        Gdx.input.setInputProcessor(this);
         //reset mop cart list
         mopCartList = new ArrayList<BoxObstacle>();
         //avatar has never visited mopcart before
@@ -1380,6 +1389,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (EnemyModel s: enemies){
             if (s!=null) {controls[s.getId()]=new AIController(s.getId(), board, enemies, avatar);}
         }
+
+        enemyCount = enemies.length;
     }
 
     private void setHazardTiles() {
@@ -1411,6 +1422,19 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setTexture(wallMidTexture, 0, offset);
             obj.setName(pname+ii);
             addWallObject(obj);
+        }
+        wallBlocked = new BoxObstacle[wallBlockedPos.size()];
+        for (int ii = 0; ii < wallBlockedPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallBlockedPos.get(ii).x);
+            y = board.boardToScreenY((int) wallBlockedPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
+            board.setBlocked((int) wallBlockedPos.get(ii).x, (int) wallBlockedPos.get(ii).y + 1);
+
+            obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
+            obj.setTexture(wallMidTexture, 0, offset);
+            obj.setName(pname+ii);
+            wallBlocked[ii] = obj;
+            addWallObject(obj);
+
         }
         for (int ii = 0; ii < wallLightPos.size(); ii++) {
             x = board.boardToScreenX((int) wallLightPos.get(ii).x);
@@ -1887,7 +1911,16 @@ public class FloorController extends WorldController implements ContactListener 
             }
             clearEnemy(dt);
 
+            if (enemyCount <= 0) {
+                removeBlockedWalls();
+            }
             SoundController.getInstance().update();
+        }
+    }
+
+    private void removeBlockedWalls() {
+        for (int i = 0; i < wallBlocked.length; i++) {
+            wallBlocked[i].markRemoved(true);
         }
     }
 
@@ -2073,6 +2106,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                     deathTimer = ENEMY_DEATH_ANIMATION_TIME; //reset deathTimer?
                     s.markRemoved(true);
+                    enemyCount--;
                 } else if (s.getHP() <= 0 && deathTimer > 0) {
                     deathTimer -= dt;
                 }
@@ -3165,7 +3199,6 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     public StateJoe getStateJoe(){
-
         if (avatar.getHP() <= 0){
             if (joeDeathTimer == 0) {
                 joeDeathTimer = DEATH_ANIMATION_TIME;

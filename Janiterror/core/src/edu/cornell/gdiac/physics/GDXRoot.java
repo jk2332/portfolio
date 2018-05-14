@@ -42,7 +42,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
 	private LevelSelectMode select;
-	//private PauseMode pause;
+	private CreditsMode credits;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -70,6 +70,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 	}
 
+
 	/** 
 	 * Called when the Application is first created.
 	 * 
@@ -96,7 +97,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		int number_of_levels = 8;
+		int number_of_levels = 22;
 
 		controllers = new WorldController[number_of_levels];
 		controllers[0] = new FloorController(1);
@@ -107,6 +108,21 @@ public class GDXRoot extends Game implements ScreenListener {
         controllers[5] = new FloorController(6);
 		controllers[6] = new FloorController(7);
 		controllers[7] = new FloorController(8);
+		controllers[8] = new FloorController(8);
+		controllers[9] = new FloorController(8);
+		controllers[10] = new FloorController(8);
+		controllers[11] = new FloorController(8);
+		controllers[12] = new FloorController(8);
+		controllers[13] = new FloorController(8);
+		controllers[14] = new FloorController(8);
+		controllers[15] = new FloorController(8);
+		controllers[16] = new FloorController(8);
+		controllers[17] = new FloorController(8);
+		controllers[18] = new FloorController(8);
+		controllers[19] = new FloorController(8);
+		controllers[20] = new FloorController(8);
+		controllers[21] = new FloorController(8);
+
 
 
 		levelNames = new String[number_of_levels];
@@ -118,9 +134,24 @@ public class GDXRoot extends Game implements ScreenListener {
         levelNames[5] = "Spring Cleaning";
 		levelNames[6] = "Another One Bites the Dust";
 		levelNames[7] = "The A-mop-calypse";
+		levelNames[8] = "The A-mop-calypse8";
+		levelNames[9] = "The A-mop-calypse9";
+		levelNames[10] = "The A-mop-calypse10";
+		levelNames[11] = "The A-mop-calypse11";
+		levelNames[12] = "The A-mop-calypse12";
+		levelNames[13] = "The A-mop-calypse13";
+		levelNames[14] = "The A-mop-calypse14";
+		levelNames[15] = "The A-mop-calypse15";
+		levelNames[16] = "The A-mop-calypse16";
+		levelNames[17] = "The A-mop-calypse17";
+		levelNames[18] = "The A-mop-calypse18";
+		levelNames[19] = "The A-mop-calypse19";
+		levelNames[20] = "The A-mop-calypse20";
+		levelNames[21] = "The A-mop-calypse21";
 
 		select = new LevelSelectMode(canvas, levelNames);
-		//pause = new PauseMode(canvas);
+
+		credits = new CreditsMode(canvas);
 
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -132,6 +163,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading.setScreenListener(this);
 		select.setScreenListener(this);
 		//pause.setScreenListener(this);
+
+		credits.setScreenListener(this);
 		setScreen(loading);
 	}
 
@@ -150,6 +183,9 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		//pause.dispose();
 		//pause=null;
+		credits.dispose();
+		credits = null;
+
 
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -202,16 +238,21 @@ public class GDXRoot extends Game implements ScreenListener {
 				scores[ii].setScreenListener(this);
 			}
 			if (exitCode == 0) {
+				//controllers[current].reset2();
+				//controllers[current].preLoadContent(manager);
 				current = 0;
 				controllers[current].reset();
+				//controllers[current].preLoadContent(manager);
 				setScreen(controllers[current]);
 			} else if (exitCode == 1) {
 				select.reset();
 				setScreen(select);
 			} else if (exitCode == 2) {
-				Gdx.app.exit();
+				credits.reset();
+				setScreen(credits);
 			}
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_MENU) {
+			((WorldController) screen).reset2();
 			loading.reset();
 			setScreen(loading);
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
@@ -235,16 +276,20 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("main");
 			loading.reset();
 			setScreen(loading);
-		} /** else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
-			setScreen(controllers[current]);
-		} else if (screen instanceof PauseMenu && exitCode==0){ //return back to main menu
-			loading.reset();
-			setScreen(loading);
-		} **/ else if (screen instanceof LevelSelectMode) {
+		}/** else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
+ setScreen(controllers[current]);
+ } else if (screen instanceof PauseMenu && exitCode==0){ //return back to main menu
+ loading.reset();
+ setScreen(loading);
+ } **/
+		else if (screen instanceof LevelSelectMode) {
 			System.out.println("select level" + exitCode);
 			current = exitCode - 1;
 			controllers[current].reset();
 			setScreen(controllers[current]);
+		} else if (screen instanceof  CreditsMode) {
+			loading.reset();
+			setScreen(loading);
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();

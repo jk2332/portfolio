@@ -29,6 +29,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
 
+    private static final String ARROW_FILE = "shared/menu-selector.png";
+
     private static final int FONT_SIZE = 30;
 
     /** Standard window size (for scaling) */
@@ -47,6 +49,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private static float OFFSET_RATIO = 0.20f;
 
     private static int NUM_ROWS = 5;
+
+    private static int LEVELS_PER_PAGE = NUM_ROWS * 2;
 
     /** The x-coordinate of the center of the progress bar */
     private int centerX;
@@ -113,6 +117,10 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     private int hoverIndex;
 
+    private int curr_page;
+
+    private Texture arrowButton;
+
 
 
     /**
@@ -151,6 +159,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 
+        arrowButton = new Texture(ARROW_FILE);
         Texture backgroundT = new Texture(BACKGROUND_FILE);
         Texture levelT = new Texture(LEVEL_FILE);
         TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
@@ -169,11 +178,14 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         subtitle = DEFAULT_SUBTITLE;
 
+        curr_page = 0;
+
     }
 
     public void reset() {
         pressState = 0;
         active = false;
+        hoverIndex = -1;
         Gdx.input.setInputProcessor(this);
     }
 
@@ -216,8 +228,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         subtitle = DEFAULT_SUBTITLE;
         hoverIndex = -1;
-        for (int i = 0; i < levelNames.length; i++) {
-            if (i < NUM_ROWS) {
+        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
+            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
                 centerY = centerYUp;
             } else {
                 centerY = centerYDown;
@@ -266,8 +278,8 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         radiusY = (int) (layout.height / 2.0f);
         canvas.drawText(subtitle, displayFont, this.centerX- radiusX, centerYUp + marginX - radiusY);
 
-        for (int i = 0; i < levelNames.length; i++) {
-            if (i < NUM_ROWS) {
+        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
+            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
                 centerY = centerYUp;
             } else {
                 centerY = centerYDown;
@@ -287,8 +299,17 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY + radiusY);
         }
 
-        color = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+        color = (pressState == 1 && exit == 0 ? Color.YELLOW: Color.WHITE);
 
+        if (curr_page > 0) {
+            canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
+                     this.centerX - (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, (float) Math.PI, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        }
+
+        if (curr_page < Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) - 1) {
+            canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
+                    this.centerX + (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        }
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
@@ -425,8 +446,22 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             exit = 0;
         }
 
-        for (int i = 0; i < levelNames.length; i++) {
-            if (i < NUM_ROWS) {
+        radius = BUTTON_SCALE*scale*arrowButton.getWidth()/2.0f;
+        dist = (screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))*(screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))+(screenY-(centerYUp + centerYDown)/2)*(screenY-(centerYUp + centerYDown)/2);
+
+        if (curr_page > 0 && dist < radius * radius) {
+            curr_page--;
+        }
+
+
+        dist = (screenX-(this.centerX + (NUM_ROWS/2 + 0.6f) * marginX))*(screenX-(this.centerX + (NUM_ROWS/2 + 0.6f) * marginX))+(screenY-(centerYUp + centerYDown)/2)*(screenY-(centerYUp + centerYDown)/2);
+
+        if (curr_page < Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) - 1 && dist < radius * radius) {
+            curr_page++;
+        }
+
+        for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
+            if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
                 centerY = centerYUp;
             } else {
                 centerY = centerYDown;

@@ -425,7 +425,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	protected int pressState;
 	//private Animation <TextureRegion> joeNext;
-	private Texture joeMain;
+	private Animation <TextureRegion> joeNext;
+	private Animation <TextureRegion> joeMain;
 	//private TextureRegion current;
 
 	/**
@@ -439,6 +440,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 * @param manager Reference to global asset manager.
 	 */
 	public void preLoadContent(AssetManager manager) {
+		System.out.println("hereeee: "+worldAssetState);
 		if (worldAssetState != AssetState.EMPTY) {
 			return;
 		}
@@ -1008,7 +1010,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	public static final int EXIT_NEXT = 1;
 	/** Exit code for jumping back to previous level */
 	public static final int EXIT_PREV = 2;
-	public static final int EXIT_MENU = 0;
+	public static final int EXIT_MENU = 100;
 
 	/** How many frames after winning/losing do we continue? */
 	public static final int COMPLETE_EXIT_COUNT = 100;
@@ -1064,6 +1066,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int countdown;
 	//private PauseMenu pauseMode;
 	private boolean paused;
+	private Texture background;
 	private Texture playButton;
 	private Texture mainButton;
 	/** The y-coordinate of the center of the progress bar */
@@ -1290,7 +1293,9 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 		mainButton = new Texture(MAIN_BTN_FILE);
 		mainButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-		joeMain = new Texture(JOE_NEXT_FILE);
+
+		background = new Texture("shared/opacity-block.png");
+
 		pressState=0;
 
 		assets = new Array<String>();
@@ -1302,9 +1307,32 @@ public abstract class WorldController implements Screen, InputProcessor {
 		debug  = false;
 		active = false;
 		countdown = -1;
+
+		Texture joeMainT = new Texture(JOE_MAIN_FILE);
+		Texture joeNextT = new Texture(JOE_NEXT_FILE);
+		TextureRegion joeMainTexture = new TextureRegion(joeMainT, joeMainT.getWidth(), joeMainT.getHeight());
+		TextureRegion joeNextTexture = new TextureRegion(joeNextT, joeNextT.getWidth(), joeNextT.getHeight());
+		// Let ANY connected controller start the game.
+        /*for(Controller controller : Controllers.getControllers()) {
+            controller.addListener(this);
+        }*/
+		Array<TextureRegion> frames = new Array<TextureRegion>();
+		for (int i=0; i < joeNextT.getWidth()/192; i++){
+			frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
+		}
+		joeNext = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
+
+		for (int i=0; i < joeMainT.getWidth()/192; i++){
+			frames.add (new TextureRegion(joeMainTexture,i*192,0,192,192));
+		}
+		joeMain = new Animation<TextureRegion>(0.1f, frames);
+		frames.clear();
 	}
 
 	public void pauseDispose(){
+		background.dispose();
+		background = null;
 		if (playButton != null) {
 			playButton.dispose();
 			playButton = null;
@@ -1312,10 +1340,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 		if (mainButton != null) {
 			mainButton.dispose();
 			mainButton = null;
-		}
-		if (joeMain != null) {
-			joeMain.dispose();
-			joeMain = null;
 		}
 	}
 	/**
@@ -1397,7 +1421,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 */
 	public boolean preUpdate(float dt) {
 		InputController input = InputController.getInstance();
-		Gdx.input.setInputProcessor(this);
 
 		input.readInput(bounds, scale);
 		if (listener == null) {
@@ -1488,7 +1511,55 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 	}
 
-	
+	public void reset2(){
+		active=false;
+		pressState=0;
+		//Gdx.input.setInputProcessor(this);
+	}
+
+	public enum StateJoe {MAIN, NEXT}
+
+	public ScoreMode.StateJoe currentState;
+	public ScoreMode.StateJoe previousState;
+
+	private TextureRegion current;
+	private float stateTimer;
+
+
+	public TextureRegion getFrameJoe (float dt){
+		currentState = getStateJanitor();
+		TextureRegion region;
+		switch (currentState){
+			case MAIN:
+				region = joeMain.getKeyFrame(stateTimer,true);
+				break;
+			case NEXT:
+				region = joeNext.getKeyFrame(stateTimer, true);
+				break;
+			default:
+				region = joeNext.getKeyFrame(stateTimer, true);
+				break;
+		}
+
+		stateTimer = currentState == previousState ? stateTimer + dt : 0;
+		previousState = currentState;
+		return region;
+	}
+
+	public ScoreMode.StateJoe getStateJanitor(){
+		float screenX = Gdx.input.getX();
+		float screenY = Gdx.input.getY();
+
+		screenY = heightY-screenY;
+
+		float radius = BUTTON_SCALE*scale2*mainButton.getWidth()/2.0f;
+		float dist = (screenX-centerXMain)*(screenX-centerXMain)+(screenY-centerY)*(screenY-centerY);
+		if (dist < radius*radius) {
+			return ScoreMode.StateJoe.MAIN;
+		}
+
+		return ScoreMode.StateJoe.NEXT;
+	}
 	/**
 	 * Draw the physics objects to the canvas
 	 *
@@ -1509,7 +1580,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		if (paused){
 			canvas.begin();
-			//canvas.draw(background, 0, 0);
+			canvas.draw(background, 0, 0);
 			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
 					centerXNext, centerY, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
@@ -1520,6 +1591,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
 			//		centerXMain, centerYJoe, 0, 1, 1);
+			canvas.draw(current, Color.WHITE, current.getRegionWidth()/2, current.getRegionHeight()/2,
+					centerX, centerYJoe, 0, 2, 2);
 			canvas.end();
 		}
             // Final message
@@ -1572,11 +1645,13 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	public void render(float delta) {
-		//current = getFrameJoe(delta);
+		canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
+		current = getFrameJoe(delta);
 		if (active) {
 			boolean b = preUpdate(delta);
 			if (!paused) {
 				pressState = 0;
+				backToMenu=false;
 				if (InputController.getInstance().getDidPause()) paused=true;
 				if (b) {
 					update(delta); // This is the one that must be defined.
@@ -1588,13 +1663,16 @@ public abstract class WorldController implements Screen, InputProcessor {
 				if (pressState==2 || Gdx.input.isKeyJustPressed(Input.Keys.P)) {
 					//pauseDispose();
 					paused=false;
-				} else if (listener!=null && (pressState==4 || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
+				} else if ((pressState==4 || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
 					//pauseDispose();
 					backToMenu=true;
+					paused=false;
 					listener.exitScreen(this, EXIT_MENU);
 				}
 			}
-			if (!backToMenu) draw(delta);
+			if (!backToMenu) {
+				draw(delta);
+			}
 			else {backToMenu=false;}
 		}
 	}

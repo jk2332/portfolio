@@ -34,6 +34,7 @@ public class LevelEditorParser {
     private ArrayList<Vector2> wallSTLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallSBRPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallSBLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallBlockedPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallLightPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> scientistPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
@@ -359,10 +360,11 @@ public class LevelEditorParser {
         }
 
         int[][] horiWalls = layerToList(layers.get(1));
-        int[][] vertiWalls = layerToList(layers.get(3));
-        int [][] hazardTiles = layerToList(layers.get(4));
+        int[][] blockedWalls = layerToList(layers.get(2));
+        int[][] vertiWalls = layerToList(layers.get(4));
+        int [][] hazardTiles = layerToList(layers.get(5));
 
-        int [][] extraTiles = layerToList(layers.get(2));
+        int [][] extraTiles = layerToList(layers.get(3));
 
         for (int i = 0; i < extraTiles.length; i++) {
             for (int j = 0; j < extraTiles[0].length; j++) {
@@ -372,6 +374,14 @@ public class LevelEditorParser {
                     beakerPos.add(new Vector2(j, i));
                 } else if (extraTiles[i][j] == plantgid) {
                     plantPos.add(new Vector2(j, i));
+                }
+            }
+        }
+
+        for (int i = 0; i < blockedWalls.length; i++) {
+            for (int j = 0; j < blockedWalls[0].length; j++) {
+                if (blockedWalls[i][j] == wallhgid + 1) {
+                    wallBlockedPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -767,5 +777,9 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getWallLightPos() {
         return wallLightPos;
+    }
+
+    public ArrayList<Vector2> getWallBlockedPos() {
+        return wallBlockedPos;
     }
 }
