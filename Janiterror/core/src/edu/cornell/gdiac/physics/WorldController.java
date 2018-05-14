@@ -1546,7 +1546,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 	}
 
 	public ScoreMode.StateJoe getStateJanitor(){
-		/**
 		float screenX = Gdx.input.getX();
 		float screenY = Gdx.input.getY();
 
@@ -1558,7 +1557,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 			return ScoreMode.StateJoe.MAIN;
 		}
 
-		return ScoreMode.StateJoe.NEXT; **/
 		return ScoreMode.StateJoe.NEXT;
 	}
 
@@ -1647,7 +1645,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	public void render(float delta) {
-		canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
 		current = getFrameJoe(delta);
 		if (active) {
 			boolean b = preUpdate(delta);
