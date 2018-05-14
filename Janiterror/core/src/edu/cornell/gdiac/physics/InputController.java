@@ -82,6 +82,11 @@ public class InputController {
 	private boolean downArrowPressed;
 	private boolean downArrowPrevious;
 
+	private boolean enterPressed;
+	private boolean enterPrevious;
+	private boolean spacePressed;
+	private boolean spacePrevious;
+
 	private boolean primaryKeyPressed;
 	private boolean primaryKeyPrevious;
 	private boolean secondaryKeyPressed;
@@ -192,6 +197,13 @@ public class InputController {
 		return downArrowPressed && !downArrowPrevious;
 	}
 
+	public boolean didEnter() {
+		return enterPressed && !enterPrevious;
+	}
+	public boolean didSpace() {
+		return spacePressed && !spacePrevious;
+	}
+
 	public boolean didPrimaryKey() { return primaryKeyPressed && !primaryKeyPrevious; }
 	public boolean didSecondaryKey() { return secondaryKeyPressed && !secondaryKeyPrevious; }
 
@@ -282,6 +294,8 @@ public class InputController {
 		rightArrowPrevious = rightArrowPressed;
 		upArrowPrevious = upArrowPressed;
 		downArrowPrevious = downArrowPressed;
+		spacePrevious = spacePressed;
+		enterPrevious = enterPressed;
 
 		lKeyPrevious = lKeyPressed;
 		pKeyPrevious = pKeyPressed;
@@ -361,6 +375,8 @@ public class InputController {
 		rightArrowPressed  = (secondary && rightArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
 		upArrowPressed  = (secondary && upArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
 		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
+		spacePressed  = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+		enterPressed  = (secondary && enterPressed) || (Gdx.input.isKeyPressed(Input.Keys.ENTER));
 
 		primaryKeyPressed  = (secondary && primaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_1));
 		secondaryKeyPressed  = (secondary && secondaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_2));

@@ -179,13 +179,15 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         subtitle = DEFAULT_SUBTITLE;
 
         curr_page = 0;
+        hoverIndex = 0;
 
     }
 
     public void reset() {
         pressState = 0;
         active = false;
-        hoverIndex = -1;
+        hoverIndex = 0;
+        curr_page = 0;
         Gdx.input.setInputProcessor(this);
     }
 
@@ -217,17 +219,17 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         stateTimer = stateTimer + delta;
 
 
-        float screenX = Gdx.input.getX();
+        /*float screenX = Gdx.input.getX();
         float screenY = heightY - Gdx.input.getY();
 
         int centerY;
         int centerX;
 
         float radius;
-        float dist;
+        float dist;*/
 
         subtitle = DEFAULT_SUBTITLE;
-        hoverIndex = -1;
+        /*hoverIndex = -1;
         for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
             if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
                 centerY = centerYUp;
@@ -244,7 +246,37 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
                 subtitle = levelNames[i];
                 hoverIndex = i;
             }
+        }*/
+
+        InputController input = InputController.getInstance();
+        input.readInput(new Rectangle(0f, 0f, 32.0f, 18.0f), new Vector2(32.0f, 32.0f));
+
+        if (input.didDownArrow()) {
+            if (hoverIndex % LEVELS_PER_PAGE < NUM_ROWS && hoverIndex + NUM_ROWS < levelNames.length) {
+                hoverIndex = hoverIndex + NUM_ROWS;
+            } else {
+                hoverIndex = (curr_page + 1) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
+            }
+        } else if (input.didUpArrow()) {
+            if (hoverIndex % LEVELS_PER_PAGE >= NUM_ROWS) {
+                hoverIndex = hoverIndex - NUM_ROWS;
+            } else {
+                hoverIndex = (curr_page - 1 + (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f))) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
+            }
+        } else if (input.didLeftArrow()) {
+            hoverIndex = (hoverIndex - 1 + levelNames.length) % levelNames.length;
+        } else if (input.didRightArrow()) {
+            hoverIndex = (hoverIndex + 1) % levelNames.length;
         }
+
+        curr_page = hoverIndex / LEVELS_PER_PAGE;
+
+        if (input.didEnter() || input.didSpace()) {
+            pressState = 2;
+        }
+
+        subtitle = levelNames[hoverIndex];
+
     }
 
     /**

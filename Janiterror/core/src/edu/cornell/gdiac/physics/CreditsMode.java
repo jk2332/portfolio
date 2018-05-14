@@ -200,6 +200,12 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         bg = bgAnimation.getKeyFrame(stateTimer,true);
         stateTimer = stateTimer + delta;
+
+        InputController input = InputController.getInstance();
+        input.readInput(new Rectangle(0f, 0f, 32.0f, 18.0f), new Vector2(32.0f, 32.0f));
+        if (input.didEnter() || input.didSpace()) {
+            pressState = 2;
+        }
     }
 
     /**

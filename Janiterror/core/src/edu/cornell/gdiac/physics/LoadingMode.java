@@ -146,6 +146,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private TextureRegion bg;
 	private float stateTimer;
 
+	private int buttonPointer;
+
 	/**
 	 * Returns the budget for the asset loader.
 	 *
@@ -229,6 +231,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		progress   = 0;
 		pressState = 0;
 		active = false;
+		buttonPointer = 0;
 
 		stateTimer = 0.0f;
 
@@ -318,7 +321,29 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				optionsButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			}
 		} else {
-			float screenX = Gdx.input.getX();
+			InputController input = InputController.getInstance();
+			input.readInput(new Rectangle(0f, 0f, 32.0f, 18.0f), new Vector2(32.0f, 32.0f));
+			if(input.didDownArrow()) {
+				buttonPointer = (buttonPointer + 1) % 3;
+			} else if (input.didUpArrow()) {
+				buttonPointer = (buttonPointer - 1 + 3) % 3;
+			}
+			buttonPlayScale = 0.75f;
+			buttonOptionScale = 0.75f;
+			buttonSelectScale = 0.75f;
+
+			if (buttonPointer == 0) {
+				buttonPlayScale = 0.85f;
+			} else if (buttonPointer == 1) {
+				buttonSelectScale = 0.85f;
+			} else if (buttonPointer == 2) {
+				buttonOptionScale = 0.85f;
+			}
+
+			if (input.didEnter() || input.didSpace()) {
+				pressState = (buttonPointer + 1) * 2;
+			}
+			/*float screenX = Gdx.input.getX();
 			float screenY = heightY - Gdx.input.getY();
 			float radiusX = buttonPlayScale*scale*playButton.getWidth()/2.0f;
 			float distX = Math.abs(screenX-centerX);
@@ -343,13 +368,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 			radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
 			radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
-			distX = screenX-centerX;
-			distY =screenY-centerYOptions;
+			distX = Math.abs(screenX-centerX);
+			distY = Math.abs(screenY-centerYOptions);
 			if (distX <= radiusX && distY <= radiusY) {
 				buttonOptionScale = 0.85f;
 			} else {
 				buttonOptionScale = 0.75f;
-			}
+			}*/
 		}
 	}
 
@@ -409,6 +434,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 	public void reset() {
 		pressState = 0;
+		buttonPointer = 0;
 		active = false;
 		Gdx.input.setInputProcessor(this);
 	}
