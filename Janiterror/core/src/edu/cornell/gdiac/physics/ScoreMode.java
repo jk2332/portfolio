@@ -55,9 +55,9 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     /** Background texture for start-up */
     private Texture background;
     /** Play button to display when done */
-    private Texture playButton;
+    public Texture playButton;
 
-    private Texture mainButton;
+    public Texture mainButton;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -162,7 +162,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      * Called when this screen should release all resources.
      */
     public void dispose() {
-
         background.dispose();
         background = null;
         if (playButton != null) {

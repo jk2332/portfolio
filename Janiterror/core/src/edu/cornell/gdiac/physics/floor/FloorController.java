@@ -1282,13 +1282,13 @@ public class FloorController extends WorldController implements ContactListener 
         //get default weapons
         String default1 = level.getJoeDefaults().get(0);
         String default2 = level.getJoeDefaults().get(1);
-        System.out.println(default1);
-        System.out.println(default2);
+        //System.out.println(default1);
+        //System.out.println(default2);
 
         avatar.setWep1(wep_to_model.get(default1));
         avatar.setWep2(wep_to_model.get(default2));
 
-        System.out.println(avatar.getMass());
+        //System.out.println(avatar.getMass());
 
         if (default1.equals("lid") || default2.equals("lid")) { avatar.setHasLid(true); }
 
@@ -2058,7 +2058,7 @@ public class FloorController extends WorldController implements ContactListener 
         for (EnemyModel s : enemies) {
             if (s.isActive()) {
                 if (s.getHP() <= 0 && deathTimer <= 0) {
-                    System.out.println("gone");
+                    //System.out.println("gone");
                     s.setDensity(0.01f); //make them super light so they don't get in the way
                     s.setMass(0.01f);
 
@@ -2509,7 +2509,7 @@ public class FloorController extends WorldController implements ContactListener 
                                         if (case4) {
                                             if (s.getY() > obj.getY() && obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
                                                     && obj.getX() < avatar.getX() + .5) {
-                                                System.out.println(obj.getX() + " " + obj.getY());
+                                                //System.out.println(obj.getX() + " " + obj.getY());
                                                 isWall = true;
                                             }
                                         }
@@ -2526,9 +2526,9 @@ public class FloorController extends WorldController implements ContactListener 
                             }
 
                             //7.5 TIMES THE NORMAL ENEMY DENSITY
-                            System.out.println(s.getMass());
-                            System.out.println(s.getDensity());
-                            System.out.println(s.getDensity() * -15f);
+                            //System.out.println(s.getMass());
+                            //System.out.println(s.getDensity());
+                            //System.out.println(s.getDensity() * -15f);
                             if (!(s instanceof RobotModel)) {
                                 knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
                                 //knockbackForce.nor();
@@ -2601,7 +2601,7 @@ public class FloorController extends WorldController implements ContactListener 
                                         if (case4) {
                                             if (s.getY() > obj.getY() && obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
                                                     && obj.getX() < avatar.getX() + .5) {
-                                                System.out.println(obj.getX() + " " + obj.getY());
+                                                //System.out.println(obj.getX() + " " + obj.getY());
                                                 isWall = true;
                                             }
                                         }
@@ -2704,7 +2704,7 @@ public class FloorController extends WorldController implements ContactListener 
                                             if (case4) {
                                                 if (s.getY() > obj.getY() && obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
                                                         && obj.getX() < avatar.getX() + .5) {
-                                                    System.out.println(obj.getX() + " " + obj.getY());
+                                                    //System.out.println(obj.getX() + " " + obj.getY());
                                                     isWall = true;
                                                 }
                                             }

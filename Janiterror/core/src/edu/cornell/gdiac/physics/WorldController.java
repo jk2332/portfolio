@@ -46,7 +46,7 @@ import edu.cornell.gdiac.physics.obstacle.*;
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
-public abstract class WorldController implements Screen, InputProcessor, ControllerListener {
+public abstract class WorldController implements Screen, InputProcessor {
 	/** 
 	 * Tracks the asset state.  Otherwise subclasses will try to load assets 
 	 */
@@ -233,9 +233,12 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	private static final String UNDER_TILE_FILE = "shared/undertile-32.png";
 	private static final String HAZARD_TILE_FILE = "shared/hazard-tile.png";
 
-	private static final String PLAY_BTN_FILE = "shared/play.png";
+	//private static final String PLAY_BTN_FILE = "shared/play.png";
 	private static final String CONTINUE_BTN_FILE = "shared/continue-button.png";
-	//private static final String MAIN_BTN_FILE = "shared/menu-button.png";
+	private static final String MAIN_BTN_FILE = "shared/menu-button.png";
+	private static final String JOE_NEXT_FILE = "shared/janitor-level-complete-3x.png";
+	private static final String JOE_MAIN_FILE = "shared/janitor-sleeping-3x.png";
+
 	//private static final String PAUSE_BTN_FILE = "floor/janitor-sleeping.png";
 
 	/** Standard window size (for scaling) */
@@ -421,6 +424,9 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	protected float cameraY;
 
 	protected int pressState;
+	//private Animation <TextureRegion> joeNext;
+	private Texture joeMain;
+	//private TextureRegion current;
 
 	/**
 	 * Preloads the assets for this controller.
@@ -929,8 +935,8 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		} else {
 			displayFont = null;
 		}
-
 		worldAssetState = AssetState.COMPLETE;
+
 	}
 	
 	/**
@@ -997,12 +1003,12 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	}
 	
 	/** Exit code for quitting the game */
-	public static final int EXIT_QUIT = 0;
+	public static final int EXIT_QUIT = 4;
 	/** Exit code for advancing to next level */
 	public static final int EXIT_NEXT = 1;
 	/** Exit code for jumping back to previous level */
 	public static final int EXIT_PREV = 2;
-	public static final int EXIT_MENU = 3;
+	public static final int EXIT_MENU = 0;
 
 	/** How many frames after winning/losing do we continue? */
 	public static final int COMPLETE_EXIT_COUNT = 100;
@@ -1039,11 +1045,13 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	protected Vector2 scale;
 	/** Scaling factor for when the student changes the resolution. */
 	private float scale2;
+	private int heightY;
 	
 	/** Whether or not this is an active controller */
 	private boolean active;
 	/** Whether we have completed this level */
 	private boolean complete;
+	private boolean backToMenu;
 	/** What level we are currently on */
 	private int currentLevel;
 	/** Whether a player has lost in this level*/
@@ -1054,10 +1062,10 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	private boolean debug;
 	/** Countdown active for winning or losing */
 	private int countdown;
-	private PauseMenu pauseMode;
+	//private PauseMenu pauseMode;
 	private boolean paused;
-	//private Texture playButton;
-	//private Texture mainButton;
+	private Texture playButton;
+	private Texture mainButton;
 	/** The y-coordinate of the center of the progress bar */
 	private int centerY;
 	/** The x-coordinate of the center of the progress bar */
@@ -1169,18 +1177,40 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	public GameCanvas getCanvas() {
 		return canvas;
 	}
-
 	public boolean touchDown(int screenX, int screenY, int pointer, int button){
-		return pauseMode.touchDown(screenX, screenY, pointer, button);
+		if (playButton == null || pressState == 2 || pressState == 4) {
+			return true;
+		}
+
+		// Flip to match graphics coordinates
+		screenY = heightY-screenY;
+
+		// TODO: Fix scaling
+		// Play button is a circle.
+		float radius = BUTTON_SCALE*scale2*playButton.getWidth()/2.0f;
+		float dist = (screenX-centerXNext)*(screenX-centerXNext)+(screenY-centerY)*(screenY-centerY);
+		if (dist < radius*radius) {
+			pressState = 1;
+		}
+
+		radius = BUTTON_SCALE*scale2*mainButton.getWidth()/2.0f;
+		dist = (screenX-centerXMain)*(screenX-centerXMain)+(screenY-centerY)*(screenY-centerY);
+		if (dist < radius*radius) {
+			pressState = 3;
+		}
+		return false;
 	}
 	public boolean touchUp(int screenX, int screenY, int pointer, int button){
-		return pauseMode.touchUp(screenX, screenY, pointer, button);
-	}
-	public boolean buttonDown(Controller controller, int buttonCode) {
-		return pauseMode.buttonDown(controller, buttonCode);
-	}
-	public boolean buttonUp(Controller controller, int buttonCode){
-		return pauseMode.buttonUp(controller, buttonCode);
+		if (pressState == 1) {
+			pressState = 2;
+			return false;
+		}
+
+		if (pressState == 3) {
+			pressState = 4;
+			return false;
+		}
+		return true;
 	}
 	public boolean keyDown(int keycode) {
 		return true;
@@ -1188,7 +1218,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	public boolean keyTyped(char character) {
 		return true;
 	}
-	public boolean keyUp(int keycode) {return pauseMode.keyUp(keycode);}
+	public boolean keyUp(int keycode) { return true; } //fix this?
 	public boolean mouseMoved(int screenX, int screenY) {
 		return true;
 	}
@@ -1198,24 +1228,6 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		return true;
 	}
-	public void connected (Controller controller) {}
-	public void disconnected (Controller controller) {}
-	public boolean axisMoved (Controller controller, int axisCode, float value) {
-		return true;
-	}
-	public boolean povMoved (Controller controller, int povCode, PovDirection value) {
-		return true;
-	}
-	public boolean xSliderMoved (Controller controller, int sliderCode, boolean value) {
-		return true;
-	}
-	public boolean ySliderMoved (Controller controller, int sliderCode, boolean value) {
-		return true;
-	}
-	public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
-		return true;
-	}
-
 
 
 	/**
@@ -1230,8 +1242,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		this.canvas = canvas;
 		this.scale.x = canvas.getWidth()/bounds.getWidth();
 		this.scale.y = canvas.getHeight()/bounds.getHeight();
-		pauseMode = new PauseMenu(canvas);
-
+		//pauseMode = new PauseMenu(canvas);
 	}
 	
 	/**
@@ -1261,6 +1272,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
 	}
 
+
 	/**
 	 * Creates a new game world
 	 *
@@ -1273,7 +1285,14 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	 */
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
 		paused=false;
-		//pressState= pauseMode.getPressState();
+		playButton = new Texture(CONTINUE_BTN_FILE);
+		playButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		mainButton = new Texture(MAIN_BTN_FILE);
+		mainButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		joeMain = new Texture(JOE_NEXT_FILE);
+		pressState=0;
+
 		assets = new Array<String>();
 		world = new World(gravity,false);
 		this.bounds = new Rectangle(bounds);
@@ -1284,7 +1303,21 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		active = false;
 		countdown = -1;
 	}
-	
+
+	public void pauseDispose(){
+		if (playButton != null) {
+			playButton.dispose();
+			playButton = null;
+		}
+		if (mainButton != null) {
+			mainButton.dispose();
+			mainButton = null;
+		}
+		if (joeMain != null) {
+			joeMain.dispose();
+			joeMain = null;
+		}
+	}
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
@@ -1292,7 +1325,7 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		for(Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
-		pauseMode.dispose();
+		pauseDispose();
 		objects.clear();
 		addQueue.clear();
 		world.dispose();
@@ -1364,6 +1397,8 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	 */
 	public boolean preUpdate(float dt) {
 		InputController input = InputController.getInstance();
+		Gdx.input.setInputProcessor(this);
+
 		input.readInput(bounds, scale);
 		if (listener == null) {
 			return true;
@@ -1383,8 +1418,9 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} /**else if (input.getDidPause()){
-			listener.exitScreen(this, EXIT_PAUSE);
+		} /**else if (backToMenu){
+			backToMenu=false;
+			listener.exitScreen(this, EXIT_MENU);
 			return false;
 		} **/else if (input.didAdvance()) {
 			listener.exitScreen(this, EXIT_NEXT);
@@ -1472,7 +1508,19 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 			canvas.endDebug();
 		}
 		if (paused){
-			pauseMode.draw();
+			canvas.begin();
+			//canvas.draw(background, 0, 0);
+			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
+			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+					centerXNext, centerY, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+
+			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
+					centerXMain, centerY, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+
+			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
+			//		centerXMain, centerYJoe, 0, 1, 1);
+			canvas.end();
 		}
             // Final message
 		else if (complete && !failed) {
@@ -1502,28 +1550,18 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	 */
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
-		float sx = ((float)width)/STANDARD_WIDTH;
-		float sy = ((float)height)/STANDARD_HEIGHT;
+		float sx = ((float) width) / STANDARD_WIDTH;
+		float sy = ((float) height) / STANDARD_HEIGHT;
 		scale2 = (sx < sy ? sx : sy);
+		heightY = height;
 
-		centerY = (int)(BAR_HEIGHT_RATIO*height);
-		centerX = width/2;
-		centerXNext = (int) (width/2 + width * OFFSET_X_RATIO);
+		centerY = (int) (BAR_HEIGHT_RATIO * height);
+		centerX = width / 2;
+		centerXNext = (int) (width / 2 + width * OFFSET_X_RATIO);
 
-		centerXMain = (int) (width/2 - width * OFFSET_X_RATIO);
-		centerYJoe = (int) (JOE_HEIGHT_RATIO*height);
+		centerXMain = (int) (width / 2 - width * OFFSET_X_RATIO);
+		centerYJoe = (int) (JOE_HEIGHT_RATIO * height);
 	}
-
-	/**
-	 * Returns true if all assets are loaded and the player is ready to go.
-	 *
-	 * @return true if the player is ready to go
-	 */
-	public boolean isReady() {
-		return pressState == 2;
-	}
-
-	public boolean isMain() { return pressState == 4;}
 
 	/**
 	 * Called when the Screen should render itself.
@@ -1534,19 +1572,30 @@ public abstract class WorldController implements Screen, InputProcessor, Control
 	 * @param delta Number of seconds since last animation frame
 	 */
 	public void render(float delta) {
+		//current = getFrameJoe(delta);
 		if (active) {
+			boolean b = preUpdate(delta);
 			if (!paused) {
+				pressState = 0;
 				if (InputController.getInstance().getDidPause()) paused=true;
-				if (preUpdate(delta)) {
+				if (b) {
 					update(delta); // This is the one that must be defined.
 					postUpdate(delta);
 				}
 			}
 			else {
 				//what to do here?
-				if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {paused=false;}
+				if (pressState==2 || Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+					//pauseDispose();
+					paused=false;
+				} else if (listener!=null && (pressState==4 || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
+					//pauseDispose();
+					backToMenu=true;
+					listener.exitScreen(this, EXIT_MENU);
+				}
 			}
-			draw(delta);
+			if (!backToMenu) draw(delta);
+			else {backToMenu=false;}
 		}
 	}
 

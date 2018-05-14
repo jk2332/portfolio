@@ -42,7 +42,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
 	private LevelSelectMode select;
-	private PauseMenu pause;
+	//private PauseMode pause;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -108,6 +108,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[6] = new FloorController(7);
 		controllers[7] = new FloorController(8);
 
+
 		levelNames = new String[number_of_levels];
 		levelNames[0] = "Taking Out the Trash";
 		levelNames[1] = "Sweeping with the Enemy";
@@ -119,7 +120,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		levelNames[7] = "The A-mop-calypse";
 
 		select = new LevelSelectMode(canvas, levelNames);
-		pause = new PauseMenu(canvas);
+		//pause = new PauseMode(canvas);
 
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -130,7 +131,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		current = 0;
 		loading.setScreenListener(this);
 		select.setScreenListener(this);
-		pause.setScreenListener(this);
+		//pause.setScreenListener(this);
 		setScreen(loading);
 	}
 
@@ -147,8 +148,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		select.dispose();
 		select = null;
 
-		pause.dispose();
-		pause=null;
+		//pause.dispose();
+		//pause=null;
 
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -190,8 +191,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
-		System.out.println(screen);
-		System.out.println(exitCode);
+		System.out.println(screen==loading);
+		System.out.println("code"+exitCode);
 		if (screen == loading) {
 			for(int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(manager);
@@ -200,7 +201,6 @@ public class GDXRoot extends Game implements ScreenListener {
 
 				scores[ii].setScreenListener(this);
 			}
-
 			if (exitCode == 0) {
 				current = 0;
 				controllers[current].reset();
@@ -211,6 +211,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else if (exitCode == 2) {
 				Gdx.app.exit();
 			}
+		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_MENU) {
+			loading.reset();
+			setScreen(loading);
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
 			System.out.println("load next score" + current);
 			scores[current].reset();
@@ -245,9 +248,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
-		} else if (exitCode == WorldController.EXIT_MENU) {
-			loading.reset();
-			setScreen(loading);
 		}
 	}
 }

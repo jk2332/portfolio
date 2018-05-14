@@ -3,29 +3,35 @@
  */
 package edu.cornell.gdiac.physics;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.util.*;
+import edu.cornell.gdiac.util.ScreenListener;
 
 /**
  * Class that provides a score screen for the state of the game.
  */
-public class PauseMenu implements Screen, InputProcessor, ControllerListener {
+public class PauseMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String BACKGROUND_FILE = "shared/opacity-block.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
-    private static final String PLAY_BTN_FILE = "shared/play-button.png";
+    private static final String PLAY_BTN_FILE = "shared/continue-button.png";
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
 
-    private static final String JOE_NEXT_FILE = "floor/janitor-level-complete.png";
-    private static final String JOE_MAIN_FILE = "floor/janitor-sleeping.png";
-    private static final String CONTINUE_BTN_FILE = "shared/continue-button.png";
+    private static final String JOE_NEXT_FILE = "shared/janitor-level-complete-3x.png";
+    private static final String JOE_MAIN_FILE = "shared/janitor-sleeping-3x.png";
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -54,11 +60,11 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
 
     private int centerYJoe;
     /** Background texture for start-up */
-    //private Texture background;
+    private Texture background;
     /** Play button to display when done */
-    private Texture playButton;
+    public Texture playButton;
 
-    private Texture mainButton;
+    public Texture mainButton;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -68,8 +74,7 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
     /** Exit code for main menu */
     public static final int EXIT_MENU = 0;
     /** Exit code for advancing to next level */
-    public static final int EXIT_CONTINUE = 1;
-    public static final int EXIT_PAUSED = 2;
+    public static final int EXIT_NEXT = 1;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -94,9 +99,11 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
     private Animation <TextureRegion> joeNext;
     private Animation <TextureRegion> joeMain;
 
-    float stateTimer;
+    private float stateTimer;
 
-    TextureRegion current;
+    private TextureRegion current;
+    private boolean backToMenu;
+    private boolean paused;
 
 
     /**
@@ -114,14 +121,15 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * Creates a ScoreMode with the default size and position
      *
      */
-    public PauseMenu(GameCanvas canvas) {
+    public PauseMode(GameCanvas canvas) {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
+        paused=false;
 
         stateTimer = 0.0f;
         // Load the next two images immediately.
-        playButton = new Texture(CONTINUE_BTN_FILE);
+        playButton = new Texture(PLAY_BTN_FILE);
         playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         mainButton = new Texture(MAIN_BTN_FILE);
@@ -140,19 +148,21 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
             controller.addListener(this);
         }*/
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i=0; i <= joeNextT.getWidth()/64; i++){
-            frames.add (new TextureRegion(joeNextTexture,i*64,0,64,64));
+        for (int i=0; i < joeNextT.getWidth()/192; i++){
+            frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
         }
         joeNext = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i=0; i <= joeMainT.getWidth()/64; i++){
-            frames.add (new TextureRegion(joeMainTexture,i*64,0,64,64));
+        for (int i=0; i < joeMainT.getWidth()/192; i++){
+            frames.add (new TextureRegion(joeMainTexture,i*192,0,192,192));
         }
         joeMain = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
     }
+    public void setPaused(boolean b){paused=b;}
+    public boolean getPaused(){return paused;}
 
     public void reset() {
         pressState = 0;
@@ -164,7 +174,6 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * Called when this screen should release all resources.
      */
     public void dispose() {
-
         //background.dispose();
         //background = null;
         if (playButton != null) {
@@ -187,12 +196,11 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     public void update(float delta) {
-
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         current = getFrameJoe(delta);
     }
 
-    public int getPressState(){return pressState;}
+    public void backToMenu(){listener.exitScreen(this, EXIT_MENU);}
 
     /**
      * Draw the status of this player mode.
@@ -212,7 +220,7 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
         canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-        //canvas.draw(current, centerX, centerYJoe);
+        canvas.draw(current, centerX - current.getRegionWidth()/2, centerYJoe - current.getRegionHeight()/2);
         canvas.end();
     }
 
@@ -226,14 +234,12 @@ public class PauseMenu implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
-        System.out.println("here");
         if (active) {
             update(delta);
             draw();
-            System.out.println("listener:"+listener);
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
-                dispose();
+                paused=false;
             } else if (listener != null && isMain()) {
                 listener.exitScreen(this, EXIT_MENU);
             }
