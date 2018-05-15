@@ -190,8 +190,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
-	private static final String SLIMEBALL_ANI_FILE = "floor/slimeball-ani.png";
-	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/turret-slimeball.png";
+	private static final String SLIMEBALL_ANI_FILE = "floor/enemy_long/slimeball-ani.png";
+	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/slimeball-turret-ani.png";
 
 	/** The texture files for the Tutorial Keys */
 	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
@@ -367,8 +367,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
 	protected TextureRegion slimeballAniTexture;
+	protected TextureRegion slimeballTurretAniTexture;
 	protected TextureRegion lidAniTexture;
-	protected TextureRegion turretSlimeballTexture;
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
@@ -905,8 +905,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
 		slimeballAniTexture = createTexture(manager,SLIMEBALL_ANI_FILE,false);
+		slimeballTurretAniTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
-		turretSlimeballTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 

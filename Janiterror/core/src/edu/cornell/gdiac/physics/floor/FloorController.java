@@ -438,6 +438,7 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> lizardDeath;
     private Animation <TextureRegion> lizardStun;
     private Animation <TextureRegion> slimeBall;
+    private Animation <TextureRegion> slimeBallTurret;
     private Animation <TextureRegion> lid;
 
 
@@ -1290,6 +1291,12 @@ public class FloorController extends WorldController implements ContactListener 
         slimeBall = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+        for (int i=0; i <= 6; i++){
+            frames.add (new TextureRegion(slimeballTurretAniTexture,i*32,0,32,32));
+        }
+        slimeBallTurret = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
         for (int i=0; i <= 1; i++){
             frames.add (new TextureRegion(lidAniTexture,i*32,0,32,32));
         }
@@ -1907,6 +1914,9 @@ public class FloorController extends WorldController implements ContactListener 
                 if (s.getName() == "slimeball"){
                     s.setTexture(slimeBall.getKeyFrame(stateTimer,true));
                 }
+                else if (s.getName() == "slimeballTurret") {
+                    s.setTexture(slimeBallTurret.getKeyFrame(stateTimer,true));
+                }
                 else if (s.getName() == "lid" && !lidGround){
                     s.setTexture(lid.getKeyFrame(stateTimer,true));
                 }
@@ -2003,6 +2013,10 @@ public class FloorController extends WorldController implements ContactListener 
             //set all new weapons
             WeaponModel old_primary = avatar.getWep1();
             avatar.setWep1(swapping_weapon);
+            if (avatar.getCurrentWeaponN().equals("1")) {
+                //reset the weapon
+                avatar.setCurrentWeapon("1");
+            }
             mopcart_menu[mopcart_index] = old_primary.name;
             if (swapping_weapon_name == "lid") {
                 avatar.setHasLid(true);
@@ -2029,6 +2043,10 @@ public class FloorController extends WorldController implements ContactListener 
             else {
                 //set new weapons
                 avatar.setWep2(swapping_weapon);
+                if (avatar.getCurrentWeaponN().equals("2")) {
+                    //reset the weapon
+                    avatar.setCurrentWeapon("2");
+                }
                 mopcart_menu[mopcart_index] = old_secondary.name;
             }
 
@@ -2427,10 +2445,10 @@ public class FloorController extends WorldController implements ContactListener 
         float radius = slimeballTexture.getRegionWidth()/(2.0f*scale.x);
         WheelObstacle bullet = new WheelObstacle(player.getX() + offsetX, player.getY() + offsetY, radius);
 
-        bullet.setName("slimeball");
+        bullet.setName("slimeballTurret");
         bullet.setDensity(HEAVY_DENSITY);
         bullet.setDrawScale(scale);
-        bullet.setTexture(turretSlimeballTexture);
+        bullet.setTexture(slimeballTexture); //does this matter?
         bullet.setBullet(true);
         bullet.setGravityScale(0);
         bullet.setVX(speedX);
@@ -2905,7 +2923,7 @@ public class FloorController extends WorldController implements ContactListener 
                 lidTimer = LID_RANGE;
             }
 
-            if (bd1.getName().equals("slimeball") && bd2 == avatar) {
+            if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret")) && bd2 == avatar) {
                 if (!bd1.isRemoved()) {
                     gotHit=ticks;
                     if (avatar.getHP() <= 1) { avatar.setRed(false); } //don't be red when dying
@@ -2914,16 +2932,17 @@ public class FloorController extends WorldController implements ContactListener 
                     removeBullet(bd1);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd1.getName().equals("slimeball") &&
+            } else if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret")) &&
                     (bd2.getName() == "mopCart" ||
                      bd2.getName() == "specialHealth" || bd2.getName() == "specialDurability")) {
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
-            } else if (bd1.getName().equals("slimeball") && !(bd2 instanceof EnemyModel)) {
+            } else if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
+                    && !(bd2 instanceof EnemyModel)) {
                 removeBullet(bd1);
             }
 
-            if (bd2.getName().equals("slimeball") && bd1 == avatar) {
+            if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret")) && bd1 == avatar) {
                 if (!bd2.isRemoved()) {
                     gotHit = ticks;
                     if (avatar.getHP() <= 1) { avatar.setRed(false); } //don't be red when dying
@@ -2932,19 +2951,21 @@ public class FloorController extends WorldController implements ContactListener 
                     removeBullet(bd2);
                     SoundController.getInstance().play(OUCH_FILE, OUCH_FILE,false,EFFECT_VOLUME);
                 }
-            } else if (bd2.getName().equals("slimeball") &&
+            } else if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret")) &&
                     (bd1.getName() == "mopCart" ||
                      bd1.getName() == "specialHealth" || bd1.getName() == "specialDurability")) {
                 //do nothing, don't remove bullet if mop cart
-            } else if(bd2.getName().equals("slimeball") && !(bd1 instanceof EnemyModel)) {
+            } else if((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
+                    && !(bd1 instanceof EnemyModel)) {
                 removeBullet(bd2);
             }
 
-            if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
+            if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
+                    && bd1.getName().equals("lid")) {
                 removeBullet(bd2);
             }
 
-            if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
+            if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret")) && bd2.getName().equals("lid")) {
                 removeBullet(bd1);
             }
 
@@ -3039,7 +3060,8 @@ public class FloorController extends WorldController implements ContactListener 
             avatar.setAtMopCart(false, 0);
         }
 
-        if (bd2.getName().equals("slimeball") && bd1.getName().equals("lid")) {
+        if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
+                && bd1.getName().equals("lid")) {
             bd1.setVX(lidVel.x);
             bd1.setVY(lidVel.y);
             //System.out.println("set lidvel");
@@ -3050,7 +3072,8 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
 
-        if (bd1.getName().equals("slimeball") && bd2.getName().equals("lid")) {
+        if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
+                && bd2.getName().equals("lid")) {
             bd2.setVX(lidVel.x);
             bd2.setVY(lidVel.y);
             /*System.out.println("set lidvel");
