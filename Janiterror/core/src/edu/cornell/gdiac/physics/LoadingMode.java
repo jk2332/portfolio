@@ -385,6 +385,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	private void draw() {
 		canvas.begin();
+//		canvas.draw(bg, cameraX - 512, cameraY - 288);
 		canvas.draw(bg, 0, 0);
 		if (playButton == null && selectButton == null) {
 			drawProgress(canvas);

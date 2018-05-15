@@ -76,13 +76,22 @@ public class FloorController extends WorldController implements ContactListener 
     /** The sound file for mad scientist attack */
     private static final String SPARK_FILE = "floor/sound/spark.mp3";
     /** The sound file for mad scientist death */
-    private static final String DROP_FILE = "floor/sound/drop.mp3";
+    private static final String SHORTCIRCUIT_FILE = "floor/sound/shortcircuit.mp3";
     /** The sound file for lizard attack */
     private static final String SLASH_FILE = "floor/sound/slash.mp3";
     /** The sound file for robot attack */
     private static final String CLAMP_FILE = "floor/sound/clamp.mp3";
     /** The sound file for robot death */
     private static final String EXPLOSION_FILE = "floor/sound/explosion.mp3";
+    /** The sound file for slime death */
+    private static final String WATERDROP_FILE = "floor/sound/waterdrop.mp3";
+    private static final String SPIT_FILE = "floor/sound/spit.mp3";
+
+    private static final String SQUIRT1_FILE = "floor/sound/squirt1.mp3";
+    private static final String SQUIRT2_FILE = "floor/sound/squirt2.mp3";
+    private static String[] SQUIRT_FILE_LIST = { SQUIRT1_FILE, SQUIRT2_FILE };
+
+    private static final String LIZARDGROAN_FILE = "floor/sound/lizardgroan.mp3";
 
     private static final int TILE_SIZE = 32;
 
@@ -187,10 +196,21 @@ public class FloorController extends WorldController implements ContactListener 
         manager.load(CLAMP_FILE, Sound.class);
         assets.add(CLAMP_FILE);
 
-        manager.load(DROP_FILE, Sound.class);
-        assets.add(DROP_FILE);
+        manager.load(SHORTCIRCUIT_FILE, Sound.class);
+        assets.add(SHORTCIRCUIT_FILE);
         manager.load(EXPLOSION_FILE, Sound.class);
         assets.add(EXPLOSION_FILE);
+
+        manager.load(WATERDROP_FILE, Sound.class);
+        assets.add(WATERDROP_FILE);
+        manager.load(SPIT_FILE, Sound.class);
+        assets.add(SPIT_FILE);
+        manager.load(SQUIRT1_FILE, Sound.class);
+        assets.add(SQUIRT1_FILE);
+        manager.load(SQUIRT2_FILE, Sound.class);
+        assets.add(SQUIRT2_FILE);
+        manager.load(LIZARDGROAN_FILE, Sound.class);
+        assets.add(LIZARDGROAN_FILE);
 
         super.preLoadContent(manager);
     }
@@ -229,8 +249,14 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, SLASH_FILE);
         sounds.allocate(manager, CLAMP_FILE);
 
+        sounds.allocate(manager, SHORTCIRCUIT_FILE);
         sounds.allocate(manager, EXPLOSION_FILE);
-        sounds.allocate(manager, DROP_FILE);
+
+        sounds.allocate(manager, WATERDROP_FILE);
+        sounds.allocate(manager, SPIT_FILE);
+        sounds.allocate(manager, SQUIRT1_FILE);
+        sounds.allocate(manager, SQUIRT2_FILE);
+        sounds.allocate(manager, LIZARDGROAN_FILE);
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -265,7 +291,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.4f;
     private static final float DEATH_ANIMATION_TIME = 2f;
-    private static final float ENEMY_DEATH_ANIMATION_TIME = 0.3f; //adjust animation frame time
+    private static final float ENEMY_DEATH_ANIMATION_TIME = 0.5f; //adjust animation frame time
     /** The timer for animations*/
     float stateTimer;
     private float stateTimerM;
@@ -572,7 +598,7 @@ public class FloorController extends WorldController implements ContactListener 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
+        SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.35f);
         //Gdx.input.setInputProcessor(this);
         //reset mop cart list
         mopCartList = new ArrayList<BoxObstacle>();
@@ -1971,6 +1997,22 @@ public class FloorController extends WorldController implements ContactListener 
         lightIsActive = !lightIsActive;
     }
 
+    private void playDeathSounds(String s) {
+        System.out.println(s);
+        if (s.equals("scientist")) {
+            SoundController.getInstance().play(SPARK_FILE, SPARK_FILE,false, 0.4f);
+        }
+        else if (s.equals("robot")) {
+            SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE,false, 1f);
+        }
+        else if (s.equals("slime") || s.equals("turret")) {
+            SoundController.getInstance().play(SPIT_FILE, SPIT_FILE,false, 1f);
+        }
+        else if (s.equals("lizard")) {
+            SoundController.getInstance().play(LIZARDGROAN_FILE, LIZARDGROAN_FILE,false, 0.3f);
+        }
+    }
+
     /**
      * Update function for Joe when he at the mop cart
      */
@@ -2017,21 +2059,23 @@ public class FloorController extends WorldController implements ContactListener 
         if (avatar.isPrimarySwapping()) {
             //get weapon at index
             String swapping_weapon_name = mopcart_menu[mopcart_index];
-            WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
+            if (!(swapping_weapon_name.equals("none"))) {
+                WeaponModel swapping_weapon = wep_to_model.get(swapping_weapon_name);
 
-            //set all new weapons
-            WeaponModel old_primary = avatar.getWep1();
-            avatar.setWep1(swapping_weapon);
-            if (avatar.getCurrentWeaponN().equals("1")) {
-                //reset the weapon
-                avatar.setCurrentWeapon("1");
-            }
-            mopcart_menu[mopcart_index] = old_primary.name;
-            if (swapping_weapon_name == "lid") {
-                avatar.setHasLid(true);
-            }
-            if (old_primary.name == "lid") {
-                avatar.setHasLid(false);
+                //set all new weapons
+                WeaponModel old_primary = avatar.getWep1();
+                avatar.setWep1(swapping_weapon);
+                if (avatar.getCurrentWeaponN().equals("1")) {
+                    //reset the weapon
+                    avatar.setCurrentWeapon("1");
+                }
+                mopcart_menu[mopcart_index] = old_primary.name;
+                if (swapping_weapon_name == "lid") {
+                    avatar.setHasLid(true);
+                }
+                if (old_primary.name == "lid") {
+                    avatar.setHasLid(false);
+                }
             }
         }
         // swapping secondary weapon
@@ -2048,8 +2092,11 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setWep1(swapping_weapon);
                 avatar.setCurrentWeapon("1");
                 mopcart_menu[mopcart_index] = old_secondary.name;
+
+                if (swapping_weapon_name == "lid") { avatar.setHasLid(true); }
+                if (old_secondary.name == "lid") { avatar.setHasLid(false); }
             }
-            else {
+            else if (!(swapping_weapon_name.equals("none"))) {
                 //set new weapons
                 avatar.setWep2(swapping_weapon);
                 if (avatar.getCurrentWeaponN().equals("2")) {
@@ -2057,13 +2104,9 @@ public class FloorController extends WorldController implements ContactListener 
                     avatar.setCurrentWeapon("2");
                 }
                 mopcart_menu[mopcart_index] = old_secondary.name;
-            }
 
-            if (swapping_weapon_name == "lid") {
-                avatar.setHasLid(true);
-            }
-            if (old_secondary.name == "lid") {
-                avatar.setHasLid(false);
+                if (swapping_weapon_name == "lid") { avatar.setHasLid(true); }
+                if (old_secondary.name == "lid") { avatar.setHasLid(false); }
             }
         }
     }
@@ -2142,6 +2185,7 @@ public class FloorController extends WorldController implements ContactListener 
                         && !(s instanceof RobotModel) && ticks % 30==0L ){ //adjust this later
                     //-1 so if they step feet on it they lose health
                     s.decrHP();
+                    if (s.getHP() == 0) { playDeathSounds(s.getName()); }
                     if (s.getHP()<0) {controls[s.getId()]=null;}
                 }
             }
@@ -2154,15 +2198,6 @@ public class FloorController extends WorldController implements ContactListener 
                     //System.out.println("gone");
                     s.setDensity(0.01f); //make them super light so they don't get in the way
                     s.setMass(0.01f);
-
-                    //enemy death sounds (repeats because they're not gone yet)
-                    //put this where they are about to die
-//                    if (s.getHP() == 0 && s instanceof ScientistModel) {
-//                        SoundController.getInstance().play(DROP_FILE, DROP_FILE, false, 0.5f);
-//                    }
-//                    if (s.getHP() == 0 && s instanceof RobotModel) {
-//                        SoundController.getInstance().play(EXPLOSION_FILE, EXPLOSION_FILE, false, 0.5f);
-//                    }
 
                     deathTimer = ENEMY_DEATH_ANIMATION_TIME; //reset deathTimer?
                     s.markRemoved(true);
@@ -2222,7 +2257,7 @@ public class FloorController extends WorldController implements ContactListener 
                     if (s.getAttackAnimationFrame()==0 && avatar.isAlive() && avatar.getHP() > 1) {
 
                         if (s instanceof ScientistModel) {
-                            SoundController.getInstance().play(SPARK_FILE, SPARK_FILE, false, 0.5f);
+                            SoundController.getInstance().play(SHORTCIRCUIT_FILE, SHORTCIRCUIT_FILE, false, 0.5f);
                         }
                         if (s instanceof LizardModel) {
                             SoundController.getInstance().play(SLASH_FILE, SLASH_FILE, false, 0.5f);
@@ -2395,7 +2430,8 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setCategoryBits(CollideBits.BIT_SLIMEBALL);
         addQueuedObject(bullet);
 
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
+        int ranNum = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+        SoundController.getInstance().play(SQUIRT_FILE_LIST[ranNum], SQUIRT_FILE_LIST[ranNum],false, 0.7f);
     }
 
     private void createBullet2(TurretModel player) {
@@ -2465,7 +2501,8 @@ public class FloorController extends WorldController implements ContactListener 
         bullet.setCategoryBits(CollideBits.BIT_SLIMEBALL);
         addQueuedObject(bullet);
 
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, 0.5f);
+        int ranNum = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+        SoundController.getInstance().play(SQUIRT_FILE_LIST[ranNum], SQUIRT_FILE_LIST[ranNum],false, 0.7f);
     }
 
     /**
@@ -2494,13 +2531,12 @@ public class FloorController extends WorldController implements ContactListener 
             lid.markRemoved(true);
             SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
             enemy.decrHP();
-            //if (enemy.getHP()<0) {controls[enemy.getId()]=null;}
-            //System.out.println("was lidded");
+            if (enemy.getHP() == 0) { playDeathSounds(enemy.getName()); }
             enemy.setKnockbackTimer(KNOCKBACK_TIMER);
             enemy.applyImpulse(knockbackForce);
             if (enemy.getHP() <= 0) {
                 controls[enemy.getId()]=null;
-                enemy.markRemoved(true);
+//                enemy.markRemoved(true);
             }
         }
     }
@@ -2613,9 +2649,8 @@ public class FloorController extends WorldController implements ContactListener 
                             if (!isWall) {
                                 enemy_hit = true;
                                 s.decrHP();
-                                if (s.getHP() < 0) {
-                                    controls[s.getId()] = null;
-                                }
+                                if (s.getHP() == 0) { playDeathSounds(s.getName()); }
+                                if (s.getHP() < 0) { controls[s.getId()] = null; }
                                 s.setAttacked(true);
                             }
 
@@ -2706,6 +2741,7 @@ public class FloorController extends WorldController implements ContactListener 
                                 SoundController.getInstance().play(SPARK_FILE, SPARK_FILE, false, 0.5f);
                                 s.setStunned(true);
                                 s.decrHP();
+                                if (s.getHP() == 0) { playDeathSounds(s.getName()); }
                                 if (s.getHP()<0) {controls[s.getId()]=null;}
                                 s.setAttacked(true);
                             } else if (!isWall){
@@ -3116,11 +3152,38 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(mopTexture, (418), (400));
             canvas.draw(arrowKeyTexture, (400), (330));
             canvas.draw(wasdKeyTexture, (60), (330));
+
+            displayFont.getData().setScale(0.5f);
+            canvas.drawText("Monitor your health",
+                    displayFont, cameraX - 380, cameraY + 260);
+            canvas.drawText("and weapons here!",
+                    displayFont, cameraX - 380, cameraY + 240);
+
+            canvas.drawText("Using your weapon",
+                    displayFont, cameraX - 380, cameraY + 190);
+            canvas.drawText("will cost durability",
+                    displayFont, cameraX - 380, cameraY + 170);
+            displayFont.getData().setScale(1f);
         }
         else if (LEVEL.equals("level2.tmx")) {
-            canvas.draw(eKeyTexture, (680), (450));
-            canvas.draw(qKeyTexture, (910), (482));
-            canvas.draw(eKeyTexture, (920), (450));
+            canvas.draw(eKeyTexture, (680), (500));
+            canvas.draw(qKeyTexture, (947), (500));
+            canvas.draw(eKeyTexture, (1040), (500));
+
+            displayFont.getData().setScale(0.5f);
+            canvas.drawText("Good work! Now let's try some more...",
+                    displayFont, 150, 450);
+            canvas.drawText("Use        to stash",
+                    displayFont, 630, 530);
+            canvas.drawText("the Spray Bottles",
+                    displayFont, 630, 490);
+
+            canvas.drawText("Press       and",
+                    displayFont, 880, 530);
+            canvas.drawText("to swap your weapons!",
+                    displayFont, 880, 490);
+            displayFont.getData().setScale(1f);
+
         }
 
         //Draw Enemy Health
