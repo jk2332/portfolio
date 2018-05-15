@@ -107,7 +107,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String COMPUTER_FILE = "shared/computer.png";
 	private static final String PLANT_FILE = "shared/plant.png";
 	/** Retro font for displaying messages */
-	private static final String FONT_FILE = "shared/Syntax_e11.ttf";
+	private static final String FONT_FILE = "shared/Title.ttf";
+	private static final String FONT_BODY_FILE = "shared/Francois.ttf";
 	private static final int FONT_SIZE = 32;
 	/** The texture files for characters/attacks */
 	private static final String JANITOR_IDLE_FILE  = "floor/janitor/janitor-idle.png";
@@ -781,9 +782,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
+		size2Params.fontFileName = FONT_BODY_FILE;
 		size2Params.fontParameters.size = FONT_SIZE;
 		manager.load(FONT_FILE, BitmapFont.class, size2Params);
 		assets.add(FONT_FILE);
+		manager.load(FONT_BODY_FILE, BitmapFont.class, size2Params);
+		assets.add(FONT_BODY_FILE);
 	}
 
 	/**

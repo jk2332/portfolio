@@ -3146,15 +3146,15 @@ public class FloorController extends WorldController implements ContactListener 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-        displayFont.setColor(Color.WHITE);
 
         //Draw Tutorial Stuff
+        displayFont.setColor(Color.WHITE);
         if (LEVEL.equals("level1.tmx")) {
             canvas.draw(mopTexture, (418), (400));
             canvas.draw(arrowKeyTexture, (400), (330));
             canvas.draw(wasdKeyTexture, (60), (330));
 
-            displayFont.getData().setScale(0.5f);
+            displayFont.getData().setScale(0.6f);
             canvas.drawText("Monitor your health",
                     displayFont, cameraX - 380, cameraY + 260);
             canvas.drawText("and weapons here!",
@@ -3167,25 +3167,25 @@ public class FloorController extends WorldController implements ContactListener 
             displayFont.getData().setScale(1f);
         }
         else if (LEVEL.equals("level2.tmx")) {
-            canvas.draw(eKeyTexture, (680), (500));
-            canvas.draw(qKeyTexture, (947), (500));
-            canvas.draw(eKeyTexture, (1040), (500));
+            canvas.draw(eKeyTexture, (670), (500));
+            canvas.draw(qKeyTexture, (932), (500));
+            canvas.draw(eKeyTexture, (1022), (500));
 
-            displayFont.getData().setScale(0.5f);
+            displayFont.getData().setScale(0.6f);
             canvas.drawText("Good work! Now let's try some more...",
                     displayFont, 150, 450);
-            canvas.drawText("Use        to stash",
+            canvas.drawText("Use             to snag",
                     displayFont, 630, 530);
             canvas.drawText("the Spray Bottles",
                     displayFont, 630, 490);
 
-            canvas.drawText("Press       and",
+            canvas.drawText("Press            and",
                     displayFont, 880, 530);
             canvas.drawText("to swap your weapons!",
                     displayFont, 880, 490);
             displayFont.getData().setScale(1f);
-
         }
+        displayFont.setColor(Color.BLACK);
 
         //Draw Enemy Health
         displayFont.getData().setScale(0.5f);
@@ -3304,8 +3304,15 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(unused_wep2, (cameraX + 435), (cameraY + 180));
 
             //DRAW MOPCART INDEX
-            int current_xlocation = mopcart_index_xlocation[mopcart_index];
-            canvas.draw(mopcartIndexTexture, (cameraX + current_xlocation), (cameraY + 145));
+            if (mopcart_menu[0].equals("none") && mopcart_menu[1].equals("none")){
+                displayFont.getData().setScale(0.7f);
+                canvas.drawText("Empty", displayFont, (cameraX + 390), (cameraY + 220));
+                displayFont.getData().setScale(1.0f);
+            }
+            else {
+                int current_xlocation = mopcart_index_xlocation[mopcart_index];
+                canvas.draw(mopcartIndexTexture, (cameraX + current_xlocation), (cameraY + 145));
+            }
         }
         canvas.end();
 

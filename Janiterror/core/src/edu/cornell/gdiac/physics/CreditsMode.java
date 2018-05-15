@@ -23,7 +23,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/inter-menu-v2.png";
 
-    private static final String FONT_FILE = "shared/Syntax_e11.ttf";
+    private static final String FONT_FILE = "shared/Title.ttf";
 
     private static final String LEVEL_FILE = "shared/mop-bucket-menu.png";
 
