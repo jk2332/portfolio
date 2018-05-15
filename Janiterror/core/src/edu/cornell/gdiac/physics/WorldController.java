@@ -190,6 +190,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
+	private static final String SLIMEBALL_ANI_FILE = "floor/slimeball-ani.png";
 	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/turret-slimeball.png";
 
 	/** The texture files for the Tutorial Keys */
@@ -202,6 +203,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
 	private static final String VACUUM_FILE  = "floor/old_ui/ui-vacuum.png";
 	private static final String LID_FILE  = "floor/old_ui/ui-lid.png";
+	private static final String LID_ANI_FILE  = "floor/lid-ani.png";
 	private static final String NONE_FILE  = "floor/ui-none.png";
 	/** The texture files for the UI icons */
 	private static final String HEALTH_BAR_FILE  = "floor/ui-health.png";
@@ -364,6 +366,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
+	protected TextureRegion slimeballAniTexture;
+	protected TextureRegion lidAniTexture;
 	protected TextureRegion turretSlimeballTexture;
 
 	/** Texture assets for Tutorial Keys */
@@ -667,6 +671,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(BULLET_FILE);
 		manager.load(SLIMEBALL_FILE, Texture.class);
 		assets.add(SLIMEBALL_FILE);
+		manager.load(SLIMEBALL_ANI_FILE, Texture.class);
+		assets.add(SLIMEBALL_ANI_FILE);
 		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
 		assets.add(TURRET_SLIMEBALL_FILE);
 
@@ -689,6 +695,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(VACUUM_FILE);
 		manager.load(LID_FILE, Texture.class);
 		assets.add(LID_FILE);
+		manager.load(LID_ANI_FILE, Texture.class);
+		assets.add(LID_ANI_FILE);
         manager.load(MOPCART_INDEX_FILE, Texture.class);
         assets.add(MOPCART_INDEX_FILE);
 
@@ -896,6 +904,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		lizardStunTexture = createTexture(manager,LIZARD_STUN_FILE,false);
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
+		slimeballAniTexture = createTexture(manager,SLIMEBALL_ANI_FILE,false);
+		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
 		turretSlimeballTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);

@@ -17,6 +17,7 @@
  */
 package edu.cornell.gdiac.physics.obstacle;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -40,6 +41,10 @@ public abstract class Obstacle {
 	/// Initialization structures to store body information
 	/** Stores the body information for this shape */
 	protected BodyDef bodyinfo;
+	/** The texture for the shape. */
+	protected TextureRegion texture;
+	/** The texture origin for drawing */
+	protected Vector2 origin;
 	/** Stores the fixture information for this shape */
 	protected FixtureDef fixture;
 	/** The mass data of this shape (which may override the fixture) */
@@ -998,5 +1003,34 @@ public abstract class Obstacle {
 	 * @param canvas Drawing context
 	 */
 	public abstract void drawDebug(GameCanvas canvas);
+	/**
+	 * Returns the object texture for drawing purposes.
+	 *
+	 * In order for drawing to work properly, you MUST set the drawScale.
+	 * The drawScale converts the physics units to pixels.
+	 *
+	 * @return the object texture for drawing purposes.
+	 */
+	public TextureRegion getTexture() {
+		return texture;
+	}
+
+	/**
+	 * Sets the object texture for drawing purposes.
+	 *
+	 * In order for drawing to work properly, you MUST set the drawScale.
+	 * The drawScale converts the physics units to pixels.
+	 *
+	 * @param value  the object texture for drawing purposes.
+	 */
+	public void setTexture(TextureRegion value) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+	}
+
+	public void setTexture(TextureRegion value, float offsetX, float offsetY) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f + offsetX, texture.getRegionHeight()/2.0f + offsetY);
+	}
 
 }

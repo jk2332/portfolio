@@ -437,6 +437,8 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> lizardAttackD;
     private Animation <TextureRegion> lizardDeath;
     private Animation <TextureRegion> lizardStun;
+    private Animation <TextureRegion> slimeBall;
+    private Animation <TextureRegion> lid;
 
 
     /** Reference to the goalDoor (for collision detection) */
@@ -1282,6 +1284,17 @@ public class FloorController extends WorldController implements ContactListener 
         lizardStun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+        for (int i=0; i <= 6; i++){
+            frames.add (new TextureRegion(slimeballAniTexture,i*32,0,32,32));
+        }
+        slimeBall = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 1; i++){
+            frames.add (new TextureRegion(lidAniTexture,i*32,0,32,32));
+        }
+        lid = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
 
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
@@ -1890,6 +1903,14 @@ public class FloorController extends WorldController implements ContactListener 
 
             }
             lidRange(dt);
+            for (Obstacle s: objects){
+                if (s.getName() == "slimeball"){
+                    s.setTexture(slimeBall.getKeyFrame(stateTimer,true));
+                }
+                else if (s.getName() == "lid" && !lidGround){
+                    s.setTexture(lid.getKeyFrame(stateTimer,true));
+                }
+            }
             enemyUpdate();
             for (EnemyModel s : enemies) {
                 if (s.getName() == "scientist") {
@@ -2521,9 +2542,9 @@ public class FloorController extends WorldController implements ContactListener 
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
                         boolean case2 = avatar.isRight() && avatar.getX() <= s.getX() && s.getX() - avatar.getX() <= 3f &&
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
-                        boolean case3 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 3f &&
+                        boolean case4 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 3f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
-                        boolean case4 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 3f &&
+                        boolean case3 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 3f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
                         if ((case1 || case2 || case3 || case4)&& s.getAttacked() == false) {
                             boolean isWall = false;
@@ -2572,10 +2593,10 @@ public class FloorController extends WorldController implements ContactListener 
                             }
 
                             //7.5 TIMES THE NORMAL ENEMY DENSITY
-                            //System.out.println(s.getMass());
-                            //System.out.println(s.getDensity());
-                            //System.out.println(s.getDensity() * -15f);
-                            if (!(s instanceof RobotModel)) {
+                            System.out.println(s.getMass());
+                            System.out.println(s.getDensity());
+                            System.out.println(s.getDensity() * -15f);
+                            if (!(s instanceof RobotModel) && !isWall) {
                                 knockbackForce.set(horiGap * (s.getDensity() * -15f), vertiGap * (s.getDensity() * -15f));
                                 //knockbackForce.nor();
 
@@ -2612,9 +2633,9 @@ public class FloorController extends WorldController implements ContactListener 
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
                         boolean case2 = avatar.isRight() && avatar.getX() <= s.getX() && s.getX() - avatar.getX() <= 5.0f &&
                                 avatar.getY()- 1.0f <= s.getY() &&  s.getY() <= avatar.getY() + 1.0f;
-                        boolean case3 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 5.0f &&
+                        boolean case4 = avatar.isUp() && avatar.getY() <= s.getY() && s.getY() - avatar.getY() <= 5.0f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
-                        boolean case4 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 5.0f &&
+                        boolean case3 = avatar.isDown() && s.getY() <= avatar.getY() && avatar.getY() - s.getY() <= 5.0f &&
                                 avatar.getX()- 1.0f <= s.getX() &&  s.getX() <= avatar.getX() + 1.0f;
 
                         if (!s.isRemoved() && (case1 || case2 || case3 || case4) && s.getAttacked() == false) {
@@ -3999,6 +4020,9 @@ public class FloorController extends WorldController implements ContactListener 
         }
         ((LizardModel)s).previousState = ((LizardModel)s).state;
         return region;
+    }
+    public void getProjectileFrame (float dt){
+
     }
 
 }
