@@ -12,6 +12,7 @@
 package edu.cornell.gdiac.physics.obstacle;
 
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.physics.*;  // For GameCanvas
@@ -123,6 +124,35 @@ public class WheelObstacle extends SimpleObstacle {
 
 	public void setMaskBits (short i) {
 	 	fixture.filter.maskBits = i;
+	}
+	/**
+	 * Returns the object texture for drawing purposes.
+	 *
+	 * In order for drawing to work properly, you MUST set the drawScale.
+	 * The drawScale converts the physics units to pixels.
+	 *
+	 * @return the object texture for drawing purposes.
+	 */
+	public TextureRegion getTexture() {
+		return texture;
+	}
+
+	/**
+	 * Sets the object texture for drawing purposes.
+	 *
+	 * In order for drawing to work properly, you MUST set the drawScale.
+	 * The drawScale converts the physics units to pixels.
+	 *
+	 * @param value  the object texture for drawing purposes.
+	 */
+	public void setTexture(TextureRegion value) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+	}
+
+	public void setTexture(TextureRegion value, float offsetX, float offsetY) {
+		texture = value;
+		origin.set(texture.getRegionWidth()/2.0f + offsetX, texture.getRegionHeight()/2.0f + offsetY);
 	}
 
 }

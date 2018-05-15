@@ -51,7 +51,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static final String PROGRESS_FILE = "shared/progressbar.png";
 	private static final String PLAY_BTN_FILE = "shared/play-button.png";
 	private static final String SELECT_BTN_FILE = "shared/levels-button.png";
-	private static final String OPTION_BTN_FILE = "shared/options-button.png";
+	private static final String CREDITS_BTN_FILE = "shared/credits-button.png";
 	
 	/** Background texture for start-up */
 	private Texture background;
@@ -60,9 +60,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 	private Texture selectButton;
 
-
-
-	private Texture optionsButton;
+	private Texture creditsButton;
 	/** Texture atlas to support a progress bar */
 	private Texture statusBar;
 	
@@ -224,7 +222,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		// Load the next two images immediately.
 		playButton = null;
 		selectButton = null;
-		optionsButton = null;
+		creditsButton = null;
 		statusBar  = new Texture(PROGRESS_FILE);
 		
 		// No progress so far.		
@@ -286,9 +284,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			selectButton.dispose();
 			selectButton = null;
 		}
-		if (optionsButton != null) {
-			optionsButton.dispose();
-			optionsButton = null;
+		if (creditsButton != null) {
+			creditsButton.dispose();
+			creditsButton = null;
 		}
 		bgAnimation = null;
 		bg = null;
@@ -306,7 +304,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private void update(float delta) {
 		bg = bgAnimation.getKeyFrame(stateTimer,true);
 		stateTimer = stateTimer + delta;
-		if (playButton == null && selectButton == null && optionsButton == null) {
+		if (playButton == null && selectButton == null && creditsButton == null) {
 			manager.update(budget);
 			this.progress = manager.getProgress();
 			if (progress >= 1.0f) {
@@ -317,8 +315,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				selectButton = new Texture(SELECT_BTN_FILE);
 				selectButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-				optionsButton = new Texture(OPTION_BTN_FILE);
-				optionsButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+				creditsButton = new Texture(CREDITS_BTN_FILE);
+				creditsButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			}
 		} else {
 			InputController input = InputController.getInstance();
@@ -402,7 +400,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 					centerX, centerYSelect, 0, buttonSelectScale*scale, buttonSelectScale*scale);
 
 			tint = (pressState == 5 ? Color.YELLOW: Color.WHITE);
-			canvas.draw(optionsButton, tint, optionsButton.getWidth()/2, optionsButton.getHeight()/2,
+			canvas.draw(creditsButton, tint, creditsButton.getWidth()/2, creditsButton.getHeight()/2,
 					centerX, centerYOptions, 0, buttonOptionScale*scale, buttonOptionScale*scale);
 		}
 		canvas.end();
@@ -574,8 +572,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			pressState = 3;
 		}
 
-		radiusX = buttonOptionScale*scale*optionsButton.getWidth()/2.0f;
-		radiusY = buttonOptionScale*scale*optionsButton.getHeight()/2.0f;
+		radiusX = buttonOptionScale*scale*creditsButton.getWidth()/2.0f;
+		radiusY = buttonOptionScale*scale*creditsButton.getHeight()/2.0f;
 		distX = screenX-centerX;
 		distY =screenY-centerYOptions;
 		if (distX <= radiusX && distY <= radiusY) {

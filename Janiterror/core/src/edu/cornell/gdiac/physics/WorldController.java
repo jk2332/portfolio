@@ -190,13 +190,20 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String ROBOT_FILE = "floor/robot.png";
 	private static final String BULLET_FILE  = "floor/lid.png";
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
-	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/turret-slimeball.png";
+	private static final String SLIMEBALL_ANI_FILE = "floor/enemy_long/slimeball-ani.png";
+	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/slimeball-turret-ani.png";
 
+	/** The texture files for the Tutorial Keys */
+	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
+	private static final String E_KEY_FILE  = "floor/tutorial/keys-e.png";
+	private static final String WASD_KEY_FILE  = "floor/tutorial/keys-movement.png";
+	private static final String ARROW_KEY_FILE  = "floor/tutorial/keys-attack.png";
 	/** The texture files for the Mop Cart UI icons */
 	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
 	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
 	private static final String VACUUM_FILE  = "floor/old_ui/ui-vacuum.png";
 	private static final String LID_FILE  = "floor/old_ui/ui-lid.png";
+	private static final String LID_ANI_FILE  = "floor/lid-ani.png";
 	private static final String NONE_FILE  = "floor/ui-none.png";
 	/** The texture files for the UI icons */
 	private static final String HEALTH_BAR_FILE  = "floor/ui-health.png";
@@ -359,7 +366,15 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	protected TextureRegion bulletTexture;
 	protected TextureRegion slimeballTexture;
-	protected TextureRegion turretSlimeballTexture;
+	protected TextureRegion slimeballAniTexture;
+	protected TextureRegion slimeballTurretAniTexture;
+	protected TextureRegion lidAniTexture;
+
+	/** Texture assets for Tutorial Keys */
+	protected Texture qKeyTexture;
+	protected Texture arrowKeyTexture;
+	protected Texture wasdKeyTexture;
+	protected Texture eKeyTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -656,8 +671,20 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(BULLET_FILE);
 		manager.load(SLIMEBALL_FILE, Texture.class);
 		assets.add(SLIMEBALL_FILE);
+		manager.load(SLIMEBALL_ANI_FILE, Texture.class);
+		assets.add(SLIMEBALL_ANI_FILE);
 		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
 		assets.add(TURRET_SLIMEBALL_FILE);
+
+		//Tutorial
+		manager.load(Q_KEY_FILE, Texture.class);
+		assets.add(Q_KEY_FILE);
+		manager.load(E_KEY_FILE, Texture.class);
+		assets.add(E_KEY_FILE);
+		manager.load(WASD_KEY_FILE, Texture.class);
+		assets.add(WASD_KEY_FILE);
+		manager.load(ARROW_KEY_FILE, Texture.class);
+		assets.add(ARROW_KEY_FILE);
 
 		//UI Icons
 		manager.load(MOP_FILE, Texture.class);
@@ -668,6 +695,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(VACUUM_FILE);
 		manager.load(LID_FILE, Texture.class);
 		assets.add(LID_FILE);
+		manager.load(LID_ANI_FILE, Texture.class);
+		assets.add(LID_ANI_FILE);
         manager.load(MOPCART_INDEX_FILE, Texture.class);
         assets.add(MOPCART_INDEX_FILE);
 
@@ -875,13 +904,21 @@ public abstract class WorldController implements Screen, InputProcessor {
 		lizardStunTexture = createTexture(manager,LIZARD_STUN_FILE,false);
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		slimeballTexture = createTexture(manager,SLIMEBALL_FILE,false);
-		turretSlimeballTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
+		slimeballAniTexture = createTexture(manager,SLIMEBALL_ANI_FILE,false);
+		slimeballTurretAniTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
+		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
 		beakerTile = createTexture(manager,BEAKER_FILE,false);
 		computerTile = createTexture(manager,COMPUTER_FILE,false);
 		plantTile = createTexture(manager,PLANT_FILE,false);
+
+		//Tutorial Icons
+		qKeyTexture  = new Texture(Q_KEY_FILE);
+		eKeyTexture = new Texture(E_KEY_FILE);
+		wasdKeyTexture = new Texture(WASD_KEY_FILE);
+		arrowKeyTexture = new Texture(ARROW_KEY_FILE);
 
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);

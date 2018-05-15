@@ -149,7 +149,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         }
         joeMain = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
-
     }
 
     public void reset() {

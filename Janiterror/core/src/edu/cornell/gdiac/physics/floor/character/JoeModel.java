@@ -46,6 +46,8 @@ public class JoeModel extends CharacterModel {
     /** The current weapons Joe is holding */
     WeaponModel wep1;
     WeaponModel wep2;
+    WeaponModel wepCurrent;
+    private String currentWeaponN;
 
     private int attackCooldown;
 
@@ -140,6 +142,37 @@ public class JoeModel extends CharacterModel {
      */
     public void setSwapping(boolean value) {
         isSwapping = value;
+    }
+
+
+
+    /**
+     * Returns true if Joe is actively swapping.
+     *
+     * @return true if Joe is actively swapping.
+     */
+    public String getCurrentWeaponN() {
+        return currentWeaponN;
+    }
+
+    public WeaponModel getCurrentWeapon() {
+        return wepCurrent;
+    }
+
+    /**
+     * Sets whether the Joe is actively swapping.
+     *
+     * @param value whether the dude is actively swapping.
+     */
+    public void setCurrentWeapon(String a) {
+        if (a.equals("1")) {
+            currentWeaponN = a;
+            wepCurrent = wep1;
+        }
+        if (a.equals("2")) {
+            currentWeaponN = a;
+            wepCurrent = wep2;
+        }
     }
 
     /**
@@ -312,6 +345,9 @@ public class JoeModel extends CharacterModel {
 
         isSwapping = false;
         isPrimarySwapping = false;
+
+        currentWeaponN = "1";
+
         isUp = false;
         isDown = false;
         isRight = false;
