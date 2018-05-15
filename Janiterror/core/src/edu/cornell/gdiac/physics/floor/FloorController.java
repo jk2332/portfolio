@@ -570,7 +570,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void reset() {
         SoundController.getInstance().play(BACKGROUND_TRACK_FILE, BACKGROUND_TRACK_FILE, true, 0.4f);
-        Gdx.input.setInputProcessor(this);
+        //Gdx.input.setInputProcessor(this);
         //reset mop cart list
         mopCartList = new ArrayList<BoxObstacle>();
         //avatar has never visited mopcart before

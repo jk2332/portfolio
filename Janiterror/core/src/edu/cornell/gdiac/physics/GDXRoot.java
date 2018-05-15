@@ -252,7 +252,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(credits);
 			}
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_MENU) {
-			((WorldController) screen).reset2();
+			//((WorldController) screen).reset2();
 			loading.reset();
 			setScreen(loading);
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {

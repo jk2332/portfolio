@@ -964,7 +964,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a newly loaded filmstrip for the given file.
 	 *
@@ -987,7 +987,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		return null;
 	}
-	
+
 	/** 
 	 * Unloads the assets for this game.
 	 * 
@@ -1314,15 +1314,17 @@ public abstract class WorldController implements Screen, InputProcessor {
 		debug  = false;
 		active = false;
 		countdown = -1;
-
+		/**
 		Texture joeMainT = new Texture(JOE_MAIN_FILE);
 		Texture joeNextT = new Texture(JOE_NEXT_FILE);
 		TextureRegion joeMainTexture = new TextureRegion(joeMainT, joeMainT.getWidth(), joeMainT.getHeight());
 		TextureRegion joeNextTexture = new TextureRegion(joeNextT, joeNextT.getWidth(), joeNextT.getHeight());
+		 **/
 		// Let ANY connected controller start the game.
         /*for(Controller controller : Controllers.getControllers()) {
             controller.addListener(this);
         }*/
+        /**
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		for (int i=0; i < joeNextT.getWidth()/192; i++){
 			frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
@@ -1335,6 +1337,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		joeMain = new Animation<TextureRegion>(0.1f, frames);
 		frames.clear();
+		 **/
 	}
 
 	public void pauseDispose(){
@@ -1428,6 +1431,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 */
 	public boolean preUpdate(float dt) {
 		InputController input = InputController.getInstance();
+		Gdx.input.setInputProcessor(this);
 
 		input.readInput(bounds, scale);
 		if (listener == null) {
@@ -1524,7 +1528,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		//Gdx.input.setInputProcessor(this);
 	}
 
-
+	/**
 	public TextureRegion getFrameJoe (float dt){
 		currentState = getStateJanitor();
 		TextureRegion region;
@@ -1558,7 +1562,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 
 		return ScoreMode.StateJoe.NEXT;
-	}
+	}**/
 
 	/**
 	 * Draw the physics objects to the canvas
@@ -1591,8 +1595,9 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
 			//		centerXMain, centerYJoe, 0, 1, 1);
+			/**
 			canvas.draw(current, Color.WHITE, current.getRegionWidth()/2, current.getRegionHeight()/2,
-					centerX, centerYJoe, 0, 2, 2);
+					centerX, centerYJoe, 0, 2, 2);**/
 			canvas.end();
 		}
             // Final message
@@ -1645,12 +1650,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	public void render(float delta) {
-		current = getFrameJoe(delta);
+		//current = getFrameJoe(delta);
 		if (active) {
 			boolean b = preUpdate(delta);
 			if (!paused) {
 				pressState = 0;
-				backToMenu=false;
+				//backToMenu=false;
 				if (InputController.getInstance().getDidPause()) paused=true;
 				if (b) {
 					update(delta); // This is the one that must be defined.
@@ -1666,6 +1671,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 					//pauseDispose();
 					backToMenu=true;
 					paused=false;
+					reset2();
 					listener.exitScreen(this, EXIT_MENU);
 				}
 			}
