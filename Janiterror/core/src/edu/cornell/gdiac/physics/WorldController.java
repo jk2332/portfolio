@@ -955,7 +955,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		broken3tileTexture = new Texture(BROKEN3_TILE_FILE);
 		broken4tileTexture = new Texture(BROKEN4_TILE_FILE);
 		grateTileTexture = new Texture(GRATE_TILE_FILE);
-		underTileTexture = new Texture(STAIRS_TILE_FILE);
+		underTileTexture = new Texture(STAIRS_TILE_FILE); //why is this backwards lol
 		stairsTileTexture = new Texture(UNDER_TILE_FILE);
 		hazardTileTexture = new Texture(HAZARD_TILE_FILE);
 
@@ -1620,14 +1620,16 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		if (paused){
 			canvas.begin();
-			canvas.draw(background, 0, 0);
+//			System.out.println(cameraX);
+//			System.out.println(cameraY);
+			canvas.draw(background, cameraX - 512, cameraY - 288);
 			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-					centerXNext, centerY, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
-
 			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			//cameraX and cameraY are exactly the middle points of the current screen
 			canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
-					centerXMain, centerY, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+					cameraX - 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+					cameraX + 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
 			//		centerXMain, centerYJoe, 0, 1, 1);

@@ -123,8 +123,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[20] = new FloorController(8);
 		controllers[21] = new FloorController(8);
 
-
-
 		levelNames = new String[number_of_levels];
 		levelNames[0] = "Taking Out the Trash";
 		levelNames[1] = "Sweeping with the Enemy";

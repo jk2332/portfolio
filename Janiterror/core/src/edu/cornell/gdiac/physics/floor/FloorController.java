@@ -136,16 +136,16 @@ public class FloorController extends WorldController implements ContactListener 
     /**whether the game has been paused **/
     private boolean paused ;
 
-    /**
-     * Preloads the assets for this controller.
-     *
-     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-     * this time.  However, we still want the assets themselves to be static.  So
-     * we have an AssetState that determines the current loading state.  If the
-     * assets are already loaded, this method will do nothing.
-     *
-     * @param manager Reference to global asset manager.
-     */
+        /**
+         * Preloads the assets for this controller.
+         *
+         * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+         * this time.  However, we still want the assets themselves to be static.  So
+         * we have an AssetState that determines the current loading state.  If the
+         * assets are already loaded, this method will do nothing.
+         *
+         * @param manager Reference to global asset manager.
+         */
     public void preLoadContent(AssetManager manager) {
         if (platformAssetState != AssetState.EMPTY) {
             return;
@@ -265,7 +265,7 @@ public class FloorController extends WorldController implements ContactListener 
     /** Attack total time frames*timerperframe for vacuum */
     private static final float ATTACK_DURATION_VACUUM= 0.4f;
     private static final float DEATH_ANIMATION_TIME = 2f;
-    private static final float ENEMY_DEATH_ANIMATION_TIME = 0.5f;
+    private static final float ENEMY_DEATH_ANIMATION_TIME = 0.3f; //adjust animation frame time
     /** The timer for animations*/
     float stateTimer;
     private float stateTimerM;
@@ -634,10 +634,16 @@ public class FloorController extends WorldController implements ContactListener 
 
         initLighting();
         createLights();
+
         // Add level goal
+            //SHOWS UP IN THE BOTTOM LEFT OF WHAT YOU INPUT IN TILED
         float dwidth  = goalTile.getRegionWidth()/scale.x;
         float dheight = goalTile.getRegionHeight()/scale.y;
-        goalDoor = new BoxObstacle(level.getGoalDoorX()/32+OBJ_OFFSET_X,level.getGoalDoorY()/32+OBJ_OFFSET_Y,dwidth,dheight);
+        System.out.println(level.getGoalDoorX() / 32);
+        System.out.println(level.getGoalDoorY() / 32);
+        System.out.println(dheight);
+        goalDoor = new BoxObstacle(level.getGoalDoorX()/32+(OBJ_OFFSET_X/2),
+                level.getGoalDoorY()/32+(OBJ_OFFSET_Y/2), dwidth, dheight);
         goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
         goalDoor.setDensity(0.0f);
         goalDoor.setFriction(0.0f);
@@ -1379,8 +1385,9 @@ public class FloorController extends WorldController implements ContactListener 
             enemies[scientistPos.size()+robotPos.size()+ii]=mon;
         }
         for (int ii=0; ii<lizardPos.size(); ii++){
-            EnemyModel mon =new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 100f, 4f, 1,
+            //changing velocity does nothing?
+            EnemyModel mon = new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 100f, 5.0f, 1,
                     StateLizard.STANDING, StateLizard.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1762,6 +1769,8 @@ public class FloorController extends WorldController implements ContactListener 
         //System.out.println(avatar.getWep1().getDurability());
         if (InputController.getInstance().getDidPause()) {
             paused=true;
+            setCameraX(cameraX);
+            setCameraY(cameraY);
         }
         if (gotHit > 0 && avatar.isRed() && gotHit +30 == ticks && avatar.isAlive()) {
             avatar.setRed(false);
