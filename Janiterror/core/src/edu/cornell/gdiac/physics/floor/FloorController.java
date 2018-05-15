@@ -1291,14 +1291,10 @@ public class FloorController extends WorldController implements ContactListener 
         //get default weapons
         String default1 = level.getJoeDefaults().get(0);
         String default2 = level.getJoeDefaults().get(1);
-        //System.out.println(default1);
-        //System.out.println(default2);
 
         avatar.setWep1(wep_to_model.get(default1));
+        avatar.setCurrentWeapon("1");
         avatar.setWep2(wep_to_model.get(default2));
-
-        //System.out.println(avatar.getMass());
-
         if (default1.equals("lid") || default2.equals("lid")) { avatar.setHasLid(true); }
 
         wep_in_use.put(default1, true);
@@ -2006,6 +2002,7 @@ public class FloorController extends WorldController implements ContactListener 
                 //if you're not wielding anything just move it to primary weapon
                     //literally only for one level (only lid)
                 avatar.setWep1(swapping_weapon);
+                avatar.setCurrentWeapon("1");
                 mopcart_menu[mopcart_index] = old_secondary.name;
             }
             else {
@@ -2028,15 +2025,30 @@ public class FloorController extends WorldController implements ContactListener 
      */
     private void joeNotAtMopCartUpdate() {
         //if you're swapping between primary and secondary weapon
-        if (avatar.isSwapping()) {
+        if (avatar.isPrimarySwapping()) {
             WeaponModel current_wep1 = avatar.getWep1();
             WeaponModel current_wep2 = avatar.getWep2();
-            //can't swap if you only have 1 weapon
-            if (!current_wep2.name.equals("none")) {
-                avatar.setWep1(current_wep2);
-                avatar.setWep2(current_wep1);
+
+            if (!(avatar.getCurrentWeaponN().equals("1")) && (!current_wep1.name.equals("none"))) {
+                //can't swap if you only have 1 weapon
+                avatar.setCurrentWeapon("1");
+//                avatar.setWep1(current_wep2);
+//                avatar.setWep2(current_wep1);
             }
         }
+        if (avatar.isSecondarySwapping()) {
+            WeaponModel current_wep1 = avatar.getWep1();
+            WeaponModel current_wep2 = avatar.getWep2();
+
+            if (!(avatar.getCurrentWeaponN().equals("2")) && (!current_wep2.name.equals("none"))) {
+                //can't swap if you only have 1 weapon
+                avatar.setCurrentWeapon("2");
+//                avatar.setWep1(current_wep2);
+//                avatar.setWep2(current_wep1);
+            }
+        }
+
+
         // attack
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
                 && avatar.getWep1().getDurability() < 0  && attackTimer == 0) {
@@ -3044,14 +3056,19 @@ public class FloorController extends WorldController implements ContactListener 
         for(Obstacle obj : objects) {
             obj.draw(canvas);
         }
-
-        canvas.end();
-        // Now draw the shadows
-        if (rayhandler != null && lightIsActive) {
-            rayhandler.render();
-        }
-        canvas.begin();
         displayFont.setColor(Color.WHITE);
+
+        //Draw Tutorial Stuff
+        if (LEVEL.equals("level1.tmx")) {
+            canvas.draw(mopTexture, (418), (400));
+            canvas.draw(arrowKeyTexture, (400), (330));
+            canvas.draw(wasdKeyTexture, (60), (330));
+        }
+        else if (LEVEL.equals("level2.tmx")) {
+            canvas.draw(eKeyTexture, (680), (450));
+            canvas.draw(qKeyTexture, (910), (482));
+            canvas.draw(eKeyTexture, (920), (450));
+        }
 
         //Draw Enemy Health
         displayFont.getData().setScale(0.5f);
@@ -3100,28 +3117,54 @@ public class FloorController extends WorldController implements ContactListener 
         String wep1FileName = avatar.getWep1().getName();
         String wep2FileName = avatar.getWep2().getName();
 
-        TextureRegion[] wep2Textures = wep_to_smallbartexture.get(wep2FileName);
-        TextureRegion[] wep1Textures = wep_to_bartexture.get(wep1FileName);
+        TextureRegion[] wep1Textures;
+        TextureRegion[] wep2Textures;
+        String currentWeaponN = avatar.getCurrentWeaponN();
+        if (currentWeaponN.equals("1")) {
+            wep1Textures = wep_to_bartexture.get(wep1FileName);
+            wep2Textures = wep_to_smallbartexture.get(wep2FileName);
 
-        //check if one is lid and holding it
-        if (wep2FileName == "lid" && !(avatar.getHasLid())) {
-            wep2Textures = wep_to_smallbartexture.get("no lid");
+            //check if one is lid and holding it
+            if (wep1FileName == "lid" && !(avatar.getHasLid())) {
+                wep1Textures = wep_to_bartexture.get("no lid");
+            }
+            else if (wep2FileName == "lid" && !(avatar.getHasLid())) {
+                wep2Textures = wep_to_smallbartexture.get("no lid");
+            }
         }
-        else if (wep1FileName == "lid" && !(avatar.getHasLid())) {
-            wep1Textures = wep_to_bartexture.get("no lid");
-        }
+        else {
+            wep1Textures = wep_to_smallbartexture.get(wep1FileName);
+            wep2Textures = wep_to_bartexture.get(wep2FileName);
 
-        int durability2 = avatar.getWep2().getDurability();
-        int maxDurability2 = avatar.getWep2().getMaxDurability();
-        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
-        canvas.draw(wep2Textures[maxDurability2 - durability2],
-                (cameraX - 450), (cameraY + 100));
+            //check if one is lid and holding it
+            if (wep1FileName == "lid" && !(avatar.getHasLid())) {
+                wep1Textures = wep_to_smallbartexture.get("no lid");
+            }
+            else if (wep2FileName == "lid" && !(avatar.getHasLid())) {
+                wep2Textures = wep_to_bartexture.get("no lid");
+            }
+        }
 
         int durability1 = avatar.getWep1().getDurability();
         int maxDurability1 = avatar.getWep1().getMaxDurability();
         if (durability1 < 0){ durability1 = 0; } //fix for negative durability
-        canvas.draw(wep1Textures[maxDurability1 - durability1],
-                (cameraX - 490), (cameraY + 140));
+        int durability2 = avatar.getWep2().getDurability();
+        int maxDurability2 = avatar.getWep2().getMaxDurability();
+        if (durability2 < 0){ durability2 = 0; } //fix for negative durability
+
+        if (currentWeaponN.equals("1")) {
+            canvas.draw(wep1Textures[maxDurability1 - durability1],
+                    (cameraX - 490), (cameraY + 140));
+            canvas.draw(wep2Textures[maxDurability2 - durability2],
+                    (cameraX - 450), (cameraY + 100));
+        }
+        else if (currentWeaponN.equals("2")) {
+            canvas.draw(wep1Textures[maxDurability1 - durability1],
+                    (cameraX - 490), (cameraY + 160));
+            canvas.draw(wep2Textures[maxDurability2 - durability2],
+                    (cameraX - 470), (cameraY + 100));
+        }
+
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
@@ -3148,6 +3191,11 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.draw(mopcartIndexTexture, (cameraX + current_xlocation), (cameraY + 145));
         }
         canvas.end();
+
+        // Now draw the shadows
+        if (rayhandler != null && lightIsActive) {
+            rayhandler.render();
+        }
 
         super.draw(delta);
     }
@@ -3199,183 +3247,184 @@ public class FloorController extends WorldController implements ContactListener 
 
 
     public StateJoe getStateJoe(){
+        WeaponModel currentWeapon = avatar.getCurrentWeapon();
         if (avatar.getHP() <= 0){
             if (joeDeathTimer == 0) {
                 joeDeathTimer = DEATH_ANIMATION_TIME;
             }
             return StateJoe.DEATH;
         }
-        else if ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
-                && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && avatar.getWep1().durability > 0)||
-                ((avatar.isLeft() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0))
+        else if ((avatar.isRight() && !avatar.isAtMopCart() && currentWeapon.getName() == "mop"
+                && !(avatar.getMovementX() < 0)&& avatar.isFacingRight() && currentWeapon.durability > 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart() && currentWeapon.getName() == "mop")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0)||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "mop")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && currentWeapon.durability > 0))
         {
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_MOP;
             }
             return StateJoe.MOPR;
         }
-        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop"
-                && avatar.getWep1().durability > 0 ) ||
-                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0)||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0)){
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && currentWeapon.getName() == "mop"
+                && currentWeapon.durability > 0 ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && currentWeapon.getName() == "mop")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0)||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "mop")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && currentWeapon.durability > 0)){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_MOP;
             }
             return StateJoe.MOPL;
         }
-        else if (avatar.isUp() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
-                && avatar.getWep1().durability > 0){
+        else if (avatar.isUp() && !avatar.isAtMopCart()&& currentWeapon.getName() == "mop"
+                && currentWeapon.durability > 0){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_MOP;
             }
             return StateJoe.MOPU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "mop"
-                && avatar.getWep1().durability > 0){
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& currentWeapon.getName() == "mop"
+                && currentWeapon.durability > 0){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_MOP;
             }
             return StateJoe.MOPD;
         }
-        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "lid"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                && avatar.getWep1().durability > 0 && avatar.getHasLid())||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
+                && currentWeapon.durability > 0 && avatar.getHasLid())||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "lid")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 && avatar.getHasLid())||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "lid")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0 && avatar.getHasLid())){
+                        && currentWeapon.durability > 0 && avatar.getHasLid())){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
                 createBullet(avatar);
                 avatar.setHasLid(false);
             }
             return StateJoe.LIDR;
         }
-        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid() ) ||
-                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 && avatar.getHasLid())||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && currentWeapon.getName() == "lid"
+                && currentWeapon.durability > 0 && avatar.getHasLid() ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && currentWeapon.getName() == "lid")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 && avatar.getHasLid())||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "lid")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && currentWeapon.durability > 0
                         && avatar.getHasLid())){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
                 createBullet(avatar);
                 avatar.setHasLid(false);
             }
             return StateJoe.LIDL;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && currentWeapon.getName() == "lid"
+                && currentWeapon.durability > 0 && avatar.getHasLid()){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
                 createBullet(avatar);
                 avatar.setHasLid(false);
             }
             return StateJoe.LIDU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "lid"
-                && avatar.getWep1().durability > 0 && avatar.getHasLid()){
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& currentWeapon.getName() == "lid"
+                && currentWeapon.durability > 0 && avatar.getHasLid()){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_LID;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
                 createBullet(avatar);
                 avatar.setHasLid(false);
             }
             return StateJoe.LIDD;
         }
-        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "spray"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                && avatar.getWep1().durability > 0 )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
+                && currentWeapon.durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "spray")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "spray")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0)){
+                        && currentWeapon.durability > 0)){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_SPRAY;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.SPRAYR;
         }
-        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0  ) ||
-                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && currentWeapon.getName() == "spray"
+                && currentWeapon.durability > 0  ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && currentWeapon.getName() == "spray")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 )||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "spray")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && currentWeapon.durability > 0
                 )){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_SPRAY;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.SPRAYL;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0 ){
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && currentWeapon.getName() == "spray"
+                && currentWeapon.durability > 0 ){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_SPRAY;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.SPRAYU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "spray"
-                && avatar.getWep1().durability > 0 ){
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& currentWeapon.getName() == "spray"
+                && currentWeapon.durability > 0 ){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_SPRAY;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.SPRAYD;
         }
-        else if ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
+        else if ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "vacuum"
                 && !(avatar.getMovementX() < 0) && avatar.isFacingRight()
-                && avatar.getWep1().durability > 0 )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
-                ((avatar.isLeft() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
+                && currentWeapon.durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "vacuum")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 )||
+                ((avatar.isLeft() && !avatar.isAtMopCart()&& currentWeapon.getName() == "vacuum")
                         && avatar.getMovementX() == 0 && !avatar.isFacingRight()
-                        && avatar.getWep1().durability > 0)){
+                        && currentWeapon.durability > 0)){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_VACUUM;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.VACUUMR;
         }
-        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0  ) ||
-                ((avatar.isRight() && !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() < 0 && avatar.getWep1().durability > 0 )||
-                ((avatar.isRight() && !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum")
-                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && avatar.getWep1().durability > 0
+        else if ((avatar.isLeft()&& !avatar.isAtMopCart() && currentWeapon.getName() == "vacuum"
+                && currentWeapon.durability > 0  ) ||
+                ((avatar.isRight() && !avatar.isAtMopCart() && currentWeapon.getName() == "vacuum")
+                        && avatar.getMovementX() < 0 && currentWeapon.durability > 0 )||
+                ((avatar.isRight() && !avatar.isAtMopCart()&& currentWeapon.getName() == "vacuum")
+                        && avatar.getMovementX() == 0 && !avatar.isFacingRight() && currentWeapon.durability > 0
                 )){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_VACUUM;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.VACUUML;
         }
-        else if (avatar.isUp()&& !avatar.isAtMopCart() && avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0 ){
+        else if (avatar.isUp()&& !avatar.isAtMopCart() && currentWeapon.getName() == "vacuum"
+                && currentWeapon.durability > 0 ){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_VACUUM;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.VACUUMU;
         }
-        else if (avatar.isDown()&& !avatar.isAtMopCart()&& avatar.getWep1().getName() == "vacuum"
-                && avatar.getWep1().durability > 0 ){
+        else if (avatar.isDown()&& !avatar.isAtMopCart()&& currentWeapon.getName() == "vacuum"
+                && currentWeapon.durability > 0 ){
             if (attackTimer == 0) {
                 attackTimer = ATTACK_DURATION_VACUUM;
-                avatar.getWep1().decrDurability();
+                currentWeapon.decrDurability();
             }
             return StateJoe.VACUUMD;
         }
@@ -3472,7 +3521,7 @@ public class FloorController extends WorldController implements ContactListener 
                 (currentState == StateJoe.SPRAYR)||(currentState == StateJoe.SPRAYU)||(currentState == StateJoe.SPRAYD)||(currentState == StateJoe.SPRAYL) ||
                 (currentState == StateJoe.VACUUMR)||(currentState == StateJoe.VACUUMU)||(currentState == StateJoe.VACUUMD)||(currentState == StateJoe.VACUUML)) {
 
-            attack(avatar.getWep1());
+            attack(avatar.getCurrentWeapon());
 
             if ((previousState == currentState) && attackTimer > 0) {
                 if (dt > attackTimer) {

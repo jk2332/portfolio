@@ -378,8 +378,8 @@ public class InputController {
 		spacePressed  = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		enterPressed  = (secondary && enterPressed) || (Gdx.input.isKeyPressed(Input.Keys.ENTER));
 
-		primaryKeyPressed  = (secondary && primaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_1));
-		secondaryKeyPressed  = (secondary && secondaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.NUM_2));
+		primaryKeyPressed  = (secondary && primaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.Q));
+		secondaryKeyPressed  = (secondary && secondaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
 
 		lKeyPressed  = (secondary && lKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
 		pKeyPressed = (secondary && pKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
