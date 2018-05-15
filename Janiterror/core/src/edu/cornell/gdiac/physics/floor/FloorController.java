@@ -1413,7 +1413,8 @@ public class FloorController extends WorldController implements ContactListener 
         for (int ii=0; ii<lizardPos.size(); ii++){
             //changing velocity does nothing?
             EnemyModel mon = new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii, 3, 100f, 5.0f, 1,
+                    dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii,
+                    3, 100f, 5.0f, 1,
                     StateLizard.STANDING, StateLizard.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);
