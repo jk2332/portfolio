@@ -267,7 +267,7 @@ public class FloorController extends WorldController implements ContactListener 
     private static final float DEATH_ANIMATION_TIME = 2f;
     private static final float ENEMY_DEATH_ANIMATION_TIME = 0.5f;
     /** The timer for animations*/
-    private float stateTimer;
+    float stateTimer;
     private float stateTimerM;
     private float stateTimerR;
     private float stateTimerL;
@@ -2090,12 +2090,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         // attack
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
-                && avatar.getWep1().getDurability() < 0  && attackTimer == 0) {
+                && avatar.getCurrentWeapon().getDurability() < 0  && attackTimer == 0) {
             SoundController.getInstance().play(NO_WEAPON_FILE, NO_WEAPON_FILE, false, 0.5f);
         }
         if ((avatar.isUp()||avatar.isDown()||avatar.isRight()||avatar.isLeft())
-                && avatar.getWep1().getDurability() == 0  && attackTimer == 0) {
-            avatar.getWep1().decrDurability();
+                && avatar.getCurrentWeapon().getDurability() == 0  && attackTimer == 0) {
+            avatar.getCurrentWeapon().decrDurability();
         }
         //update all mopcart sprites
         for (int i=0; i < mopCartList.size(); i++) {
@@ -3292,6 +3292,7 @@ public class FloorController extends WorldController implements ContactListener 
 
     public StateJoe getStateJoe(){
         WeaponModel currentWeapon = avatar.getCurrentWeapon();
+
         if (avatar.getHP() <= 0){
             if (joeDeathTimer == 0) {
                 joeDeathTimer = DEATH_ANIMATION_TIME;
