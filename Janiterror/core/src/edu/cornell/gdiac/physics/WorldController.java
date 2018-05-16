@@ -1122,6 +1122,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int centerXMain;
 	private int centerXNext;
 	private int centerYJoe;
+	int choose;
 
 	public enum StateJoe {MAIN, NEXT}
 
@@ -1340,6 +1341,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 */
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
 		paused=false;
+		choose=1;
 		playButton = new Texture(CONTINUE_BTN_FILE);
 		playButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -1632,12 +1634,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 //			System.out.println(cameraX);
 //			System.out.println(cameraY);
 			canvas.draw(background, cameraX - 512, cameraY - 288);
-			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
+			Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
 			//cameraX and cameraY are exactly the middle points of the current screen
-			canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
+			canvas.draw(mainButton, mainTint, mainButton.getWidth()/2, mainButton.getHeight()/2,
 					cameraX - 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
-			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+			canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
 					cameraX + 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
@@ -1702,6 +1704,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 			boolean b = preUpdate(delta);
 			if (!paused) {
 				pressState = 0;
+				choose=1;
 				//backToMenu=false;
 				if (InputController.getInstance().getDidPause()) paused=true;
 				if (b) {
@@ -1710,14 +1713,21 @@ public abstract class WorldController implements Screen, InputProcessor {
 				}
 			}
 			else {
+				if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && choose==1){
+					choose=0;
+				}
+				else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && choose==0){
+					choose=1;
+				}
 				//what to do here?
-				if (pressState==2 || Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+				if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==1) {
 					//pauseDispose();
 					paused=false;
-				} else if ((pressState==4 || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
+				} else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==0) {
 					//pauseDispose();
 					backToMenu=true;
 					paused=false;
+					choose=1;
 					reset2();
 					listener.exitScreen(this, EXIT_MENU);
 				}
