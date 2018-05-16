@@ -536,9 +536,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        if (input_level == 1) {
-            LEVEL = "testlevel3.tmx";
-        }
+//        if (input_level == 1) {
+//            LEVEL = "testlevel1.tmx";
+//        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1363,8 +1363,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         wep_in_use.put(default1, true);
         wep_in_use.put(default2, true);
-        if (LEVEL.equals("level3.tmx")) {
+        if (LEVEL.equals("level4.tmx")) {
             mopcart_menu[0] = "lid";
+            mopcart_menu[1] = "none";
+        }
+        else if (LEVEL.equals("level5.tmx")) {
+            mopcart_menu[0] = "vacuum";
             mopcart_menu[1] = "none";
         }
         else if (default2.equals("none")) {
@@ -3199,23 +3203,48 @@ public class FloorController extends WorldController implements ContactListener 
             displayFont.getData().setScale(1f);
         }
         else if (LEVEL.equals("level2.tmx")) {
-            canvas.draw(eKeyTexture, (670), (500));
-            canvas.draw(qKeyTexture, (932), (500));
-            canvas.draw(eKeyTexture, (1022), (500));
+            canvas.draw(eKeyTexture, (670), (480));
+            canvas.draw(qKeyTexture, (932), (480));
+            canvas.draw(eKeyTexture, (1022), (480));
 
             displayFont.getData().setScale(0.6f);
             canvas.drawText("Good work! Now let's try some more...",
                     displayFont, 150, 450);
             canvas.drawText("Use             to snag",
-                    displayFont, 630, 530);
+                    displayFont, 630, 510);
             canvas.drawText("the Spray Bottles",
-                    displayFont, 630, 490);
+                    displayFont, 630, 470);
 
             canvas.drawText("Press            and",
-                    displayFont, 880, 530);
+                    displayFont, 880, 510);
             canvas.drawText("to swap your weapons!",
-                    displayFont, 880, 490);
+                    displayFont, 880, 470);
             displayFont.getData().setScale(1f);
+        }
+        else if (LEVEL.equals("level4.tmx")) {
+            displayFont.getData().setScale(0.7f);
+            canvas.drawText("Watch out for the acid!",
+                    displayFont, 405, 1177);
+            canvas.drawText("Hmmm...how can you get them all the way over there?",
+                    displayFont, 300, 505);
+
+            //maybe switch these to the bars
+            canvas.drawText("Press           to swap with",
+                    displayFont, 625, 85);
+            canvas.draw(eKeyTexture, (685), (55));
+            canvas.draw(sprayTexture, (885), (45));
+
+            canvas.drawText("Press           to swap with",
+                    displayFont, 625, 140);
+            canvas.draw(qKeyTexture, (685), (110));
+            canvas.draw(mopTexture, (860), (95));
+        }
+        else if (LEVEL.equals("level5.tmx")) {
+            displayFont.getData().setScale(0.6f);
+            canvas.drawText("Hmm...Mop and Spray don't seem to be good here",
+                    displayFont, 150, 410);
+            canvas.drawText("Perhaps check out what's in that cart...",
+                    displayFont, 150, 380);
         }
         displayFont.setColor(Color.BLACK);
 
