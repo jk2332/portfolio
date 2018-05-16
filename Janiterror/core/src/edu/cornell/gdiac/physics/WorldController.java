@@ -99,6 +99,9 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	private static final String EMPTY_MOP_CART_FILE = "shared/mop-cart-empty.png";
+	private static final String MOP_CART_PIN_FULL_FILE = "shared/mop-cart-indicator-full.png";
+	private static final String MOP_CART_PIN_EMPTY_FILE = "shared/mop-cart-indicator-empty.png";
+
 	/** File to texture for power-ups */
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
 	private static final String SPECIAL_DURABILITY_FILE = "shared/duct-tape.png";
@@ -107,7 +110,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String COMPUTER_FILE = "shared/computer.png";
 	private static final String PLANT_FILE = "shared/plant.png";
 	/** Retro font for displaying messages */
-	private static final String FONT_FILE = "shared/Syntax_e11.ttf";
+	private static final String FONT_FILE = "shared/Title.ttf";
+	private static final String FONT_BODY_FILE = "shared/Francois.ttf";
 	private static final int FONT_SIZE = 32;
 	/** The texture files for characters/attacks */
 	private static final String JANITOR_IDLE_FILE  = "floor/janitor/janitor-idle.png";
@@ -192,6 +196,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
 	private static final String SLIMEBALL_ANI_FILE = "floor/enemy_long/slimeball-ani.png";
 	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/slimeball-turret-ani.png";
+	private static final String VACUUM_SUCK_ANI_FILE = "floor/vacuum-suck-animation.png";
 
 	/** The texture files for the Tutorial Keys */
 	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
@@ -368,6 +373,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion slimeballAniTexture;
 	protected TextureRegion slimeballTurretAniTexture;
 	protected TextureRegion lidAniTexture;
+	protected TextureRegion vacSuckAniTexture;
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
@@ -423,6 +429,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** The texture for the mop cart*/
 	protected TextureRegion mopCartTile;
 	protected TextureRegion emptyMopCartTile;
+	protected TextureRegion mopCartPinFullTile;
+	protected TextureRegion mopCartPinEmptyTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
 	protected TextureRegion specialDurabilityTile;
@@ -674,6 +682,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(SLIMEBALL_ANI_FILE);
 		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
 		assets.add(TURRET_SLIMEBALL_FILE);
+		manager.load(VACUUM_SUCK_ANI_FILE, Texture.class);
+		assets.add(VACUUM_SUCK_ANI_FILE);
 
 		//Tutorial
 		manager.load(Q_KEY_FILE, Texture.class);
@@ -771,6 +781,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(MOP_CART_FILE);
 		manager.load(EMPTY_MOP_CART_FILE,Texture.class);
 		assets.add(EMPTY_MOP_CART_FILE);
+		manager.load(MOP_CART_PIN_FULL_FILE,Texture.class);
+		assets.add(MOP_CART_PIN_FULL_FILE);
+		manager.load(MOP_CART_PIN_EMPTY_FILE,Texture.class);
+		assets.add(MOP_CART_PIN_EMPTY_FILE);
 
 		//Load Special Power Up Tiles
 		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
@@ -781,9 +795,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
+		size2Params.fontFileName = FONT_BODY_FILE;
 		size2Params.fontParameters.size = FONT_SIZE;
 		manager.load(FONT_FILE, BitmapFont.class, size2Params);
 		assets.add(FONT_FILE);
+		manager.load(FONT_BODY_FILE, BitmapFont.class, size2Params);
+		assets.add(FONT_BODY_FILE);
 	}
 
 	/**
@@ -906,6 +923,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		slimeballAniTexture = createTexture(manager,SLIMEBALL_ANI_FILE,false);
 		slimeballTurretAniTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
+		vacSuckAniTexture = createTexture(manager,VACUUM_SUCK_ANI_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
@@ -962,6 +980,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopCartTile = createTexture(manager,MOP_CART_FILE, true);
 		emptyMopCartTile = createTexture(manager,EMPTY_MOP_CART_FILE, true);
+		mopCartPinFullTile = createTexture(manager,MOP_CART_PIN_FULL_FILE, true);
+		mopCartPinEmptyTile = createTexture(manager,MOP_CART_PIN_EMPTY_FILE, true);
 
 		//idk why I made these textureregions
 		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
