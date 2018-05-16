@@ -99,6 +99,9 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	private static final String EMPTY_MOP_CART_FILE = "shared/mop-cart-empty.png";
+	private static final String MOP_CART_PIN_FULL_FILE = "shared/mop-cart-indicator-full.png";
+	private static final String MOP_CART_PIN_EMPTY_FILE = "shared/mop-cart-indicator-empty.png";
+
 	/** File to texture for power-ups */
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
 	private static final String SPECIAL_DURABILITY_FILE = "shared/duct-tape.png";
@@ -424,6 +427,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** The texture for the mop cart*/
 	protected TextureRegion mopCartTile;
 	protected TextureRegion emptyMopCartTile;
+	protected TextureRegion mopCartPinFullTile;
+	protected TextureRegion mopCartPinEmptyTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
 	protected TextureRegion specialDurabilityTile;
@@ -772,6 +777,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(MOP_CART_FILE);
 		manager.load(EMPTY_MOP_CART_FILE,Texture.class);
 		assets.add(EMPTY_MOP_CART_FILE);
+		manager.load(MOP_CART_PIN_FULL_FILE,Texture.class);
+		assets.add(MOP_CART_PIN_FULL_FILE);
+		manager.load(MOP_CART_PIN_EMPTY_FILE,Texture.class);
+		assets.add(MOP_CART_PIN_EMPTY_FILE);
 
 		//Load Special Power Up Tiles
 		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
@@ -966,6 +975,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		mopCartTile = createTexture(manager,MOP_CART_FILE, true);
 		emptyMopCartTile = createTexture(manager,EMPTY_MOP_CART_FILE, true);
+		mopCartPinFullTile = createTexture(manager,MOP_CART_PIN_FULL_FILE, true);
+		mopCartPinEmptyTile = createTexture(manager,MOP_CART_PIN_EMPTY_FILE, true);
 
 		//idk why I made these textureregions
 		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);

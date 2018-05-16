@@ -30,5 +30,4 @@ public class LizardModel extends EnemyModel {
         this.previousState = previousState;
         this.state = state;
     }
-
 }
