@@ -99,8 +99,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** File to texture for the mop cart */
 	private static final String MOP_CART_FILE = "shared/mop-cart.png";
 	private static final String EMPTY_MOP_CART_FILE = "shared/mop-cart-empty.png";
-	private static final String MOP_CART_PIN_FULL_FILE = "shared/mop-cart-indicator-full.png";
-	private static final String MOP_CART_PIN_EMPTY_FILE = "shared/mop-cart-indicator-empty.png";
 
 	/** File to texture for power-ups */
 	private static final String SPECIAL_HEALTH_FILE = "shared/chips.png";
@@ -429,8 +427,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 	/** The texture for the mop cart*/
 	protected TextureRegion mopCartTile;
 	protected TextureRegion emptyMopCartTile;
-	protected TextureRegion mopCartPinFullTile;
-	protected TextureRegion mopCartPinEmptyTile;
 	/** The texture for the mop cart*/
 	protected TextureRegion specialHealthTile;
 	protected TextureRegion specialDurabilityTile;
@@ -781,10 +777,6 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(MOP_CART_FILE);
 		manager.load(EMPTY_MOP_CART_FILE,Texture.class);
 		assets.add(EMPTY_MOP_CART_FILE);
-		manager.load(MOP_CART_PIN_FULL_FILE,Texture.class);
-		assets.add(MOP_CART_PIN_FULL_FILE);
-		manager.load(MOP_CART_PIN_EMPTY_FILE,Texture.class);
-		assets.add(MOP_CART_PIN_EMPTY_FILE);
 
 		//Load Special Power Up Tiles
 		manager.load(SPECIAL_HEALTH_FILE,Texture.class);
@@ -978,14 +970,11 @@ public abstract class WorldController implements Screen, InputProcessor {
 		hazardTileTexture = new Texture(HAZARD_TILE_FILE);
 
 		goalTile  = createTexture(manager,GOAL_FILE,true);
-		mopCartTile = createTexture(manager,MOP_CART_FILE, true);
-		emptyMopCartTile = createTexture(manager,EMPTY_MOP_CART_FILE, true);
-		mopCartPinFullTile = createTexture(manager,MOP_CART_PIN_FULL_FILE, true);
-		mopCartPinEmptyTile = createTexture(manager,MOP_CART_PIN_EMPTY_FILE, true);
+		mopCartTile = createTexture(manager,MOP_CART_FILE,false);
+		emptyMopCartTile = createTexture(manager,EMPTY_MOP_CART_FILE,false);
 
-		//idk why I made these textureregions
-		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, true);
-		specialDurabilityTile = createTexture(manager,SPECIAL_DURABILITY_FILE, true);
+		specialHealthTile = createTexture(manager,SPECIAL_HEALTH_FILE, false);
+		specialDurabilityTile = createTexture(manager,SPECIAL_DURABILITY_FILE, false);
 
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
@@ -1133,6 +1122,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int centerXMain;
 	private int centerXNext;
 	private int centerYJoe;
+	int choose;
 
 	public enum StateJoe {MAIN, NEXT}
 
@@ -1351,6 +1341,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	 */
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
 		paused=false;
+		choose=1;
 		playButton = new Texture(CONTINUE_BTN_FILE);
 		playButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -1643,12 +1634,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 //			System.out.println(cameraX);
 //			System.out.println(cameraY);
 			canvas.draw(background, cameraX - 512, cameraY - 288);
-			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
+			Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
 			//cameraX and cameraY are exactly the middle points of the current screen
-			canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
+			canvas.draw(mainButton, mainTint, mainButton.getWidth()/2, mainButton.getHeight()/2,
 					cameraX - 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
-			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+			canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
 					cameraX + 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
@@ -1713,6 +1704,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 			boolean b = preUpdate(delta);
 			if (!paused) {
 				pressState = 0;
+				choose=1;
 				//backToMenu=false;
 				if (InputController.getInstance().getDidPause()) paused=true;
 				if (b) {
@@ -1721,14 +1713,21 @@ public abstract class WorldController implements Screen, InputProcessor {
 				}
 			}
 			else {
+				if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && choose==1){
+					choose=0;
+				}
+				else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && choose==0){
+					choose=1;
+				}
 				//what to do here?
-				if (pressState==2 || Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+				if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==1) {
 					//pauseDispose();
 					paused=false;
-				} else if ((pressState==4 || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
+				} else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==0) {
 					//pauseDispose();
 					backToMenu=true;
 					paused=false;
+					choose=1;
 					reset2();
 					listener.exitScreen(this, EXIT_MENU);
 				}

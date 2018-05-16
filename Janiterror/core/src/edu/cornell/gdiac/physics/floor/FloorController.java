@@ -539,7 +539,7 @@ public class FloorController extends WorldController implements ContactListener 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
 //        if (input_level == 1) {
-//            LEVEL = "level16.tmx";
+//            LEVEL = "testlevel1.tmx";
 //        }
 
         level = new LevelEditorParser(LEVEL);
@@ -851,8 +851,8 @@ public class FloorController extends WorldController implements ContactListener 
     private void addUIInfo() {
         /** Pixel Locations of Weapon Icons in Mop Cart*/
         //added on to avatar.getX()
-        mopcart_index_xlocation[0] = 375;
-        mopcart_index_xlocation[1] = 450;
+        mopcart_index_xlocation[0] = 367;
+        mopcart_index_xlocation[1] = 443;
         /** Add names to list of weapons */
         list_of_weapons[0] = "mop";
         list_of_weapons[1] = "spray";
@@ -1367,8 +1367,12 @@ public class FloorController extends WorldController implements ContactListener 
 
         wep_in_use.put(default1, true);
         wep_in_use.put(default2, true);
-        if (LEVEL.equals("level3.tmx")) {
+        if (LEVEL.equals("level4.tmx")) {
             mopcart_menu[0] = "lid";
+            mopcart_menu[1] = "none";
+        }
+        else if (LEVEL.equals("level5.tmx")) {
+            mopcart_menu[0] = "vacuum";
             mopcart_menu[1] = "none";
         }
         else if (default2.equals("none")) {
@@ -3015,11 +3019,13 @@ public class FloorController extends WorldController implements ContactListener 
             }
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
+                System.out.println("lid regained");
                 removeBullet(bd1);
                 avatar.setHasLid(true);
                 lidGround = false;
                 lidTimer = LID_RANGE;
             } else if (bd2.getName().equals("lid") && (bd1 == avatar) ) {
+                System.out.println("lid regained");
                 removeBullet(bd2);
                 avatar.setHasLid(true);
                 lidGround = false;
@@ -3065,10 +3071,13 @@ public class FloorController extends WorldController implements ContactListener 
 
             if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
                     && bd1.getName().equals("lid")) {
+                System.out.println("removed bullet");
                 removeBullet(bd2);
             }
 
-            if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret")) && bd2.getName().equals("lid")) {
+            if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
+                    && bd2.getName().equals("lid")) {
+                System.out.println("removed bullet");
                 removeBullet(bd1);
             }
 
@@ -3225,23 +3234,48 @@ public class FloorController extends WorldController implements ContactListener 
             displayFont.getData().setScale(1f);
         }
         else if (LEVEL.equals("level2.tmx")) {
-            canvas.draw(eKeyTexture, (670), (500));
-            canvas.draw(qKeyTexture, (932), (500));
-            canvas.draw(eKeyTexture, (1022), (500));
+            canvas.draw(eKeyTexture, (670), (480));
+            canvas.draw(qKeyTexture, (932), (480));
+            canvas.draw(eKeyTexture, (1022), (480));
 
             displayFont.getData().setScale(0.6f);
             canvas.drawText("Good work! Now let's try some more...",
                     displayFont, 150, 450);
             canvas.drawText("Use             to snag",
-                    displayFont, 630, 530);
+                    displayFont, 630, 510);
             canvas.drawText("the Spray Bottles",
-                    displayFont, 630, 490);
+                    displayFont, 630, 470);
 
             canvas.drawText("Press            and",
-                    displayFont, 880, 530);
+                    displayFont, 880, 510);
             canvas.drawText("to swap your weapons!",
-                    displayFont, 880, 490);
+                    displayFont, 880, 470);
             displayFont.getData().setScale(1f);
+        }
+        else if (LEVEL.equals("level4.tmx")) {
+            displayFont.getData().setScale(0.7f);
+            canvas.drawText("Watch out for the acid!",
+                    displayFont, 405, 1177);
+            canvas.drawText("Hmmm...how can you get them all the way over there?",
+                    displayFont, 300, 505);
+
+            //maybe switch these to the bars
+            canvas.drawText("Press           to swap with",
+                    displayFont, 625, 85);
+            canvas.draw(eKeyTexture, (685), (55));
+            canvas.draw(sprayTexture, (885), (45));
+
+            canvas.drawText("Press           to swap with",
+                    displayFont, 625, 140);
+            canvas.draw(qKeyTexture, (685), (110));
+            canvas.draw(mopTexture, (860), (95));
+        }
+        else if (LEVEL.equals("level5.tmx")) {
+            displayFont.getData().setScale(0.6f);
+            canvas.drawText("Hmm...Mop and Spray don't seem to be good here",
+                    displayFont, 150, 410);
+            canvas.drawText("Perhaps check out what's in that cart...",
+                    displayFont, 150, 380);
         }
         displayFont.setColor(Color.BLACK);
 
@@ -3256,6 +3290,10 @@ public class FloorController extends WorldController implements ContactListener 
                         //draw 5 health for robot, 3 for everyone else
                         canvas.draw(allEnemyHeartTextures[1][5 - enemy_hp],
                                 (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
+                    } else if (s instanceof TurretModel || s instanceof SlimeModel) {
+                        //draw it slightly lower
+                        canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
+                                (s.getX() * scale.x) - 30, ((s.getY()) * scale.y));
                     } else {
                         canvas.draw(allEnemyHeartTextures[0][3 - enemy_hp],
                                 (s.getX() * scale.x) - 30, ((s.getY()) * scale.y) + 10);
@@ -3266,13 +3304,25 @@ public class FloorController extends WorldController implements ContactListener 
                     if (!(s instanceof TurretModel)) {
                         //don't draw state for turrets
                         if (state.equals("CHASE") || state.equals("ATTACK")) {
-                            canvas.draw(emoticonExclamationTexture,
-                                    (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
                             //might want to scale this and put next to hp
+                            if (s instanceof SlimeModel) {
+                                canvas.draw(emoticonExclamationTexture,
+                                        (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
+                            }
+                            else {
+                                canvas.draw(emoticonExclamationTexture,
+                                        (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
+                            }
                         }
                         else {
-                            canvas.draw(emoticonQuestionTexture,
-                                    (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
+                            if (s instanceof SlimeModel) {
+                                canvas.draw(emoticonQuestionTexture,
+                                        (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
+                            }
+                            else {
+                                canvas.draw(emoticonQuestionTexture,
+                                        (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
+                            }
                         }
                     }
                 }
@@ -3343,7 +3393,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         if (avatar.isAtMopCart()){
             //DRAW MOP CART BACKGROUND
-            canvas.draw(mopcartBackgroundTexture, (cameraX + 350), (cameraY + 140));
+            canvas.draw(mopcartBackgroundTexture, (cameraX + 328), (cameraY + 140));
             //change sy to increase height of black box
             displayFont.getData().setScale(0.5f);
 
@@ -3358,8 +3408,8 @@ public class FloorController extends WorldController implements ContactListener 
             //draw unused weapons currently in cart
             Texture unused_wep1 = wep_to_texture.get(draw_mopcart[0]);
             Texture unused_wep2 = wep_to_texture.get(draw_mopcart[1]);
-            canvas.draw(unused_wep1, (cameraX + 360), (cameraY + 180));
-            canvas.draw(unused_wep2, (cameraX + 435), (cameraY + 180));
+            canvas.draw(unused_wep1, (cameraX + 350), (cameraY + 180));
+            canvas.draw(unused_wep2, (cameraX + 425), (cameraY + 180));
 
             //DRAW MOPCART INDEX
             if (mopcart_menu[0].equals("none") && mopcart_menu[1].equals("none")){
