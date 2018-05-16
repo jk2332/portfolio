@@ -1715,6 +1715,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 			boolean b = preUpdate(delta);
 			if (!paused) {
 				pressState = 0;
+				choose=1;
 				//backToMenu=false;
 				if (InputController.getInstance().getDidPause()) paused=true;
 				if (b) {
@@ -1737,6 +1738,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 					//pauseDispose();
 					backToMenu=true;
 					paused=false;
+					choose=1;
 					reset2();
 					listener.exitScreen(this, EXIT_MENU);
 				}
