@@ -1720,7 +1720,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 					choose=1;
 				}
 				//what to do here?
-				if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==1) {
+				if ((Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==1) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					//pauseDispose();
 					paused=false;
 				} else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==0) {

@@ -38,7 +38,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 576;
     /** Amount to scale the play button */
-    private static float BUTTON_SCALE  = 0.75f;
+    private float buttonScale  = 0.75f;
 
     private static float CENTER_X_RATIO = 0.67f;
 
@@ -252,30 +252,58 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         input.readInput(new Rectangle(0f, 0f, 32.0f, 18.0f), new Vector2(32.0f, 32.0f));
 
         if (input.didDownArrow()) {
-            if (hoverIndex % LEVELS_PER_PAGE < NUM_ROWS && hoverIndex + NUM_ROWS < levelNames.length) {
+            if (hoverIndex == levelNames.length) {
+
+            }
+            else if (hoverIndex % LEVELS_PER_PAGE < NUM_ROWS && hoverIndex + NUM_ROWS < levelNames.length) {
                 hoverIndex = hoverIndex + NUM_ROWS;
+
             } else {
-                hoverIndex = (curr_page + 1) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
+                //hoverIndex = (curr_page + 1) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
+                hoverIndex = levelNames.length;
             }
         } else if (input.didUpArrow()) {
-            if (hoverIndex % LEVELS_PER_PAGE >= NUM_ROWS) {
+            if (hoverIndex == levelNames.length) {
+                hoverIndex = (curr_page) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
+            }
+            else if (hoverIndex % LEVELS_PER_PAGE >= NUM_ROWS) {
                 hoverIndex = hoverIndex - NUM_ROWS;
             } else {
                 hoverIndex = (curr_page - 1 + (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f))) % (int) Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) * LEVELS_PER_PAGE;
             }
         } else if (input.didLeftArrow()) {
-            hoverIndex = (hoverIndex - 1 + levelNames.length) % levelNames.length;
-        } else if (input.didRightArrow()) {
-            hoverIndex = (hoverIndex + 1) % levelNames.length;
-        }
+            if (hoverIndex == levelNames.length) {
 
-        curr_page = hoverIndex / LEVELS_PER_PAGE;
+            } else {
+                hoverIndex = (hoverIndex - 1 + levelNames.length) % levelNames.length;
+            }
+        } else if (input.didRightArrow()) {
+            if (hoverIndex == levelNames.length) {
+
+            } else {
+                hoverIndex = (hoverIndex + 1) % levelNames.length;
+            }
+
+    }
 
         if (input.didEnter() || input.didSpace()) {
             pressState = 2;
+            if (hoverIndex == levelNames.length) {
+                exit = 0;
+            } else {
+                exit = hoverIndex + 1;
+            }
+
         }
 
-        subtitle = levelNames[hoverIndex];
+        if (hoverIndex == levelNames.length) {
+            subtitle = DEFAULT_SUBTITLE;
+        } else {
+            subtitle = levelNames[hoverIndex];
+            curr_page = hoverIndex / LEVELS_PER_PAGE;
+        }
+
+        System.out.println(hoverIndex);
 
     }
 
@@ -331,19 +359,23 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY + radiusY);
         }
 
-        color = (pressState == 1 && exit == 0 ? Color.YELLOW: Color.WHITE);
-
+        color = (pressState == 1 || pressState == 2 && exit == 0 ? Color.YELLOW: Color.WHITE);
+        buttonScale = 0.75f;
         if (curr_page > 0) {
             canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
-                     this.centerX - (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, (float) Math.PI, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+                     this.centerX - (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, (float) Math.PI, buttonScale*scale, buttonScale*scale);
         }
 
         if (curr_page < Math.ceil(levelNames.length/(LEVELS_PER_PAGE * 1.0f)) - 1) {
             canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,
-                    this.centerX + (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+                    this.centerX + (NUM_ROWS/2 + 0.6f) * marginX, (centerYUp + centerYDown)/2, 0, buttonScale*scale, buttonScale*scale);
+        }
+
+        if (hoverIndex == levelNames.length) {
+            buttonScale = 0.85f;
         }
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
-                STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+                STANDARD_WIDTH/2, menuY, 0, buttonScale*scale, buttonScale*scale);
 
         canvas.end();
     }
@@ -471,14 +503,14 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         float centerY;
 
 
-        float radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
+        float radius = buttonScale*scale*mainButton.getWidth()/2.0f;
         float dist = (screenX-STANDARD_WIDTH/2)*(screenX-STANDARD_WIDTH/2)+(screenY-menuY)*(screenY-menuY);
         if (dist < radius*radius) {
             pressState = 1;
             exit = 0;
         }
 
-        radius = BUTTON_SCALE*scale*arrowButton.getWidth()/2.0f;
+        radius = buttonScale*scale*arrowButton.getWidth()/2.0f;
         dist = (screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))*(screenX-(this.centerX - (NUM_ROWS/2 + 0.6f) * marginX))+(screenY-(centerYUp + centerYDown)/2)*(screenY-(centerYUp + centerYDown)/2);
 
         if (curr_page > 0 && dist < radius * radius) {
