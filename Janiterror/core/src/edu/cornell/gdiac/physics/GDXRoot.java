@@ -110,7 +110,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[7] = new FloorController(8);
 		controllers[8] = new FloorController(9);
 		controllers[9] = new FloorController(10);
-		controllers[10] = new FloorController(8);
+		controllers[10] = new FloorController(11);
 		controllers[11] = new FloorController(8);
 		controllers[12] = new FloorController(8);
 		controllers[13] = new FloorController(8);
