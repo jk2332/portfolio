@@ -302,6 +302,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	private void update(float delta) {
+		canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
 		bg = bgAnimation.getKeyFrame(stateTimer,true);
 		stateTimer = stateTimer + delta;
 		if (playButton == null && selectButton == null && creditsButton == null) {

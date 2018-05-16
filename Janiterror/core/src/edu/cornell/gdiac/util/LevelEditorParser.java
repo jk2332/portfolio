@@ -35,6 +35,8 @@ public class LevelEditorParser {
     private ArrayList<Vector2> wallSBRPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallSBLPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallBlockedPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallBlockedVLPos = new ArrayList<Vector2>();
+    private ArrayList<Vector2> wallBlockedVRPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> wallLightPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> scientistPos = new ArrayList<Vector2>();
     private ArrayList<Vector2> robotPos = new ArrayList<Vector2>();
@@ -382,6 +384,10 @@ public class LevelEditorParser {
             for (int j = 0; j < blockedWalls[0].length; j++) {
                 if (blockedWalls[i][j] == wallhgid + 1) {
                     wallBlockedPos.add(new Vector2(j, i));
+                } else if (blockedWalls[i][j] == wallvgid) {
+                    wallBlockedVLPos.add(new Vector2(j, i));
+                } else if (blockedWalls[i][j] == wallvgid + 1) { //TODO change later
+                    wallBlockedVRPos.add(new Vector2(j, i));
                 }
             }
         }
@@ -781,5 +787,12 @@ public class LevelEditorParser {
 
     public ArrayList<Vector2> getWallBlockedPos() {
         return wallBlockedPos;
+    }
+
+    public ArrayList<Vector2> getWallBlockedVLPos() {
+        return wallBlockedVLPos;
+    }
+    public ArrayList<Vector2> getWallBlockedVRPos() {
+        return wallBlockedVRPos;
     }
 }

@@ -365,6 +365,8 @@ public class FloorController extends WorldController implements ContactListener 
     ArrayList<Vector2> computerPos;
     ArrayList<Vector2> beakerPos;
     ArrayList<Vector2> wallBlockedPos;
+    ArrayList<Vector2> wallBlockedVLPos;
+    ArrayList<Vector2> wallBlockedVRPos;
 
     BoxObstacle[] wallBlocked;
 
@@ -582,6 +584,8 @@ public class FloorController extends WorldController implements ContactListener 
         wallDBRPos = level.getWallDBRPos();
         wallLightPos = level.getWallLightPos();
         wallBlockedPos = level.getWallBlockedPos();
+        wallBlockedVLPos = level.getWallBlockedVLPos();
+        wallBlockedVRPos = level.getWallBlockedVRPos();
 
         computerPos = level.getComputerPos();
         plantPos = level.getPlantPos();
@@ -1485,7 +1489,7 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             addWallObject(obj);
         }
-        wallBlocked = new BoxObstacle[wallBlockedPos.size()];
+        wallBlocked = new BoxObstacle[wallBlockedPos.size() + wallBlockedVLPos.size() + wallBlockedVRPos.size()];
         for (int ii = 0; ii < wallBlockedPos.size(); ii++) {
             x = board.boardToScreenX((int) wallBlockedPos.get(ii).x);
             y = board.boardToScreenY((int) wallBlockedPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1498,6 +1502,7 @@ public class FloorController extends WorldController implements ContactListener 
             addWallObject(obj);
 
         }
+
         for (int ii = 0; ii < wallLightPos.size(); ii++) {
             x = board.boardToScreenX((int) wallLightPos.get(ii).x);
             y = board.boardToScreenY((int) wallLightPos.get(ii).y) + offset/32 + 0.5f; //added 0.5f for offset due to wall dimensions
@@ -1752,6 +1757,19 @@ public class FloorController extends WorldController implements ContactListener 
             addWallObject(obj);
         }
 
+        for (int ii = 0; ii < wallBlockedVLPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallBlockedVLPos.get(ii).x) + offset/32;
+            y = board.boardToScreenY((int) wallBlockedVLPos.get(ii).y);
+            board.setBlocked((int) wallBlockedVLPos.get(ii).x, (int) wallBlockedVLPos.get(ii).y);
+
+            obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
+            obj.setTexture(wallLeftTexture, offset, 0);
+            obj.setName(pname+ii);
+            wallBlocked[wallBlockedPos.size() + ii] = obj;
+            addWallObject(obj);
+
+        }
+
         offset = -offset;
         for (int ii = 0; ii < wallRightPos.size(); ii++) {
             x = board.boardToScreenX((int) wallRightPos.get(ii).x) + offset/32;
@@ -1762,6 +1780,19 @@ public class FloorController extends WorldController implements ContactListener 
             obj.setName(pname+ii);
             obj.setTexture(wallRightTexture, offset, 0);
             addWallObject(obj);
+        }
+
+        for (int ii = 0; ii < wallBlockedVRPos.size(); ii++) {
+            x = board.boardToScreenX((int) wallBlockedVRPos.get(ii).x) + offset/32;
+            y = board.boardToScreenY((int) wallBlockedVRPos.get(ii).y);
+            board.setBlocked((int) wallBlockedVRPos.get(ii).x, (int) wallBlockedVRPos.get(ii).y);
+
+            obj = new BoxObstacle(x, y, dwidth * WALL_THICKNESS_SCALE, dheight);
+            obj.setName(pname+ii);
+            obj.setTexture(wallRightTexture, offset, 0);
+            wallBlocked[wallBlockedPos.size() + wallBlockedVLPos.size() + ii] = obj;
+            addWallObject(obj);
+
         }
     }
 
