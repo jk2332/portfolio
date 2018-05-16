@@ -375,6 +375,7 @@ public class InputController {
 		rightArrowPressed  = (secondary && rightArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.RIGHT));
 		upArrowPressed  = (secondary && upArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
 		downArrowPressed  = (secondary && downArrowPressed) || (Gdx.input.isKeyPressed(Input.Keys.DOWN));
+
 		spacePressed  = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		enterPressed  = (secondary && enterPressed) || (Gdx.input.isKeyPressed(Input.Keys.ENTER));
 

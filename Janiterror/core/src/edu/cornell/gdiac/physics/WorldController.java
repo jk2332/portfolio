@@ -193,6 +193,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String SLIMEBALL_FILE = "floor/slimeball.png";
 	private static final String SLIMEBALL_ANI_FILE = "floor/enemy_long/slimeball-ani.png";
 	private static final String TURRET_SLIMEBALL_FILE = "floor/enemy_long/slimeball-turret-ani.png";
+	private static final String VACUUM_SUCK_ANI_FILE = "floor/vacuum-suck-animation.png";
 
 	/** The texture files for the Tutorial Keys */
 	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
@@ -369,6 +370,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion slimeballAniTexture;
 	protected TextureRegion slimeballTurretAniTexture;
 	protected TextureRegion lidAniTexture;
+	protected TextureRegion vacSuckAniTexture;
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
@@ -675,6 +677,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(SLIMEBALL_ANI_FILE);
 		manager.load(TURRET_SLIMEBALL_FILE, Texture.class);
 		assets.add(TURRET_SLIMEBALL_FILE);
+		manager.load(VACUUM_SUCK_ANI_FILE, Texture.class);
+		assets.add(VACUUM_SUCK_ANI_FILE);
 
 		//Tutorial
 		manager.load(Q_KEY_FILE, Texture.class);
@@ -910,6 +914,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		slimeballAniTexture = createTexture(manager,SLIMEBALL_ANI_FILE,false);
 		slimeballTurretAniTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
+		vacSuckAniTexture = createTexture(manager,VACUUM_SUCK_ANI_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
