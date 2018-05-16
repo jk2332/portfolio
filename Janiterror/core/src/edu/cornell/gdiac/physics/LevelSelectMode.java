@@ -24,6 +24,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
     private static final String BACKGROUND_FILE = "shared/inter-menu-v2.png";
 
     private static final String FONT_FILE = "shared/Title.ttf";
+    private static final String FONT_BODY_FILE = "shared/Francois.ttf";
 
     private static final String LEVEL_FILE = "shared/mop-bucket-menu.png";
 
@@ -70,6 +71,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected BitmapFont bodyFont;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -152,10 +154,18 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_FILE));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = FONT_SIZE;
+
         displayFont = generator.generateFont(parameter);
         generator.dispose();
-
         displayFont.getData().setScale(scale);
+
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal(FONT_BODY_FILE));
+        FreeTypeFontParameter parameter2 = new FreeTypeFontParameter();
+        parameter2.size = FONT_SIZE;
+
+        bodyFont = generator2.generateFont(parameter2);
+        generator2.dispose();
+        bodyFont.getData().setScale(scale);
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 
@@ -333,10 +343,13 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
         canvas.drawText(TITLE, displayFont, this.centerX - radiusX, titleY - radiusY);
         displayFont.setColor(Color.WHITE);
         displayFont.getData().setScale(scale);
-        layout.setText(displayFont, subtitle);
+
+        bodyFont.setColor(Color.WHITE);
+        bodyFont.getData().setScale(1f);
+        layout.setText(bodyFont, subtitle);
         radiusX = (int) (layout.width / 2.0f);
         radiusY = (int) (layout.height / 2.0f);
-        canvas.drawText(subtitle, displayFont, this.centerX- radiusX, centerYUp + marginX - radiusY);
+        canvas.drawText(subtitle, bodyFont, this.centerX- radiusX, centerYUp + marginX - radiusY);
 
         for (int i = curr_page * LEVELS_PER_PAGE; i < Math.min((curr_page + 1) * LEVELS_PER_PAGE, levelNames.length); i++) {
             if (i < NUM_ROWS + curr_page * LEVELS_PER_PAGE) {
