@@ -2769,13 +2769,13 @@ public class FloorController extends WorldController implements ContactListener 
                 avatar.setMass(10000f); //RAISE MASS SO ENEMIES DON'T PUSH JOE BACK
 
                 for (Obstacle obj : objects) {
+                    int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
+                    int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(obj.getY());
+                    boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
+                    boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <= 1;
+                    boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <= 1;
+                    boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <= 1;
                     if (obj.getName() == "lid") {
-                        int horiGap = board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX());
-                        int vertiGap = board.screenToBoardY(avatar.getY()) - board.screenToBoardY(obj.getY());
-                        boolean case1 = Math.abs(horiGap) <= vacuum.getRange() && horiGap >= 0 && avatar.isLeft() && Math.abs(vertiGap) <= 1;
-                        boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <= 1;
-                        boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <= 1;
-                        boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <= 1;
                         if ((case1)) {
                             obj.setVX(BULLET_SPEED);
                         }
@@ -2788,6 +2788,13 @@ public class FloorController extends WorldController implements ContactListener 
                         if ((case4)) {
                             obj.setVY(-BULLET_SPEED);
                         }
+                    }
+                    else if (obj.getName() == "slimeball" || obj.getName() == "slimeballTurret"){
+                        if (case1||case2 ||case3||case4) {
+                            obj.setActive(false);
+                            obj.markRemoved(true);
+                        }
+
                     }
                 }
 
