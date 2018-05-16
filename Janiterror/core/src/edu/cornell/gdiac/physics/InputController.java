@@ -382,7 +382,7 @@ public class InputController {
 		secondaryKeyPressed  = (secondary && secondaryKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
 
 		lKeyPressed  = (secondary && lKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
-		pKeyPressed = (secondary && pKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+		pKeyPressed = (secondary && pKeyPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 
 		// Directional controls
 		horizontal = (secondary ? horizontal : 0.0f);
