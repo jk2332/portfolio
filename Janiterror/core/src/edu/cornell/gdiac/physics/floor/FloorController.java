@@ -314,8 +314,10 @@ public class FloorController extends WorldController implements ContactListener 
     /** The boolean for whether lid is on ground*/
     private boolean lidGround;
     private boolean isWall;
+    private boolean isVacWall;
     private int vacuumDirection;
     private int vacuumTiles;
+    private boolean isVacDraw;
 
 
     // TODO reform weapon class and move to mop class
@@ -529,6 +531,10 @@ public class FloorController extends WorldController implements ContactListener 
         stateTimerL = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
+        isWall = false;
+        vacuumDirection = 0;
+        vacuumTiles = 0;
+        isVacDraw = false;
         gotHit = -1;
         setDebug(false);
         setComplete(false);
@@ -650,6 +656,11 @@ public class FloorController extends WorldController implements ContactListener 
         attackTimer = 0.0f;
         lidTimer = LID_RANGE;
         lidGround = false;
+        isWall = false;
+        vacuumDirection = 0;
+        vacuumTiles = 0;
+        isVacDraw = false;
+
 
         enemies=new EnemyModel[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
         controls = new AIController[scientistPos.size() + robotPos.size() + slimePos.size() + lizardPos.size() + slimeTurretPos.size()];
@@ -2835,6 +2846,7 @@ public class FloorController extends WorldController implements ContactListener 
 
                 for (EnemyModel s : enemies) {
                     if (!s.isRemoved()) {
+
                         if (!(s instanceof RobotModel)) {
 //                            s.setDensity(1f); //normalize enemy density to prevent pushing joe
 //                            s.setMass(2.2293804f);
@@ -2845,22 +2857,156 @@ public class FloorController extends WorldController implements ContactListener 
                             boolean case2 = Math.abs(horiGap) <= vacuum.getRange() && horiGap <= 0 && avatar.isRight() && Math.abs(vertiGap) <= 1;
                             boolean case3 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap >= 0 && avatar.isDown() && Math.abs(horiGap) <= 1;
                             boolean case4 = Math.abs(vertiGap) <= vacuum.getRange() && vertiGap <= 0 && avatar.isUp() && Math.abs(horiGap) <= 1;
+//                            System.out.println(vacuum.getRange());
+                            boolean breaker = false;
+                            isWall = false;
+                            for (Obstacle obj : objects) {
+                                if (obj.getName().length() > 4 && breaker == false) {
+                                    if (obj.getName().substring(0, 4).equals("wall")) {
+                                if (avatar.isLeft()) {
+                                    if (avatar.getX() > obj.getX()  && obj.getY() > avatar.getY() - .5
+                                            && obj.getY() < avatar.getY() + .5 && avatar.getX() - obj.getX() <= 10
+                                            ) {
+                                        if (!(s.getX() < avatar.getX() && s.getX() > obj.getX()
+                                                && s.getY() > avatar.getY() - .5
+                                                && s.getY() < avatar.getY() + .5)) {
+                                            breaker = true;
+                                            isWall = true;
+                                        }
+                                    }
+                                    }
+                                    if (avatar.isRight()) {
+                                            if (avatar.getX() < obj.getX() && obj.getY() > avatar.getY() - .5
+                                                    && obj.getY() < avatar.getY() + .5 &&  obj.getX() - avatar.getX() <= 10
+                                                   ) {
+                                                if (!(s.getX() > avatar.getX() && s.getX() < obj.getX()
+                                                        && s.getY() > avatar.getY() - .5
+                                                        && s.getY() < avatar.getY() + .5)){
+                                                    breaker = true;
+                                                isWall = true;
+                                            }
+                                            }
+                                        }
+                                        if (avatar.isDown()) {
+                                            if (avatar.getY() > obj.getY() && obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5 && avatar.getY() - obj.getY() <= 10
+                                                    ) {
+                                                if (!(s.getY() < avatar.getY() && s.getY() > obj.getY()
+                                                        && s.getX() > avatar.getX() - .5
+                                                        && s.getX() < avatar.getX() + .5)) {
+                                                    System.out.println("iswalldown");
+                                                    breaker = true;
+                                                    isWall = true;
+                                                }
+                                            }
+                                        }
+                                        if (avatar.isUp()) {
+                                            if (avatar.getY() < obj.getY()  && obj.getX() > avatar.getX() - .5
+                                                    && obj.getX() < avatar.getX() + .5 &&  obj.getY() - avatar.getY() <= 10
+                                                    ) {
+                                                if (!(s.getY() > avatar.getY() && s.getY() < obj.getY()
+                                                        && s.getX() > avatar.getX() - .5
+                                                        && s.getX() < avatar.getX() + .5)) {
+                                                    breaker = true;
+                                                    isWall = true;
+                                                }
+                                            }
+                                        }
+                                }
+
+                                }
+                            }
                             if (case1 && !isWall){
+                                isVacDraw = true;
                                 vacuumTiles = Math.abs(horiGap);
                                 vacuumDirection = 1;
                             }
-                            if (case2 && !isWall){
+                            else if (case2 && !isWall){
+                                isVacDraw = true;
                                 vacuumTiles = Math.abs(horiGap);
                                 vacuumDirection = 2;
                             }
-                            if (case3 && !isWall){
+                            else if (case3 && !isWall){
+                                System.out.println("shouldnt be here");
+                                System.out.println(isWall);
+                                isVacDraw = true;
                                 vacuumTiles = Math.abs(vertiGap);
                                 vacuumDirection = 3;
                             }
-                            if (case4 && !isWall){
+                            else if (case4 && !isWall){
+                                isVacDraw = true;
                                 vacuumTiles = Math.abs(vertiGap);
                                 vacuumDirection = 4;
                             }
+                            else if (isVacDraw == false) {
+                                System.out.println("case5");
+                                int leastWallDis = 10;
+                                for (Obstacle obj : objects) {
+                                    if (obj.getName().length() > 4) {
+                                        if (obj.getName().substring(0, 4).equals("wall")) {
+                                            if (avatar.isLeft()) {
+                                                vacuumDirection = 1;
+                                                if (avatar.getX() > obj.getX()  && obj.getY() > avatar.getY() - .5
+                                                        && obj.getY() < avatar.getY() + .5) {
+                                                    if (leastWallDis > Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX()))) {
+                                                        leastWallDis = Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX()));
+                                                    }
+
+                                                }
+                                            }
+                                            if (avatar.isRight()) {
+                                                vacuumDirection = 2;
+                                                if ( obj.getX() > avatar.getX()&& obj.getY() > avatar.getY() - .5
+                                                        && obj.getY() < avatar.getY() + .5) {
+
+                                                    if (leastWallDis > Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX()))) {
+                                                        leastWallDis = Math.abs(board.screenToBoardX(avatar.getX()) - board.screenToBoardX(obj.getX()));
+                                                    }
+                                                }
+                                            }
+                                            if (avatar.isDown()) {
+                                                vacuumDirection = 3;
+                                                if (avatar.getY() > obj.getY() && obj.getX() > avatar.getX() - .5
+                                                        && obj.getX() < avatar.getX() + .5) {
+
+                                                    if (leastWallDis > Math.abs(board.screenToBoardX(avatar.getY()) - board.screenToBoardX(obj.getY()))) {
+                                                        leastWallDis = Math.abs(board.screenToBoardX(avatar.getY()) - board.screenToBoardX(obj.getY()));
+                                                    }
+                                                }
+                                            }
+                                            if (avatar.isUp()) {
+                                                vacuumDirection = 4;
+                                                if ( obj.getY() > avatar.getY() && obj.getX() > avatar.getX() - .5
+                                                        && obj.getX() < avatar.getX() + .5) {
+
+                                                    if (leastWallDis > Math.abs(board.screenToBoardX(avatar.getY()) - board.screenToBoardX(obj.getY()))) {
+                                                        leastWallDis = Math.abs(board.screenToBoardX(avatar.getY()) - board.screenToBoardX(obj.getY()));
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                                vacuumTiles = leastWallDis;
+                            }
+
+
+//                            if (case5 ){
+//                                vacuumTiles = 10;
+//                                if (avatar.isLeft() ) {
+//                                    vacuumDirection = 1;
+//                                }
+//                                if (avatar.isRight() ) {
+//                                    vacuumDirection = 2;
+//                                }
+//                                if (avatar.isDown() ) {
+//                                    vacuumDirection = 3;
+//                                }
+//                                if (avatar.isUp() ) {
+//                                    vacuumDirection = 4;
+//                                }
+//                            }
 //                            else {
 //                                vacuumTiles = 10;
 //                                if (avatar.isLeft())
@@ -3423,21 +3569,34 @@ public class FloorController extends WorldController implements ContactListener 
             }
         }
         if  (((currentState == StateJoe.VACUUMR)||(currentState == StateJoe.VACUUMU)
-                ||(currentState == StateJoe.VACUUMD)||(currentState == StateJoe.VACUUML))&& !isWall){
+                ||(currentState == StateJoe.VACUUMD)||(currentState == StateJoe.VACUUML)) ){
+            isVacDraw = true;
             for (float i = 1.5f; i < vacuumTiles + .5f  ; i++) {
                 if (vacuumDirection == 1) {
+//                    System.out.println(vacuumDirection + "" + vacuumTiles + "draw");
                     canvas.draw(vac, ((avatar.getX()-(i))* scale.x), ((avatar.getY())* (scale.y))-16.0f);
                 }
                 if (vacuumDirection == 2) {
+//                    System.out.println(vacuumDirection + "" + vacuumTiles + "draw");
                     canvas.draw(vac, ((avatar.getX()+(i))* scale.x), ((avatar.getY())* (scale.y))-16.0f);
                 }
                 if (vacuumDirection == 3) {
+//                    System.out.println(vacuumDirection + "" + vacuumTiles + "draw");
                     canvas.draw(vac, ((avatar.getX())* (scale.x)-16.0f), ((avatar.getY()-(i))* scale.y));
                 }
                 if (vacuumDirection == 4) {
+//                    System.out.println(vacuumDirection + "" + vacuumTiles + "draw");
                     canvas.draw(vac, ((avatar.getX())* (scale.x)-16.0f), ((avatar.getY()+(i))* scale.y));
                 }
+//                if (i+1 >=vacuumTiles + .5f){
+//                    isVacDraw = false;
+//                    vacuumTiles = 0;
+//                }
             }
+        }
+        else{
+            isVacDraw = false;
+            vacuumTiles = 0;
         }
         canvas.end();
 
