@@ -197,10 +197,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String VACUUM_SUCK_ANI_FILE = "floor/vacuum-suck-animation.png";
 
 	/** The texture files for the Tutorial Keys */
-	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
-	private static final String E_KEY_FILE  = "floor/tutorial/keys-e.png";
-	private static final String WASD_KEY_FILE  = "floor/tutorial/keys-movement.png";
-	private static final String ARROW_KEY_FILE  = "floor/tutorial/keys-attack.png";
+	private static final String Q_KEY_FILE  = "floor/tutorial_keys/keys-q.png";
+	private static final String E_KEY_FILE  = "floor/tutorial_keys/keys-e.png";
+	private static final String WASD_KEY_FILE  = "floor/tutorial_keys/keys-movement.png";
+	private static final String ARROW_KEY_FILE  = "floor/tutorial_keys/keys-attack.png";
+	private static final String LEFT_KEY_FILE  = "floor/tutorial_keys/keys-left.png";
+	private static final String RIGHT_KEY_FILE  = "floor/tutorial_keys/keys-right.png";
 	/** The texture files for the Mop Cart UI icons */
 	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
 	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
@@ -375,9 +377,11 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
+	protected Texture eKeyTexture;
 	protected Texture arrowKeyTexture;
 	protected Texture wasdKeyTexture;
-	protected Texture eKeyTexture;
+	protected Texture leftKeyTexture;
+	protected Texture rightKeyTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -690,6 +694,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(WASD_KEY_FILE);
 		manager.load(ARROW_KEY_FILE, Texture.class);
 		assets.add(ARROW_KEY_FILE);
+		manager.load(LEFT_KEY_FILE, Texture.class);
+		assets.add(LEFT_KEY_FILE);
+		manager.load(RIGHT_KEY_FILE, Texture.class);
+		assets.add(RIGHT_KEY_FILE);
 
 		//UI Icons
 		manager.load(MOP_FILE, Texture.class);
@@ -928,6 +936,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		eKeyTexture = new Texture(E_KEY_FILE);
 		wasdKeyTexture = new Texture(WASD_KEY_FILE);
 		arrowKeyTexture = new Texture(ARROW_KEY_FILE);
+		leftKeyTexture = new Texture(LEFT_KEY_FILE);
+		rightKeyTexture = new Texture(RIGHT_KEY_FILE);
 
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);

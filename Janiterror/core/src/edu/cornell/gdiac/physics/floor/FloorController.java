@@ -544,9 +544,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        if (input_level == 1) {
-            LEVEL = "lizardman.tmx";
-        }
+//        if (input_level == 1) {
+//            LEVEL = "testlevel2.tmx";
+//        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -1378,7 +1378,11 @@ public class FloorController extends WorldController implements ContactListener 
 
         wep_in_use.put(default1, true);
         wep_in_use.put(default2, true);
-        if (LEVEL.equals("level4.tmx")) {
+        if (LEVEL.equals("level3.tmx")) {
+            mopcart_menu[0] = "mop";
+            mopcart_menu[1] = "none";
+        }
+        else if (LEVEL.equals("level4.tmx")) {
             mopcart_menu[0] = "lid";
             mopcart_menu[1] = "none";
         }
@@ -2396,6 +2400,8 @@ public class FloorController extends WorldController implements ContactListener 
         }
 
         float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
+        System.out.println(radius);
+        System.out.println(bulletTexture.getRegionHeight());
         WheelObstacle bullet = new WheelObstacle(player.getX()+offsetx, player.getY()+offsety, radius);
         bullet.setName("lid");
         bullet.setDensity(HEAVY_DENSITY);
@@ -3193,7 +3199,8 @@ public class FloorController extends WorldController implements ContactListener 
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
-                    && !(bd2 instanceof EnemyModel)) {
+                    && !(bd2 instanceof EnemyModel)
+                    && !(bd2.getName().equals("slimeball")) && !(bd2.getName().equals("slimeballTurret"))) {
                 removeBullet(bd1);
             }
 
@@ -3209,9 +3216,13 @@ public class FloorController extends WorldController implements ContactListener 
             } else if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret")) &&
                     (bd1.getName() == "mopCart" ||
                      bd1.getName() == "specialHealth" || bd1.getName() == "specialDurability")) {
+
+//                 ||
+//                bd1.getName() == "slimeball" || bd1.getName() == "slimeballTurret")
                 //do nothing, don't remove bullet if mop cart
             } else if((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
-                    && !(bd1 instanceof EnemyModel)) {
+                    && !(bd1 instanceof EnemyModel)
+                    && !(bd1.getName().equals("slimeball")) && !(bd1.getName().equals("slimeballTurret"))) {
                 removeBullet(bd2);
             }
 
@@ -3398,6 +3409,18 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, 880, 470);
             displayFont.getData().setScale(1f);
         }
+        else if (LEVEL.equals("level3.tmx")) {
+            displayFont.getData().setScale(0.6f);
+            canvas.drawText("ALL ranged weapons lose ammo when you shoot",
+                    displayFont, 180, 530);
+            canvas.drawText("Be careful not to miss!",
+                    displayFont, 180, 510);
+
+            canvas.drawText("Strategize what weapons to use",
+                    displayFont, 1400, 530);
+            canvas.drawText("against different enemies",
+                    displayFont, 1400, 510);
+        }
         else if (LEVEL.equals("level4.tmx")) {
             displayFont.getData().setScale(0.7f);
             canvas.drawText("Watch out for the acid!",
@@ -3422,6 +3445,28 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, 150, 410);
             canvas.drawText("Perhaps check out what's in that cart...",
                     displayFont, 150, 380);
+        }
+        else if (LEVEL.equals("level6.tmx")) {
+            displayFont.getData().setScale(0.7f);
+            canvas.drawText("Use",
+                    displayFont, 730, 1220);
+            canvas.draw(leftKeyTexture, (770), (1195));
+            canvas.draw(rightKeyTexture, (805), (1195));
+            canvas.drawText("to move",
+                    displayFont, 730, 1180);
+            canvas.draw(mopcartIndexTexture, (810), (1155));
+            canvas.drawText("in the mop cart",
+                    displayFont, 730, 1145);
+
+            canvas.drawText("Press          to swap",
+                    displayFont, 235, 1150);
+            canvas.draw(eKeyTexture, (295), (1120));
+            canvas.draw(wep_to_smallbartexture.get("spray")[0], (450), (1115));
+
+            canvas.drawText("Press          to swap",
+                    displayFont, 235, 1200);
+            canvas.draw(qKeyTexture, (295), (1170));
+            canvas.draw(wep_to_bartexture.get("mop")[0], (420), (1160));
         }
         displayFont.setColor(Color.BLACK);
 
