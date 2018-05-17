@@ -1416,7 +1416,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<scientistPos.size(); ii++) {
             EnemyModel mon =new ScientistModel(scientistPos.get(ii).x/32+OBJ_OFFSET_X, scientistPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, ii, 3, 100f, 2.5f, 2,
+                    dwidth, dheight, ii, 3, 100f, 3f, 2,
                     StateMad.STANDING, StateMad.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(scientistPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1427,7 +1427,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         for (int ii=0; ii<robotPos.size(); ii++) {
             EnemyModel mon =new RobotModel(robotPos.get(ii).x/32+OBJ_OFFSET_X, robotPos.get(ii).y/32+OBJ_OFFSET_Y,
-                    dwidth, dheight, scientistPos.size()+ii, 5, 500f, 2.5f, 2,
+                    dwidth, dheight, scientistPos.size()+ii, 5, 500f, 3f, 2,
                     StateRobot.STANDING, StateRobot.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(robotPatrol.get(ii));
             mon.setDrawScale(scale);
@@ -1449,7 +1449,7 @@ public class FloorController extends WorldController implements ContactListener 
             //changing velocity does nothing?
             EnemyModel mon = new LizardModel(lizardPos.get(ii).x/32+OBJ_OFFSET_X, lizardPos.get(ii).y/32+OBJ_OFFSET_Y,
                     dwidth, dheight, scientistPos.size()+robotPos.size()+slimePos.size()+ii,
-                    3, 100f, 5.0f, 1,
+                    3, 100f, 5f, 1,
                     StateLizard.STANDING, StateLizard.STANDING, CollideBits.BIT_ENEMY, CollideBits.BIT_ENEMY);
             mon.setPatrol(lizardPatrol.get(ii));
             mon.setDrawScale(scale);

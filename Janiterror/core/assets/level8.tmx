@@ -18,7 +18,7 @@
  <tileset firstgid="30" source="wallsdiagonal.tsx"/>
  <tileset firstgid="34" source="wallssp.tsx"/>
  <tileset firstgid="38" source="goaldoor.tsx"/>
- <tileset firstgid="39" source="beaker-table.tsx"/>
+ <tileset firstgid="38" source="beaker-table.tsx"/>
  <layer name="tiles" width="36" height="32">
   <data encoding="csv">
 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,
@@ -115,35 +115,35 @@
     <property name="attack_direction" value="left"/>
    </properties>
   </object>
-  <object id="23" type="turret-slime" gid="27" x="34.6667" y="511.59" width="64" height="64">
+  <object id="23" type="turret-slime" gid="27" x="30.0058" y="541.886" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>
     <property name="attack_direction" value="right"/>
    </properties>
   </object>
-  <object id="24" type="turret-slime" gid="27" x="32.1026" y="416.718" width="64" height="64">
+  <object id="24" type="turret-slime" gid="27" x="29.7721" y="349.135" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>
     <property name="attack_direction" value="right"/>
    </properties>
   </object>
-  <object id="25" type="turret-slime" gid="27" x="285.949" y="352.615" width="64" height="64">
+  <object id="25" type="turret-slime" gid="27" x="285.949" y="401.555" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="4"/>
     <property name="attack_direction" value="left"/>
    </properties>
   </object>
-  <object id="26" type="turret-slime" gid="27" x="29.5385" y="319.282" width="64" height="64">
+  <object id="26" type="turret-slime" gid="27" x="31.869" y="221.403" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>
     <property name="attack_direction" value="right"/>
    </properties>
   </object>
-  <object id="27" type="turret-slime" gid="27" x="285.949" y="257.744" width="64" height="64">
+  <object id="27" type="turret-slime" gid="27" x="288.279" y="285.71" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="4"/>
@@ -164,7 +164,7 @@
     <property name="attack_direction" value="down"/>
    </properties>
   </object>
-  <object id="30" type="turret-slime" gid="27" x="929.538" y="321.846" width="64" height="64">
+  <object id="30" type="turret-slime" gid="27" x="929.538" y="315.846" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="10 1"/>
     <property name="attack_delay" type="int" value="2"/>

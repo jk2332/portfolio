@@ -360,7 +360,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
             //s = "LVL " + i + ": " + levelNames[i - 1];
             centerX = (i % NUM_ROWS - NUM_ROWS/2) * marginX + this.centerX;
-            color = (pressState == 1 && exit == (i + 1) ? Color.YELLOW: Color.WHITE);
+            color = (pressState == 1 && exit == (i + 1) ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
             displayFont.setColor(color);
             displayFont.getData().setScale(scale * 1.5f);
             layout.setText(displayFont, i + 1 + "");
@@ -372,7 +372,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
             canvas.drawText(i + 1 + "", displayFont, centerX - radiusX, centerY + radiusY);
         }
 
-        color = (pressState == 1 || pressState == 2 && exit == 0 ? Color.YELLOW: Color.WHITE);
+        color = (pressState == 1 || pressState == 2 && exit == 0 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
         buttonScale = 0.75f;
         if (curr_page > 0) {
             canvas.draw(arrowButton, color, arrowButton.getWidth()/2, arrowButton.getHeight()/2,

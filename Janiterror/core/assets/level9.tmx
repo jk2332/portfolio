@@ -59,7 +59,7 @@
   <object id="2" gid="7" x="927.525" y="831.556" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="character">
-  <object id="4" type="joe" gid="24" x="66.7538" y="130.238" width="64" height="64">
+  <object id="4" type="joe" gid="24" x="257.64" y="126.133" width="64" height="64">
    <properties>
     <property name="default1" value="mop"/>
     <property name="default2" value="spray"/>

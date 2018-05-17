@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextobjectid="43">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="36" height="40" tilewidth="32" tileheight="32" infinite="0" nextobjectid="53">
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="9" source="wallsh.tsx"/>
  <tileset firstgid="19" source="slime.tsx"/>
@@ -8,6 +8,8 @@
  <tileset firstgid="22" source="mop-cart.tsx"/>
  <tileset firstgid="23" source="joe.tsx"/>
  <tileset firstgid="24" source="lizard.tsx"/>
+ <tileset firstgid="25" source="scientist.tsx"/>
+ <tileset firstgid="26" source="robot.tsx"/>
  <layer name="tiles" width="36" height="40">
   <data encoding="csv">
 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
@@ -74,7 +76,7 @@
     <property name="default2" value="spray"/>
    </properties>
   </object>
-  <object id="19" type="slime" gid="19" x="577.787" y="643.031" width="64" height="64">
+  <object id="19" type="slime" gid="19" x="477.743" y="637.808" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
    </properties>
@@ -104,29 +106,29 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="25" name="lizard3" type="lizard" gid="24" x="768.502" y="474.901" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="26" name="lizard3" type="lizard" gid="24" x="193.847" y="477.41" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="27" name="lizard3" type="lizard" gid="24" x="893.972" y="956.708" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
-  <object id="28" name="lizard3" type="lizard" gid="24" x="186.319" y="1054.57" width="64" height="64">
-   <properties>
-    <property name="Patrol Path" value="11 13"/>
-   </properties>
-  </object>
   <object id="29" type="slime" gid="19" x="673.144" y="1117.31" width="64" height="64">
    <properties>
     <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="46" type="scientist" gid="25" x="192.321" y="1056.04" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="49" type="scientist" gid="25" x="768.356" y="475.562" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="11 13"/>
+   </properties>
+  </object>
+  <object id="51" type="robot" gid="26" x="221.446" y="481.562" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="10 1"/>
+   </properties>
+  </object>
+  <object id="52" type="robot" gid="26" x="895.079" y="959.552" width="64" height="64">
+   <properties>
+    <property name="Patrol Path" value="10 1"/>
    </properties>
   </object>
  </objectgroup>
