@@ -77,7 +77,7 @@
     <property name="Patrol Path" value="11 13"/>
    </properties>
   </object>
-  <object id="14" type="joe" gid="29" x="97.7397" y="224.897" width="64" height="64">
+  <object id="14" type="joe" gid="29" x="127.842" y="224.897" width="64" height="64">
    <properties>
     <property name="default1" value="mop"/>
     <property name="default2" value="spray"/>
