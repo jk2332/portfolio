@@ -554,7 +554,7 @@ public class FloorController extends WorldController implements ContactListener 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
 //        if (input_level == 1) {
-//            LEVEL = "testlevel2.tmx";
+//            LEVEL = "testlevel5.tmx";
 //        }
 
         level = new LevelEditorParser(LEVEL);
@@ -3208,8 +3208,7 @@ public class FloorController extends WorldController implements ContactListener 
                 //maybe combine this in below if statement, be careful of order or might break
                 //do nothing, don't remove bullet if mop cart
             } else if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
-                    && !(bd2 instanceof EnemyModel)
-                    && !(bd2.getName().equals("slimeball")) && !(bd2.getName().equals("slimeballTurret"))) {
+                    && !(bd2 instanceof EnemyModel)) {
                 removeBullet(bd1);
             }
 
@@ -3230,8 +3229,8 @@ public class FloorController extends WorldController implements ContactListener 
 //                bd1.getName() == "slimeball" || bd1.getName() == "slimeballTurret")
                 //do nothing, don't remove bullet if mop cart
             } else if((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
-                    && !(bd1 instanceof EnemyModel)
-                    && !(bd1.getName().equals("slimeball")) && !(bd1.getName().equals("slimeballTurret"))) {
+                    && !(bd1 instanceof EnemyModel)) {
+//                && !(bd1.getName().equals("slimeball")) && !(bd1.getName().equals("slimeballTurret"))
                 removeBullet(bd2);
             }
 
@@ -3440,12 +3439,12 @@ public class FloorController extends WorldController implements ContactListener 
             canvas.drawText("Press           to swap with",
                     displayFont, 625, 85);
             canvas.draw(eKeyTexture, (685), (55));
-            canvas.draw(sprayTexture, (885), (45));
+            canvas.draw(wep_to_smallbartexture.get("spray")[0], (890), (50));
 
             canvas.drawText("Press           to swap with",
                     displayFont, 625, 140);
             canvas.draw(qKeyTexture, (685), (110));
-            canvas.draw(mopTexture, (860), (95));
+            canvas.draw(wep_to_bartexture.get("mop")[0], (860), (95));
         }
         else if (LEVEL.equals("level5.tmx")) {
             displayFont.getData().setScale(0.6f);
