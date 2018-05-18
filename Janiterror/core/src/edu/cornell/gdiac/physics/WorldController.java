@@ -70,6 +70,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String WALL_LEFT_FILE = "shared/vertical-left.png";
 	private static final String WALL_RIGHT_FILE = "shared/vertical-right.png";
 	private static final String WALL_MID_FILE = "shared/horizontal-wall.png";
+	private static final String WALL_MID_LOCKED_FILE = "shared/horizontal-wall-locked.png";
 	private static final String WALL_TL_FILE = "shared/corner-top-left.png";
 	private static final String WALL_TR_FILE = "shared/corner-top-right.png";
 	private static final String WALL_BR_FILE = "shared/corner-bottom-right.png";
@@ -275,6 +276,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion wallRightTexture;
 	protected TextureRegion wallLeftTexture;
 	protected TextureRegion wallMidTexture;
+	protected TextureRegion wallMidLockedTexture;
 	protected TextureRegion wallTLTexture;
 	protected TextureRegion wallTRTexture;
 	protected TextureRegion wallBLTexture;
@@ -488,6 +490,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(WALL_RIGHT_FILE);
 		manager.load(WALL_MID_FILE, Texture.class);
 		assets.add(WALL_MID_FILE);
+		manager.load(WALL_MID_LOCKED_FILE, Texture.class);
+		assets.add(WALL_MID_LOCKED_FILE);
 		manager.load(WALL_TL_FILE, Texture.class);
 		assets.add(WALL_TL_FILE);
 		manager.load(WALL_TR_FILE, Texture.class);
@@ -845,6 +849,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		wallRightTexture = createTexture(manager,WALL_RIGHT_FILE,false);
 		wallLeftTexture = createTexture(manager,WALL_LEFT_FILE,false);
 		wallMidTexture = createTexture(manager,WALL_MID_FILE,false);
+		wallMidLockedTexture = createTexture(manager,WALL_MID_LOCKED_FILE,false);
+		System.out.println(wallMidLockedTexture);
 		wallTRTexture = createTexture(manager,WALL_TR_FILE,false);
 		wallTLTexture = createTexture(manager,WALL_TL_FILE,false);
 		wallBRTexture = createTexture(manager,WALL_BR_FILE,false);

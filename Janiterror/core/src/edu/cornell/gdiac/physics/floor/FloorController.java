@@ -1556,7 +1556,8 @@ public class FloorController extends WorldController implements ContactListener 
             board.setBlocked((int) wallBlockedPos.get(ii).x, (int) wallBlockedPos.get(ii).y + 1);
 
             obj = new BoxObstacle(x, y, dwidth, dheight * WALL_THICKNESS_SCALE / 2);
-            obj.setTexture(wallMidTexture, 0, offset);
+            System.out.println(wallMidLockedTexture);
+            obj.setTexture(wallMidLockedTexture, 0, offset);
             obj.setName(pname+ii);
             wallBlocked[ii] = obj;
             addWallObject(obj);
