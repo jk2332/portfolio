@@ -1500,14 +1500,14 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 
 		// Toggle debug
-		if (input.didDebug()) {
+		/*if (input.didDebug()) {
 			debug = !debug;
-		}
+		}*/
 		
 		// Handle resets
-		if (input.didReset()) {
-			reset();
-		}
+//		if (input.didReset()) {
+//			reset();
+//		}
 		
 		// Now it is time to maybe switch screens.
 		if (input.didExit()) {
