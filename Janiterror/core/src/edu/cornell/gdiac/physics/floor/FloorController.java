@@ -3543,21 +3543,23 @@ public class FloorController extends WorldController implements ContactListener 
                         if (state.equals("CHASE") || state.equals("ATTACK")) {
                             //might want to scale this and put next to hp
                             if (s instanceof SlimeModel) {
-                                canvas.draw(emoticonExclamation,
+                                canvas.draw(emoticonExclamationTexture,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
+                                // CHANGE emoticonExclamationTexture to emotionExclmation for animation version same
+                               // for the other three cases down below
                             }
                             else {
-                                canvas.draw(emoticonExclamation,
+                                canvas.draw(emoticonExclamationTexture,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
                             }
                         }
                         else {
                             if (s instanceof SlimeModel) {
-                                canvas.draw(emoticonQuestion,
+                                canvas.draw(emoticonQuestionTexture,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
                             }
                             else {
-                                canvas.draw(emoticonQuestion,
+                                canvas.draw(emoticonQuestionTexture,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
                             }
                         }
