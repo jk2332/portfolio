@@ -162,6 +162,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public int getBudget() {
 		return budget;
 	}
+	public Music getTrack(){return music;}
 
 	/**
 	 * Sets the budget for the asset loader.
