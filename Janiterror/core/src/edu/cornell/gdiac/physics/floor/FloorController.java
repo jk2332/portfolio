@@ -2066,10 +2066,6 @@ public class FloorController extends WorldController implements ContactListener 
             clearEnemy(dt);
 
             if (enemyCount <= 0) {
-                if (blockedWallsRemoved == false) {
-                    SoundController.getInstance().play(UNLOCK_FILE, UNLOCK_FILE,false,0.8f);
-                    blockedWallsRemoved = true;
-                }
                 removeBlockedWalls();
             }
             SoundController.getInstance().update();
@@ -2077,6 +2073,10 @@ public class FloorController extends WorldController implements ContactListener 
     }
 
     private void removeBlockedWalls() {
+        if (blockedWallsRemoved == false && wallBlocked.length != 0) {
+            SoundController.getInstance().play(UNLOCK_FILE, UNLOCK_FILE,false,0.8f);
+            blockedWallsRemoved = true;
+        }
         for (int i = 0; i < wallBlocked.length; i++) {
             wallBlocked[i].markRemoved(true);
         }
@@ -3486,6 +3486,10 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, 1400, 530);
             canvas.drawText("against different enemies",
                     displayFont, 1400, 510);
+
+            canvas.draw(eKeyTexture, (1480), (120));
+            canvas.drawText("to equip as", displayFont, 1455, 115);
+            canvas.drawText("secondary", displayFont, 1460, 95);
         }
         else if (LEVEL.equals("level4.tmx")) {
             displayFont.getData().setScale(0.7f);
