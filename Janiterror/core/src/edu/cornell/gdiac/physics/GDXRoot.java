@@ -154,7 +154,12 @@ public class GDXRoot extends Game implements ScreenListener {
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(manager);
-			scores[ii] = new ScoreMode(canvas);
+
+			String level_name = "";
+			if (ii == controllers.length-1) { level_name = "none"; }
+			else { level_name = levelNames[ii + 1]; }
+
+			scores[ii] = new ScoreMode(canvas, level_name);
 			//scores[ii].setScreenListener(this);
 		}
 		current = 0;
