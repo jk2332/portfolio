@@ -395,6 +395,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         canvas.end();
     }
+    private static final String LOADING_TRACK_FILE = "floor/sound/track2.mp3";
 
     // ADDITIONAL SCREEN METHODS
     /**
@@ -412,6 +413,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
+                //SoundController.getInstance().stop(LOADING_TRACK_FILE);
                 listener.exitScreen(this, exit);
             }
         }

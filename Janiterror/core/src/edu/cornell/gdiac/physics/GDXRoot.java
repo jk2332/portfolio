@@ -52,6 +52,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/** The sound file for background music */
 	private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+	private static final String LOADING_TRACK_FILE = "floor/sound/track2.mp3";
 	protected Array<String> assets;
 
 	/**
@@ -239,6 +240,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				scores[ii].setScreenListener(this);
 			}
 			if (exitCode == 0) {
+				//SoundController.getInstance().stop(LOADING_TRACK_FILE);
 				//controllers[current].reset2();
 				//controllers[current].preLoadContent(manager);
 				current = 0;
@@ -291,6 +293,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("select level" + exitCode);
 			current = exitCode - 1;
 			controllers[current].reset();
+			loading.getTrack().stop();
 			setScreen(controllers[current]);
 		} else if (screen instanceof  CreditsMode) {
 			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
