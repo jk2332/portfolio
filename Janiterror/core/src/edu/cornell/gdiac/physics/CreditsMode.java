@@ -24,6 +24,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
     private static final String BACKGROUND_FILE = "shared/inter-menu-v2.png";
 
     private static final String FONT_FILE = "shared/Title.ttf";
+    private static final String FONT_BODY_FILE = "shared/Francois.ttf";
 
     private static final String LEVEL_FILE = "shared/mop-bucket-menu.png";
 
@@ -64,6 +65,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected BitmapFont bodyFont;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -144,7 +146,14 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         displayFont = generator.generateFont(parameter);
         generator.dispose();
 
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal(FONT_BODY_FILE));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter2.size = 30; //font size
+        bodyFont = generator2.generateFont(parameter2);
+        generator2.dispose();
+
         displayFont.getData().setScale(scale);
+        bodyFont.getData().setScale(scale);
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 
@@ -230,49 +239,49 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         radiusY = (int) (layout.height / 2.0f);
         canvas.drawText(TITLE, displayFont, this.centerX - radiusX, titleY - radiusY);
 
-        String text ="Eliot Huang...........Project Lead";
-        displayFont.getData().setScale(scale);
-        layout.setText(displayFont, text);
-        displayFont.setColor(Color.WHITE);
+        String text = "Eliot Huang......................Project Lead";
+        bodyFont.getData().setScale(scale);
+        layout.setText(bodyFont, text);
+        bodyFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 4 * radiusY);
-        text ="Douglas Lo...........Programming Lead";
-        displayFont.getData().setScale(scale);
-        layout.setText(displayFont, text);
-        displayFont.setColor(Color.WHITE);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 4 * radiusY);
+        text = "Douglas Lo...........Programming Lead";
+        bodyFont.getData().setScale(scale);
+        layout.setText(bodyFont, text);
+        bodyFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 6 * radiusY);
-        text ="Ziyad Duron...........Design Lead";
-        displayFont.getData().setScale(scale);
-        layout.setText(displayFont, text);
-        displayFont.setColor(Color.WHITE);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 6 * radiusY);
+        text = "Ziyad Duron.....................Design Lead";
+        bodyFont.getData().setScale(scale);
+        layout.setText(bodyFont, text);
+        bodyFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 8 * radiusY);
-        text = "Sophie Lan.........Programmer";
-        layout.setText(displayFont, text);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 8 * radiusY);
+        text = "Sophie Lan......................Programmer";
+        layout.setText(bodyFont, text);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 10 * radiusY);
-        text = "Jiwon Kim.........Programmer";
-        layout.setText(displayFont, text);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 10 * radiusY);
+        text = "Jiwon Kim........................Programmer";
+        layout.setText(bodyFont, text);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 12 * radiusY);
-        text = "Matt Haro.........Designer";
-        layout.setText(displayFont, text);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 12 * radiusY);
+        text = "Matt Haro..............................Designer";
+        layout.setText(bodyFont, text);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 14 * radiusY);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 10 - 14 * radiusY);
 
         text = "SOUNDS";
         displayFont.setColor(Color.SKY);
         displayFont.getData().setScale(scale  * 1.2f);
         layout.setText(displayFont, text);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 18 * radiusY);
-        text = "Tharun Sankar.........Music Composition";
-        displayFont.getData().setScale(scale);
-        layout.setText(displayFont, text);
-        displayFont.setColor(Color.WHITE);
+        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY + 10 - 18 * radiusY);
+        text = "Tharun Sankar..........................Music";
+        bodyFont.getData().setScale(scale);
+        layout.setText(bodyFont, text);
+        bodyFont.setColor(Color.WHITE);
         radiusX = (int) (layout.width / 2.0f);
-        canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 20 * radiusY);
+        canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 20 * radiusY);
 
         color = Color.YELLOW;
 
