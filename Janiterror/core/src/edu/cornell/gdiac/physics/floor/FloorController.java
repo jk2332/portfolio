@@ -318,7 +318,7 @@ public class FloorController extends WorldController implements ContactListener 
     private float deathTimer;
     private float joeDeathTimer;
     /** The "range" for the lid */
-    private static final float LID_RANGE = 0.5f;
+    private static final float LID_RANGE = 1.0f;
     /** The timer for lid range*/
     private float lidTimer;
     /** The boolean for whether lid is on ground*/
@@ -4331,16 +4331,16 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getStunned() == true || s.getStunnedVacuum() == true) {
             return StateTurret.STUN;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("up")){
+        else if (s.getAttackAnimationFrame() == ((TurretModel) s).getDelay() && attack_direction.equals("up")){
             return StateTurret.ATTACKU;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("down")){
+        else if (s.getAttackAnimationFrame() == ((TurretModel) s).getDelay()  && attack_direction.equals("down")){
             return StateTurret.ATTACKD;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("right")) {
+        else if (s.getAttackAnimationFrame() == ((TurretModel) s).getDelay() && attack_direction.equals("right")) {
             return StateTurret.ATTACKR;
         }
-        else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
+        else if (s.getAttackAnimationFrame() == ((TurretModel) s).getDelay()  && attack_direction.equals("left")) {
             return StateTurret.ATTACKL;
         }
         else {
