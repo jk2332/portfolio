@@ -1136,7 +1136,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int centerXMain;
 	private int centerXNext;
 	private int centerYJoe;
-	int choose;
+	private int choose;
 
 	public enum StateJoe {MAIN, NEXT}
 
@@ -1500,14 +1500,14 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 
 		// Toggle debug
-		if (input.didDebug()) {
+		/*if (input.didDebug()) {
 			debug = !debug;
-		}
+		}*/
 		
 		// Handle resets
-		if (input.didReset()) {
-			reset();
-		}
+//		if (input.didReset()) {
+//			reset();
+//		}
 		
 		// Now it is time to maybe switch screens.
 		if (input.didExit()) {
@@ -1647,8 +1647,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 			canvas.begin();
 			canvas.draw(background, cameraX - 520, cameraY - 300);
 			canvas.draw(allKeyTexture, cameraX - 300, cameraY);
-			Color mainTint = choose==0 ? Color.WHITE : Color.WHITE;
-			Color playTint = choose==1 ? Color.WHITE : Color.WHITE;
+			Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
+			Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
 //            Color mainTint = choose==0 ? new Color(0.117f, 0.459f, 0.776f, 1f) : Color.WHITE;
 //            Color playTint = choose==1 ? new Color(0.117f, 0.459f, 0.776f, 1f) : Color.WHITE;
 			float mainScale = choose==0 ? 0.85f : 0.75f;
