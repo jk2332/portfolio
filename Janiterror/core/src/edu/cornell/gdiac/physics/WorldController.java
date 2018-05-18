@@ -207,6 +207,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String LEFT_KEY_FILE  = "floor/tutorial_keys/keys-left.png";
 	private static final String RIGHT_KEY_FILE  = "floor/tutorial_keys/keys-right.png";
 	private static final String ALL_KEY_FILE  = "floor/tutorial_keys/keys-all.png";
+	private static final String SPACE_KEY_FILE = "floor/tutorial_keys/keys-space.png";
 	/** The texture files for the Mop Cart UI icons */
 	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
 	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
@@ -396,6 +397,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected Texture leftKeyTexture;
 	protected Texture rightKeyTexture;
 	protected Texture allKeyTexture;
+	protected Texture spaceKeyTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -972,6 +974,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		leftKeyTexture = new Texture(LEFT_KEY_FILE);
 		rightKeyTexture = new Texture(RIGHT_KEY_FILE);
 		allKeyTexture = new Texture(ALL_KEY_FILE);
+		spaceKeyTexture = new Texture(SPACE_KEY_FILE);
 
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);

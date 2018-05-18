@@ -3455,6 +3455,8 @@ public class FloorController extends WorldController implements ContactListener 
                     displayFont, cameraX - 380, cameraY + 190);
             canvas.drawText("will cost durability",
                     displayFont, cameraX - 380, cameraY + 170);
+
+            canvas.draw(spaceKeyTexture, 950, 400);
             displayFont.getData().setScale(1f);
         }
         else if (LEVEL.equals("level2.tmx")) {
