@@ -60,7 +60,8 @@ public class FloorController extends WorldController implements ContactListener 
     private static final String NO_WEAPON_FILE = "floor/sound/no_weapon.mp3";
     /** The sound file for getting hurt */
     private static final String OUCH_FILE = "floor/sound/ouch.mp3";
-
+    /** The sound file for getting hurt */
+    private static final String UNLOCK_FILE = "floor/sound/unlock.mp3";
 
     /** The sound file for vacuum attack */
     private static final String MOP_FILE1 = "floor/sound/mop1.mp3";
@@ -141,6 +142,8 @@ public class FloorController extends WorldController implements ContactListener 
     private int mopcart_index = 0;
     private int[] mopcart_index_xlocation = new int[2];
 
+    private Boolean blockedWallsRemoved = false;
+
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
@@ -183,6 +186,8 @@ public class FloorController extends WorldController implements ContactListener 
         assets.add(NO_WEAPON_FILE);
         manager.load(OUCH_FILE, Sound.class);
         assets.add(OUCH_FILE);
+        manager.load(UNLOCK_FILE, Sound.class);
+        assets.add(UNLOCK_FILE);
 
         manager.load(MOP_FILE1, Sound.class);
         assets.add(MOP_FILE1);
@@ -248,6 +253,7 @@ public class FloorController extends WorldController implements ContactListener 
         sounds.allocate(manager, RELOAD_FILE);
         sounds.allocate(manager, NO_WEAPON_FILE);
         sounds.allocate(manager, OUCH_FILE);
+        sounds.allocate(manager, UNLOCK_FILE);
 
         sounds.allocate(manager, MOP_FILE1);
         sounds.allocate(manager, MOP_FILE2);
@@ -560,9 +566,9 @@ public class FloorController extends WorldController implements ContactListener 
 
         currentLevel = input_level;
         LEVEL = "level" + input_level + ".tmx";
-        if (input_level == 1) {
-            LEVEL = "testlevel6.tmx";
-        }
+//        if (input_level == 1) {
+//            LEVEL = "testlevel6.tmx";
+//        }
 
         level = new LevelEditorParser(LEVEL);
         scientistPos = level.getScientistPos();
@@ -636,6 +642,7 @@ public class FloorController extends WorldController implements ContactListener 
         mopCartList = new ArrayList<BoxObstacle>();
         //avatar has never visited mopcart before
         mopCartVisitedBefore = new ArrayList(level.getMopCartVisitedBefore());
+        blockedWallsRemoved = false;
 
         for(LightSource light : lights) {
             light.remove();
@@ -2059,6 +2066,10 @@ public class FloorController extends WorldController implements ContactListener 
             clearEnemy(dt);
 
             if (enemyCount <= 0) {
+                if (blockedWallsRemoved == false) {
+                    SoundController.getInstance().play(UNLOCK_FILE, UNLOCK_FILE,false,0.8f);
+                    blockedWallsRemoved = true;
+                }
                 removeBlockedWalls();
             }
             SoundController.getInstance().update();
@@ -3480,7 +3491,9 @@ public class FloorController extends WorldController implements ContactListener 
             displayFont.getData().setScale(0.7f);
             canvas.drawText("Watch out for the acid!",
                     displayFont, 405, 1177);
-            canvas.drawText("Hmmm...how can you get them all the way over there?",
+            canvas.drawText("Swap out something for a new weapon in the cart",
+                    displayFont, 300, 535);
+            canvas.drawText("Be careful not to lose it though!",
                     displayFont, 300, 505);
 
             //maybe switch these to the bars

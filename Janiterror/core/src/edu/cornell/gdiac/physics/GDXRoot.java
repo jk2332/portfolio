@@ -97,7 +97,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[1] = new PlatformController();
 		controllers[2] = new RagdollController();
 		*/
-		int number_of_levels = 22;
+		int number_of_levels = 14;
 
 		controllers = new WorldController[number_of_levels];
 		controllers[0] = new FloorController(1);
@@ -114,38 +114,26 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[11] = new FloorController(12);
 		controllers[12] = new FloorController(13);
 		controllers[13] = new FloorController(14);
-		controllers[14] = new FloorController(15);
-		controllers[15] = new FloorController(11);
-		controllers[16] = new FloorController(8);
-		controllers[17] = new FloorController(8);
-		controllers[18] = new FloorController(8);
-		controllers[19] = new FloorController(8);
-		controllers[20] = new FloorController(8);
-		controllers[21] = new FloorController(8);
+//		controllers[14] = new FloorController(15);
+//		controllers[15] = new FloorController(15);
 
 		levelNames = new String[number_of_levels];
 		levelNames[0] = "Spring Cleaning";
-		levelNames[1] = "Taking Out the Trash";
-		levelNames[2] = "Sweeping with the Enemy";
-		levelNames[3] = "Trash Level";
-		levelNames[4] = "Garbage Gladiator";
-        levelNames[5] = "A Slimey Situation";
-        levelNames[6] = "Mr. Clean, Mr. Mean";
-		levelNames[7] = "Another One Bites the Dust";
-		levelNames[8] = "All Washed Up";
-		levelNames[9] = "Ninjanitor";
-		levelNames[10] = "The A-mop-calypse";
-		levelNames[11] = "The A-mop-calypse";
+		levelNames[1] = "Sweeping with the Enemy";
+		levelNames[2] = "This Level is a Febreeze";
+		levelNames[3] = "This Level is Trash";
+		levelNames[4] = "This Level Sucks";
+        levelNames[5] = "Garbage Gladiator";
+        levelNames[6] = "Old Calamari";
+		levelNames[7] = "A Slimey Situation";
+		levelNames[8] = "Ninjanitor";
+		levelNames[9] = "Another One Bites the Dust";
+		levelNames[10] = "Let The Slimefall";
+		levelNames[11] = "All Washed Up";
 		levelNames[12] = "The A-mop-calypse";
-		levelNames[13] = "The A-mop-calypse";
-		levelNames[14] = "The A-mop-calypse";
-		levelNames[15] = "The A-mop-calypse15";
-		levelNames[16] = "The A-mop-calypse16";
-		levelNames[17] = "The A-mop-calypse17";
-		levelNames[18] = "The A-mop-calypse18";
-		levelNames[19] = "The A-mop-calypse19";
-		levelNames[20] = "The A-mop-calypse20";
-		levelNames[21] = "The A-mop-calypse21";
+		levelNames[13] = "Janiterror Juggernaut";
+//		levelNames[14] = "Janiterror";
+//		levelNames[15] = "The A-mop-calypse15";
 
 		select = new LevelSelectMode(canvas, levelNames);
 
