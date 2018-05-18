@@ -470,10 +470,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 				music.stop();
 				listener.exitScreen(this, 0);
 			} else if (isSelect() && listener != null) {
-				music.stop();
+				//music.stop();
 				listener.exitScreen(this, 1);
 			} else if (isOptions() && listener != null) {
-				music.stop();
+				//music.stop();
 				listener.exitScreen(this, 2);
 			}
 		}
