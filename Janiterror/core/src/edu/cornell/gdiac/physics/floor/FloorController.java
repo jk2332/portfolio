@@ -483,7 +483,12 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> slimeBallTurret;
     private Animation <TextureRegion> lid;
     private Animation <TextureRegion> vacSuck;
+    private Animation <TextureRegion> exclamation;
+    private Animation <TextureRegion> question;
     private TextureRegion vac;
+    private TextureRegion emoticonExclamation;
+    private TextureRegion emoticonQuestion;
+
 
 
 
@@ -1371,6 +1376,18 @@ public class FloorController extends WorldController implements ContactListener 
         vacSuck = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+        for (int i=0; i <= 11; i++){
+            frames.add (new TextureRegion(exclamationAni,i*32,0,32,32));
+        }
+        exclamation = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
+        for (int i=0; i <= 11; i++){
+            frames.add (new TextureRegion(questionAni,i*32,0,32,32));
+        }
+        question = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
@@ -1863,8 +1880,7 @@ public class FloorController extends WorldController implements ContactListener 
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        //OrthographicCamera camera = canvas.getCamera();
-        System.out.println(lidGround);
+
         if (InputController.getInstance().getDidPause()) {
             paused=true;
             setCameraX(cameraX);
@@ -2004,6 +2020,8 @@ public class FloorController extends WorldController implements ContactListener 
             }
             lidRange(dt);
             vac = (vacSuck.getKeyFrame(stateTimer,true));
+            emoticonExclamation = (exclamation.getKeyFrame(stateTimer,true));
+            emoticonQuestion = (question.getKeyFrame(stateTimer,true));
             for (Obstacle s: objects){
                 if (s.getName() == "slimeball"){
                     s.setTexture(slimeBall.getKeyFrame(stateTimer,true));
@@ -2025,7 +2043,6 @@ public class FloorController extends WorldController implements ContactListener 
                     s.setTexture(getFrameSlime(dt, s));
                 } else if (s.getName() == "turret") {
                     s.setTexture(getFrameTurret(dt, s));
-//                    System.out.println(s.getId());
                 } else if (s.getName() == "lizard") {
                     s.setTexture(getFrameLizard(dt, s));
                 }
@@ -3526,21 +3543,21 @@ public class FloorController extends WorldController implements ContactListener 
                         if (state.equals("CHASE") || state.equals("ATTACK")) {
                             //might want to scale this and put next to hp
                             if (s instanceof SlimeModel) {
-                                canvas.draw(emoticonExclamationTexture,
+                                canvas.draw(emoticonExclamation,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
                             }
                             else {
-                                canvas.draw(emoticonExclamationTexture,
+                                canvas.draw(emoticonExclamation,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
                             }
                         }
                         else {
                             if (s instanceof SlimeModel) {
-                                canvas.draw(emoticonQuestionTexture,
+                                canvas.draw(emoticonQuestion,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 40);
                             }
                             else {
-                                canvas.draw(emoticonQuestionTexture,
+                                canvas.draw(emoticonQuestion,
                                         (s.getX() * scale.x) - 15, ((s.getY()) * scale.y) + 50);
                             }
                         }
@@ -4326,22 +4343,6 @@ public class FloorController extends WorldController implements ContactListener 
         else if (s.getAttackAnimationFrame() > 0 && attack_direction.equals("left")) {
             return StateTurret.ATTACKL;
         }
-
-        else if (s.getMovementX() > 0) {
-
-            slimeMovedLeft = false;
-            return StateTurret.RUNNINGR;
-        }
-        else if (s.getMovementX() < 0) {
-
-            slimeMovedLeft = true;
-            return StateTurret.RUNNINGR;
-        }
-        else if (s.getMovementY() > 0) {
-            return StateTurret.RUNNINGU;
-        } else if (s.getMovementY() < 0) {
-            return StateTurret.RUNNINGD;
-        }
         else {
             return StateTurret.STANDING;
         }
@@ -4351,15 +4352,6 @@ public class FloorController extends WorldController implements ContactListener 
         ((TurretModel)s).state = getStateTurret(s);
         TextureRegion region;
         switch (((TurretModel)s).state){
-            case RUNNINGR:
-                region = turretRunR.getKeyFrame(stateTimerT,true);
-                break;
-            case RUNNINGU:
-                region =  turretRunU.getKeyFrame(stateTimerT,true);
-                break;
-            case RUNNINGD:
-                region =  turretRunD.getKeyFrame(stateTimerT,true);
-                break;
             case ATTACKL:
                 region =  turretAttackL.getKeyFrame(stateTimerT,false);
                 break;

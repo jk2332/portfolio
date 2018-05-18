@@ -233,6 +233,8 @@ public abstract class WorldController implements Screen, InputProcessor {
     private static final String ENEMY_HEALTH_5_FILE  = "floor/enemy-health-5.png";
 	private static final String EMOTICON_EXCLAMATION_FILE  = "floor/emoticon-exclamation.png";
 	private static final String EMOTICON_QUESTION_FILE  = "floor/emoticon-question.png";
+	private static final String EXCLAMATION_ANI_FILE  = "floor/exclamation-ani.png";
+	private static final String QUESTION_ANI_FILE  = "floor/question-ani.png";
 
 	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 	private static final String BACKGROUND_FILE = "shared/loading.png";
@@ -378,6 +380,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion slimeballTurretAniTexture;
 	protected TextureRegion lidAniTexture;
 	protected TextureRegion vacSuckAniTexture;
+	protected TextureRegion exclamationAni;
+	protected TextureRegion questionAni;
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
@@ -679,6 +683,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(LIZARD_DEATH_FILE);
 		manager.load(LIZARD_STUN_FILE, Texture.class);
 		assets.add(LIZARD_STUN_FILE);
+		manager.load(EXCLAMATION_ANI_FILE, Texture.class);
+		assets.add(EXCLAMATION_ANI_FILE);
+		manager.load(QUESTION_ANI_FILE, Texture.class);
+		assets.add(QUESTION_ANI_FILE);
 
 
 		manager.load(BULLET_FILE, Texture.class);
@@ -932,6 +940,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		slimeballTurretAniTexture = createTexture(manager,TURRET_SLIMEBALL_FILE,false);
 		lidAniTexture = createTexture(manager,LID_ANI_FILE,false);
 		vacSuckAniTexture = createTexture(manager,VACUUM_SUCK_ANI_FILE,false);
+		exclamationAni = createTexture(manager,EXCLAMATION_ANI_FILE,false);
+		questionAni = createTexture(manager,QUESTION_ANI_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
