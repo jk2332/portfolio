@@ -2281,9 +2281,7 @@ public class FloorController extends WorldController implements ContactListener 
 
         AIController ai = controls[s.getId()];
         float vel = s.getName()=="lizard" && ai.getState()== AIController.FSMState.CHASE &&
-                (s.canHitTargetFrom(sx, sy, tx, ty, 2, 2, 2) ||
-                        (board.isHazard(sx-1, sy) || board.isHazard(sx+1, sy) || board.isHazard(sx, sy+1) ||
-                        board.isHazard(sx, sy-1))) ? 2.5f : s.getVelocity();
+                s.canHitTargetFrom(sx, sy, tx, ty, 2, 2, 2) ? 2.5f : s.getVelocity();
         if (action == CONTROL_NO_ACTION) {
             s.setMovementY(0);
             s.setMovementX(0);
