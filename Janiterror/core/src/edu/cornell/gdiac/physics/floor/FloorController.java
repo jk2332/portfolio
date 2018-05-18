@@ -324,7 +324,6 @@ public class FloorController extends WorldController implements ContactListener 
     /** The boolean for whether lid is on ground*/
     private boolean lidGround;
     private boolean isWall;
-    private boolean isVacWall;
     private int vacuumDirection;
     private int vacuumTiles;
     private boolean isVacDraw;
@@ -1865,7 +1864,7 @@ public class FloorController extends WorldController implements ContactListener 
      */
     public void update(float dt) {
         //OrthographicCamera camera = canvas.getCamera();
-        //System.out.println(avatar.getWep1().getDurability());
+        System.out.println(lidGround);
         if (InputController.getInstance().getDidPause()) {
             paused=true;
             setCameraX(cameraX);
@@ -2587,6 +2586,8 @@ public class FloorController extends WorldController implements ContactListener 
     public void removeLid(Obstacle lid,EnemyModel enemy) {
         if (avatar.getHasLid() == false) {
             avatar.setHasLid(true);
+            lidGround = false;
+            lidTimer = LID_RANGE;
             float knockbackx = 10f;
             float knockbackx2 = (lid.getX() > enemy.getX() ? -knockbackx : knockbackx);
             knockbackForce.set(knockbackx2,0f);
@@ -3160,24 +3161,37 @@ public class FloorController extends WorldController implements ContactListener 
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
             for (EnemyModel s : enemies){
+//                System.out.println((bd2 != s) + " 1");
+//                System.out.println((bd2 != avatar)+ " 2");
+//                System.out.println((bd2.getName() != "slimeball")+ " 3");
+//                System.out.println((bd2.getName() != "slimeballTurret")+ " 4");
+                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar) && (bd2.getName() != "slimeball")
+                        && (bd2.getName() != "slimeballTurret")    && (bd2.getName() != "slime")
+                        && (bd2.getName() != "robot")     && (bd2.getName() != "scientist")
+                        && (bd2.getName() != "lizard") && (bd2.getName() != "turret")
+                        && (bd2.getName() != "mopCart") && (bd2.getName() != "specialDurability")
+                        && (bd2.getName() != "specialHealth")) {
+                    //don't drop at mop cart
+                    System.out.println("dropping" + bd2);
+                    dropLid(bd1);
+                }
+                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar) && (bd1.getName() != "slimeball")
+                        && (bd1.getName() != "slimeballTurret") && (bd1.getName() != "slime")
+                        && (bd1.getName() != "robot")     && (bd1.getName() != "scientist")
+                        && (bd1.getName() != "lizard") && (bd1.getName() != "turret")
+                        && (bd1.getName() != "mopCart") && (bd1.getName() != "specialDurability")
+                        && (bd1.getName() != "specialHealth") ) {
+                    //don't drop at mop cart
+                    System.out.println("dropping" + bd1.getName());
+                    dropLid(bd2);
+                }
                 if (bd1.getName().equals("lid") && bd2 == s) {
                     removeLid(bd1,s);
                 }
                 if (bd2.getName().equals("lid") && bd1 == s) {
                     removeLid(bd2,s);
                 }
-                if (bd1.getName().equals("lid") && (bd2 != s) && (bd2 != avatar)
-                        && (bd2.getName() != "mopCart") && (bd2.getName() != "specialDurability")
-                        && (bd2.getName() != "specialHealth")) {
-                    //don't drop at mop cart
-                    dropLid(bd1);
-                }
-                if (bd2.getName().equals("lid") && ((bd1 != s)) && (bd1 != avatar)
-                        && (bd1.getName() != "mopCart") && (bd1.getName() != "specialDurability")
-                        && (bd1.getName() != "specialHealth") ) {
-                    //don't drop at mop cart
-                    dropLid(bd2);
-                }
+
             }
 
             if (bd1.getName().equals("lid") && (bd2 == avatar) ) {
@@ -3339,24 +3353,31 @@ public class FloorController extends WorldController implements ContactListener 
 
         if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
                 && bd1.getName().equals("lid")) {
+            System.out.println("entered 1");
             bd1.setVX(lidVel.x);
             bd1.setVY(lidVel.y);
-            //System.out.println("set lidvel");
-            //System.out.println(bd1.getVX());
-            //System.out.println(bd1.getVY());
-            //System.out.println("");
 
         }
 
-
         if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
                 && bd2.getName().equals("lid")) {
+            System.out.println("entered 2");
             bd2.setVX(lidVel.x);
             bd2.setVY(lidVel.y);
-            /*System.out.println("set lidvel");
-            System.out.println(bd2.getVX());
-            System.out.println(bd2.getVY());
-            System.out.println("");*/
+        }
+
+        if ((bd1.getName().equals("slimeball") || bd1.getName().equals("slimeballTurret"))
+                && bd2.getName().equals("lid") && lidGround) {
+            System.out.println("entered 3");
+            bd2.setVX(0);
+            bd2.setVY(0);
+        }
+        if ((bd2.getName().equals("slimeball") || bd2.getName().equals("slimeballTurret"))
+                && bd1.getName().equals("lid")&& lidGround) {
+            System.out.println("entered 4");
+            bd1.setVX(0);
+            bd1.setVY(0);
+
         }
 
         /*if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
