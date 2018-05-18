@@ -19,6 +19,7 @@ import edu.cornell.gdiac.util.*;
 public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/opacity-block.png";
+    private static final String LEVELCOMPLETE_FILE = "shared/level-complete.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/continue-button.png";
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
@@ -96,6 +97,12 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
     private float stateTimer;
 
+    private float stateTimerbg;
+
+    private Animation <TextureRegion> bgAnimation;
+
+    private TextureRegion bg;
+
     private TextureRegion current;
 
 
@@ -121,6 +128,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         choose=1;
 
         stateTimer = 0.0f;
+        stateTimerbg = 0.0f;
         // Load the next two images immediately.
         playButton = new Texture(PLAY_BTN_FILE);
         playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -140,7 +148,14 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         /*for(Controller controller : Controllers.getControllers()) {
             controller.addListener(this);
         }*/
+        Texture backgroundT = new Texture(LEVELCOMPLETE_FILE);
+        TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
         Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i=0; i < backgroundT.getWidth()/1024; i++){
+            frames.add (new TextureRegion(backgroundTexture,i*1024,0,1024,576));
+        }
+        bgAnimation = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
         for (int i=0; i < joeNextT.getWidth()/192; i++){
             frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
         }
@@ -166,6 +181,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     public void dispose() {
         background.dispose();
         background = null;
+        bgAnimation = null;
+        bg = null;
         if (playButton != null) {
             playButton.dispose();
             playButton = null;
@@ -189,6 +206,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         current = getFrameJoe(delta);
+        bg = bgAnimation.getKeyFrame(stateTimer,true);
+        stateTimerbg = stateTimerbg + delta;
     }
 
     /**
@@ -201,6 +220,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0);
+        canvas.draw(bg, 0, 0);
         Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
         Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
         canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
