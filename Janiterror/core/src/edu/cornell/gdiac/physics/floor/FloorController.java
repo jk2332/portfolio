@@ -45,6 +45,9 @@ public class FloorController extends WorldController implements ContactListener 
     private String LEVEL;
     /** The sound file for background music */
     private static final String BACKGROUND_TRACK_FILE = "floor/background-track.mp3";
+    /** The sound file for game states*/
+    private static final String VICTORY_FILE = "floor/sound/victory.mp3";
+    private static final String FAILURE_FILE = "floor/sound/failure.mp3";
     /** The sound file for a jump */
     private static final String JUMP_FILE = "floor/sound/jump.mp3";
     /** The sound file for a bullet fire */
@@ -164,6 +167,10 @@ public class FloorController extends WorldController implements ContactListener 
 
         manager.load(BACKGROUND_TRACK_FILE, Sound.class);
         assets.add(BACKGROUND_TRACK_FILE);
+        manager.load(VICTORY_FILE, Sound.class);
+        assets.add(VICTORY_FILE);
+        manager.load(FAILURE_FILE, Sound.class);
+        assets.add(FAILURE_FILE);
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
         manager.load(PEW_FILE, Sound.class);
@@ -232,6 +239,8 @@ public class FloorController extends WorldController implements ContactListener 
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, BACKGROUND_TRACK_FILE);
+        sounds.allocate(manager, VICTORY_FILE);
+        sounds.allocate(manager, FAILURE_FILE);
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, PEW_FILE);
         sounds.allocate(manager, POP_FILE);
@@ -1869,12 +1878,12 @@ public class FloorController extends WorldController implements ContactListener 
         ticks ++;
         avatar.setTexture(getFrameJoe(dt));
         if(avatar.getHP()<=0) {
+            SoundController.getInstance().play(FAILURE_FILE, FAILURE_FILE, false, 0.8f);
             avatar.setAlive(false);
             avatar.setMovementX(0.0f);
             avatar.setMovementY(0.0f);
             avatar.setVelocity();
             if (joeDeathTimer <= 0 ) {
-                //System.out.println("deathtimerset");
                 if (!isFailure()) {
                     setFailure(true);
                     setCameraX(cameraX);
@@ -3278,8 +3287,7 @@ public class FloorController extends WorldController implements ContactListener 
                 //Perma upgrade player's base HP
                 avatar.setBaseHP(avatar.getCurrentMaxHP());
                 avatar.setCurrentMaxHP(avatar.getBaseHP());
-                //System.out.println("base hp" + avatar.getBaseHP());
-                //System.out.println("current max hp" + avatar.getCurrentMaxHP());
+                SoundController.getInstance().play(VICTORY_FILE, VICTORY_FILE, false, 0.8f);
                 setComplete(true);
                 setCameraX(cameraX);
                 setCameraY(cameraY);
