@@ -70,8 +70,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 	}
 
-
-	/** 
+	/**
 	 * Called when the Application is first created.
 	 * 
 	 * This is method immediately loads assets for the loading screen, and prepares
@@ -114,7 +113,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[11] = new FloorController(12);
 		controllers[12] = new FloorController(13);
 		controllers[13] = new FloorController(14);
-		controllers[14] = new FloorController(11);
+		controllers[14] = new FloorController(15);
 		controllers[15] = new FloorController(11);
 		controllers[16] = new FloorController(8);
 		controllers[17] = new FloorController(8);
@@ -230,6 +229,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
+
 		if (screen == loading) {
 			for(int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(manager);
