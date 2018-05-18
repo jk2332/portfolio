@@ -485,9 +485,11 @@ public class FloorController extends WorldController implements ContactListener 
     private Animation <TextureRegion> vacSuck;
     private Animation <TextureRegion> exclamation;
     private Animation <TextureRegion> question;
+    private Animation <TextureRegion> poison;
     private TextureRegion vac;
     private TextureRegion emoticonExclamation;
     private TextureRegion emoticonQuestion;
+    private TextureRegion emoticonPoison;
 
 
 
@@ -1388,6 +1390,12 @@ public class FloorController extends WorldController implements ContactListener 
         question = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
+        for (int i=0; i <= 8; i++){
+            frames.add (new TextureRegion(poisonAni,i*32,0,32,32));
+        }
+        poison = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
+
         float dwidth  = 64/scale.x;
         float dheight = 64/scale.y;
         avatar = new JoeModel(level.getJoePosX()/32+OBJ_OFFSET_X, level.getJoePosY()/32+OBJ_OFFSET_Y, dwidth, dheight,
@@ -2022,6 +2030,7 @@ public class FloorController extends WorldController implements ContactListener 
             vac = (vacSuck.getKeyFrame(stateTimer,true));
             emoticonExclamation = (exclamation.getKeyFrame(stateTimer,true));
             emoticonQuestion = (question.getKeyFrame(stateTimer,true));
+            emoticonPoison = (poison.getKeyFrame(stateTimer,true));
             for (Obstacle s: objects){
                 if (s.getName() == "slimeball"){
                     s.setTexture(slimeBall.getKeyFrame(stateTimer,true));
@@ -3690,6 +3699,10 @@ public class FloorController extends WorldController implements ContactListener 
         else{
             isVacDraw = false;
             vacuumTiles = 0;
+        }
+        if (board.isHazard(board.screenToBoardX(avatar.getX()),
+                board.screenToBoardY(avatar.getY()) - 1) && avatar.getHP() > 0){
+            canvas.draw(emoticonPoison, ((avatar.getX())* (scale.x)-16.0f), ((avatar.getY())* scale.y) + 50);
         }
         canvas.end();
 

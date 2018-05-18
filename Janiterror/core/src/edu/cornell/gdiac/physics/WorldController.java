@@ -233,8 +233,10 @@ public abstract class WorldController implements Screen, InputProcessor {
     private static final String ENEMY_HEALTH_5_FILE  = "floor/enemy-health-5.png";
 	private static final String EMOTICON_EXCLAMATION_FILE  = "floor/emoticon-exclamation.png";
 	private static final String EMOTICON_QUESTION_FILE  = "floor/emoticon-question.png";
+	private static final String EMOTICON_POISON_FILE  = "floor/emoticon-poison.png";
 	private static final String EXCLAMATION_ANI_FILE  = "floor/exclamation-ani.png";
 	private static final String QUESTION_ANI_FILE  = "floor/question-ani.png";
+	private static final String POISON_ANI_FILE  = "floor/poison-ani.png";
 
 	private static final String MOPCART_INDEX_FILE  = "floor/mopcart-index.png";
 	private static final String BACKGROUND_FILE = "shared/loading.png";
@@ -382,6 +384,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion vacSuckAniTexture;
 	protected TextureRegion exclamationAni;
 	protected TextureRegion questionAni;
+	protected TextureRegion poisonAni;
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
@@ -407,6 +410,7 @@ public abstract class WorldController implements Screen, InputProcessor {
     protected TextureRegion enemyHealth5Texture;
 	protected Texture emoticonExclamationTexture;
 	protected Texture emoticonQuestionTexture;
+	protected Texture emoticonPoisonTexture;
 
     protected TextureRegion mopBarTexture;
 	protected TextureRegion sprayBarTexture;
@@ -687,6 +691,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(EXCLAMATION_ANI_FILE);
 		manager.load(QUESTION_ANI_FILE, Texture.class);
 		assets.add(QUESTION_ANI_FILE);
+		manager.load(POISON_ANI_FILE, Texture.class);
+		assets.add(POISON_ANI_FILE);
 
 
 		manager.load(BULLET_FILE, Texture.class);
@@ -741,6 +747,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(EMOTICON_EXCLAMATION_FILE);
 		manager.load(EMOTICON_QUESTION_FILE, Texture.class);
 		assets.add(EMOTICON_QUESTION_FILE);
+		manager.load(EMOTICON_POISON_FILE, Texture.class);
+		assets.add(EMOTICON_POISON_FILE);
 
 		manager.load(MOP_BAR_FILE, Texture.class);
 		assets.add(MOP_BAR_FILE);
@@ -942,6 +950,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		vacSuckAniTexture = createTexture(manager,VACUUM_SUCK_ANI_FILE,false);
 		exclamationAni = createTexture(manager,EXCLAMATION_ANI_FILE,false);
 		questionAni = createTexture(manager,QUESTION_ANI_FILE,false);
+		poisonAni = createTexture(manager,POISON_ANI_FILE,false);
 		backgroundTexture = new Texture(BACKGROUND_FILE);
 		mopcartBackgroundTexture = new Texture(MOPCART_BACKGROUND_FILE);
 
@@ -972,6 +981,7 @@ public abstract class WorldController implements Screen, InputProcessor {
         enemyHealth5Texture = createTexture(manager,ENEMY_HEALTH_5_FILE,false);
 		emoticonExclamationTexture = new Texture(EMOTICON_EXCLAMATION_FILE);
 		emoticonQuestionTexture = new Texture(EMOTICON_QUESTION_FILE);
+		emoticonPoisonTexture = new Texture(EMOTICON_POISON_FILE);
 
 		mopBarTexture = createTexture(manager,MOP_BAR_FILE,false);
 		sprayBarTexture = createTexture(manager,SPRAY_BAR_FILE,false);
