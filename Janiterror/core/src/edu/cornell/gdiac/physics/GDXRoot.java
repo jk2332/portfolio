@@ -249,6 +249,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_MENU) {
 			//((WorldController) screen).reset2();
+			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
 			loading.reset();
 			setScreen(loading);
 		} else if (screen instanceof WorldController && exitCode == WorldController.EXIT_NEXT) {
@@ -266,10 +267,13 @@ public class GDXRoot extends Game implements ScreenListener {
 			setScreen(controllers[current]);
 		} else if (screen instanceof ScoreMode && exitCode == 0) {
 			// main menu
+			System.out.println("main menu");
+			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
 			loading.reset();
 			setScreen(loading);
 		} else if (screen instanceof LevelSelectMode && exitCode == 0) {
 			System.out.println("main");
+			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
 			loading.reset();
 			setScreen(loading);
 		}/** else if (screen instanceof PauseMenu && exitCode == 1) { //continue on the game
@@ -284,6 +288,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			controllers[current].reset();
 			setScreen(controllers[current]);
 		} else if (screen instanceof  CreditsMode) {
+			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
 			loading.reset();
 			setScreen(loading);
 		} else if (exitCode == WorldController.EXIT_QUIT) {

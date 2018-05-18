@@ -23,6 +23,7 @@
 package edu.cornell.gdiac.physics;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
@@ -52,6 +53,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static final String PLAY_BTN_FILE = "shared/play-button.png";
 	private static final String SELECT_BTN_FILE = "shared/levels-button.png";
 	private static final String CREDITS_BTN_FILE = "shared/credits-button.png";
+	private static final String LOADING_TRACK = "floor/sound/track2.mp3";
 	
 	/** Background texture for start-up */
 	private Texture background;
@@ -145,6 +147,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private float stateTimer;
 
 	private int buttonPointer;
+	private Music music;
 
 	/**
 	 * Returns the budget for the asset loader.
@@ -212,6 +215,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param millis The loading budget in milliseconds
 	 */
 	public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
+		music = Gdx.audio.newMusic(Gdx.files.internal(LOADING_TRACK));
+		music.setLooping(true);
+		music.setVolume(0.4f);
+		music.play();
 		this.manager = manager;
 		this.canvas  = canvas;
 		budget = millis;
@@ -266,6 +273,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Called when this screen should release all resources.
 	 */
 	public void dispose() {
+		 music.dispose();
 		 statusBkgLeft = null;
 		 statusBkgRight = null;
 		 statusBkgMiddle = null;
@@ -437,6 +445,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		buttonPointer = 0;
 		active = false;
 		Gdx.input.setInputProcessor(this);
+		//music = Gdx.audio.newMusic(Gdx.files.internal(LOADING_TRACK));
+		//music.setLooping(true);
+		//music.setVolume(0.4f);
+		music.play();
 	}
 
 	// ADDITIONAL SCREEN METHODS
@@ -455,10 +467,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 			// We are are ready, notify our listener
 			if (isReady() && listener != null) {
+				music.stop();
 				listener.exitScreen(this, 0);
 			} else if (isSelect() && listener != null) {
+				music.stop();
 				listener.exitScreen(this, 1);
 			} else if (isOptions() && listener != null) {
+				music.stop();
 				listener.exitScreen(this, 2);
 			}
 		}
