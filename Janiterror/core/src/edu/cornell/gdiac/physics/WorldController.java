@@ -31,6 +31,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.physics.obstacle.*;
+import sun.plugin2.util.ColorUtil;
 
 /**
  * Base class for a world-specific controller.
@@ -197,10 +198,13 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private static final String VACUUM_SUCK_ANI_FILE = "floor/vacuum-suck-animation.png";
 
 	/** The texture files for the Tutorial Keys */
-	private static final String Q_KEY_FILE  = "floor/tutorial/keys-q.png";
-	private static final String E_KEY_FILE  = "floor/tutorial/keys-e.png";
-	private static final String WASD_KEY_FILE  = "floor/tutorial/keys-movement.png";
-	private static final String ARROW_KEY_FILE  = "floor/tutorial/keys-attack.png";
+	private static final String Q_KEY_FILE  = "floor/tutorial_keys/keys-q.png";
+	private static final String E_KEY_FILE  = "floor/tutorial_keys/keys-e.png";
+	private static final String WASD_KEY_FILE  = "floor/tutorial_keys/keys-movement.png";
+	private static final String ARROW_KEY_FILE  = "floor/tutorial_keys/keys-attack.png";
+	private static final String LEFT_KEY_FILE  = "floor/tutorial_keys/keys-left.png";
+	private static final String RIGHT_KEY_FILE  = "floor/tutorial_keys/keys-right.png";
+	private static final String ALL_KEY_FILE  = "floor/tutorial_keys/keys-all.png";
 	/** The texture files for the Mop Cart UI icons */
 	private static final String MOP_FILE  = "floor/old_ui/ui-mop.png";
 	private static final String SPRAY_FILE  = "floor/old_ui/ui-spray.png";
@@ -375,9 +379,12 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	/** Texture assets for Tutorial Keys */
 	protected Texture qKeyTexture;
+	protected Texture eKeyTexture;
 	protected Texture arrowKeyTexture;
 	protected Texture wasdKeyTexture;
-	protected Texture eKeyTexture;
+	protected Texture leftKeyTexture;
+	protected Texture rightKeyTexture;
+	protected Texture allKeyTexture;
 
 	/** Texture assets for UI Icons */
 	protected Texture mopTexture;
@@ -690,6 +697,10 @@ public abstract class WorldController implements Screen, InputProcessor {
 		assets.add(WASD_KEY_FILE);
 		manager.load(ARROW_KEY_FILE, Texture.class);
 		assets.add(ARROW_KEY_FILE);
+		manager.load(LEFT_KEY_FILE, Texture.class);
+		assets.add(LEFT_KEY_FILE);
+		manager.load(RIGHT_KEY_FILE, Texture.class);
+		assets.add(RIGHT_KEY_FILE);
 
 		//UI Icons
 		manager.load(MOP_FILE, Texture.class);
@@ -928,6 +939,9 @@ public abstract class WorldController implements Screen, InputProcessor {
 		eKeyTexture = new Texture(E_KEY_FILE);
 		wasdKeyTexture = new Texture(WASD_KEY_FILE);
 		arrowKeyTexture = new Texture(ARROW_KEY_FILE);
+		leftKeyTexture = new Texture(LEFT_KEY_FILE);
+		rightKeyTexture = new Texture(RIGHT_KEY_FILE);
+		allKeyTexture = new Texture(ALL_KEY_FILE);
 
 		//UI Icons
 		mopTexture = new Texture(MOP_FILE);
@@ -1631,16 +1645,21 @@ public abstract class WorldController implements Screen, InputProcessor {
 		}
 		if (paused){
 			canvas.begin();
-//			System.out.println(cameraX);
-//			System.out.println(cameraY);
-			canvas.draw(background, cameraX - 512, cameraY - 288);
-			Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
-			Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
+			canvas.draw(background, cameraX - 520, cameraY - 300);
+			canvas.draw(allKeyTexture, cameraX - 300, cameraY);
+			Color mainTint = choose==0 ? Color.WHITE : Color.WHITE;
+			Color playTint = choose==1 ? Color.WHITE : Color.WHITE;
+//            Color mainTint = choose==0 ? new Color(0.117f, 0.459f, 0.776f, 1f) : Color.WHITE;
+//            Color playTint = choose==1 ? new Color(0.117f, 0.459f, 0.776f, 1f) : Color.WHITE;
+			float mainScale = choose==0 ? 0.85f : 0.75f;
+			float playScale = choose==1 ? 0.85f : 0.75f;
+
 			//cameraX and cameraY are exactly the middle points of the current screen
 			canvas.draw(mainButton, mainTint, mainButton.getWidth()/2, mainButton.getHeight()/2,
-					cameraX - 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+					cameraX - 156, cameraY - 104, 0, mainScale*scale2, mainScale*scale2);
 			canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
-					cameraX + 156, cameraY - 104, 0, BUTTON_SCALE*scale2, BUTTON_SCALE*scale2);
+					cameraX + 156, cameraY - 104, 0, playScale*scale2, playScale*scale2);
+
 
 			//canvas.draw(joeMain, Color.WHITE, joeMain.getWidth()/2, joeMain.getHeight()/2,
 			//		centerXMain, centerYJoe, 0, 1, 1);

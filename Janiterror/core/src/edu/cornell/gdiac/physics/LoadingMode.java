@@ -252,7 +252,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		for (int i=0; i < backgroundT.getWidth()/1024; i++){
 			frames.add (new TextureRegion(backgroundTexture,i*1024,0,1024,576));
 		}
-		bgAnimation = new Animation<TextureRegion>(0.15f, frames);
+		bgAnimation = new Animation<TextureRegion>(0.12f, frames);
 		frames.clear();
 
 		// Let ANY connected controller start the game.
@@ -391,17 +391,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		if (playButton == null && selectButton == null) {
 			drawProgress(canvas);
 		} else {
-			Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
+			Color tint = (pressState == 1 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
 						centerX, centerYPlay, 0, buttonPlayScale*scale, buttonPlayScale*scale);
 //			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
 //					centerX, centerY + 160, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-			tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
+			tint = (pressState == 3 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
 			canvas.draw(selectButton, tint, selectButton.getWidth()/2, selectButton.getHeight()/2,
 					centerX, centerYSelect, 0, buttonSelectScale*scale, buttonSelectScale*scale);
 
-			tint = (pressState == 5 ? Color.YELLOW: Color.WHITE);
+			tint = (pressState == 5 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
 			canvas.draw(creditsButton, tint, creditsButton.getWidth()/2, creditsButton.getHeight()/2,
 					centerX, centerYOptions, 0, buttonOptionScale*scale, buttonOptionScale*scale);
 		}
