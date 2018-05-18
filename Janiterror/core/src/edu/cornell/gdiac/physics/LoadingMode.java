@@ -399,17 +399,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		if (playButton == null && selectButton == null) {
 			drawProgress(canvas);
 		} else {
-			Color tint = (pressState == 1 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
+			Color tint = buttonPlayScale==0.85f ? Color.YELLOW: Color.WHITE;
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
 						centerX, centerYPlay, 0, buttonPlayScale*scale, buttonPlayScale*scale);
 //			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
 //					centerX, centerY + 160, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-			tint = (pressState == 3 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
+			tint = buttonSelectScale==0.85f ? Color.YELLOW: Color.WHITE;
 			canvas.draw(selectButton, tint, selectButton.getWidth()/2, selectButton.getHeight()/2,
 					centerX, centerYSelect, 0, buttonSelectScale*scale, buttonSelectScale*scale);
 
-			tint = (pressState == 5 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
+			tint = buttonOptionScale==0.85f ? Color.YELLOW: Color.WHITE;
 			canvas.draw(creditsButton, tint, creditsButton.getWidth()/2, creditsButton.getHeight()/2,
 					centerX, centerYOptions, 0, buttonOptionScale*scale, buttonOptionScale*scale);
 		}

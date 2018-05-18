@@ -4,6 +4,7 @@
 package edu.cornell.gdiac.physics;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
@@ -19,6 +20,7 @@ import edu.cornell.gdiac.util.*;
 public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/opacity-block.png";
+    private static final String LEVELCOMPLETE_FILE = "shared/level-complete.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/continue-button.png";
     private static final String MAIN_BTN_FILE = "shared/menu-button.png";
@@ -27,7 +29,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private static final String JOE_MAIN_FILE = "shared/janitor-sleeping-3x.png";
 
     /** The font for giving messages to the player */
-    protected BitmapFont displayFont;
+    protected BitmapFont bodyFont;
 
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 800;
@@ -96,7 +98,16 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
     private float stateTimer;
 
+    private float stateTimerbg;
+
+    private Animation <TextureRegion> bgAnimation;
+
+    private TextureRegion bg;
+
     private TextureRegion current;
+
+    private String next_level_name;
+    private static final String FONT_BODY_FILE = "shared/Francois.ttf";
 
 
     /**
@@ -114,13 +125,23 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      * Creates a ScoreMode with the default size and position
      *
      */
-    public ScoreMode(GameCanvas canvas) {
+    public ScoreMode(GameCanvas canvas, String next_level_name) {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
         choose=1;
 
+        this.next_level_name = next_level_name;
+
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal(FONT_BODY_FILE));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter2.size = 30; //font size
+        bodyFont = generator2.generateFont(parameter2);
+        generator2.dispose();
+        bodyFont.getData().setScale(scale);
+
         stateTimer = 0.0f;
+        stateTimerbg = 0.0f;
         // Load the next two images immediately.
         playButton = new Texture(PLAY_BTN_FILE);
         playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -140,7 +161,14 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         /*for(Controller controller : Controllers.getControllers()) {
             controller.addListener(this);
         }*/
+        Texture backgroundT = new Texture(LEVELCOMPLETE_FILE);
+        TextureRegion backgroundTexture = new TextureRegion(backgroundT, backgroundT.getWidth(), backgroundT.getHeight());
         Array<TextureRegion> frames = new Array<TextureRegion>();
+        for (int i=0; i < backgroundT.getWidth()/1024; i++){
+            frames.add (new TextureRegion(backgroundTexture,i*1024,0,1024,576));
+        }
+        bgAnimation = new Animation<TextureRegion>(0.1f, frames);
+        frames.clear();
         for (int i=0; i < joeNextT.getWidth()/192; i++){
             frames.add (new TextureRegion(joeNextTexture,i*192,0,192,192));
         }
@@ -166,6 +194,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     public void dispose() {
         background.dispose();
         background = null;
+        bgAnimation = null;
+        bg = null;
         if (playButton != null) {
             playButton.dispose();
             playButton = null;
@@ -189,6 +219,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
         canvas.setCameraPosition(canvas.getWidth()/2.0f,canvas.getHeight()/2.0f);
         current = getFrameJoe(delta);
+        bg = bgAnimation.getKeyFrame(stateTimer,true);
+        stateTimerbg = stateTimerbg + delta;
     }
 
     /**
@@ -201,6 +233,15 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0);
+        canvas.draw(bg, 0, 0);
+
+        if (next_level_name.equals("none")) {
+            canvas.drawTextCentered("Congratulations! You've beat Janiterror!", bodyFont, 140);
+        }
+        else {
+            canvas.drawTextCentered("Next Level: " + next_level_name, bodyFont, 140);
+        }
+
         Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
         canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
                 centerXNext, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);

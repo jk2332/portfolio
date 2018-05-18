@@ -112,8 +112,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		controllers[9] = new FloorController(10);
 		controllers[10] = new FloorController(11);
 		controllers[11] = new FloorController(12);
-		controllers[12] = new FloorController(11);
-		controllers[13] = new FloorController(11);
+		controllers[12] = new FloorController(13);
+		controllers[13] = new FloorController(14);
 		controllers[14] = new FloorController(11);
 		controllers[15] = new FloorController(11);
 		controllers[16] = new FloorController(8);
@@ -154,7 +154,12 @@ public class GDXRoot extends Game implements ScreenListener {
 		scores = new ScoreMode[controllers.length];
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(manager);
-			scores[ii] = new ScoreMode(canvas);
+
+			String level_name = "";
+			if (ii == controllers.length-1) { level_name = "none"; }
+			else { level_name = levelNames[ii + 1]; }
+
+			scores[ii] = new ScoreMode(canvas, level_name);
 			//scores[ii].setScreenListener(this);
 		}
 		current = 0;

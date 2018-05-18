@@ -274,7 +274,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         radiusX = (int) (layout.width / 2.0f);
         canvas.drawText(text, displayFont, this.centerX - radiusX, titleY - 20 * radiusY);
 
-        color = (pressState == 1 ? Color.YELLOW: Color.WHITE);
+        color = Color.YELLOW;
 
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
