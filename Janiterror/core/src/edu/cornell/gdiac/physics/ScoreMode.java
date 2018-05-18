@@ -82,6 +82,8 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
     /** The current state of the play button */
     private int   pressState;
+    private int choose;
+
     /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
     private int   budget;
     /** Support for the X-Box start button in place of play button */
@@ -116,6 +118,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
+        choose=1;
 
         stateTimer = 0.0f;
         // Load the next two images immediately.
@@ -198,12 +201,12 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0);
-        Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+        Color mainTint = choose==0 ? Color.YELLOW : Color.WHITE;
+        Color playTint = choose==1 ? Color.YELLOW : Color.WHITE;
+        canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
                 centerXNext, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
-        tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
+        canvas.draw(mainButton, mainTint, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 
         canvas.draw(current, centerX - current.getRegionWidth()/2, centerYJoe - current.getRegionHeight()/2);
@@ -224,12 +227,23 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             update(delta);
             draw();
 
-            // We are are ready, notify our listener
-            if (listener != null && (isReady() || Gdx.input.isKeyJustPressed(Input.Keys.C))) {
-                listener.exitScreen(this, EXIT_NEXT);
-            } else if (listener != null && (isMain() || Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE))) {
-                listener.exitScreen(this, EXIT_MENU);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && choose==1){
+                choose=0;
             }
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && choose==0){
+                choose=1;
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                if (listener != null && choose==1) {
+                    choose=1;
+                    listener.exitScreen(this, EXIT_NEXT);
+                    //&& Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && choose==0
+                } else if (listener != null && choose==0) {
+                    choose=1;
+                    listener.exitScreen(this, EXIT_MENU);
+                }
+            }
+            // We are are ready, notify our listener
         }
     }
 

@@ -1122,7 +1122,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	private int centerXMain;
 	private int centerXNext;
 	private int centerYJoe;
-	int choose;
+	private int choose;
 
 	public enum StateJoe {MAIN, NEXT}
 
