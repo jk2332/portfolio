@@ -94,6 +94,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	/** File to texture for level completion */
 	private static final String VICTORY_FILE = "shared/victory.png";
+	private static final String FAILURE_FILE = "shared/failure.png";
 
 	/** File to texture for the win door */
 	private static final String GOAL_FILE = "shared/stairs-down.png";
@@ -289,6 +290,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 	protected TextureRegion wallLightTexture;
 
 	protected TextureRegion victoryTexture;
+	protected TextureRegion failureTexture;
 
 	protected TextureRegion avatarIdleTexture;
 	protected TextureRegion avatarWalkRTexture;
@@ -501,6 +503,8 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 		manager.load(VICTORY_FILE, Texture.class);
 		assets.add(VICTORY_FILE);
+		manager.load(FAILURE_FILE, Texture.class);
+		assets.add(FAILURE_FILE);
 
 		manager.load(WALL_DTL_FILE, Texture.class);
 		assets.add(WALL_DTL_FILE);
@@ -847,6 +851,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		wallLightTexture = createTexture(manager,WALL_LIGHT_FILE,false);
 
 		victoryTexture = createTexture(manager,VICTORY_FILE,false);
+		failureTexture = createTexture(manager,FAILURE_FILE,false);
 
 		avatarWalkRTexture = createTexture(manager,JANITOR_WALKR_FILE,false);
 		avatarWalkUTexture = createTexture(manager,JANITOR_WALKU_FILE,false);
@@ -1073,7 +1078,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 
 	/** How many frames after winning/losing do we continue? */
 	public static final int COMPLETE_EXIT_COUNT = 100;
-	public static final int FAILURE_EXIT_COUNT = 60;
+	public static final int FAILURE_EXIT_COUNT = 100;
 
 	/** The amount of time for a physics engine step. */
 	public static final float WORLD_STEP = 1/60.0f;
@@ -1677,10 +1682,7 @@ public abstract class WorldController implements Screen, InputProcessor {
 		} else if (failed) {
 			displayFont.setColor(Color.RED);
 			canvas.begin(); // DO NOT SCALE
-			System.out.println(cameraX);
-			System.out.println(cameraY);
-			canvas.drawText("FAILURE!", displayFont, cameraX - 100, cameraY + 20);
-//			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+			canvas.draw(failureTexture, cameraX - 250, cameraY - 220);
 			canvas.end();
 		}
 	}
