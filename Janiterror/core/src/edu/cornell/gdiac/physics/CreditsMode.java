@@ -61,7 +61,11 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
 
     private String[] levelNames;
 
+    //CODE INSERT
+    private Texture background;
+    private Texture playButton;
     private Texture mainButton;
+    private int choose;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -283,7 +287,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
         radiusX = (int) (layout.width / 2.0f);
         canvas.drawText(text, bodyFont, this.centerX - radiusX, titleY - 20 * radiusY);
 
-        color = Color.YELLOW;
+        color = new Color(0.117f, 0.459f, 0.776f, 1f);
 
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 STANDARD_WIDTH/2, menuY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
@@ -308,6 +312,7 @@ public class CreditsMode implements Screen, InputProcessor, ControllerListener {
             // We are are ready, notify our listener
             if (listener != null && isReady()) {
                 listener.exitScreen(this, exit);
+                System.out.println(exit);
             }
         }
     }

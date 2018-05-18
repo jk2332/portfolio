@@ -81,7 +81,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,14);
 
-
 		//Attempt to play music during loading
 //		manager.load(BACKGROUND_TRACK_FILE, Sound.class);
 //		assets.add(BACKGROUND_TRACK_FILE);
@@ -218,7 +217,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
-
 		if (screen == loading) {
 			for(int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(manager);
@@ -228,9 +226,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				scores[ii].setScreenListener(this);
 			}
 			if (exitCode == 0) {
-				//SoundController.getInstance().stop(LOADING_TRACK_FILE);
-				//controllers[current].reset2();
-				//controllers[current].preLoadContent(manager);
+				System.out.println("start the game");
 				current = 0;
 				controllers[current].reset();
 				//controllers[current].preLoadContent(manager);
@@ -267,7 +263,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.reset();
 			setScreen(loading);
 		} else if (screen instanceof LevelSelectMode && exitCode == 0) {
-			System.out.println("main");
+			System.out.println("main menu");
 			SoundController.getInstance().stop(BACKGROUND_TRACK_FILE);
 			loading.reset();
 			setScreen(loading);

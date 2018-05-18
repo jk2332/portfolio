@@ -47,7 +47,7 @@
   </object>
  </objectgroup>
  <objectgroup name="goal door">
-  <object id="6" gid="7" x="1183" y="192.048" width="32" height="32"/>
+  <object id="6" gid="7" x="1184.89" y="159.869" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="characters">
   <object id="3" type="scientist" gid="26" x="750.01" y="401.549" width="64" height="64">

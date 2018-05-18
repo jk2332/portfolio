@@ -58,7 +58,6 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     private Texture background;
     /** Play button to display when done */
     public Texture playButton;
-
     public Texture mainButton;
 
     /** Start button for XBox controller on Windows */
@@ -115,11 +114,10 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
      *
      * @return true if the player is ready to go
      */
+    public boolean isMain() { return choose == 0;}
     public boolean isReady() {
-        return pressState == 2;
+        return choose == 1;
     }
-
-    public boolean isMain() { return pressState == 4;}
 
     /**
      * Creates a ScoreMode with the default size and position
@@ -129,7 +127,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
         this.canvas  = canvas;
-        choose=1;
+        choose = 1;
 
         this.next_level_name = next_level_name;
 
@@ -184,6 +182,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
 
     public void reset() {
         pressState = 0;
+        choose = 1;
         active = false;
         Gdx.input.setInputProcessor(this);
     }
@@ -242,13 +241,16 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             canvas.drawTextCentered("Next Level: " + next_level_name, bodyFont, 140);
         }
 
-        Color tint = (pressState == 1 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                centerXNext, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        Color mainTint = (choose == 0 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
+        float mainScale = choose == 0 ? 0.85f : 0.75f;
+        canvas.draw(mainButton, mainTint, mainButton.getWidth()/2, mainButton.getHeight()/2,
+                centerXMain, centerY, 0, BUTTON_SCALE*scale, mainScale*scale);
 
-        tint = (pressState == 3 ? Color.YELLOW: Color.WHITE);
-        canvas.draw(mainButton, tint, mainButton.getWidth()/2, mainButton.getHeight()/2,
-                centerXMain, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        System.out.println(choose);
+        Color playTint = (choose == 1 ? new Color(0.117f, 0.459f, 0.776f, 1f): Color.WHITE);
+        float playScale = choose == 1 ? 0.85f : 0.75f;
+        canvas.draw(playButton, playTint, playButton.getWidth()/2, playButton.getHeight()/2,
+                centerXNext, centerY, 0, BUTTON_SCALE*scale, playScale*scale);
 
         canvas.draw(current, centerX - current.getRegionWidth()/2, centerYJoe - current.getRegionHeight()/2);
         canvas.end();
@@ -268,11 +270,40 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
             update(delta);
             draw();
 
-            // We are are ready, notify our listener
-            if (listener != null && isReady()) {
-                listener.exitScreen(this, EXIT_NEXT);
-            } else if (listener != null && isMain()) {
-                listener.exitScreen(this, EXIT_MENU);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && choose==0){
+                choose=1;
+            }
+            else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && choose==1){
+                choose=0;
+            }
+
+//            // We are are ready, notify our listener
+//            if ((Gdx.input.isKeyJustPressed(Input.Keys.ENTER))) {
+//                if (listener != null && isReady()) {
+//                    System.out.println("next level");
+//                    reset();
+//                    listener.exitScreen(this, EXIT_NEXT);
+//                } else if (listener != null && isMain()) {
+//                    System.out.println("main menu real");
+//                    reset();
+//                    listener.exitScreen(this, EXIT_MENU);
+//                }
+//            }
+
+//            if ((Gdx.input.isKeyJustPressed(Input.Keys.G))) {
+
+
+            InputController input = InputController.getInstance();
+            input.readInput(new Rectangle(0f, 0f, 32.0f, 18.0f), new Vector2(32.0f, 32.0f));
+            if (input.didEnter()) {
+                // We are are ready, notify our listener
+                if (listener != null && isReady()) {
+                    reset();
+                    listener.exitScreen(this, EXIT_NEXT);
+                } else if (listener != null && isMain()) {
+                    reset();
+                    listener.exitScreen(this, EXIT_MENU);
+                }
             }
         }
     }
@@ -611,17 +642,7 @@ public class ScoreMode implements Screen, InputProcessor, ControllerListener {
     public StateJoe previousState;
 
     public StateJoe getStateJoe(){
-        float screenX = Gdx.input.getX();
-        float screenY = Gdx.input.getY();
-
-        screenY = heightY-screenY;
-
-        float radius = BUTTON_SCALE*scale*mainButton.getWidth()/2.0f;
-        float dist = (screenX-centerXMain)*(screenX-centerXMain)+(screenY-centerY)*(screenY-centerY);
-        if (dist < radius*radius) {
-            return StateJoe.MAIN;
-        }
-
+        if (choose == 0) { return StateJoe.MAIN; }
         return StateJoe.NEXT;
     }
 

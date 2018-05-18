@@ -388,7 +388,7 @@ public class LevelSelectMode implements Screen, InputProcessor, ControllerListen
 
         if (hoverIndex == levelNames.length) {
             buttonScale = 0.85f;
-            color = Color.YELLOW;
+            color = new Color(0.117f, 0.459f, 0.776f, 1f);
         }
         canvas.draw(mainButton, color, mainButton.getWidth()/2, mainButton.getHeight()/2,
                 STANDARD_WIDTH/2, menuY, 0, buttonScale*scale, buttonScale*scale);
