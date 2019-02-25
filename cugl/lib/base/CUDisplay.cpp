@@ -199,9 +199,9 @@ void Display::dispose() {
     _usable.size.set(0,0);
     _scale.setZero();
     _aspect = Aspect::LANDSCAPE_16_9;
-    _initialOrientation = Orientation::UNKNOWN,
-    _displayOrientation = Orientation::UNKNOWN,
-    _deviceOrientation = Orientation::UNKNOWN,
+    _initialOrientation = Orientation::UNKNOWN;
+    _displayOrientation = Orientation::UNKNOWN;
+    _deviceOrientation = Orientation::UNKNOWN;
     SDL_Quit();
 }
 

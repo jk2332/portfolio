@@ -16,11 +16,12 @@
 using namespace cugl;
 
 
-bool Plant::init(const Vec2& pos, std::shared_ptr<Texture> texture) {
+
+bool Plant::init(const Vec2& pos) {
     Obstacle::init(pos);
     _health = 0;
-    _texture = texture;
-    
+    //_texture = texture;
+    _state = noNeed;
     return true;
 }
 
@@ -31,7 +32,11 @@ bool Plant::init(const Vec2& pos, std::shared_ptr<Texture> texture) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Plant::dispose() {
-    _texture = nullptr;
+    //_texture = nullptr;
+}
+
+void Plant::updateState(int state){
+    _state = state;
 }
 
 

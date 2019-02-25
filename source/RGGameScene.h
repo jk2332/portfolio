@@ -28,6 +28,8 @@
 #include <vector>
 #include "RGRagdollModel.h"
 #include "RGInput.h"
+#include "Plant.hpp"
+#include "Cloud.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -44,6 +46,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
+    std::shared_ptr<Plant> _plants[10];
     
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -58,7 +61,8 @@ protected:
 
     // Physics objects for the game
 	/** Reference to the ragdoll model */
-	std::shared_ptr<RagdollModel> _ragdoll;
+	//std::shared_ptr<RagdollModel> _ragdoll;
+    std::shared_ptr<Cloud> _cloud;
 	/** Selector to allow mouse control of the ragdoll */
 	std::shared_ptr<cugl::ObstacleSelector> _selector;
     /** The node referencing the crosshair */

@@ -69,7 +69,7 @@ const Uint32 AudioNode::DEFAULT_SAMPLING = 48000;
 AudioNode::AudioNode() : _channels(0), _sampling(0) {
     _localname  = "";
     _classname  = "AudioNode";
-    _callback = nullptr,
+    _callback = nullptr;
     _calling  = false;
     _hashOfName = 0;
     _ndgain = 1.0f;

@@ -47,6 +47,7 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    bool _keySplit;
 
     // TOUCH SUPPORT
     /** The initial touch location for the current gesture, IN SCREEN COORDINATES */
@@ -93,6 +94,7 @@ private:
 protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
+    bool _splitPressed;
     bool _resetPressed;
     /** Whether the debug toggle was chosen. */
     bool _debugPressed;
@@ -189,6 +191,7 @@ public:
      * @return true if the reset button was pressed.
      */
     bool didReset() const { return _resetPressed; }
+    bool didSplit()const {return _splitPressed;}
     
     /**
      * Returns true if the player wants to go toggle the debug mode.

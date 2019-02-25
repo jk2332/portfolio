@@ -24,6 +24,8 @@ using namespace cugl;
 #define DEBUG_KEY KeyCode::D
 /** The key for exitting the game */
 #define EXIT_KEY  KeyCode::ESCAPE
+/** The key for splitting the cloud */
+#define SPLIT_KEY   KeyCode::S
 
 /** How fast a double click must be in milliseconds */
 #define EVENT_DOUBLE_CLICK  400
@@ -52,6 +54,8 @@ _exitPressed(false),
 _keyUp(false),
 _keyDown(false),
 _keyReset(false),
+_keySplit(false),
+_splitPressed(false),
 _keyDebug(false),
 _keyExit(false),
 _select(false),
@@ -146,19 +150,24 @@ void RagdollInput::update(float dt) {
 
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
+    _keySplit = keys->keyPressed(SPLIT_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
+    
 #endif
 
     _resetPressed = _keyReset;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
+    _splitPressed = _keySplit;
+    
 
 // If it does not support keyboard, we must reset "virtual" keyboard
 #ifdef CU_TOUCH_SCREEN
     _keyExit = false;
     _keyReset = false;
     _keyDebug = false;
+    _keySplit = false;
 #endif
 }
 

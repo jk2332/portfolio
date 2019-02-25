@@ -60,6 +60,10 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 
 /** The initial position of the ragdoll head */
 float DOLL_POS[] = { 16, 10 };
+float PLANT_POS_X[] = {SCENE_WIDTH/2, SCENE_WIDTH/2 + 100};
+float PLANT_POS_Y[] = {100, 100};
+
+long ticks = 0l;
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -73,7 +77,7 @@ float DOLL_POS[] = { 16, 10 };
 /** How big to make the crosshairs */
 #define CROSSHAIR_SIZE      0.1f
 /** The new lessened gravity for this world */
-#define WATER_GRAVITY   -0.25f
+#define WATER_GRAVITY   0.0f
 
 
 #pragma mark Assset Constants
@@ -236,23 +240,21 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     node->setColor(Color4(255, 255, 255, FRGD_OPACITY));
     addChild(node, 2);
     
-    _assets->load<Texture>("crop", "/textures/_Crops-512.png");
-    Vec2 PLANT_POS[] = {Vec2(SCENE_WIDTH/2, 100), Vec2(SCENE_WIDTH/2 + 100, 100)};
-    std::shared_ptr<Plant> _plants[sizeof(PLANT_POS)];
-    image = _assets->get<Texture>("crop");
-    
-    for (unsigned int i = 0; i < sizeof(PLANT_POS); i++){
-        _plants[i] = Plant::alloc(PLANT_POS[i], image);
-        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-        node->setPosition(PLANT_POS[i]);
-        node->setScale(0.4f);
-        addChild(node);
-    }
-    
     // Create selector
     _selector = ObstacleSelector::alloc(_world);
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
+    
+    _assets->load<Texture>("crop", "/textures/_Crops-512.png");
+    image = _assets->get<Texture>("crop");
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_X); i++){
+        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+        node->setName("plant" + std::to_string(i));
+        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        node->setScale(0.4f);
+        addChild(node, 3);
+    }
   
     populate();
     _active = true;
@@ -274,7 +276,8 @@ void GameScene::dispose() {
         _selector = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
-        _ragdoll = nullptr;
+        //_ragdoll = nullptr;
+        _cloud = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -293,7 +296,8 @@ void GameScene::dispose() {
 void GameScene::reset() {
     _selector->deselect();
     _world->clear();
-    _ragdoll = nullptr;
+    //_ragdoll = nullptr;
+    _cloud = nullptr;
     _selector->setDebugScene(nullptr);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -320,19 +324,30 @@ void GameScene::populate() {
 #pragma mark : Ragdoll
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
-    _ragdoll = RagdollModel::alloc(DOLL_POS, _scale);
-    _ragdoll->buildParts(_assets);
-    _ragdoll->makeBubbleGenerator(_assets->get<Texture>("bubble"));
-
-	auto ragdollNode = Node::alloc();
-	// Add the ragdollNode to the world before calling setSceneNode, as noted in the documentation for the Ragdoll's method.
-	_worldnode->addChild(ragdollNode);
-    _ragdoll->setSceneNode(ragdollNode);
-
-    _ragdoll->setDrawScale(_scale);
-    _ragdoll->setDebugColor(DYNAMIC_COLOR);
-    _ragdoll->setDebugScene(_debugnode);
-    _world->addObstacle(_ragdoll);
+//    _ragdoll = RagdollModel::alloc(DOLL_POS, _scale);
+//    _ragdoll->buildParts(_assets);
+//    _ragdoll->makeBubbleGenerator(_assets->get<Texture>("bubble"));
+    _cloud = Cloud::alloc(DOLL_POS, _scale);
+    _assets->load<Texture>("cloud", "/textures/cloud3.png");
+    _cloud->initialBuild(_assets);
+//
+//    auto ragdollNode = Node::alloc();
+//    // Add the ragdollNode to the world before calling setSceneNode, as noted in the documentation for the Ragdoll's method.
+//    _worldnode->addChild(ragdollNode);
+//    _ragdoll->setSceneNode(ragdollNode);
+//
+//    _ragdoll->setDrawScale(_scale);
+//    _ragdoll->setDebugColor(DYNAMIC_COLOR);
+//    _ragdoll->setDebugScene(_debugnode);
+//    _world->addObstacle(_ragdoll);
+    
+    auto cloudNode = Node::alloc();
+    _worldnode->addChild(cloudNode);
+    _cloud->setSceneNode(cloudNode);
+    _cloud->setDrawScale(_scale);
+    _cloud->setDebugColor(DYNAMIC_COLOR);
+    _cloud->setDebugScene(_debugnode);
+    _world->addObstacle(_cloud);
 
     // All walls share the same texture
     std::shared_ptr<Texture> image = _assets->get<Texture>("earth");
@@ -449,6 +464,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
  */
 void GameScene::update(float dt) {
     _input.update(dt);
+    ticks ++;
     
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -456,6 +472,10 @@ void GameScene::update(float dt) {
     if (_input.didExit())  {
         CULog("Shutting down");
         Application::get()->quit();
+    }
+    
+    if (_input.didSplit()){
+        _cloud->dropUnit(*_world->getWorld());
     }
   
     // Move an object if touched
@@ -479,25 +499,42 @@ void GameScene::update(float dt) {
         }
         _crosshair->setVisible(false);
     }
-  
+
+    if (ticks % 100 == 0){
+        for (unsigned int i = 0; i < sizeof(PLANT_POS_Y); i++){
+            _plants[i]->updateState(std::rand() % 5);
+            std::string childName = "plant" + std::to_string(i);
+            int st = _plants[i]->getState();
+            if (st == noNeed) {continue;}
+            if (st == needRain){
+                getChildByName(childName)->setColor(Color4(0, 0, 255));
+            }
+            else if (st == needSun){
+                getChildByName(childName)->setColor(Color4(255, 0, 0));
+            }
+            else {
+                getChildByName(childName)->setColor(Color4(211, 211, 211));
+            }
+        }
+    }
 
     // Turn the physics engine crank.
     _world->update(dt);
   
     // Play a sound for each bubble
-    if (_ragdoll->getBubbleGenerator()->didBubble()) {
-        // Pick a sound by generating a random index and playing it
-        std::random_device rd;
-        std::mt19937 mt(rd());
-        std::uniform_real_distribution<float> dist(0, 1.0f);
-        float rand = dist(mt);
-        int indx = 1+ (int)(rand*NUM_BUBBLES) % NUM_BUBBLES;
-        std::string asset = std::string(SOUND_PREFIX) + (indx < 10 ? "0" : "" ) + cugl::to_string(indx);
-        std::string key = std::string(SOUND_PREFIX);
-        _counter++;
-        std::shared_ptr<Sound> source = _assets->get<Sound>(asset);
-        AudioChannels::get()->playEffect(key, source, false, source->getVolume());
-    }
+//    if (_ragdoll->getBubbleGenerator()->didBubble()) {
+//        // Pick a sound by generating a random index and playing it
+//        std::random_device rd;
+//        std::mt19937 mt(rd());
+//        std::uniform_real_distribution<float> dist(0, 1.0f);
+//        float rand = dist(mt);
+//        int indx = 1+ (int)(rand*NUM_BUBBLES) % NUM_BUBBLES;
+//        std::string asset = std::string(SOUND_PREFIX) + (indx < 10 ? "0" : "" ) + cugl::to_string(indx);
+//        std::string key = std::string(SOUND_PREFIX);
+//        _counter++;
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(asset);
+//        AudioChannels::get()->playEffect(key, source, false, source->getVolume());
+//    }
 }
 
 /**

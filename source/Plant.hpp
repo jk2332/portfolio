@@ -13,6 +13,11 @@
 #include <cugl/cugl.h>
 #include <vector>
 
+#define noNeed 0
+#define needRain 1
+#define needSun 2
+#define needShade 3
+
 
 class Plant : public cugl::BoxObstacle {
 private:
@@ -21,8 +26,9 @@ private:
     
 protected:
     int _health;
-    std::shared_ptr<cugl::Texture> _texture;
+    //std::shared_ptr<cugl::Texture> _texture;
     std::shared_ptr<cugl::Vec2> _pos;
+    int _state;
     
     
 public:
@@ -62,7 +68,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos, std::shared_ptr<cugl::Texture> texture);
+    bool init(const cugl::Vec2& pos);
     
     
 #pragma mark -
@@ -81,18 +87,21 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos, std::shared_ptr<cugl::Texture> texture) {
+    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos) {
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
-        return (result->init(pos, texture) ? result : nullptr);
+        return (result->init(pos) ? result : nullptr);
     }
     
     
     int getHealth() {return _health;}
     std::shared_ptr<cugl::Vec2> getPosition() {return _pos;}
-    std::shared_ptr<cugl::Texture> getTexture() {return _texture;}
-    void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
+    //std::shared_ptr<cugl::Texture> getTexture() {return _texture;}
+    //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
     void decHealth() {_health -= 1;}
     void incHealth() {_health += 1;}
+    void updateState(int state); 
+    int getState() {return _state;}
+    
 };
 
 
