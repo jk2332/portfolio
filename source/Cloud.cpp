@@ -46,12 +46,43 @@ bool Cloud::init(const Vec2& pos, float scale) {
     std::string name("ragdoll");
     setName(name);
     
+    _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
     _drawscale = scale;
     _unitNum = 2;
+    _world = nullptr;
     return true;
 }
+
+void Cloud::BeginContact(b2Contact* contact) {
+    CULog("contact detected");
+    _contacting = true;
+    
+    b2RevoluteJointDef jointDef;
+    b2Joint* joint;
+    jointDef.bodyA = _bodies[LEFT]->getBody();
+    jointDef.bodyB = _bodies[BODY]->getBody();
+    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
+    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+    jointDef.enableLimit = true;
+    jointDef.upperAngle = 0;
+    jointDef.lowerAngle = 0;
+    joint = _world->CreateJoint(&jointDef);
+    _joints.push_back(joint);
+    
+    b2WeldJointDef weldDef;
+    
+    // Weld center of mass to torso
+    weldDef.bodyA = _bodies[BODY]->getBody();
+    weldDef.bodyB = _body;
+    weldDef.localAnchorA.Set(0, 0);
+    weldDef.localAnchorB.Set(0, 0);
+    joint = _world->CreateJoint(&weldDef);
+    _joints.push_back(joint);
+}
+void Cloud::EndContact(b2Contact* contact) { _contacting = false; }
+
 
 /**
  * Disposes all resources and assets of this Ragdoll
@@ -63,6 +94,10 @@ void Cloud::dispose() {
     _node = nullptr;
     _bodies.clear();
     //_bubbler = nullptr;
+}
+
+void Cloud::setWorld(b2World& world) {
+    _world = &world;
 }
 
 
@@ -177,27 +212,31 @@ bool Cloud::dropUnit(b2World& world){
 bool Cloud::joinUnit(b2World& world){
     CULog("Join clouds");
     _unitNum += 1;
-    Cloud::createJoints(world);
-//    b2RevoluteJointDef jointDef;
-//    b2Joint* joint;
-//    jointDef.bodyA = _bodies[LEFT]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = 0;
-//    jointDef.lowerAngle = 0;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//    b2WeldJointDef weldDef;
-//
-//    // Weld center of mass to torso
-//    weldDef.bodyA = _bodies[BODY]->getBody();
-//    weldDef.bodyB = _body;
-//    weldDef.localAnchorA.Set(0, 0);
-//    weldDef.localAnchorB.Set(0, 0);
-//    joint = world.CreateJoint(&weldDef);
-//    _joints.push_back(joint);
+    
+//    Cloud::createJoints(world);
+    b2RevoluteJointDef jointDef;
+    b2Joint* joint;
+    
+    // SHOULDERS
+    jointDef.bodyA = _bodies[LEFT]->getBody();
+    jointDef.bodyB = _bodies[BODY]->getBody();
+    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
+    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+    jointDef.enableLimit = true;
+    jointDef.upperAngle = 0;
+    jointDef.lowerAngle = 0;
+    joint = world.CreateJoint(&jointDef);
+    _joints.push_back(joint);
+    
+    b2WeldJointDef weldDef;
+    
+    // Weld center of mass to torso
+    weldDef.bodyA = _bodies[BODY]->getBody();
+    weldDef.bodyB = _body;
+    weldDef.localAnchorA.Set(0, 0);
+    weldDef.localAnchorB.Set(0, 0);
+    joint = world.CreateJoint(&weldDef);
+    _joints.push_back(joint);
     return true;
 }
 
@@ -295,32 +334,10 @@ void Cloud::update(float delta) {
  */
 bool Cloud::createJoints(b2World& world) {
     CULog("Create joints calleds");
+    return true;
 
-    
     b2RevoluteJointDef jointDef;
     b2Joint* joint;
-    
-    
-//    // NECK JOINT
-//    jointDef.bodyA = _bodies[UP]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, (-TORSO_OFFSET) / 2);
-//    jointDef.localAnchorB.Set(0, (TORSO_OFFSET) / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2.0f;
-//    jointDef.lowerAngle = -M_PI / 2.0f;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[DOWN]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, (TORSO_OFFSET) / 2);
-//    jointDef.localAnchorB.Set(0, (-TORSO_OFFSET) / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2.0f;
-//    jointDef.lowerAngle = -M_PI / 2.0f;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
     
     // SHOULDERS
     jointDef.bodyA = _bodies[LEFT]->getBody();
@@ -332,90 +349,9 @@ bool Cloud::createJoints(b2World& world) {
     jointDef.lowerAngle = 0;
     joint = world.CreateJoint(&jointDef);
     _joints.push_back(joint);
-
     
-//    jointDef.bodyA = _bodies[RIGHT]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(-ARM_XOFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(ARM_XOFFSET / 2, ARM_YOFFSET);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = 0;
-//    jointDef.lowerAngle = 0;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
-//    // ELBOWS
-//    jointDef.bodyA = _bodies[PART_LEFT_FOREARM]->getBody();
-//    jointDef.bodyB = _bodies[PART_LEFT_ARM]->getBody();
-//    jointDef.localAnchorA.Set(FOREARM_OFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(-FOREARM_OFFSET / 2, 0);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_FOREARM]->getBody();
-//    jointDef.bodyB = _bodies[PART_RIGHT_ARM]->getBody();
-//    jointDef.localAnchorA.Set(-FOREARM_OFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(FOREARM_OFFSET / 2, 0);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
-//    // HIPS
-//    jointDef.bodyA = _bodies[PART_LEFT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, THIGH_YOFFSET / 2);
-//    jointDef.localAnchorB.Set(-THIGH_XOFFSET, -THIGH_YOFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, THIGH_YOFFSET / 2);
-//    jointDef.localAnchorB.Set(THIGH_XOFFSET, -THIGH_YOFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    // KNEES
-//    jointDef.bodyA = _bodies[PART_LEFT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_LEFT_SHIN]->getBody();
-//    jointDef.localAnchorA.Set(0, -SHIN_OFFSET / 2);
-//    jointDef.localAnchorB.Set(0, SHIN_OFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_RIGHT_SHIN]->getBody();
-//    jointDef.localAnchorA.Set(0, -SHIN_OFFSET / 2);
-//    jointDef.localAnchorB.Set(0, SHIN_OFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
-//    // Weld bubbler to the head.
     b2WeldJointDef weldDef;
-//    weldDef.bodyA = _bodies[PART_HEAD]->getBody();
-//    weldDef.bodyB = _bubbler->getBody();
-//    weldDef.localAnchorA.Set(BUBB_OFF[0], BUBB_OFF[1]);
-//    weldDef.localAnchorB.Set(0, 0);
-//    joint = world.CreateJoint(&weldDef);
-//    _joints.push_back(joint);
-    
+
     // Weld center of mass to torso
     weldDef.bodyA = _bodies[BODY]->getBody();
     weldDef.bodyB = _body;

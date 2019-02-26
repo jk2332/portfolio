@@ -76,6 +76,10 @@ protected:
     float _drawscale;
     int _unitNum;
     
+    bool _contacting;
+    b2World* _world;
+
+    
 //    /**
 //     * Returns the texture key for the given body part.
 //     *
@@ -117,6 +121,8 @@ public:
      */
     virtual ~Cloud(void) { dispose(); }
     
+    void setWorld(b2World& _world);
+
     /**
      * Disposes all resources and assets of this Ragdoll
      *
@@ -258,6 +264,17 @@ public:
      * this method for maximum flexibility.
      */
     virtual void releaseFixtures() override;
+    
+    
+    virtual void BeginContact(b2Contact* contact);
+    
+    // Called when two fixtures cease to touch
+    virtual void EndContact(b2Contact* contact);
+    
+    b2Fixture* GetFixtureA();
+    
+    // Get the second fixture in this contact
+    b2Fixture* GetFixtureB();
     
     /**
      * Creates the individual body parts for this ragdoll

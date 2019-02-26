@@ -481,6 +481,8 @@ void GameScene::update(float dt) {
     if (_input.didJoin()){
         _cloud->joinUnit(*_world->getWorld());
     }
+    
+    _cloud->setWorld(*_world->getWorld());
   
     // Move an object if touched
     if (_input.didSelect()) {
