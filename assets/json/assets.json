@@ -6,7 +6,7 @@
             "wrapT":    "repeat"
 		},
         "background": {
-            "file":     "textures/fishtank.png"
+            "file":     "textures/foreground.png"
         },
         "foreground": {
             "file":     "textures/foreground.png"

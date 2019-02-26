@@ -274,6 +274,9 @@ public:
     
     bool dropUnit(b2World& world);
     
+    bool joinUnit(b2World& world);
+
+    
     
 #pragma mark -
 #pragma mark Attribute Accessors

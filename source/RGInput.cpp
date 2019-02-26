@@ -26,6 +26,8 @@ using namespace cugl;
 #define EXIT_KEY  KeyCode::ESCAPE
 /** The key for splitting the cloud */
 #define SPLIT_KEY   KeyCode::S
+/** The key for splitting the cloud */
+#define JOIN_KEY   KeyCode::J
 
 /** How fast a double click must be in milliseconds */
 #define EVENT_DOUBLE_CLICK  400
@@ -55,6 +57,7 @@ _keyUp(false),
 _keyDown(false),
 _keyReset(false),
 _keySplit(false),
+_keyJoin(false),
 _splitPressed(false),
 _keyDebug(false),
 _keyExit(false),
@@ -151,6 +154,7 @@ void RagdollInput::update(float dt) {
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
     _keySplit = keys->keyPressed(SPLIT_KEY);
+    _keyJoin = keys->keyPressed(JOIN_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
     
@@ -160,6 +164,7 @@ void RagdollInput::update(float dt) {
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     _splitPressed = _keySplit;
+    _joinPressed = _keyJoin;
     
 
 // If it does not support keyboard, we must reset "virtual" keyboard
@@ -168,6 +173,8 @@ void RagdollInput::update(float dt) {
     _keyReset = false;
     _keyDebug = false;
     _keySplit = false;
+    _keyJoin = false;
+
 #endif
 }
 

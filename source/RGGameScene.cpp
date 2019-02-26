@@ -477,6 +477,10 @@ void GameScene::update(float dt) {
     if (_input.didSplit()){
         _cloud->dropUnit(*_world->getWorld());
     }
+
+    if (_input.didJoin()){
+        _cloud->joinUnit(*_world->getWorld());
+    }
   
     // Move an object if touched
     if (_input.didSelect()) {
