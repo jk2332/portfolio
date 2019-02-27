@@ -350,7 +350,7 @@ void GameScene::populate() {
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
 
     _cloud = Cloud::alloc(DOLL_POS, _scale);
-    _assets->load<Texture>("cloud", "/textures/smallCloud.png");
+    _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
     _cloud->initialBuild(_assets);
     
     auto cloudNode = Node::alloc();
