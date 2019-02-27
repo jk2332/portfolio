@@ -60,8 +60,8 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 
 /** The initial position of the ragdoll head */
 float DOLL_POS[] = { 16, 10 };
-float PLANT_POS_X[] = {2, 8, 10, 16, 20, 28};
-float PLANT_POS_Y[] = {2, 2, 2, 2, 2, 2};
+float PLANT_POS_X[] = {100, 200, 400, 600, 800};
+float PLANT_POS_Y[] = {50, 50, 50, 50, 50};
 
 long ticks = 0l;
 std::vector<Obstacle *> toBeRemoved;
@@ -261,15 +261,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _assets->load<Texture>("crop", "/textures/_Crops-512.png");
     image = _assets->get<Texture>("crop");
     for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
-        std::shared_ptr<BoxObstacle> crop = BoxObstacle::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]), image->getSize()/5/_scale);
-        crop->setBodyType(b2BodyType::b2_staticBody);
-        //rain->setBodyType(b2BodyType::b2_dynamicBody);x
-        //crop->setDensity(1);
-        crop->setName("crop");
-        
-        std::shared_ptr<Node> cropNode = PolygonNode::allocWithTexture(image);
-        cropNode->setContentSize(image->getSize()/5);
-        addObstacle(crop, cropNode, 1);
+        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+        node->setName("plant" + std::to_string(i));
+        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        node->setScale(0.3f);
+        addChild(node, 3);
     }
   
     populate();
@@ -499,26 +496,56 @@ void GameScene::update(float dt) {
         _cloud->joinUnit(*_world->getWorld());
     }
     
-    if (ticks % 100 == 0){
-        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
-        std::cout << _cloud->getX() <<endl;
-        std::cout << _cloud->getY() <<endl;
-        std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(_cloud->getX()-(image->getWidth()/2/_scale), _cloud->getY()-(image->getHeight()/2/_scale)), image->getSize()/_scale);
-        //std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(16, 9), image->getSize()*_scale);
-        rain->setLinearVelocity(0, -10);
-        //rain->setDensity(0.01f);
-        rain->cugl::Obstacle::setFriction(0);
-        rain->setFixedRotation(true);
-        rain->setGravityScale(-10000);
-        rain->setBullet(true);
-        rain->setName("rain");
-        auto rainNode = Node::alloc();
-        //_worldnode->addChild(rainNode);
-        rainNode = PolygonNode::allocWithTexture(image);
-        rainNode->setContentSize(image->getSize());
-        addObstacle(rain, rainNode, 1);
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
+        if (ticks % 500 == 0){_plants[i]->updateState(std::rand() % 4);}
+        std::string childName = "plant" + std::to_string(i);
+        int st = _plants[i]->getState();
+        if (st == noNeed) {
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+        if (st == needRain){
+            //getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
+        else if (st == needSun){
+            getChildByName(childName)->setColor(Color4(255, 0, 0));
+        }
+        else if (st == needShade) {
+            getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
     }
+    
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
+        std::string childName = "plant" + std::to_string(i);
+        int st = _plants[i]->getState();
+        Size size = _assets->get<Texture>("crop")->getSize()/_scale;
+        if (st == needShade and PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth()  and PLANT_POS_X[i]/32 <= _cloud->getX()) {
+            _plants[i]->updateState(noNeed);
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+        if (st == needSun and !(PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth() and PLANT_POS_X[i]/32 <= _cloud->getX())) {
+            _plants[i]->updateState(noNeed);
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+    }
+    
 
+    //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
+    //        std::cout << _cloud->getX() <<endl;
+    //        std::cout << _cloud->getY() <<endl;
+    //        std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(_cloud->getX()-(image->getWidth()/2/_scale), _cloud->getY()-(image->getHeight()/2/_scale)), image->getSize()/_scale);
+    //        //std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(16, 9), image->getSize()*_scale);
+    //        rain->setLinearVelocity(0, -10);
+    //        //rain->setDensity(0.01f);
+    //        rain->cugl::Obstacle::setFriction(0);
+    //        rain->setFixedRotation(true);
+    //        rain->setGravityScale(-10000);
+    //        rain->setBullet(true);
+    //        rain->setName("rain");
+    //        auto rainNode = Node::alloc();
+    //        //_worldnode->addChild(rainNode);
+    //        rainNode = PolygonNode::allocWithTexture(image);
+    //        rainNode->setContentSize(image->getSize());
+    //        addObstacle(rain, rainNode, 1);
 
     _cloud->setWorld(*_world->getWorld());
   
@@ -544,24 +571,7 @@ void GameScene::update(float dt) {
         _crosshair->setVisible(false);
     }
 
-//    if (ticks % 100 == 0){
-//        for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
-//
-//            _plants[i]->updateState(std::rand() % 5);
-//            std::string childName = "plant" + std::to_string(i);
-//            int st = _plants[i]->getState();
-//            if (st == noNeed) {continue;}
-//            if (st == needRain){
-//                getChildByName(childName)->setColor(Color4(0, 0, 255));
-//            }
-//            else if (st == needSun){
-//                getChildByName(childName)->setColor(Color4(255, 0, 0));
-//            }
-//            else {
-//                getChildByName(childName)->setColor(Color4(211, 211, 211));
-//            }
-//        }
-//    }
+    
 
     // Turn the physics engine crank.
     _world->update(dt);

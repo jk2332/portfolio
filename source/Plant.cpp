@@ -21,7 +21,7 @@ bool Plant::init(const Vec2& pos) {
     Obstacle::init(pos);
     _health = 0;
     //_texture = texture;
-    _state = noNeed;
+    _state = rand() % 4;
     return true;
 }
 
