@@ -76,6 +76,11 @@ protected:
     float _drawscale;
     int _unitNum;
     
+    bool _contacting;
+    b2World* _world;
+    bool _makeitRain;
+
+    
 //    /**
 //     * Returns the texture key for the given body part.
 //     *
@@ -117,6 +122,8 @@ public:
      */
     virtual ~Cloud(void) { dispose(); }
     
+    void setWorld(b2World& _world);
+
     /**
      * Disposes all resources and assets of this Ragdoll
      *
@@ -259,6 +266,17 @@ public:
      */
     virtual void releaseFixtures() override;
     
+    
+    virtual void BeginContact(b2Contact* contact);
+    
+    // Called when two fixtures cease to touch
+    virtual void EndContact(b2Contact* contact);
+    
+    b2Fixture* GetFixtureA();
+    
+    // Get the second fixture in this contact
+    b2Fixture* GetFixtureB();
+    
     /**
      * Creates the individual body parts for this ragdoll
      *
@@ -273,6 +291,9 @@ public:
     bool initialBuild(const std::shared_ptr<AssetManager>& assets);
     
     bool dropUnit(b2World& world);
+    
+    bool joinUnit(b2World& world);
+
     
     
 #pragma mark -
@@ -365,6 +386,8 @@ public:
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
     void setDrawScale(float scale);
+    bool makeRain() {return _makeitRain;}
+
     
 #pragma mark -
 #pragma mark Physics

@@ -15,14 +15,12 @@
 
 using namespace cugl;
 
-
-
 bool Plant::init(const Vec2& pos) {
     Obstacle::init(pos);
     _health = 0;
     //_texture = texture;
-    _state = noNeed;
     isShaded = false;
+    _state = rand() % 4;
     return true;
 }
 

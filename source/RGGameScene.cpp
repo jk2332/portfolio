@@ -60,10 +60,12 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 
 /** The initial position of the ragdoll head */
 float DOLL_POS[] = { 16, 10 };
-float PLANT_POS_X[] = {SCENE_WIDTH/2, SCENE_WIDTH/2 + 100};
-float PLANT_POS_Y[] = {100, 100};
-int PLANT_NUM = 2;
+float PLANT_POS_X[] = {100, 200, 400, 600, 800};
+float PLANT_POS_Y[] = {50, 50, 50, 50, 50};
+int PLANT_NUM = 5;
 long ticks = 0l;
+std::vector<Obstacle *> toBeRemoved;
+
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -77,7 +79,7 @@ long ticks = 0l;
 /** How big to make the crosshairs */
 #define CROSSHAIR_SIZE      0.1f
 /** The new lessened gravity for this world */
-#define WATER_GRAVITY   0.0f
+#define WATER_GRAVITY   1.0f
 
 
 #pragma mark Assset Constants
@@ -203,13 +205,24 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
+
     
     // Start up the input handler
     _assets = assets;
+    _assets->load<Texture>("rain", "/textures/rain.png");
+    
     _input.init();
     
     // Create the world and attach the listeners.
     _world = ObstacleWorld::alloc(rect,gravity);
+    _world->activateCollisionCallbacks(true);
+    _world->onBeginContact = [this](b2Contact* contact) {
+        beginContact(contact);
+    };
+    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
+        beforeSolve(contact,oldManifold);
+    };
+
   
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -248,28 +261,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     _assets->load<Texture>("crop", "/textures/_Crops-512.png");
     image = _assets->get<Texture>("crop");
-//    for (unsigned int i = 0; i < sizeof(PLANT_POS_X); i++){
-//        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-//        node->setName("plant" + std::to_string(i));
-//        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        node->setScale(0.4f);
-//        addChild(node, 3);
-//    }
-    _plants[0] = Plant::alloc(Vec2(PLANT_POS_X[0], PLANT_POS_Y[0]));
-    std::shared_ptr<Node> node2  = PolygonNode::allocWithTexture(image);
-    node2->setName("plant" + std::to_string(0));
-    node2->setPosition(Vec2(PLANT_POS_X[0], PLANT_POS_Y[0]));
-    node2->setScale(0.4f);
-    addChild(node2, 3);
-    
-    _plants[1] = Plant::alloc(Vec2(PLANT_POS_X[1], PLANT_POS_Y[1]));
-    std::shared_ptr<Node> node3  = PolygonNode::allocWithTexture(image);
-    node3->setName("plant" + std::to_string(1));
-    node3->setPosition(Vec2(PLANT_POS_X[1], PLANT_POS_Y[1]));
-    node3->setScale(0.4f);
-    addChild(node3, 3);
-    
+
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
+        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+        node->setName("plant" + std::to_string(i));
+        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+        node->setScale(0.3f);
+        addChild(node, 3);
+    }
     
     _assets->load<Texture>("sun", "/textures/Sun.png");
     image = _assets->get<Texture>("sun");
@@ -348,6 +348,7 @@ void GameScene::populate() {
 #pragma mark : Ragdoll
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
+
     _cloud = Cloud::alloc(DOLL_POS, _scale);
     _assets->load<Texture>("cloud", "/textures/cloudraft1.png");
     _cloud->initialBuild(_assets);
@@ -504,6 +505,63 @@ void GameScene::update(float dt) {
     if (_input.didSplit()){
         _cloud->dropUnit(*_world->getWorld());
     }
+
+    if (_input.didJoin()){
+        _cloud->joinUnit(*_world->getWorld());
+    }
+    
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
+        if (ticks % 500 == 0){_plants[i]->updateState(std::rand() % 4);}
+        std::string childName = "plant" + std::to_string(i);
+        int st = _plants[i]->getState();
+        if (st == noNeed) {
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+        if (st == needRain){
+            //getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
+        else if (st == needSun){
+            getChildByName(childName)->setColor(Color4(255, 0, 0));
+        }
+        else if (st == needShade) {
+            getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
+    }
+    
+    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
+        std::string childName = "plant" + std::to_string(i);
+        int st = _plants[i]->getState();
+        Size size = _assets->get<Texture>("crop")->getSize()/_scale;
+        if (st == needShade and PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth()  and PLANT_POS_X[i]/32 <= _cloud->getX()) {
+            _plants[i]->updateState(noNeed);
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+        if (st == needSun and !(PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth() and PLANT_POS_X[i]/32 <= _cloud->getX())) {
+            _plants[i]->updateState(noNeed);
+            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        }
+    }
+    
+
+    //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
+    //        std::cout << _cloud->getX() <<endl;
+    //        std::cout << _cloud->getY() <<endl;
+    //        std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(_cloud->getX()-(image->getWidth()/2/_scale), _cloud->getY()-(image->getHeight()/2/_scale)), image->getSize()/_scale);
+    //        //std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(16, 9), image->getSize()*_scale);
+    //        rain->setLinearVelocity(0, -10);
+    //        //rain->setDensity(0.01f);
+    //        rain->cugl::Obstacle::setFriction(0);
+    //        rain->setFixedRotation(true);
+    //        rain->setGravityScale(-10000);
+    //        rain->setBullet(true);
+    //        rain->setName("rain");
+    //        auto rainNode = Node::alloc();
+    //        //_worldnode->addChild(rainNode);
+    //        rainNode = PolygonNode::allocWithTexture(image);
+    //        rainNode->setContentSize(image->getSize());
+    //        addObstacle(rain, rainNode, 1);
+
+    _cloud->setWorld(*_world->getWorld());
   
     // Move an object if touched
     if (_input.didSelect()) {
@@ -569,7 +627,84 @@ void GameScene::update(float dt) {
     }
     // Turn the physics engine crank.
     _world->update(dt);
+
+}
+
+void GameScene::beginContact(b2Contact* contact) {
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();
+
     
+    // If we hit the "win" door, we are done
+    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+    
+    if(body1->IsBullet() and (b2->getName() == "crop" or b2->getName() == "wall")) {
+        Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+        toBeRemoved.push_back(b1);
+        std::cout << b1->getName() <<endl;
+        std::cout << b2->getName() <<endl;
+        //delete b1;
+    }
+    else if (body2->IsBullet() and (b1->getName() == "crop" or b1->getName() == "wall")){
+        Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+        toBeRemoved.push_back(b2);
+        std::cout << b1->getName() <<endl;
+        std::cout << b2->getName() <<endl;
+        //delete b2;j
+    }
+    std::cout << "END" <<endl;
+}
+
+
+/**
+ * Handles any modifications necessary before collision resolution
+ *
+ * This method is called just before Box2D resolves a collision.  We use this method
+ * to implement sound on contact, using the algorithms outlined in Ian Parberry's
+ * "Introduction to Game Physics with Box2D".
+ *
+ * @param  contact      The two bodies that collided
+ * @param  oldManfold      The collision manifold before contact
+ */
+void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
+    float speed = 0;
+    
+    // Use Ian Parberry's method to compute a speed threshold
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//    b2WorldManifold worldManifold;
+//    contact->GetWorldManifold(&worldManifold);
+//    b2PointState state1[2], state2[2];
+//    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+//    for(int ii =0; ii < 2; ii++) {
+//        if (state2[ii] == b2_addState) {
+//            b2Vec2 wp = worldManifold.points[0];
+//            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
+//            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
+//            b2Vec2 dv = v1-v2;
+//            speed = b2Dot(dv,worldManifold.normal);
+//        }
+//    }
+//
+//    // Play a sound if above threshold
+//    if (speed > SOUND_THRESHOLD) {
+//        // These keys result in a low number of sounds.  Too many == distortion.
+//        std::string key = ((Obstacle*)body1->GetUserData())->getName()+((Obstacle*)body2->GetUserData())->getName();
+//        auto source = _assets->get<Sound>(COLLISION_SOUND);
+//        if (!AudioChannels::get()->isActiveEffect(key)) {
+//            AudioChannels::get()->playEffect(key, source, false, source->getVolume());
+//        }
+//    }
+    Obstacle * b1 = (Obstacle *) body1;
+    Obstacle * b2 = (Obstacle *) body2;
+    if (b1->getName() == b2->getName()){
+        contact->SetEnabled(false);
+    }
+    else{
+        contact->SetEnabled(true);
+    }
+
 }
 
 /**

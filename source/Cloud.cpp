@@ -43,15 +43,47 @@ using namespace cugl;
 bool Cloud::init(const Vec2& pos, float scale) {
     Obstacle::init(pos);
     
-    std::string name("ragdoll");
-    setName(name);
-    
+    setName("cloud");
+    setGravityScale(0);
+
+    _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
     _drawscale = scale;
     _unitNum = 2;
+    _makeitRain = false;
+    _world = nullptr;
     return true;
 }
+
+void Cloud::BeginContact(b2Contact* contact) {
+    CULog("contact detected");
+    _contacting = true;
+    
+    b2RevoluteJointDef jointDef;
+    b2Joint* joint;
+    jointDef.bodyA = _bodies[LEFT]->getBody();
+    jointDef.bodyB = _bodies[BODY]->getBody();
+    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
+    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+    jointDef.enableLimit = true;
+    jointDef.upperAngle = 0;
+    jointDef.lowerAngle = 0;
+    joint = _world->CreateJoint(&jointDef);
+    _joints.push_back(joint);
+    
+    b2WeldJointDef weldDef;
+    
+    // Weld center of mass to torso
+    weldDef.bodyA = _bodies[BODY]->getBody();
+    weldDef.bodyB = _body;
+    weldDef.localAnchorA.Set(0, 0);
+    weldDef.localAnchorB.Set(0, 0);
+    joint = _world->CreateJoint(&weldDef);
+    _joints.push_back(joint);
+}
+void Cloud::EndContact(b2Contact* contact) { _contacting = false; }
+
 
 /**
  * Disposes all resources and assets of this Ragdoll
@@ -63,6 +95,10 @@ void Cloud::dispose() {
     _node = nullptr;
     _bodies.clear();
     //_bubbler = nullptr;
+}
+
+void Cloud::setWorld(b2World& world) {
+    _world = &world;
 }
 
 
@@ -108,7 +144,8 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
 //    // HEAD
 //    makeUnit(UP, BODY, Vec2(0, TORSO_OFFSET));
     // ARMS
-    makeUnit(LEFT, BODY, Vec2(-ARM_XOFFSET, ARM_YOFFSET));
+    part = makeUnit(LEFT, BODY, Vec2(-ARM_XOFFSET, ARM_YOFFSET));
+    part->setFixedRotation(true);
 //    makeUnit(RIGHT, BODY, Vec2(ARM_XOFFSET, ARM_YOFFSET));
 //    makeUnit(DOWN, BODY, Vec2(0, -TORSO_OFFSET));
     return true;
@@ -143,8 +180,8 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& pos) {
     std::shared_ptr<Texture> image = _texture;
     Size size = image->getSize();
-    size.width /= _drawscale;
-    size.height /= _drawscale;
+    size.width /= (_drawscale*2);
+    size.height /= (_drawscale*2);
     
     Vec2 pos2 = pos;
     if (connect != PART_NONE) {
@@ -167,6 +204,37 @@ bool Cloud::dropUnit(b2World& world){
         return true;
     }
     return false;
+}
+
+bool Cloud::joinUnit(b2World& world){
+    CULog("Join clouds");
+    _unitNum += 1;
+    
+//    Cloud::createJoints(world);
+    b2RevoluteJointDef jointDef;
+    b2Joint* joint;
+    
+    // SHOULDERS
+    jointDef.bodyA = _bodies[LEFT]->getBody();
+    jointDef.bodyB = _bodies[BODY]->getBody();
+    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
+    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+    jointDef.enableLimit = true;
+    jointDef.upperAngle = 0;
+    jointDef.lowerAngle = 0;
+    joint = world.CreateJoint(&jointDef);
+    _joints.push_back(joint);
+    
+    b2WeldJointDef weldDef;
+    
+    // Weld center of mass to torso
+    weldDef.bodyA = _bodies[BODY]->getBody();
+    weldDef.bodyB = _body;
+    weldDef.localAnchorA.Set(0, 0);
+    weldDef.localAnchorB.Set(0, 0);
+    joint = world.CreateJoint(&weldDef);
+    _joints.push_back(joint);
+    return true;
 }
 
 #pragma mark -
@@ -213,7 +281,9 @@ void Cloud::update(float delta) {
  * @return true if object allocation succeeded
  */
 bool Cloud::createJoints(b2World& world) {
-    
+    CULog("Create joints calleds");
+    return true;
+
     b2RevoluteJointDef jointDef;
     b2Joint* joint;
     
@@ -228,9 +298,8 @@ bool Cloud::createJoints(b2World& world) {
     joint = world.CreateJoint(&jointDef);
     _joints.push_back(joint);
     
-//    // Weld bubbler to the head.
     b2WeldJointDef weldDef;
-    
+
     // Weld center of mass to torso
     weldDef.bodyA = _bodies[BODY]->getBody();
     weldDef.bodyB = _body;
