@@ -62,7 +62,7 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 float DOLL_POS[] = { 16, 10 };
 float PLANT_POS_X[] = {SCENE_WIDTH/2, SCENE_WIDTH/2 + 100};
 float PLANT_POS_Y[] = {100, 100};
-
+int PLANT_NUM = 2;
 long ticks = 0l;
 
 #pragma mark -
@@ -122,6 +122,7 @@ long ticks = 0l;
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
 
+std::shared_ptr<Plant> currentPlant;
 
 #pragma mark -
 #pragma mark Constructors
@@ -247,14 +248,37 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     _assets->load<Texture>("crop", "/textures/_Crops-512.png");
     image = _assets->get<Texture>("crop");
-    for (unsigned int i = 0; i < sizeof(PLANT_POS_X); i++){
-        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-        node->setName("plant" + std::to_string(i));
-        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-        node->setScale(0.4f);
-        addChild(node, 3);
-    }
+//    for (unsigned int i = 0; i < sizeof(PLANT_POS_X); i++){
+//        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+//        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+//        node->setName("plant" + std::to_string(i));
+//        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+//        node->setScale(0.4f);
+//        addChild(node, 3);
+//    }
+    _plants[0] = Plant::alloc(Vec2(PLANT_POS_X[0], PLANT_POS_Y[0]));
+    std::shared_ptr<Node> node2  = PolygonNode::allocWithTexture(image);
+    node2->setName("plant" + std::to_string(0));
+    node2->setPosition(Vec2(PLANT_POS_X[0], PLANT_POS_Y[0]));
+    node2->setScale(0.4f);
+    addChild(node2, 3);
+    
+    _plants[1] = Plant::alloc(Vec2(PLANT_POS_X[1], PLANT_POS_Y[1]));
+    std::shared_ptr<Node> node3  = PolygonNode::allocWithTexture(image);
+    node3->setName("plant" + std::to_string(1));
+    node3->setPosition(Vec2(PLANT_POS_X[1], PLANT_POS_Y[1]));
+    node3->setScale(0.4f);
+    addChild(node3, 3);
+    
+    
+    _assets->load<Texture>("sun", "/textures/Sun.png");
+    image = _assets->get<Texture>("sun");
+    sunNode = PolygonNode::allocWithTexture(image);
+    sunNode->setName("sun");
+    sunNode->setScale(0.4f);
+    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
+    sunNode->setPosition(Vec2(0,SCENE_HEIGHT));
+    addChild(sunNode, 4);
   
     populate();
     _active = true;
@@ -324,22 +348,9 @@ void GameScene::populate() {
 #pragma mark : Ragdoll
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
-//    _ragdoll = RagdollModel::alloc(DOLL_POS, _scale);
-//    _ragdoll->buildParts(_assets);
-//    _ragdoll->makeBubbleGenerator(_assets->get<Texture>("bubble"));
     _cloud = Cloud::alloc(DOLL_POS, _scale);
-    _assets->load<Texture>("cloud", "/textures/cloud3.png");
+    _assets->load<Texture>("cloud", "/textures/cloudraft1.png");
     _cloud->initialBuild(_assets);
-//
-//    auto ragdollNode = Node::alloc();
-//    // Add the ragdollNode to the world before calling setSceneNode, as noted in the documentation for the Ragdoll's method.
-//    _worldnode->addChild(ragdollNode);
-//    _ragdoll->setSceneNode(ragdollNode);
-//
-//    _ragdoll->setDrawScale(_scale);
-//    _ragdoll->setDebugColor(DYNAMIC_COLOR);
-//    _ragdoll->setDebugScene(_debugnode);
-//    _world->addObstacle(_ragdoll);
     
     auto cloudNode = Node::alloc();
     _worldnode->addChild(cloudNode);
@@ -452,6 +463,22 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
 #pragma mark -
 #pragma mark Physics Handling
 
+/*Raycasting callback function*/
+float callback(b2Fixture* fixture, const Vec2& point, const Vec2& normal, float fraction){
+    if (fixture->GetBody()->GetType() == 2){
+        currentPlant->isShaded = true;
+    }
+    //hoefully we will not collide with other plants
+    return 0.0;
+}
+
+Vec2 transformPoint(Vec2 point) {
+    float x = (32.0/961.0)*point.x - (1024.0/961.0);
+    float y = (9.0/256.0)*point.y - (9.0/8.0);
+    
+    return Vec2(x,y);
+}
+
 /**
  * Executes the core gameplay loop of this world.
  *
@@ -499,12 +526,26 @@ void GameScene::update(float dt) {
         }
         _crosshair->setVisible(false);
     }
-
-    if (ticks % 100 == 0){
-        for (unsigned int i = 0; i < sizeof(PLANT_POS_Y); i++){
-            _plants[i]->updateState(std::rand() % 5);
+    
+    if (ticks % 40 == 0){
+        for (unsigned int i = 0; i < PLANT_NUM; i++){
+            currentPlant = _plants[i];
+            currentPlant->isShaded = false;
+            
+            Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
+            Vec2 sunPos = sunNode->getPosition();
+            std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
+            _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
+            
+            if (currentPlant->isShaded){
+                currentPlant->updateState(needSun);
+            }
+            else{
+                currentPlant->updateState(needShade);
+            }
+            
             std::string childName = "plant" + std::to_string(i);
-            int st = _plants[i]->getState();
+            int st = currentPlant->getState();
             if (st == noNeed) {continue;}
             if (st == needRain){
                 getChildByName(childName)->setColor(Color4(0, 0, 255));
@@ -518,23 +559,17 @@ void GameScene::update(float dt) {
         }
     }
 
+    if (ticks % 80 == 0){
+        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - sunNode->getWidth()){
+            sunNode->setPositionX(0);
+        }
+        else{
+            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
+        }
+    }
     // Turn the physics engine crank.
     _world->update(dt);
-  
-    // Play a sound for each bubble
-//    if (_ragdoll->getBubbleGenerator()->didBubble()) {
-//        // Pick a sound by generating a random index and playing it
-//        std::random_device rd;
-//        std::mt19937 mt(rd());
-//        std::uniform_real_distribution<float> dist(0, 1.0f);
-//        float rand = dist(mt);
-//        int indx = 1+ (int)(rand*NUM_BUBBLES) % NUM_BUBBLES;
-//        std::string asset = std::string(SOUND_PREFIX) + (indx < 10 ? "0" : "" ) + cugl::to_string(indx);
-//        std::string key = std::string(SOUND_PREFIX);
-//        _counter++;
-//        std::shared_ptr<Sound> source = _assets->get<Sound>(asset);
-//        AudioChannels::get()->playEffect(key, source, false, source->getVolume());
-//    }
+    
 }
 
 /**

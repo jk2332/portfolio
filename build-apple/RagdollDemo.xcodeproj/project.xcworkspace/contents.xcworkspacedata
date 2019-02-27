@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:MixerDemo.xcodeproj">
+      location = "self:/Users/Stefan/Desktop/cs_4152/cs4152/build-apple/GameplayPrototype.xcodeproj">
    </FileRef>
 </Workspace>

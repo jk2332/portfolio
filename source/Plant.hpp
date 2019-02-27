@@ -20,6 +20,8 @@
 
 
 class Plant : public cugl::BoxObstacle {
+public:
+    bool isShaded;
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Plant);

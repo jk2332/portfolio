@@ -405,7 +405,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */;
+			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "GameplayPrototype" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -716,7 +716,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */ = {
+		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "GameplayPrototype" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EBB1AC151DF8C6BC00C353B0 /* Debug */,

@@ -123,10 +123,6 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
  * @param texture   The texture for the given body part
  */
 void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
-//    if (_textures.size() <= 4) {
-//        _textures.resize(PART_RIGHT_SHIN+1, nullptr);
-//    }
-//    _textures[part] = texture;
     _texture = texture;
 }
 
@@ -172,55 +168,6 @@ bool Cloud::dropUnit(b2World& world){
     }
     return false;
 }
-
-///**
-// * Returns the texture key for the given body part.
-// *
-// * As some body parts are symmetrical, we reuse textures.
-// *
-// * @return the texture key for the given body part
-// */
-//std::string RagdollModel::getPartName(int part) {
-//    switch (part) {
-//        case PART_HEAD:
-//            return HEAD_TEXTURE;
-//        case PART_BODY:
-//            return BODY_TEXTURE;
-//        case PART_LEFT_ARM:
-//        case PART_RIGHT_ARM:
-//            return ARM_TEXTURE;
-//        case PART_LEFT_FOREARM:
-//        case PART_RIGHT_FOREARM:
-//            return FOREARM_TEXTURE;
-//        case PART_LEFT_THIGH:
-//        case PART_RIGHT_THIGH:
-//            return THIGH_TEXTURE;
-//        case PART_LEFT_SHIN:
-//        case PART_RIGHT_SHIN:
-//            return SHIN_TEXTURE;
-//        default:
-//            return "UNKNOWN";
-//    }
-//}
-
-///**
-// * Creates the bubble generator for this ragdoll
-// *
-// * The bubble generator will be offset at the snorkel on the head.
-// *
-// * @param texture   The texture for an individual bubble
-// */
-//void Cloud::makeBubbleGenerator(const std::shared_ptr<Texture>& bubble) {
-//    CUAssertLog(_bubbler == nullptr, "Bubbler is already initialized");
-//    CUAssertLog(_bodies.size() > PART_RIGHT_SHIN, "Bodies must be initialized before adding bubbler");
-//
-//    Vec2 offpos = (Vec2)(BUBB_OFF)+getPosition();
-//    _bubbler = BubbleGenerator::alloc(bubble, offpos);
-//    _bubbler->setDrawScale(_drawscale);
-//    _bodies.push_back(_bubbler);
-//}
-
-
 
 #pragma mark -
 #pragma mark Physics
@@ -270,27 +217,6 @@ bool Cloud::createJoints(b2World& world) {
     b2RevoluteJointDef jointDef;
     b2Joint* joint;
     
-//    // NECK JOINT
-//    jointDef.bodyA = _bodies[UP]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, (-TORSO_OFFSET) / 2);
-//    jointDef.localAnchorB.Set(0, (TORSO_OFFSET) / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2.0f;
-//    jointDef.lowerAngle = -M_PI / 2.0f;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[DOWN]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, (TORSO_OFFSET) / 2);
-//    jointDef.localAnchorB.Set(0, (-TORSO_OFFSET) / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2.0f;
-//    jointDef.lowerAngle = -M_PI / 2.0f;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
     // SHOULDERS
     jointDef.bodyA = _bodies[LEFT]->getBody();
     jointDef.bodyB = _bodies[BODY]->getBody();
@@ -302,87 +228,8 @@ bool Cloud::createJoints(b2World& world) {
     joint = world.CreateJoint(&jointDef);
     _joints.push_back(joint);
     
-//    jointDef.bodyA = _bodies[RIGHT]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(-ARM_XOFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(ARM_XOFFSET / 2, ARM_YOFFSET);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = 0;
-//    jointDef.lowerAngle = 0;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
-//    // ELBOWS
-//    jointDef.bodyA = _bodies[PART_LEFT_FOREARM]->getBody();
-//    jointDef.bodyB = _bodies[PART_LEFT_ARM]->getBody();
-//    jointDef.localAnchorA.Set(FOREARM_OFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(-FOREARM_OFFSET / 2, 0);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_FOREARM]->getBody();
-//    jointDef.bodyB = _bodies[PART_RIGHT_ARM]->getBody();
-//    jointDef.localAnchorA.Set(-FOREARM_OFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(FOREARM_OFFSET / 2, 0);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
-//    // HIPS
-//    jointDef.bodyA = _bodies[PART_LEFT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, THIGH_YOFFSET / 2);
-//    jointDef.localAnchorB.Set(-THIGH_XOFFSET, -THIGH_YOFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_BODY]->getBody();
-//    jointDef.localAnchorA.Set(0, THIGH_YOFFSET / 2);
-//    jointDef.localAnchorB.Set(THIGH_XOFFSET, -THIGH_YOFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    // KNEES
-//    jointDef.bodyA = _bodies[PART_LEFT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_LEFT_SHIN]->getBody();
-//    jointDef.localAnchorA.Set(0, -SHIN_OFFSET / 2);
-//    jointDef.localAnchorB.Set(0, SHIN_OFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    jointDef.bodyA = _bodies[PART_RIGHT_THIGH]->getBody();
-//    jointDef.bodyB = _bodies[PART_RIGHT_SHIN]->getBody();
-//    jointDef.localAnchorA.Set(0, -SHIN_OFFSET / 2);
-//    jointDef.localAnchorB.Set(0, SHIN_OFFSET / 2);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = M_PI / 2;
-//    jointDef.lowerAngle = -M_PI / 2;
-//    joint = world.CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-    
 //    // Weld bubbler to the head.
     b2WeldJointDef weldDef;
-//    weldDef.bodyA = _bodies[PART_HEAD]->getBody();
-//    weldDef.bodyB = _bubbler->getBody();
-//    weldDef.localAnchorA.Set(BUBB_OFF[0], BUBB_OFF[1]);
-//    weldDef.localAnchorB.Set(0, 0);
-//    joint = world.CreateJoint(&weldDef);
-//    _joints.push_back(joint);
     
     // Weld center of mass to torso
     weldDef.bodyA = _bodies[BODY]->getBody();
@@ -464,12 +311,6 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
         }
         _node->addChild(sprite);
     }
-    
-//    // Bubbler takes a standard node
-//    std::shared_ptr<Node> bubbs = Node::alloc();
-//    bubbs->setPosition(_node->getPosition());
-//    _bubbler->setGeneratorNode(bubbs);
-//    _node->addChild(bubbs);
 }
 
 /**

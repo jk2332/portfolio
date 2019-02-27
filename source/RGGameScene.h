@@ -47,7 +47,7 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
     std::shared_ptr<Plant> _plants[10];
-    
+    std::shared_ptr<Node> sunNode;
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
@@ -255,6 +255,7 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
+    
 };
 
 #endif /* __RG_GAME_MODE_H__ */

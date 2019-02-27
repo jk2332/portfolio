@@ -22,6 +22,7 @@ bool Plant::init(const Vec2& pos) {
     _health = 0;
     //_texture = texture;
     _state = noNeed;
+    isShaded = false;
     return true;
 }
 
