@@ -24,6 +24,9 @@ bool Plant::init(const Vec2& pos) {
     if (_state == needRain){
         _state = needShade;
     }
+    else if (_state == noNeed){
+        _state = needSun;
+    }
     return true;
 }
 

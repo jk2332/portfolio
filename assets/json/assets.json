@@ -6,7 +6,7 @@
             "wrapT":    "repeat"
 		},
         "background": {
-            "file":     "textures/sky.png"
+            "file":     "textures/background-gameplayprototype.png"
         },
         "foreground": {
             "file":     "textures/foreground.png"

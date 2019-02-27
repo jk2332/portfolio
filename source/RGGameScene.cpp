@@ -61,7 +61,7 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 /** The initial position of the ragdoll head */
 float DOLL_POS[] = { 16, 10 };
 float PLANT_POS_X[] = {100, 200, 400, 600, 800};
-float PLANT_POS_Y[] = {50, 50, 50, 50, 50};
+float PLANT_POS_Y[] = {108, 108, 108, 108, 108};
 int PLANT_NUM = 5;
 long ticks = 0l;
 std::vector<Obstacle *> toBeRemoved;
@@ -271,13 +271,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         addChild(node, 3);
     }
     
-    _assets->load<Texture>("sun", "/textures/smallSun.png");
+    _assets->load<Texture>("sun", "/textures/bestsun.png");
     image = _assets->get<Texture>("sun");
     sunNode = PolygonNode::allocWithTexture(image);
     sunNode->setName("sun");
     sunNode->setScale(0.4f);
     sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-    sunNode->setPosition(Vec2(0,SCENE_HEIGHT));
+    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
     addChild(sunNode, 4);
   
     populate();
@@ -585,11 +585,11 @@ void GameScene::update(float dt) {
     }
 
     if (ticks % 40 == 0){
-        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - sunNode->getWidth()){
-            sunNode->setPositionX(0);
+        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - 40){
+            sunNode->setPositionX(40);
         }
         else{
-            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/8);
+            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
         }
     }
     // Turn the physics engine crank.
