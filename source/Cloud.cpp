@@ -217,8 +217,8 @@ bool Cloud::joinUnit(b2World& world){
     // SHOULDERS
     jointDef.bodyA = _bodies[LEFT]->getBody();
     jointDef.bodyB = _bodies[BODY]->getBody();
-    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
-    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+    jointDef.localAnchorA.Set(ARM_XOFFSET / 4, 0);
+    jointDef.localAnchorB.Set(-ARM_XOFFSET / 3, ARM_YOFFSET);
     jointDef.enableLimit = true;
     jointDef.upperAngle = 0;
     jointDef.lowerAngle = 0;

@@ -22,6 +22,7 @@
 class Plant : public cugl::BoxObstacle {
 public:
     bool isShaded;
+    int healthLimit = 20;
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Plant);
@@ -99,9 +100,14 @@ public:
     std::shared_ptr<cugl::Vec2> getPosition() {return _pos;}
     //std::shared_ptr<cugl::Texture> getTexture() {return _texture;}
     //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
-    void decHealth() {_health -= 1;}
-    void incHealth() {_health += 1;}
-    void updateState(int state); 
+    void decHealth() {
+        if (_health > -healthLimit){_health -= 1;}
+    }
+    void incHealth() {
+        if (_health < healthLimit){_health += 1;}
+    }
+    void updateState();
+    void setState(int s);
     int getState() {return _state;}
     
 };

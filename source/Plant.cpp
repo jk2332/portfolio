@@ -21,6 +21,9 @@ bool Plant::init(const Vec2& pos) {
     //_texture = texture;
     isShaded = false;
     _state = rand() % 4;
+    if (_state == needRain){
+        _state = needShade;
+    }
     return true;
 }
 
@@ -34,10 +37,31 @@ void Plant::dispose() {
     //_texture = nullptr;
 }
 
-void Plant::updateState(int state){
-    _state = state;
+void Plant::updateState(){
+    if (_state == needShade){
+        if (isShaded){
+            incHealth();
+            if (_health >= 0){_state = noNeed;}
+        }
+        else{decHealth();}
+    }
+    else if (_state == needRain){
+        //nothing yet
+    }
+    else if (_state == needSun){
+        if (!isShaded){
+            incHealth();
+            if (_health >= 0){_state = noNeed;}
+        }
+        else{decHealth();}
+    }
+//    CULog("%d", _health);
 }
 
+void Plant::setState(int s){
+    _state = s;
+    _health = 0;
+}
 
 
 

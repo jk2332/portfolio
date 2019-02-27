@@ -156,7 +156,7 @@ _counter(0)
  * @return true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,WATER_GRAVITY));
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0));
 }
 
 /**
@@ -271,7 +271,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         addChild(node, 3);
     }
     
-    _assets->load<Texture>("sun", "/textures/Sun.png");
+    _assets->load<Texture>("sun", "/textures/smallSun.png");
     image = _assets->get<Texture>("sun");
     sunNode = PolygonNode::allocWithTexture(image);
     sunNode->setName("sun");
@@ -350,7 +350,7 @@ void GameScene::populate() {
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
 
     _cloud = Cloud::alloc(DOLL_POS, _scale);
-    _assets->load<Texture>("cloud", "/textures/cloudraft1.png");
+    _assets->load<Texture>("cloud", "/textures/smallCloud.png");
     _cloud->initialBuild(_assets);
     
     auto cloudNode = Node::alloc();
@@ -511,37 +511,33 @@ void GameScene::update(float dt) {
     }
     
     for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
-        if (ticks % 500 == 0){_plants[i]->updateState(std::rand() % 4);}
+        currentPlant = _plants[i];
+        currentPlant->isShaded = false;
+        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
+        Vec2 sunPos = sunNode->getPosition() + Vec2(sunNode->getWidth()/2, sunNode->getHeight()/2);
+        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
+        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
+        currentPlant->updateState();
+        int st = currentPlant->getState();
+        if (ticks % 250 == 0 && st == noNeed){
+            int n = rand() % 4;
+            if (n == needRain){n = noNeed;}
+            currentPlant->setState(n);
+        }
         std::string childName = "plant" + std::to_string(i);
-        int st = _plants[i]->getState();
         if (st == noNeed) {
             getChildByName(childName)->setColor(Color4(0, 255, 0));
         }
         if (st == needRain){
-            //getChildByName(childName)->setColor(Color4(0, 0, 255));
-        }
-        else if (st == needSun){
-            getChildByName(childName)->setColor(Color4(255, 0, 0));
-        }
-        else if (st == needShade) {
             getChildByName(childName)->setColor(Color4(0, 0, 255));
         }
-    }
-    
-    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
-        std::string childName = "plant" + std::to_string(i);
-        int st = _plants[i]->getState();
-        Size size = _assets->get<Texture>("crop")->getSize()/_scale;
-        if (st == needShade and PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth()  and PLANT_POS_X[i]/32 <= _cloud->getX()) {
-            _plants[i]->updateState(noNeed);
-            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        else if (st == needSun){
+            getChildByName(childName)->setColor(Color4(255, 165, 0));
         }
-        if (st == needSun and !(PLANT_POS_X[i]/32 >= _cloud->getX() - size.getIWidth() and PLANT_POS_X[i]/32 <= _cloud->getX())) {
-            _plants[i]->updateState(noNeed);
-            getChildByName(childName)->setColor(Color4(0, 255, 0));
+        else if (st == needShade) {
+            getChildByName(childName)->setColor(Color4(255, 0, 0));
         }
     }
-    
 
     //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
     //        std::cout << _cloud->getX() <<endl;
@@ -584,45 +580,13 @@ void GameScene::update(float dt) {
         }
         _crosshair->setVisible(false);
     }
-    
-    if (ticks % 40 == 0){
-        for (unsigned int i = 0; i < PLANT_NUM; i++){
-            currentPlant = _plants[i];
-            currentPlant->isShaded = false;
-            
-            Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
-            Vec2 sunPos = sunNode->getPosition();
-            std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
-            _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
-            
-            if (currentPlant->isShaded){
-                currentPlant->updateState(needSun);
-            }
-            else{
-                currentPlant->updateState(needShade);
-            }
-            
-            std::string childName = "plant" + std::to_string(i);
-            int st = currentPlant->getState();
-            if (st == noNeed) {continue;}
-            if (st == needRain){
-                getChildByName(childName)->setColor(Color4(0, 0, 255));
-            }
-            else if (st == needSun){
-                getChildByName(childName)->setColor(Color4(255, 0, 0));
-            }
-            else {
-                getChildByName(childName)->setColor(Color4(211, 211, 211));
-            }
-        }
-    }
 
-    if (ticks % 80 == 0){
+    if (ticks % 40 == 0){
         if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - sunNode->getWidth()){
             sunNode->setPositionX(0);
         }
         else{
-            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
+            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/8);
         }
     }
     // Turn the physics engine crank.
@@ -653,7 +617,7 @@ void GameScene::beginContact(b2Contact* contact) {
         std::cout << b2->getName() <<endl;
         //delete b2;j
     }
-    std::cout << "END" <<endl;
+//    std::cout << "END" <<endl;
 }
 
 
