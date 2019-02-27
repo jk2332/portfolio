@@ -1,0 +1,81 @@
+{
+	"textures": {
+		"earth": {
+			"file":     "textures/earthtile.png",
+            "wrapS":    "repeat",
+            "wrapT":    "repeat"
+		},
+        "background": {
+            "file":     "textures/foreground.png"
+        },
+        "foreground": {
+            "file":     "textures/foreground.png"
+        },
+        "head": {
+            "file":      "textures/ProfWhite.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "body": {
+            "file":      "textures/tux_body.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "arm": {
+            "file":      "textures/tux_arm.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "forearm": {
+            "file":      "textures/tux_forearm.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "thigh": {
+            "file":      "textures/tux_thigh.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "shin": {
+            "file":      "textures/tux_shin.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "bubble": {
+            "file":      "textures/bubble.png",
+            "minfilter": "linear",
+            "magfilter": "linear"
+        },
+        "crosshair": {
+            "file":     "textures/crosshair.png"
+        }
+	},
+    "sounds": {
+        "bubble01": {
+            "type":     "sample",
+            "file":     "sounds/bubble01.wav",
+            "volume":   0.2
+        },
+        "bubble02": {
+            "type":     "sample",
+            "file":     "sounds/bubble02.wav",
+            "volume":   0.5
+        },
+        "bubble03": {
+            "type":     "sample",
+            "file":     "sounds/bubble03.wav",
+            "volume":   0.5
+        },
+        "bubble04": {
+            "type":     "sample",
+            "file":     "sounds/bubble04.wav",
+            "volume":   0.5
+        }
+    },
+	"fonts": {
+		"retro": {
+			"file":     "fonts/RetroGame.ttf",
+			"size":     64
+		}
+	}
+}
