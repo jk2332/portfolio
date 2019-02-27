@@ -261,6 +261,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+
     
 #pragma mark -
 #pragma mark Gameplay Handling

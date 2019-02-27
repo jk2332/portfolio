@@ -387,6 +387,7 @@ public:
      */
     void setDrawScale(float scale);
     bool makeRain() {return _makeitRain;}
+
     
 #pragma mark -
 #pragma mark Physics

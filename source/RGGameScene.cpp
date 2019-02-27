@@ -66,6 +66,7 @@ float PLANT_POS_Y[] = {2, 2, 2, 2, 2, 2};
 long ticks = 0l;
 std::vector<Obstacle *> toBeRemoved;
 
+
 #pragma mark -
 #pragma mark Physics Constants
 
@@ -208,6 +209,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Start up the input handler
     _assets = assets;
     _assets->load<Texture>("rain", "/textures/rain.png");
+    
     _input.init();
     
     // Create the world and attach the listeners.
@@ -219,6 +221,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
         beforeSolve(contact,oldManifold);
     };
+
   
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -340,7 +343,7 @@ void GameScene::populate() {
 //    _ragdoll = RagdollModel::alloc(DOLL_POS, _scale);
 //    _ragdoll->buildParts(_assets);
 //    _ragdoll->makeBubbleGenerator(_assets->get<Texture>("bubble"));
-    
+
     _cloud = Cloud::alloc(DOLL_POS, _scale);
     _assets->load<Texture>("cloud", "/textures/cloud3.png");
     _cloud->initialBuild(_assets);
@@ -356,7 +359,6 @@ void GameScene::populate() {
 //    _world->addObstacle(_ragdoll);
     
     auto cloudNode = Node::alloc();
-    //cloudNode->setContentSize(_assets->get<Texture>("cloud")->getSize()/_scale);
     _worldnode->addChild(cloudNode);
     _cloud->setSceneNode(cloudNode);
     _cloud->setDrawScale(_scale);
@@ -517,6 +519,7 @@ void GameScene::update(float dt) {
         addObstacle(rain, rainNode, 1);
     }
 
+
     _cloud->setWorld(*_world->getWorld());
   
     // Move an object if touched
@@ -578,17 +581,17 @@ void GameScene::update(float dt) {
 //        AudioChannels::get()->playEffect(key, source, false, source->getVolume());
 //    }
     
-    for(Obstacle* ob: toBeRemoved) {
-        /* std::cout << v[i]; ... */
-        //_world->obs
-        try{
-            _world->removeObstacle(ob);
-        }
-        catch(...){
-            
-        }
-        //delete ob;
-    }
+//    for(Obstacle* ob: toBeRemoved) {
+//        /* std::cout << v[i]; ... */
+//        //_world->obs
+//        try{
+//            _world->removeObstacle(ob);
+//        }
+//        catch(...){
+//
+//        }
+//        //delete ob;
+//    }
 }
 
 void GameScene::beginContact(b2Contact* contact) {
@@ -665,6 +668,7 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
     else{
         contact->SetEnabled(true);
     }
+
 }
 
 /**

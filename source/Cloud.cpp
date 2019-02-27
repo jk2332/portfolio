@@ -45,6 +45,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
     
     setName("cloud");
     setGravityScale(0);
+
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;

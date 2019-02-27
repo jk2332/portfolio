@@ -282,7 +282,7 @@ void ObstacleWorld::removeObstacle(Obstacle* obj) {
             return;
         }
     }
-    //CUAssertLog(false, "Physics object not present in world");
+    CUAssertLog(false, "Physics object not present in world");
 }
 
 /**
