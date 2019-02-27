@@ -537,6 +537,9 @@ void GameScene::update(float dt) {
         else if (st == needShade) {
             getChildByName(childName)->setColor(Color4(255, 0, 0));
         }
+        else if (st == dead){
+            getChildByName(childName)->setColor(Color4(0, 0, 0));
+        }
     }
 
     //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");

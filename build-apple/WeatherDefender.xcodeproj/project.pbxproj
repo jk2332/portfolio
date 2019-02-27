@@ -400,12 +400,12 @@
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = QU25NUFHDA;
+						DevelopmentTeam = TX52T47YPD;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "GameplayPrototype" */;
+			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -682,11 +682,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = QU25NUFHDA;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderGameplayPrototype;
 			};
 			name = Debug;
 		};
@@ -696,11 +696,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = QU25NUFHDA;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderGameplayPrototype;
 			};
 			name = Release;
 		};
@@ -716,7 +716,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "GameplayPrototype" */ = {
+		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EBB1AC151DF8C6BC00C353B0 /* Debug */,

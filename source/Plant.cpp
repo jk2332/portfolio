@@ -38,24 +38,32 @@ void Plant::dispose() {
 }
 
 void Plant::updateState(){
-    if (_state == needShade){
-        if (isShaded){
-            incHealth();
-            if (_health >= 0){_state = noNeed;}
+    if (_state == dead){
+        //do nothing
+    }
+    else{
+        if (_state == needShade){
+            if (isShaded){
+                incHealth();
+                if (_health >= 0){setState(noNeed);}
+            }
+            else{decHealth();}
         }
-        else{decHealth();}
-    }
-    else if (_state == needRain){
-        //nothing yet
-    }
-    else if (_state == needSun){
-        if (!isShaded){
-            incHealth();
-            if (_health >= 0){_state = noNeed;}
+        else if (_state == needRain){
+            //nothing yet
         }
-        else{decHealth();}
+        else if (_state == needSun){
+            if (!isShaded){
+                incHealth();
+                if (_health >= 0){setState(noNeed);}
+            }
+            else{decHealth();}
+        }
+        if(_health <= -healthLimit){
+            setState(dead);
+        }
     }
-//    CULog("%d", _health);
+    
 }
 
 void Plant::setState(int s){

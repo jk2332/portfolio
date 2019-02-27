@@ -17,12 +17,12 @@
 #define needRain 1
 #define needSun 2
 #define needShade 3
-
+#define dead 4
 
 class Plant : public cugl::BoxObstacle {
 public:
     bool isShaded;
-    int healthLimit = 20;
+    int healthLimit = 2000;
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Plant);
@@ -104,7 +104,7 @@ public:
         if (_health > -healthLimit){_health -= 1;}
     }
     void incHealth() {
-        if (_health < healthLimit){_health += 1;}
+        if (_health < healthLimit){_health += 2;}
     }
     void updateState();
     void setState(int s);
