@@ -26,6 +26,7 @@
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
+#include "Grid.hpp"
 
 #include <ctime>
 #include <string>
@@ -59,12 +60,10 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 				  16.0f, 17.0f, 16.0f, 18.0f };
 
 /** The initial position of the ragdoll head */
-float DOLL_POS[] = { 16, 10 };
 float PLANT_POS_X[] = {100, 200, 400, 600, 800};
 float PLANT_POS_Y[] = {108, 108, 108, 108, 108};
-int PLANT_NUM = 5;
 long ticks = 0l;
-std::vector<Obstacle *> toBeRemoved;
+// std::vector<Obstacle *> toBeRemoved;
 
 
 #pragma mark -
@@ -76,25 +75,13 @@ std::vector<Obstacle *> toBeRemoved;
 #define BASIC_FRICTION      0.1f
 /** The restitution for all of (external) objects */
 #define BASIC_RESTITUTION   0.1f
-/** How big to make the crosshairs */
-#define CROSSHAIR_SIZE      0.1f
 /** The new lessened gravity for this world */
 #define WATER_GRAVITY   1.0f
 
 
 #pragma mark Assset Constants
-/** The key for the earth texture in the asset manager */
-#define EARTH_TEXTURE   "earth"
 /** The key for the rocket texture in the asset manager */
 #define BKGD_TEXTURE    "background"
-/** The key for the win door texture in the asset manager */
-#define FRGD_TEXTURE    "foreground"
-/** The key for the crosshaior texture in the asset manager */
-#define CROSS_TEXTURE   "crosshair"
-/** The key prefix for the multiple crate assets */
-#define SOUND_PREFIX    "bubble"
-/** The number of bubble sounds available */
-#define NUM_BUBBLES     4
 /** Opacity of the foreground mask */
 #define FRGD_OPACITY    64
 
@@ -123,6 +110,8 @@ std::vector<Obstacle *> toBeRemoved;
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
+#define GRID_NUM_X          11
+#define GRID_NUM_Y          4
 
 std::shared_ptr<Plant> currentPlant;
 
@@ -210,6 +199,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Start up the input handler
     _assets = assets;
     _assets->load<Texture>("rain", "/textures/rain.png");
+    _assets->load<Texture>("crop", "/textures/_Crops-512.png");
+    _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
     
     _input.init();
     
@@ -243,42 +234,40 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
 
-    addChild(_worldnode,0);
-    addChild(_debugnode,1);
+    addChildWithName(_worldnode,"worldNode");
+    addChildWithName(_debugnode,"debugNode");
 
-    // Add foreground layer
-    image = _assets->get<Texture>(FRGD_TEXTURE);
-    std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-    node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    node->setPosition(offset);
-    node->setColor(Color4(255, 255, 255, FRGD_OPACITY));
-    addChild(node, 2);
+//    // Add foreground layer
+//    image = _assets->get<Texture>(FRGD_TEXTURE);
+//    std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+//    node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    node->setPosition(offset);
+//    node->setColor(Color4(255, 255, 255, FRGD_OPACITY));
+//    addChild(node, 2);
     
     // Create selector
     _selector = ObstacleSelector::alloc(_world);
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
     
-    _assets->load<Texture>("crop", "/textures/_Crops-512.png");
     image = _assets->get<Texture>("crop");
 
-    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
-        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-        node->setName("plant" + std::to_string(i));
-        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-        node->setScale(0.3f);
-        addChild(node, 3);
-    }
+//    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
+//        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+//        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
+//        node->setScale(0.3f);
+//        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
+//        addChildWithName(node, "plant" + std::to_string(i));
+//    }
     
-    _assets->load<Texture>("sun", "/textures/bestsun.png");
-    image = _assets->get<Texture>("sun");
-    sunNode = PolygonNode::allocWithTexture(image);
-    sunNode->setName("sun");
-    sunNode->setScale(0.4f);
-    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
-    addChild(sunNode, 4);
+//    _assets->load<Texture>("sun", "/textures/bestsun.png");
+//    image = _assets->get<Texture>("sun");
+//    sunNode = PolygonNode::allocWithTexture(image);
+//    sunNode->setName("sun");
+//    sunNode->setScale(0.4f);
+//    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
+//    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
+//    addChild(sunNode, 4);
   
     populate();
     _active = true;
@@ -301,7 +290,7 @@ void GameScene::dispose() {
         _worldnode = nullptr;
         _debugnode = nullptr;
         //_ragdoll = nullptr;
-        _cloud = nullptr;
+        //_cloud = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -321,7 +310,7 @@ void GameScene::reset() {
     _selector->deselect();
     _world->clear();
     //_ragdoll = nullptr;
-    _cloud = nullptr;
+    //_cloud = nullptr;
     _selector->setDebugScene(nullptr);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -349,79 +338,27 @@ void GameScene::populate() {
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
 
-    _cloud = Cloud::alloc(DOLL_POS, _scale);
-    _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
-    _cloud->initialBuild(_assets);
+//    _cloud = Cloud::alloc(DOLL_POS, _scale);
+//    _cloud->initialBuild(_assets);
     
-    auto cloudNode = Node::alloc();
-    _worldnode->addChild(cloudNode);
-    _cloud->setSceneNode(cloudNode);
-    _cloud->setDrawScale(_scale);
-    _cloud->setDebugColor(DYNAMIC_COLOR);
-    _cloud->setDebugScene(_debugnode);
-    _world->addObstacle(_cloud);
-
-    // All walls share the same texture
-    std::shared_ptr<Texture> image = _assets->get<Texture>("earth");
-    std::shared_ptr<PolygonNode> sprite;
-    std::shared_ptr<WireNode> draw;
-
-#pragma mark : Wall polygon 1
-    // Create ground pieces
-    // All walls share the same texture
-    image  = _assets->get<Texture>(EARTH_TEXTURE);
-    std::string wname = "wall";
-
-    // Create the polygon outline
-    Poly2 wall1(WALL1,16);
-    SimpleTriangulator triangulator;
-    triangulator.set(wall1);
-    triangulator.calculate();
-    wall1.setIndices(triangulator.getTriangulation());
-    wall1.setType(Poly2::Type::SOLID);
-
-    std::shared_ptr<PolygonObstacle> wallobj = PolygonObstacle::alloc(wall1);
-    wallobj->setDebugColor(STATIC_COLOR);
-    wallobj->setName(wname);
-
-    // Set the physics attributes
-    wallobj->setBodyType(b2_staticBody);
-    wallobj->setDensity(BASIC_DENSITY);
-    wallobj->setFriction(BASIC_FRICTION);
-    wallobj->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall1 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall1);
-    addObstacle(wallobj,sprite,1);  // All walls share the same texture
+//    auto cloudNode = Node::alloc();
+//    _worldnode->addChild(cloudNode);
+//    _cloud->setSceneNode(cloudNode);
+//    _cloud->setDrawScale(_scale);
+//    _cloud->setDebugColor(DYNAMIC_COLOR);
+//    _cloud->setDebugScene(_debugnode);
+//    _world->addObstacle(_cloud);
     
-#pragma mark : Wall polygon 2
-    Poly2 wall2(WALL2,16);
-    triangulator.set(wall2);
-    triangulator.calculate();
-    wall2.setIndices(triangulator.getTriangulation());
-    wall2.setType(Poly2::Type::SOLID);
+    for (int i = 0; i < GRID_NUM_X; i++){
+        for (int j = 0; j < GRID_NUM_Y; j++){
+            auto grid = Grid::alloc(_scale, _assets->get<Texture>("earth"), i, j);
+            auto gridNode = Node::alloc();
+            addChild(gridNode);
+            grid->setDrawScale(32.0f);
+            grid->setSceneNode(gridNode);
+        }
+    }
 
-    wallobj = PolygonObstacle::alloc(wall2);
-    wallobj->setDebugColor(STATIC_COLOR);
-    wallobj->setName(wname);
-    
-    // Set the physics attributes
-    wallobj->setBodyType(b2_staticBody);
-    wallobj->setDensity(BASIC_DENSITY);
-    wallobj->setFriction(BASIC_FRICTION);
-    wallobj->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall2 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall2);
-    addObstacle(wallobj,sprite,1);  // All walls share the same texture
-    
-#pragma mark: Mouse Cross Hair
-    image  = _assets->get<Texture>(CROSS_TEXTURE);
-    _crosshair = PolygonNode::allocWithTexture(image);
-    _worldnode->addChild(_crosshair);
-    _crosshair->setVisible(false);
 }
 
 /**
@@ -502,45 +439,37 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
     
-    if (_input.didSplit()){
-        _cloud->dropUnit(*_world->getWorld());
-    }
-
-    if (_input.didJoin()){
-        _cloud->joinUnit(*_world->getWorld());
-    }
-    
-    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
-        currentPlant = _plants[i];
-        currentPlant->isShaded = false;
-        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
-        Vec2 sunPos = sunNode->getPosition() + Vec2(sunNode->getWidth()/2, sunNode->getHeight()/2);
-        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
-        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
-        currentPlant->updateState();
-        int st = currentPlant->getState();
-        if (ticks % 250 == 0 && st == noNeed){
-            int n = rand() % 4;
-            if (n == needRain){n = noNeed;}
-            currentPlant->setState(n);
-        }
-        std::string childName = "plant" + std::to_string(i);
-        if (st == noNeed) {
-            getChildByName(childName)->setColor(Color4(0, 255, 0));
-        }
-        if (st == needRain){
-            getChildByName(childName)->setColor(Color4(0, 0, 255));
-        }
-        else if (st == needSun){
-            getChildByName(childName)->setColor(Color4(255, 165, 0));
-        }
-        else if (st == needShade) {
-            getChildByName(childName)->setColor(Color4(255, 0, 0));
-        }
-        else if (st == dead){
-            getChildByName(childName)->setColor(Color4(0, 0, 0));
-        }
-    }
+//    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
+//        currentPlant = _plants[i];
+//        currentPlant->isShaded = false;
+//        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
+//        Vec2 sunPos = sunNode->getPosition() + Vec2(sunNode->getWidth()/2, sunNode->getHeight()/2);
+//        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
+//        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
+//        currentPlant->updateState();
+//        int st = currentPlant->getState();
+//        if (ticks % 250 == 0 && st == noNeed){
+//            int n = rand() % 4;
+//            if (n == needRain){n = noNeed;}
+//            currentPlant->setState(n);
+//        }
+//        std::string childName = "plant" + std::to_string(i);
+//        if (st == noNeed) {
+//            getChildByName(childName)->setColor(Color4(0, 255, 0));
+//        }
+//        if (st == needRain){
+//            getChildByName(childName)->setColor(Color4(0, 0, 255));
+//        }
+//        else if (st == needSun){
+//            getChildByName(childName)->setColor(Color4(255, 165, 0));
+//        }
+//        else if (st == needShade) {
+//            getChildByName(childName)->setColor(Color4(255, 0, 0));
+//        }
+//        else if (st == dead){
+//            getChildByName(childName)->setColor(Color4(0, 0, 0));
+//        }
+//    }
 
     //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
     //        std::cout << _cloud->getX() <<endl;
@@ -560,7 +489,7 @@ void GameScene::update(float dt) {
     //        rainNode->setContentSize(image->getSize());
     //        addObstacle(rain, rainNode, 1);
 
-    _cloud->setWorld(*_world->getWorld());
+//    _cloud->setWorld(*_world->getWorld());
   
     // Move an object if touched
     if (_input.didSelect()) {
@@ -570,8 +499,6 @@ void GameScene::update(float dt) {
         
         // Place the cross hair
         _selector->setPosition(pos/_scale);
-        _crosshair->setPosition(pos);
-        _crosshair->setVisible(true);
       
         // Attempt to select an obstacle at the current position
         if (!_selector->isSelected()) {
@@ -581,46 +508,45 @@ void GameScene::update(float dt) {
         if (_selector->isSelected()) {
             _selector->deselect();
         }
-        _crosshair->setVisible(false);
     }
 
-    if (ticks % 40 == 0){
-        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - 40){
-            sunNode->setPositionX(40);
-        }
-        else{
-            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
-        }
-    }
+//    if (ticks % 40 == 0){
+//        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - 40){
+//            sunNode->setPositionX(40);
+//        }
+//        else{
+//            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
+//        }
+//    }
     // Turn the physics engine crank.
     _world->update(dt);
 
 }
 
 void GameScene::beginContact(b2Contact* contact) {
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-
-    
-    // If we hit the "win" door, we are done
-    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
-    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
-    
-    if(body1->IsBullet() and (b2->getName() == "crop" or b2->getName() == "wall")) {
-        Obstacle * b1 = (Obstacle *)(body1->GetUserData());
-        toBeRemoved.push_back(b1);
-        std::cout << b1->getName() <<endl;
-        std::cout << b2->getName() <<endl;
-        //delete b1;
-    }
-    else if (body2->IsBullet() and (b1->getName() == "crop" or b1->getName() == "wall")){
-        Obstacle * b2 = (Obstacle *)(body2->GetUserData());
-        toBeRemoved.push_back(b2);
-        std::cout << b1->getName() <<endl;
-        std::cout << b2->getName() <<endl;
-        //delete b2;j
-    }
-//    std::cout << "END" <<endl;
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//
+//
+//    // If we hit the "win" door, we are done
+//    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+//    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+//
+//    if(body1->IsBullet() and (b2->getName() == "crop" or b2->getName() == "wall")) {
+//        Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+//        toBeRemoved.push_back(b1);
+//        std::cout << b1->getName() <<endl;
+//        std::cout << b2->getName() <<endl;
+//        //delete b1;
+//    }
+//    else if (body2->IsBullet() and (b1->getName() == "crop" or b1->getName() == "wall")){
+//        Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+//        toBeRemoved.push_back(b2);
+//        std::cout << b1->getName() <<endl;
+//        std::cout << b2->getName() <<endl;
+//        //delete b2;j
+//    }
+////    std::cout << "END" <<endl;
 }
 
 
@@ -635,43 +561,42 @@ void GameScene::beginContact(b2Contact* contact) {
  * @param  oldManfold      The collision manifold before contact
  */
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-    float speed = 0;
-    
-    // Use Ian Parberry's method to compute a speed threshold
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-//    b2WorldManifold worldManifold;
-//    contact->GetWorldManifold(&worldManifold);
-//    b2PointState state1[2], state2[2];
-//    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
-//    for(int ii =0; ii < 2; ii++) {
-//        if (state2[ii] == b2_addState) {
-//            b2Vec2 wp = worldManifold.points[0];
-//            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
-//            b2Vec2 dv = v1-v2;
-//            speed = b2Dot(dv,worldManifold.normal);
-//        }
-//    }
+//    float speed = 0;
 //
-//    // Play a sound if above threshold
-//    if (speed > SOUND_THRESHOLD) {
-//        // These keys result in a low number of sounds.  Too many == distortion.
-//        std::string key = ((Obstacle*)body1->GetUserData())->getName()+((Obstacle*)body2->GetUserData())->getName();
-//        auto source = _assets->get<Sound>(COLLISION_SOUND);
-//        if (!AudioChannels::get()->isActiveEffect(key)) {
-//            AudioChannels::get()->playEffect(key, source, false, source->getVolume());
-//        }
+//    // Use Ian Parberry's method to compute a speed threshold
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+////    b2WorldManifold worldManifold;
+////    contact->GetWorldManifold(&worldManifold);
+////    b2PointState state1[2], state2[2];
+////    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+////    for(int ii =0; ii < 2; ii++) {
+////        if (state2[ii] == b2_addState) {
+////            b2Vec2 wp = worldManifold.points[0];
+////            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
+////            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
+////            b2Vec2 dv = v1-v2;
+////            speed = b2Dot(dv,worldManifold.normal);
+////        }
+////    }
+////
+////    // Play a sound if above threshold
+////    if (speed > SOUND_THRESHOLD) {
+////        // These keys result in a low number of sounds.  Too many == distortion.
+////        std::string key = ((Obstacle*)body1->GetUserData())->getName()+((Obstacle*)body2->GetUserData())->getName();
+////        auto source = _assets->get<Sound>(COLLISION_SOUND);
+////        if (!AudioChannels::get()->isActiveEffect(key)) {
+////            AudioChannels::get()->playEffect(key, source, false, source->getVolume());
+////        }
+////    }
+//    Obstacle * b1 = (Obstacle *) body1;
+//    Obstacle * b2 = (Obstacle *) body2;
+//    if (b1->getName() == b2->getName()){
+//        contact->SetEnabled(false);
 //    }
-    Obstacle * b1 = (Obstacle *) body1;
-    Obstacle * b2 = (Obstacle *) body2;
-    if (b1->getName() == b2->getName()){
-        contact->SetEnabled(false);
-    }
-    else{
-        contact->SetEnabled(true);
-    }
-
+//    else{
+//        contact->SetEnabled(true);
+//    }
 }
 
 /**

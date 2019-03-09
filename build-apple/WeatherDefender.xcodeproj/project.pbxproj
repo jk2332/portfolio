@@ -69,6 +69,7 @@
 		EBE28ECE1DFEDCFA00C059A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */; };
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
+		F1F2EDA2223331F600ECCD4B /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Grid.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,6 +159,8 @@
 		F15F4AB522223516006D5CD3 /* Plant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Plant.hpp; sourceTree = "<group>"; };
 		F1B4E5482224517700D807D5 /* Cloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cloud.cpp; sourceTree = "<group>"; };
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
+		F1F2EDA0223331F600ECCD4B /* Grid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
+		F1F2EDA1223331F600ECCD4B /* Grid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Grid.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +265,8 @@
 				F15F4AB522223516006D5CD3 /* Plant.hpp */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
 				F1B4E5492224517700D807D5 /* Cloud.hpp */,
+				F1F2EDA0223331F600ECCD4B /* Grid.cpp */,
+				F1F2EDA1223331F600ECCD4B /* Grid.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -405,7 +410,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */;
+			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "WeatherDefender" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -512,6 +517,7 @@
 				EBB4B5782040ADD300238092 /* RGApp.cpp in Sources */,
 				F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
+				F1F2EDA2223331F600ECCD4B /* Grid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,7 +722,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "RagdollDemo" */ = {
+		EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "WeatherDefender" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EBB1AC151DF8C6BC00C353B0 /* Debug */,
