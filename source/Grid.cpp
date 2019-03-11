@@ -83,9 +83,9 @@ void Grid::dispose() {
  */
 void Grid::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     std::shared_ptr<PolygonNode> grid_node = PolygonNode::allocWithTexture(_texture);
-    grid_node->setPosition((UP_LEFT_CORNER_X+(GRID_WIDTH+OFFSET_X)*_x)*_drawscale, ((GRID_HEIGHT+OFFSET_Y)*_y+UP_LEFT_CORNER_Y)*_drawscale);
+    grid_node->setPosition(gridCoordToPosition());
     grid_node->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
-    node->addChildWithName(grid_node, "grid"+std::to_string(_x)+std::to_string(_y));
+    node->addChildWithName(grid_node, "grid"+std::to_string(_x) + std::to_string(_y));
 }
 
 

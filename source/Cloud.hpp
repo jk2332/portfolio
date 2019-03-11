@@ -75,10 +75,10 @@ protected:
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawscale;
     int _unitNum;
-    
     bool _contacting;
     b2World* _world;
-    bool _makeitRain;
+    bool _isRaining;
+    long _rainCoolDown;
 
     
 //    /**
@@ -373,6 +373,8 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
+    void makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture);
+    
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
@@ -386,8 +388,9 @@ public:
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
     void setDrawScale(float scale);
-    bool makeRain() {return _makeitRain;}
-
+    void setIsRaining(float b){_isRaining = b;}
+    bool getIsRaining(){return _isRaining;}
+    long getRainCoolDown(){return _rainCoolDown;}
     
 #pragma mark -
 #pragma mark Physics

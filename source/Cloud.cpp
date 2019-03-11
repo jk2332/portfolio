@@ -50,8 +50,9 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _node = nullptr;
     _centroid  = nullptr;
     _drawscale = scale;
-    _unitNum = 2;
-    _makeitRain = false;
+    _unitNum = 1;
+    _isRaining = false;
+    _rainCoolDown = 50l;
     _world = nullptr;
     return true;
 }
@@ -144,8 +145,8 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
 //    // HEAD
 //    makeUnit(UP, BODY, Vec2(0, TORSO_OFFSET));
     // ARMS
-    part = makeUnit(LEFT, BODY, Vec2(-ARM_XOFFSET, ARM_YOFFSET));
-    part->setFixedRotation(true);
+//    part = makeUnit(LEFT, BODY, Vec2(-ARM_XOFFSET, ARM_YOFFSET));
+//    part->setFixedRotation(true);
 //    makeUnit(RIGHT, BODY, Vec2(ARM_XOFFSET, ARM_YOFFSET));
 //    makeUnit(DOWN, BODY, Vec2(0, -TORSO_OFFSET));
     return true;
@@ -195,6 +196,16 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
     _bodies.push_back(body);
     return body;
 }
+
+//void Cloud::makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture){
+//    std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(pos.x, pos.y - 1), rainTexture->getSize());
+//    rainDrop->setLinearVelocity(0, -100);
+//    rainDrop->cugl::Obstacle::setGravityScale(10);
+//    rainDrop->setFriction(0);
+//    rainDrop->setMass(0.1);
+//    _bodies.push_back(rainDrop);
+//}
+
 
 bool Cloud::dropUnit(b2World& world){
     if (_unitNum > 1){
@@ -378,7 +389,7 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
         if (ii == RIGHT) {
             sprite->flipHorizontal(true); // More reliable than rotating 90 degrees.
         }
-        _node->addChild(sprite);
+        _node->addChildWithName(sprite, "cloud");
     }
 }
 

@@ -20,9 +20,9 @@
 #define GRID_WIDTH      2.5
 #define GRID_HEIGHT     1.6
 #define UP_LEFT_CORNER_X    1.6
-#define UP_LEFT_CORNER_Y    2
-#define OFFSET_X         GRID_WIDTH/10
-#define OFFSET_Y         GRID_HEIGHT/10
+#define UP_LEFT_CORNER_Y    9.5
+#define OFFSET_X         0
+#define OFFSET_Y         0
 
 
 #pragma mark -
@@ -109,7 +109,7 @@ public:
     }
     
     cugl::Vec2 gridCoordToPosition(){
-        return cugl::Vec2((UP_LEFT_CORNER_X+(GRID_WIDTH+OFFSET_X)*_x)*_drawscale, ((GRID_HEIGHT+OFFSET_Y)*_y+UP_LEFT_CORNER_Y)*_drawscale);
+        return cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*_x + GRID_WIDTH/2)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*_y + UP_LEFT_CORNER_Y + GRID_HEIGHT/2)*_drawscale);
     }
     
     
@@ -150,7 +150,7 @@ public:
      */
     void setDrawScale(float scale);
     
-    
+
 
 };
 

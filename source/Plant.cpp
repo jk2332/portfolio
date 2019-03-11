@@ -7,7 +7,6 @@
 //
 
 #include "Plant.hpp"
-
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
@@ -15,10 +14,12 @@
 
 using namespace cugl;
 
-bool Plant::init(const Vec2& pos) {
-    Obstacle::init(pos);
+bool Plant::init(int x, int y, std::shared_ptr<Texture> texture, float drawscale) {
     _health = 0;
-    //_texture = texture;
+    _x = x;
+    _y = y;
+    _drawscale = drawscale;
+    _texture = texture;
     isShaded = false;
     _state = rand() % 4;
     if (_state == needRain){
@@ -72,6 +73,13 @@ void Plant::updateState(){
 void Plant::setState(int s){
     _state = s;
     _health = 0;
+}
+
+void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node){
+    std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_texture);
+    plant_node->setPosition(getGridCenterPos());
+    plant_node->setScale(0.15f);
+    node->addChildWithName(plant_node, "plant"+std::to_string(_x) + std::to_string(_y));
 }
 
 

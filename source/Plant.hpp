@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
-
+#include "Grid.hpp"
 #define noNeed 0
 #define needRain 1
 #define needSun 2
@@ -29,8 +29,11 @@ private:
     
 protected:
     int _health;
+    float _drawscale;
     //std::shared_ptr<cugl::Texture> _texture;
-    std::shared_ptr<cugl::Vec2> _pos;
+    int _x;
+    int _y;
+    std::shared_ptr<cugl::Texture> _texture;
     int _state;
     
     
@@ -71,7 +74,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos);
+    bool init(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale);
     
     
 #pragma mark -
@@ -90,15 +93,14 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Plant> alloc(const cugl::Vec2& pos) {
+    static std::shared_ptr<Plant> alloc(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale) {
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
-        return (result->init(pos) ? result : nullptr);
+        return (result->init(x, y, texture, drawscale) ? result : nullptr);
     }
     
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
     int getHealth() {return _health;}
-    std::shared_ptr<cugl::Vec2> getPosition() {return _pos;}
-    //std::shared_ptr<cugl::Texture> getTexture() {return _texture;}
     //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
     void decHealth() {
         if (_health > -healthLimit){_health -= 1;}
@@ -109,6 +111,10 @@ public:
     void updateState();
     void setState(int s);
     int getState() {return _state;}
+    
+    cugl::Vec2 getGridCenterPos(){
+        return cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*_x + GRID_WIDTH/3)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*_y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*_drawscale);
+    }
     
 };
 

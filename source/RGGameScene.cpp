@@ -60,9 +60,11 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 				  16.0f, 17.0f, 16.0f, 18.0f };
 
 /** The initial position of the ragdoll head */
-float PLANT_POS_X[] = {100, 200, 400, 600, 800};
-float PLANT_POS_Y[] = {108, 108, 108, 108, 108};
 long ticks = 0l;
+long click1 = -1l;
+long click2 = -1l;
+Obstacle * clicked_ob = nullptr;
+long rainingTicks = 0l;
 // std::vector<Obstacle *> toBeRemoved;
 
 
@@ -110,8 +112,8 @@ long ticks = 0l;
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
-#define GRID_NUM_X          11
-#define GRID_NUM_Y          4
+#define GRID_NUM_X          12
+#define GRID_NUM_Y          6
 
 std::shared_ptr<Plant> currentPlant;
 
@@ -199,20 +201,26 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Start up the input handler
     _assets = assets;
     _assets->load<Texture>("rain", "/textures/rain.png");
-    _assets->load<Texture>("crop", "/textures/_Crops-512.png");
+    _assets->load<Texture>("plant", "/textures/_Crops-512.png");
     _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
+    _assets->load<Texture>("tile0", "/textures/tile1.png");
+    _assets->load<Texture>("tile1", "/textures/tile2.png");
+    _assets->load<Texture>("tile2", "/textures/tile3.png");
+    _assets->load<Texture>("tile3", "/textures/tile4.png");
+    _assets->load<Texture>("tile4", "/textures/tile5.png");
+    _assets->load<Texture>("backg", "/textures/background.png");
     
     _input.init();
     
     // Create the world and attach the listeners.
     _world = ObstacleWorld::alloc(rect,gravity);
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        beginContact(contact);
-    };
-    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
-        beforeSolve(contact,oldManifold);
-    };
+//    _world->activateCollisionCallbacks(true);
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        beginContact(contact);
+//    };
+//    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
+//        beforeSolve(contact,oldManifold);
+//    };
 
   
     // IMPORTANT: SCALING MUST BE UNIFORM
@@ -222,7 +230,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
     // Create the scene graph
-    std::shared_ptr<Texture> image = _assets->get<Texture>(BKGD_TEXTURE);
+    std::shared_ptr<Texture> image = _assets->get<Texture>("backg");
     _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -250,7 +258,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
     
-    image = _assets->get<Texture>("crop");
 
 //    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
 //        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
@@ -290,7 +297,7 @@ void GameScene::dispose() {
         _worldnode = nullptr;
         _debugnode = nullptr;
         //_ragdoll = nullptr;
-        //_cloud = nullptr;
+        _cloud = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -310,7 +317,7 @@ void GameScene::reset() {
     _selector->deselect();
     _world->clear();
     //_ragdoll = nullptr;
-    //_cloud = nullptr;
+    _cloud = nullptr;
     _selector->setDebugScene(nullptr);
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -337,27 +344,33 @@ void GameScene::populate() {
 #pragma mark : Ragdoll
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
-
-//    _cloud = Cloud::alloc(DOLL_POS, _scale);
-//    _cloud->initialBuild(_assets);
     
-//    auto cloudNode = Node::alloc();
-//    _worldnode->addChild(cloudNode);
-//    _cloud->setSceneNode(cloudNode);
-//    _cloud->setDrawScale(_scale);
-//    _cloud->setDebugColor(DYNAMIC_COLOR);
-//    _cloud->setDebugScene(_debugnode);
-//    _world->addObstacle(_cloud);
-    
+    auto gridNode = Node::alloc();
     for (int i = 0; i < GRID_NUM_X; i++){
         for (int j = 0; j < GRID_NUM_Y; j++){
-            auto grid = Grid::alloc(_scale, _assets->get<Texture>("earth"), i, j);
-            auto gridNode = Node::alloc();
-            addChild(gridNode);
-            grid->setDrawScale(32.0f);
+            auto grid = Grid::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(j % 5)), i, j);
             grid->setSceneNode(gridNode);
         }
     }
+    _worldnode->addChildWithName(gridNode, "gridNode");
+    
+    auto plantNode = Node::alloc();
+    for (int i = 0; i < GRID_NUM_X; i++){
+        for (int j = 0; j < GRID_NUM_Y; j++){
+            auto plant = Plant::alloc(i, j, _assets->get<Texture>("plant"), 32.0f);
+            plant->setSceneNode(plantNode);
+        }
+    }
+    _worldnode->addChildWithName(plantNode, "plantNode");
+    
+    _cloud = Cloud::alloc(Vec2(16, 10), _scale);
+    _cloud->initialBuild(_assets);
+    auto cloudNode = Node::alloc();
+    _worldnode->addChildWithName(cloudNode, "cloudNode");
+    _cloud->setSceneNode(cloudNode);
+    _cloud->setDebugColor(DYNAMIC_COLOR);
+    _cloud->setDebugScene(_debugnode);
+    _world->addObstacle(_cloud);
 
 }
 
@@ -471,26 +484,8 @@ void GameScene::update(float dt) {
 //        }
 //    }
 
-    //        std::shared_ptr<Texture> image = _assets->get<Texture>("rain");
-    //        std::cout << _cloud->getX() <<endl;
-    //        std::cout << _cloud->getY() <<endl;
-    //        std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(_cloud->getX()-(image->getWidth()/2/_scale), _cloud->getY()-(image->getHeight()/2/_scale)), image->getSize()/_scale);
-    //        //std::shared_ptr<BoxObstacle> rain = BoxObstacle::alloc(Vec2(16, 9), image->getSize()*_scale);
-    //        rain->setLinearVelocity(0, -10);
-    //        //rain->setDensity(0.01f);
-    //        rain->cugl::Obstacle::setFriction(0);
-    //        rain->setFixedRotation(true);
-    //        rain->setGravityScale(-10000);
-    //        rain->setBullet(true);
-    //        rain->setName("rain");
-    //        auto rainNode = Node::alloc();
-    //        //_worldnode->addChild(rainNode);
-    //        rainNode = PolygonNode::allocWithTexture(image);
-    //        rainNode->setContentSize(image->getSize());
-    //        addObstacle(rain, rainNode, 1);
-
-//    _cloud->setWorld(*_world->getWorld());
-  
+    _cloud->setWorld(*_world->getWorld());
+    
     // Move an object if touched
     if (_input.didSelect()) {
         // Transform from screen to physics coords
@@ -506,10 +501,32 @@ void GameScene::update(float dt) {
         }
     } else {
         if (_selector->isSelected()) {
+            if (click1 == -1){
+                clicked_ob = _selector->getObstacle();
+                click1 = ticks;
+            }
+            else if (click2 == -1){
+                click2 = ticks;
+                if (click2 - click1 <= 50 and clicked_ob == _selector->getObstacle()){
+                    ((Cloud *) clicked_ob)->setIsRaining(true);
+                    for (int i = -5; i < 5; i++){
+                        Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
+                        std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
+                        rainDrop->setMass(0);
+                        rainDrop->setLinearVelocity(0, -1);
+                        std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
+                        addObstacle(rainDrop, rainNode, 5);
+                    }
+                }
+                click1 = -1;
+                click2 = -1;
+                clicked_ob = nullptr;
+            }
             _selector->deselect();
         }
     }
-
+    
+    
 //    if (ticks % 40 == 0){
 //        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - 40){
 //            sunNode->setPositionX(40);
