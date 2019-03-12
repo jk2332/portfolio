@@ -84,6 +84,7 @@ long rainingTicks = 0l;
 #pragma mark Assset Constants
 /** The key for the rocket texture in the asset manager */
 #define BKGD_TEXTURE    "background"
+#define EARTH_TEXTURE   "earth"
 /** Opacity of the foreground mask */
 #define FRGD_OPACITY    64
 
@@ -112,8 +113,8 @@ long rainingTicks = 0l;
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
-#define GRID_NUM_X          12
-#define GRID_NUM_Y          6
+#define GRID_NUM_X          9
+#define GRID_NUM_Y          4
 
 std::shared_ptr<Plant> currentPlant;
 
@@ -203,11 +204,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _assets->load<Texture>("rain", "/textures/rain.png");
     _assets->load<Texture>("plant", "/textures/_Crops-512.png");
     _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
-    _assets->load<Texture>("tile0", "/textures/tile1.png");
-    _assets->load<Texture>("tile1", "/textures/tile2.png");
-    _assets->load<Texture>("tile2", "/textures/tile3.png");
-    _assets->load<Texture>("tile3", "/textures/tile4.png");
-    _assets->load<Texture>("tile4", "/textures/tile5.png");
+    _assets->load<Texture>("tile1", "/textures/tile1.png");
+    _assets->load<Texture>("tile2", "/textures/tile2.png");
+    _assets->load<Texture>("tile3", "/textures/tile3.png");
+    _assets->load<Texture>("tile4", "/textures/tile4.png");
+    _assets->load<Texture>("tile5", "/textures/tile5.png");
     _assets->load<Texture>("backg", "/textures/background.png");
     
     _input.init();
@@ -344,11 +345,64 @@ void GameScene::populate() {
 #pragma mark : Ragdoll
 	// Allocate the ragdoll and set its (empty) node. Its model handles creation of parts 
 	// (both obstacles and nodes to be drawn) upon alllocation and setting the scene node.
+#pragma mark : Wall polygon 1
+    // Create ground pieces
+    // All walls share the same texture
+    std::shared_ptr<Texture> image  = _assets->get<Texture>("earth");
+    std::string wname = "wall";
+    
+    // Create the polygon outline
+    Poly2 wall1(WALL1,16);
+    SimpleTriangulator triangulator;
+    triangulator.set(wall1);
+    triangulator.calculate();
+    wall1.setIndices(triangulator.getTriangulation());
+    wall1.setType(Poly2::Type::SOLID);
+    
+    std::shared_ptr<PolygonObstacle> wallobj = PolygonObstacle::alloc(wall1);
+    wallobj->setDebugColor(STATIC_COLOR);
+    wallobj->setName(wname);
+    
+    // Set the physics attributes
+    wallobj->setBodyType(b2_staticBody);
+    wallobj->setDensity(BASIC_DENSITY);
+    wallobj->setFriction(BASIC_FRICTION);
+    wallobj->setRestitution(BASIC_RESTITUTION);
+    
+    // Add the scene graph nodes to this object
+    wall1 *= _scale;
+    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
+    addObstacle(wallobj,sprite,1);  // All walls share the same texture
+    
+#pragma mark : Wall polygon 2
+    Poly2 wall2(WALL2,16);
+    triangulator.set(wall2);
+    triangulator.calculate();
+    wall2.setIndices(triangulator.getTriangulation());
+    wall2.setType(Poly2::Type::SOLID);
+    
+    wallobj = PolygonObstacle::alloc(wall2);
+    wallobj->setDebugColor(STATIC_COLOR);
+    wallobj->setName(wname);
+    
+    // Set the physics attributes
+    wallobj->setBodyType(b2_staticBody);
+    wallobj->setDensity(BASIC_DENSITY);
+    wallobj->setFriction(BASIC_FRICTION);
+    wallobj->setRestitution(BASIC_RESTITUTION);
+    
+    // Add the scene graph nodes to this object
+    wall2 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall2);
+    addObstacle(wallobj,sprite,1);  // All walls share the same texture
+    
     
     auto gridNode = Node::alloc();
     for (int i = 0; i < GRID_NUM_X; i++){
         for (int j = 0; j < GRID_NUM_Y; j++){
-            auto grid = Grid::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(j % 5)), i, j);
+            int rand = (std::rand() % 5) + 1;
+            std::cout << rand << endl;
+            auto grid = Grid::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
             grid->setSceneNode(gridNode);
         }
     }
@@ -515,6 +569,7 @@ void GameScene::update(float dt) {
                         rainDrop->setMass(0);
                         rainDrop->setLinearVelocity(0, -1);
                         std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
+                        
                         addObstacle(rainDrop, rainNode, 5);
                     }
                 }
@@ -524,6 +579,7 @@ void GameScene::update(float dt) {
             }
             _selector->deselect();
         }
+        
     }
     
     
