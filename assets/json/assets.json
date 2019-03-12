@@ -48,6 +48,33 @@
         },
         "crosshair": {
             "file":     "textures/crosshair.png"
+        },
+        "rain": {
+            "file":     "textures/rain.png"
+        },
+        "plant": {
+            "file":     "textures/_Crops-512.png"
+        },
+        "cloud": {
+            "file":     "textures/shadowCloud.png"
+        },
+        "tile1": {
+            "file":     "textures/tile1.png"
+        },
+        "tile2": {
+            "file":     "textures/tile2.png"
+        },
+        "tile3": {
+            "file":     "textures/tile3.png"
+        },
+        "tile4": {
+            "file":     "textures/tile4.png"
+        },
+        "tile5": {
+            "file":     "textures/tile5.png"
+        },
+        "backg": {
+            "file":     "textures/background.png"
         }
 	},
     "sounds": {

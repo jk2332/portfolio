@@ -10,5 +10,10 @@
 #define WeatherController_hpp
 
 #include <stdio.h>
+#include "Cloud.hpp"
+
+class WeatherController {
+    std::shared_ptr<Cloud> _clouds[1];
+};
 
 #endif /* WeatherController_hpp */

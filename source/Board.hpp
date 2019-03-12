@@ -1,17 +1,18 @@
 //
-//  Grid.hpp
+//  Board.hpp
 //  WeatherDefender (Mac)
 //
 //  Created by 김지원 on 3/8/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef Grid_hpp
-#define Grid_hpp
+#ifndef Board_hpp
+#define Board_hpp
 
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
+#include "Plant.hpp"
 
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
@@ -26,7 +27,7 @@
 
 
 #pragma mark -
-#pragma mark Ragdoll
+#pragma mark Board
 /**
  * A ragdoll whose body parts are boxes connected by joints
  *
@@ -36,36 +37,36 @@
  *
  * For the construction, see the ragdoll diagram above, with the position offsets.
  */
-class Grid {
+class Board {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
-    CU_DISALLOW_COPY_AND_ASSIGN(Grid);
+    CU_DISALLOW_COPY_AND_ASSIGN(Board);
     
 protected:
     float _drawscale;
     std::shared_ptr<cugl::Texture> _texture;
+//    std::shared_ptr<Plant> _plants[5][5];
     int _x;
     int _y;
-    
     
 public:
 #pragma mark -
 #pragma mark Constructors
     /**
-     * Creates a new Ragdoll at the origin.
+     * Creates a new Board.
      *
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Grid(void) { }
+    Board(void) { }
     
     /**
-     * Destroys this Ragdoll, releasing all resources.
+     * Destroys this Board, releasing all resources.
      */
-    virtual ~Grid(void) { dispose(); }
+    virtual ~Board(void) { dispose(); }
     
     /**
-     * Disposes all resources and assets of this Ragdoll
+     * Disposes all resources and assets of this Board
      *
      * Any assets owned by this object will be immediately released.  Once
      * disposed, a Ragdoll may not be used until it is initialized again.
@@ -73,7 +74,7 @@ public:
     void dispose();
     
     /**
-     * Initializes a new Ragdoll with the given position and scale
+     * Initializes a new Board with the given position and scale
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -91,7 +92,7 @@ public:
 #pragma mark -
 #pragma mark Static Constructors
     /**
-     * Returns a newly allocated Ragdoll with the given position and scale
+     * Returns a newly allocated Board
      *
      * The scene graph is completely decoupled from the physics system.
      * The node does not have to be the same size as the physics body. We
@@ -101,23 +102,27 @@ public:
      * @param pos   Initial position in world coordinates
      * @param scale The drawing scale to convert world to screen coordinates
      *
-     * @return a newly allocated Ragdoll with the given position
+     * @return a newly allocated Board
      */
-    static std::shared_ptr<Grid> alloc(float scale, std::shared_ptr<cugl::Texture> texture, int x, int y) {
-        std::shared_ptr<Grid> result = std::make_shared<Grid>();
+    static std::shared_ptr<Board> alloc(float scale, std::shared_ptr<cugl::Texture> texture, int x, int y) {
+        std::shared_ptr<Board> result = std::make_shared<Board>();
         return (result->init(scale, texture, x, y) ? result : nullptr);
     }
+ 
+#pragma mark -
+#pragma mark Accessors
+    int getPlantStatus();
+    void setPlantStatus(int s);
     
-    cugl::Vec2 gridCoordToPosition(){
-        return cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*_x + GRID_WIDTH/2)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*_y + UP_LEFT_CORNER_Y + GRID_HEIGHT/2)*_drawscale);
-    }
-    
+    bool isGoalTile();
+    bool wasVisited();
+    void tileReset();
     
 #pragma mark -
 #pragma mark Animation
     
     /**
-     * Sets the scene graph node representing this Ragdoll.
+     * Sets the scene graph node representing this Board.
      *
      * Note that this method also handles creating the nodes for the body parts
      * of this Ragdoll. Since the obstacles are decoupled from the scene graph,
@@ -132,7 +137,7 @@ public:
      * the node to be in sync with the physics info. It does this via the
      * {@link Obstacle#update(float)} method.
      *
-     * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
+     * @param node  The scene graph node representing this Board, which has been added to the world node already.
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
@@ -150,8 +155,21 @@ public:
      */
     void setDrawScale(float scale);
     
-
-
+    cugl::Vec2 getGridCenterPos(cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/3)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*_drawscale);
+        return a;
+    }
+    
+    cugl::Vec2 getGridCenterPos(float d, cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/3)*d, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*d);
+        return a;
+    }
+    
+    cugl::Vec2 gridCoordToPosition(cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/2)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT/2)*_drawscale);
+        return a;
+    }
+    
 };
 
 #endif

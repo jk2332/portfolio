@@ -28,6 +28,10 @@
 #include <vector>
 #include "RagdollModel.h"
 #include "InputController.h"
+#include "SoundController.hpp"
+#include "PestController.hpp"
+#include "WeatherController.hpp"
+#include "ResourceController.hpp"
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
@@ -48,13 +52,18 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
     std::shared_ptr<Plant> _plants[72];
-    std::shared_ptr<Node> sunNode;
+    Board _board;
+    WeatherController _weather;
+    ResourceController _resource;
+    PestController _pest;
+    
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
-
+    std::shared_ptr<Node> sunNode;
+    
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */

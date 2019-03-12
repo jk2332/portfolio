@@ -201,15 +201,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     // Start up the input handler
     _assets = assets;
-    _assets->load<Texture>("rain", "/textures/rain.png");
-    _assets->load<Texture>("plant", "/textures/_Crops-512.png");
-    _assets->load<Texture>("cloud", "/textures/shadowCloud.png");
-    _assets->load<Texture>("tile1", "/textures/tile1.png");
-    _assets->load<Texture>("tile2", "/textures/tile2.png");
-    _assets->load<Texture>("tile3", "/textures/tile3.png");
-    _assets->load<Texture>("tile4", "/textures/tile4.png");
-    _assets->load<Texture>("tile5", "/textures/tile5.png");
-    _assets->load<Texture>("backg", "/textures/background.png");
     
     _input.init();
     
@@ -396,13 +387,12 @@ void GameScene::populate() {
     sprite = PolygonNode::allocWithTexture(image,wall2);
     addObstacle(wallobj,sprite,1);  // All walls share the same texture
     
-    
     auto gridNode = Node::alloc();
     for (int i = 0; i < GRID_NUM_X; i++){
         for (int j = 0; j < GRID_NUM_Y; j++){
             int rand = (std::rand() % 5) + 1;
             std::cout << rand << endl;
-            auto grid = Grid::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
+            auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
             grid->setSceneNode(gridNode);
         }
     }
@@ -506,6 +496,18 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
     
+    //Get Input
+    //If Clouds Dragged, Update Physics Location of Clouds
+    //Else if Cloud Combined/Split, Destroy/Create Cloud
+    //Else if Cloud Form Changed, Change Cloud State
+    
+    //Update Clouds
+    //Update Pests
+    //Update Plants
+    //Draw View
+    
+    //Check win/loss conditions
+    
 //    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
 //        currentPlant = _plants[i];
 //        currentPlant->isShaded = false;
@@ -561,7 +563,7 @@ void GameScene::update(float dt) {
             }
             else if (click2 == -1){
                 click2 = ticks;
-                if (click2 - click1 <= 50 and clicked_ob == _selector->getObstacle()){
+                if (click2 - click1 <= 50 && clicked_ob == _selector->getObstacle()){
                     ((Cloud *) clicked_ob)->setIsRaining(true);
                     for (int i = -5; i < 5; i++){
                         Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
@@ -596,14 +598,14 @@ void GameScene::beginContact(b2Contact* contact) {
 //    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
 //    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
 //
-//    if(body1->IsBullet() and (b2->getName() == "crop" or b2->getName() == "wall")) {
+//    if(body1->IsBullet() && (b2->getName() == "crop" || b2->getName() == "wall")) {
 //        Obstacle * b1 = (Obstacle *)(body1->GetUserData());
 //        toBeRemoved.push_back(b1);
 //        std::cout << b1->getName() <<endl;
 //        std::cout << b2->getName() <<endl;
 //        //delete b1;
 //    }
-//    else if (body2->IsBullet() and (b1->getName() == "crop" or b1->getName() == "wall")){
+//    else if (body2->IsBullet() && (b1->getName() == "crop" || b1->getName() == "wall")){
 //        Obstacle * b2 = (Obstacle *)(body2->GetUserData());
 //        toBeRemoved.push_back(b2);
 //        std::cout << b1->getName() <<endl;

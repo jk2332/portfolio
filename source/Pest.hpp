@@ -10,5 +10,111 @@
 #define Pest_hpp
 
 #include <stdio.h>
+#include <cugl/cugl.h>
+#include <vector>
 
+using namespace cugl;
+
+class Pest {
+public:
+
+private:
+    /** This macro disables the copy constructor (not allowed on scene graphs) */
+    CU_DISALLOW_COPY_AND_ASSIGN(Pest);
+    
+protected:
+    int _health;
+    Vec2 _pos;
+    Vec2 _target;
+    int _status;
+    int _type;
+    int _speed;
+    int _damage;
+    
+public:
+#pragma mark -
+#pragma mark Constructors
+    /**
+     * Creates a new Pest.
+     *
+     * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
+     * the heap, use one of the static constructors instead.
+     */
+    Pest(void) { }
+    
+    /**
+     * Destroys this Pest, releasing all resources.
+     */
+    virtual ~Pest(void) { dispose(); }
+    
+    /**
+     * Disposes all resources and assets of this Pest
+     *
+     * Any assets owned by this object will be immediately released.  Once
+     * disposed, a Pest may not be used until it is initialized again.
+     */
+    void dispose();
+    
+    /**
+     * Initializes a new Pest with the given position and scale
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
+     * @param scale The drawing scale to convert world to screen coordinates
+     *
+     * @return  true if the obstacle is initialized properly, false otherwise.
+     */
+    bool init(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale);
+    
+    
+#pragma mark -
+#pragma mark Static Constructors
+    /**
+     * Returns a newly allocated Pest with the given position
+     *
+     * The Pest is scaled so that 1 pixel = 1 Box2d unit
+     *
+     * The scene graph is completely decoupled from the physics system.
+     * The node does not have to be the same size as the physics body. We
+     * only guarantee that the scene graph node is positioned correctly
+     * according to the drawing scale.
+     *
+     * @param pos   Initial position in world coordinates
+     *
+     * @return a newly allocated Pest with the given position
+     */
+    static std::shared_ptr<Pest> alloc(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale) {
+        std::shared_ptr<Pest> result = std::make_shared<Pest>();
+        return (result->init(x, y, texture, drawscale) ? result : nullptr);
+    }
+    
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+    
+    int getType() {return _type;}
+    void setType(int t) {_type = t;}
+    
+    int getHealth() {return _health;}
+    void setHealth(int h) {_health = h;}
+
+    void setStatus(int s);
+    int getStatus() {return _status;}
+    
+    Vec2 getPosition() {return _pos;}
+    void setPosition(Vec2 p) {_pos = p;}
+    
+    Vec2 getTarget() {return _target;}
+    void setTarget(Vec2 t) {_target = t;}
+    
+    int getSpeed() {return _speed;}
+    void setSpeed(int s) {_speed = s;}
+    
+    int getDamage() {return _damage;}
+    void setDamage(int h) {_damage = h;}
+    
+    void update();
+};
 #endif /* Pest_hpp */

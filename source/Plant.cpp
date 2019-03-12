@@ -7,6 +7,7 @@
 //
 
 #include "Plant.hpp"
+#include "Board.hpp"
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
@@ -77,10 +78,10 @@ void Plant::setState(int s){
 
 void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_texture);
-    plant_node->setPosition(getGridCenterPos());
+    Board b;
+    plant_node->setPosition(b.getGridCenterPos(32.0f, Vec2(_x,_y)));
     plant_node->setScale(0.15f);
     node->addChildWithName(plant_node, "plant"+std::to_string(_x) + std::to_string(_y));
 }
-
 
 

@@ -19,6 +19,8 @@
 #define needShade 3
 #define dead 4
 
+using namespace cugl;
+
 class Plant : public cugl::BoxObstacle {
 public:
     bool isShaded;
@@ -35,6 +37,7 @@ protected:
     int _y;
     std::shared_ptr<cugl::Texture> _texture;
     int _state;
+    int _type;
     
     
 public:
@@ -99,8 +102,15 @@ public:
     }
     
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+
+    int getType() {return _type;}
+    void setType(int t) {_type = t;}
+    
+    Vec2 getPosition() {return Vec2(_x,_y);}
+    void setPosition(Vec2 z) {_x = z.x; _y = z.y;}
     
     int getHealth() {return _health;}
+    void setHealth(int h) {_health = h;}
     //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
     void decHealth() {
         if (_health > -healthLimit){_health -= 1;}
@@ -111,11 +121,6 @@ public:
     void updateState();
     void setState(int s);
     int getState() {return _state;}
-    
-    cugl::Vec2 getGridCenterPos(){
-        return cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*_x + GRID_WIDTH/3)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*_y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*_drawscale);
-    }
-    
 };
 
 

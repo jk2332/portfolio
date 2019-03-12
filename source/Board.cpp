@@ -39,7 +39,7 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool Grid::init(float scale, std::shared_ptr<Texture> texture, int x, int y) {
+bool Board::init(float scale, std::shared_ptr<Texture> texture, int x, int y) {
     _drawscale = scale;
     _texture = texture;
     _x = x;
@@ -54,7 +54,7 @@ bool Grid::init(float scale, std::shared_ptr<Texture> texture, int x, int y) {
  * Any assets owned by this object will be immediately released.  Once
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
-void Grid::dispose() {
+void Board::dispose() {
     _texture = nullptr;
 }
 
@@ -81,9 +81,9 @@ void Grid::dispose() {
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
-void Grid::setSceneNode(const std::shared_ptr<cugl::Node>& node){
+void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     std::shared_ptr<PolygonNode> grid_node = PolygonNode::allocWithTexture(_texture);
-    grid_node->setPosition(gridCoordToPosition());
+    grid_node->setPosition(gridCoordToPosition(Vec2(_x,_y)));
     grid_node->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
     node->addChildWithName(grid_node, "grid"+std::to_string(_x) + std::to_string(_y));
 }
@@ -101,7 +101,7 @@ void Grid::setSceneNode(const std::shared_ptr<cugl::Node>& node){
  *
  * @param scale The ratio of the Ragdoll sprite to the physics body
  */
-void Grid::setDrawScale(float scale) {
+void Board::setDrawScale(float scale) {
     _drawscale = scale;
 }
 

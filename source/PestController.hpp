@@ -11,4 +11,11 @@
 
 #include <stdio.h>
 
+#include <stdio.h>
+#include "Pest.hpp"
+
+class PestController {
+    std::shared_ptr<Pest> _pests[1];
+};
+
 #endif /* PestController_hpp */

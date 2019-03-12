@@ -79,7 +79,9 @@ protected:
     b2World* _world;
     bool _isRaining;
     long _rainCoolDown;
-
+    int _type;
+    Vec2 _velocity;
+    int _size;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -338,6 +340,12 @@ public:
 //     * @param texture   The texture for an individual bubble
 //     */
 //    void makeBubbleGenerator(const std::shared_ptr<Texture>& bubble);
+    
+    int getSize() {return _size;}
+    void setSize(int s) {_size = s;}
+    
+    Vec2 getVelocity() {return _velocity;}
+    void setVelocity(Vec2 v) {_velocity = v;}
     
 #pragma mark -
 #pragma mark Animation
