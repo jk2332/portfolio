@@ -54,22 +54,37 @@
 		EBB1AC531DF8C95400C353B0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB1AC521DF8C95400C353B0 /* Accelerate.framework */; };
 		EBB1AC561DF8C96100C353B0 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB1AC541DF8C96100C353B0 /* Carbon.framework */; };
 		EBB1AC571DF8C96100C353B0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB1AC551DF8C96100C353B0 /* Cocoa.framework */; };
-		EBB4B5782040ADD300238092 /* RGApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56C2040ADD200238092 /* RGApp.cpp */; };
-		EBB4B5792040ADD300238092 /* RGApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56C2040ADD200238092 /* RGApp.cpp */; };
-		EBB4B57A2040ADD300238092 /* RGGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56F2040ADD200238092 /* RGGameScene.cpp */; };
-		EBB4B57B2040ADD300238092 /* RGGameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56F2040ADD200238092 /* RGGameScene.cpp */; };
-		EBB4B57C2040ADD300238092 /* RGInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* RGInput.cpp */; };
-		EBB4B57D2040ADD300238092 /* RGInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* RGInput.cpp */; };
-		EBB4B57E2040ADD300238092 /* RGRagdollModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5732040ADD300238092 /* RGRagdollModel.cpp */; };
-		EBB4B57F2040ADD300238092 /* RGRagdollModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5732040ADD300238092 /* RGRagdollModel.cpp */; };
-		EBB4B5802040ADD300238092 /* RGBubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* RGBubbleGenerator.cpp */; };
-		EBB4B5812040ADD300238092 /* RGBubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* RGBubbleGenerator.cpp */; };
-		EBB4B5822040ADD300238092 /* RGLoadingScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* RGLoadingScene.cpp */; };
-		EBB4B5832040ADD300238092 /* RGLoadingScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* RGLoadingScene.cpp */; };
+		EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56C2040ADD200238092 /* WDApp.cpp */; };
+		EBB4B5792040ADD300238092 /* WDApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56C2040ADD200238092 /* WDApp.cpp */; };
+		EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56F2040ADD200238092 /* GameController.cpp */; };
+		EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56F2040ADD200238092 /* GameController.cpp */; };
+		EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* InputController.cpp */; };
+		EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* InputController.cpp */; };
+		EBB4B57E2040ADD300238092 /* RagdollModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5732040ADD300238092 /* RagdollModel.cpp */; };
+		EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5732040ADD300238092 /* RagdollModel.cpp */; };
+		EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */; };
+		EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */; };
+		EBB4B5822040ADD300238092 /* LoadingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* LoadingController.cpp */; };
+		EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* LoadingController.cpp */; };
 		EBE28ECE1DFEDCFA00C059A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */; };
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
-		F1F2EDA2223331F600ECCD4B /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Grid.cpp */; };
+		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
+		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
+		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
+		F8939EA82236FEED00199385 /* Pest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA62236FEED00199385 /* Pest.cpp */; };
+		F8939EA92236FEED00199385 /* Pest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA62236FEED00199385 /* Pest.cpp */; };
+		F8939EAC2236FEFE00199385 /* ResourceCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */; };
+		F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */; };
+		F8939EB0223750FC00199385 /* SoundController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAE223750FC00199385 /* SoundController.cpp */; };
+		F8939EB1223750FC00199385 /* SoundController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAE223750FC00199385 /* SoundController.cpp */; };
+		F8939EB42237515400199385 /* WeatherController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB22237515400199385 /* WeatherController.cpp */; };
+		F8939EB52237515400199385 /* WeatherController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB22237515400199385 /* WeatherController.cpp */; };
+		F8939EB82237517400199385 /* PestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB62237517400199385 /* PestController.cpp */; };
+		F8939EB92237517400199385 /* PestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB62237517400199385 /* PestController.cpp */; };
+		F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EBA22375A9E00199385 /* ResourceController.cpp */; };
+		F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EBA22375A9E00199385 /* ResourceController.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,7 +114,7 @@
 /* Begin PBXFileReference section */
 		EB122D981E281EE70019E2D1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		EB122DA01E281F4A0019E2D1 /* RagdollDemo (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RagdollDemo (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WeatherDefender (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
@@ -124,7 +139,7 @@
 		EB602D20221A53BF006DE4D7 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		EB602D21221A53BF006DE4D7 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		EB602D22221A53BF006DE4D7 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.1.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
-		EBB1AC061DF8C6BC00C353B0 /* RagdollDemo (Mac).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RagdollDemo (Mac).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EBB1AC061DF8C6BC00C353B0 /* WeatherDefender (Mac).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WeatherDefender (Mac).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBB1AC2B1DF8C76D00C353B0 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		EBB1AC381DF8C8B600C353B0 /* iOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iOS-Info.plist"; sourceTree = "<group>"; };
 		EBB1AC391DF8C8B600C353B0 /* iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = iOS.xcassets; sourceTree = "<group>"; };
@@ -142,25 +157,41 @@
 		EBB1AC521DF8C95400C353B0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		EBB1AC541DF8C96100C353B0 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		EBB1AC551DF8C96100C353B0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		EBB4B56C2040ADD200238092 /* RGApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGApp.cpp; sourceTree = "<group>"; };
-		EBB4B56D2040ADD200238092 /* RGGameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGGameScene.h; sourceTree = "<group>"; };
-		EBB4B56E2040ADD200238092 /* RGApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGApp.h; sourceTree = "<group>"; };
-		EBB4B56F2040ADD200238092 /* RGGameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGGameScene.cpp; sourceTree = "<group>"; };
-		EBB4B5702040ADD200238092 /* RGInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGInput.cpp; sourceTree = "<group>"; };
-		EBB4B5712040ADD200238092 /* RGInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGInput.h; sourceTree = "<group>"; };
-		EBB4B5722040ADD200238092 /* RGLoadingScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGLoadingScene.h; sourceTree = "<group>"; };
-		EBB4B5732040ADD300238092 /* RGRagdollModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGRagdollModel.cpp; sourceTree = "<group>"; };
-		EBB4B5742040ADD300238092 /* RGBubbleGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGBubbleGenerator.h; sourceTree = "<group>"; };
-		EBB4B5752040ADD300238092 /* RGBubbleGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBubbleGenerator.cpp; sourceTree = "<group>"; };
-		EBB4B5762040ADD300238092 /* RGLoadingScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGLoadingScene.cpp; sourceTree = "<group>"; };
-		EBB4B5772040ADD300238092 /* RGRagdollModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGRagdollModel.h; sourceTree = "<group>"; };
+		EBB4B56C2040ADD200238092 /* WDApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WDApp.cpp; sourceTree = "<group>"; };
+		EBB4B56D2040ADD200238092 /* GameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameController.h; sourceTree = "<group>"; };
+		EBB4B56E2040ADD200238092 /* WDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WDApp.h; sourceTree = "<group>"; };
+		EBB4B56F2040ADD200238092 /* GameController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameController.cpp; sourceTree = "<group>"; };
+		EBB4B5702040ADD200238092 /* InputController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputController.cpp; sourceTree = "<group>"; };
+		EBB4B5712040ADD200238092 /* InputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputController.h; sourceTree = "<group>"; };
+		EBB4B5722040ADD200238092 /* LoadingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingController.h; sourceTree = "<group>"; };
+		EBB4B5732040ADD300238092 /* RagdollModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RagdollModel.cpp; sourceTree = "<group>"; };
+		EBB4B5742040ADD300238092 /* BubbleGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleGenerator.h; sourceTree = "<group>"; };
+		EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleGenerator.cpp; sourceTree = "<group>"; };
+		EBB4B5762040ADD300238092 /* LoadingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadingController.cpp; sourceTree = "<group>"; };
+		EBB4B5772040ADD300238092 /* RagdollModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RagdollModel.h; sourceTree = "<group>"; };
 		EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		F15F4AB422223516006D5CD3 /* Plant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
 		F15F4AB522223516006D5CD3 /* Plant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Plant.hpp; sourceTree = "<group>"; };
 		F1B4E5482224517700D807D5 /* Cloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cloud.cpp; sourceTree = "<group>"; };
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
-		F1F2EDA0223331F600ECCD4B /* Grid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Grid.cpp; sourceTree = "<group>"; };
-		F1F2EDA1223331F600ECCD4B /* Grid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Grid.hpp; sourceTree = "<group>"; };
+		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
+		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
+		F8939E9D2235FA5600199385 /* particleGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleGenerator.cpp; sourceTree = "<group>"; };
+		F8939E9E2235FA5600199385 /* particleGenerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = particleGenerator.hpp; sourceTree = "<group>"; };
+		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };
+		F8939EA32236FE2900199385 /* MenuController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MenuController.hpp; sourceTree = "<group>"; };
+		F8939EA62236FEED00199385 /* Pest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Pest.cpp; sourceTree = "<group>"; };
+		F8939EA72236FEED00199385 /* Pest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Pest.hpp; sourceTree = "<group>"; };
+		F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceCloud.cpp; sourceTree = "<group>"; };
+		F8939EAB2236FEFE00199385 /* ResourceCloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourceCloud.hpp; sourceTree = "<group>"; };
+		F8939EAE223750FC00199385 /* SoundController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundController.cpp; sourceTree = "<group>"; };
+		F8939EAF223750FC00199385 /* SoundController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundController.hpp; sourceTree = "<group>"; };
+		F8939EB22237515400199385 /* WeatherController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeatherController.cpp; sourceTree = "<group>"; };
+		F8939EB32237515400199385 /* WeatherController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WeatherController.hpp; sourceTree = "<group>"; };
+		F8939EB62237517400199385 /* PestController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PestController.cpp; sourceTree = "<group>"; };
+		F8939EB72237517400199385 /* PestController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PestController.hpp; sourceTree = "<group>"; };
+		F8939EBA22375A9E00199385 /* ResourceController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceController.cpp; sourceTree = "<group>"; };
+		F8939EBB22375A9E00199385 /* ResourceController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourceController.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,8 +270,8 @@
 		EBB1AC071DF8C6BC00C353B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EBB1AC061DF8C6BC00C353B0 /* RagdollDemo (Mac).app */,
-				EB122DA01E281F4A0019E2D1 /* RagdollDemo (iOS).app */,
+				EBB1AC061DF8C6BC00C353B0 /* WeatherDefender (Mac).app */,
+				EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -248,25 +279,41 @@
 		EBB1AC281DF8C75400C353B0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
-				EBB4B56E2040ADD200238092 /* RGApp.h */,
-				EBB4B56C2040ADD200238092 /* RGApp.cpp */,
-				EBB4B5722040ADD200238092 /* RGLoadingScene.h */,
-				EBB4B5762040ADD300238092 /* RGLoadingScene.cpp */,
-				EBB4B56F2040ADD200238092 /* RGGameScene.cpp */,
-				EBB4B56D2040ADD200238092 /* RGGameScene.h */,
-				EBB4B5702040ADD200238092 /* RGInput.cpp */,
-				EBB4B5772040ADD300238092 /* RGRagdollModel.h */,
-				EBB4B5732040ADD300238092 /* RGRagdollModel.cpp */,
-				EBB4B5712040ADD200238092 /* RGInput.h */,
-				EBB4B5742040ADD300238092 /* RGBubbleGenerator.h */,
-				EBB4B5752040ADD300238092 /* RGBubbleGenerator.cpp */,
-				F15F4AB422223516006D5CD3 /* Plant.cpp */,
-				F15F4AB522223516006D5CD3 /* Plant.hpp */,
+				F1F2EDA0223331F600ECCD4B /* Board.cpp */,
+				F1F2EDA1223331F600ECCD4B /* Board.hpp */,
+				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
+				EBB4B5742040ADD300238092 /* BubbleGenerator.h */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
 				F1B4E5492224517700D807D5 /* Cloud.hpp */,
-				F1F2EDA0223331F600ECCD4B /* Grid.cpp */,
-				F1F2EDA1223331F600ECCD4B /* Grid.hpp */,
+				EBB4B56F2040ADD200238092 /* GameController.cpp */,
+				EBB4B56D2040ADD200238092 /* GameController.h */,
+				EBB4B5702040ADD200238092 /* InputController.cpp */,
+				EBB4B5712040ADD200238092 /* InputController.h */,
+				EBB4B5762040ADD300238092 /* LoadingController.cpp */,
+				EBB4B5722040ADD200238092 /* LoadingController.h */,
+				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
+				F8939EA22236FE2900199385 /* MenuController.cpp */,
+				F8939EA32236FE2900199385 /* MenuController.hpp */,
+				F8939E9D2235FA5600199385 /* particleGenerator.cpp */,
+				F8939E9E2235FA5600199385 /* particleGenerator.hpp */,
+				F8939EA62236FEED00199385 /* Pest.cpp */,
+				F8939EA72236FEED00199385 /* Pest.hpp */,
+				F8939EB62237517400199385 /* PestController.cpp */,
+				F8939EB72237517400199385 /* PestController.hpp */,
+				F15F4AB422223516006D5CD3 /* Plant.cpp */,
+				F15F4AB522223516006D5CD3 /* Plant.hpp */,
+				EBB4B5732040ADD300238092 /* RagdollModel.cpp */,
+				EBB4B5772040ADD300238092 /* RagdollModel.h */,
+				F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */,
+				F8939EAB2236FEFE00199385 /* ResourceCloud.hpp */,
+				F8939EBA22375A9E00199385 /* ResourceController.cpp */,
+				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
+				F8939EAE223750FC00199385 /* SoundController.cpp */,
+				F8939EAF223750FC00199385 /* SoundController.hpp */,
+				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
+				EBB4B56E2040ADD200238092 /* WDApp.h */,
+				F8939EB22237515400199385 /* WeatherController.cpp */,
+				F8939EB32237515400199385 /* WeatherController.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -355,9 +402,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EB122D9F1E281F4A0019E2D1 /* RagdollDemo (iOS) */ = {
+		EB122D9F1E281F4A0019E2D1 /* WeatherDefender (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "RagdollDemo (iOS)" */;
+			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefender (iOS)" */;
 			buildPhases = (
 				EB122D9C1E281F4A0019E2D1 /* Sources */,
 				EB122D9D1E281F4A0019E2D1 /* Frameworks */,
@@ -367,14 +414,14 @@
 			);
 			dependencies = (
 			);
-			name = "RagdollDemo (iOS)";
+			name = "WeatherDefender (iOS)";
 			productName = "UIDemo (iOS)";
-			productReference = EB122DA01E281F4A0019E2D1 /* RagdollDemo (iOS).app */;
+			productReference = EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */;
 			productType = "com.apple.product-type.application";
 		};
-		EBB1AC051DF8C6BC00C353B0 /* RagdollDemo (Mac) */ = {
+		EBB1AC051DF8C6BC00C353B0 /* WeatherDefender (Mac) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EBB1AC171DF8C6BC00C353B0 /* Build configuration list for PBXNativeTarget "RagdollDemo (Mac)" */;
+			buildConfigurationList = EBB1AC171DF8C6BC00C353B0 /* Build configuration list for PBXNativeTarget "WeatherDefender (Mac)" */;
 			buildPhases = (
 				EBB1AC021DF8C6BC00C353B0 /* Sources */,
 				EBB1AC031DF8C6BC00C353B0 /* Frameworks */,
@@ -384,9 +431,9 @@
 			);
 			dependencies = (
 			);
-			name = "RagdollDemo (Mac)";
+			name = "WeatherDefender (Mac)";
 			productName = "UIDemo (Mac)";
-			productReference = EBB1AC061DF8C6BC00C353B0 /* RagdollDemo (Mac).app */;
+			productReference = EBB1AC061DF8C6BC00C353B0 /* WeatherDefender (Mac).app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -429,8 +476,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				EBB1AC051DF8C6BC00C353B0 /* RagdollDemo (Mac) */,
-				EB122D9F1E281F4A0019E2D1 /* RagdollDemo (iOS) */,
+				EBB1AC051DF8C6BC00C353B0 /* WeatherDefender (Mac) */,
+				EB122D9F1E281F4A0019E2D1 /* WeatherDefender (iOS) */,
 			);
 		};
 /* End PBXProject section */
@@ -494,12 +541,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBB4B57F2040ADD300238092 /* RGRagdollModel.cpp in Sources */,
-				EBB4B5832040ADD300238092 /* RGLoadingScene.cpp in Sources */,
-				EBB4B57B2040ADD300238092 /* RGGameScene.cpp in Sources */,
-				EBB4B5812040ADD300238092 /* RGBubbleGenerator.cpp in Sources */,
-				EBB4B57D2040ADD300238092 /* RGInput.cpp in Sources */,
-				EBB4B5792040ADD300238092 /* RGApp.cpp in Sources */,
+				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
+				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
+				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
+				F8939EB1223750FC00199385 /* SoundController.cpp in Sources */,
+				F8939EB92237517400199385 /* PestController.cpp in Sources */,
+				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
+				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
+				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
+				F8939EB52237515400199385 /* WeatherController.cpp in Sources */,
+				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
+				EBB4B5792040ADD300238092 /* WDApp.cpp in Sources */,
+				F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */,
+				F8939EA52236FE2900199385 /* MenuController.cpp in Sources */,
 				EB122DBE1E28203D0019E2D1 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -508,16 +562,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBB4B57E2040ADD300238092 /* RGRagdollModel.cpp in Sources */,
+				EBB4B57E2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */,
-				EBB4B5822040ADD300238092 /* RGLoadingScene.cpp in Sources */,
-				EBB4B57A2040ADD300238092 /* RGGameScene.cpp in Sources */,
-				EBB4B5802040ADD300238092 /* RGBubbleGenerator.cpp in Sources */,
-				EBB4B57C2040ADD300238092 /* RGInput.cpp in Sources */,
-				EBB4B5782040ADD300238092 /* RGApp.cpp in Sources */,
+				F8939EA42236FE2900199385 /* MenuController.cpp in Sources */,
+				F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */,
+				F8939EAC2236FEFE00199385 /* ResourceCloud.cpp in Sources */,
+				EBB4B5822040ADD300238092 /* LoadingController.cpp in Sources */,
+				F8939EB82237517400199385 /* PestController.cpp in Sources */,
+				EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */,
+				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
+				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
+				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
+				F8939EB0223750FC00199385 /* SoundController.cpp in Sources */,
+				F8939EB42237515400199385 /* WeatherController.cpp in Sources */,
+				F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */,
 				F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */,
+				F8939EA82236FEED00199385 /* Pest.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
-				F1F2EDA2223331F600ECCD4B /* Grid.cpp in Sources */,
+				F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,7 +754,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderGameplayPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
 			};
 			name = Debug;
 		};
@@ -706,14 +768,14 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderGameplayPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "RagdollDemo (iOS)" */ = {
+		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefender (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB122DB51E281F4A0019E2D1 /* Debug */,
@@ -731,7 +793,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EBB1AC171DF8C6BC00C353B0 /* Build configuration list for PBXNativeTarget "RagdollDemo (Mac)" */ = {
+		EBB1AC171DF8C6BC00C353B0 /* Build configuration list for PBXNativeTarget "WeatherDefender (Mac)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EBB1AC181DF8C6BC00C353B0 /* Debug */,
