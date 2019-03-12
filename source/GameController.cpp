@@ -1,6 +1,6 @@
 //
-//  RGGameScene.cpp
-//  Ragdoll Demo
+//  GameController.cpp
+//  Weather Defender
 //
 //  This is the most important class in this demo.  This class manages the gameplay
 //  for this demo.  It also handles collision detection. There is not much to do for
@@ -21,12 +21,12 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#include "RGGameScene.h"
+#include "GameController.h"
 #include "Plant.hpp"
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Collision/b2Collision.h>
-#include "Grid.hpp"
+#include "Board.hpp"
 
 #include <ctime>
 #include <string>
@@ -456,7 +456,7 @@ void GameScene::update(float dt) {
 //        currentPlant = _plants[i];
 //        currentPlant->isShaded = false;
 //        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
-//        Vec2 sunPos = sunNode->getPosition() + Vec2(sunNode->getWidth()/2, sunNode->getHeight()/2);
+//        Vec2 sunPos = Vec2(plantPos.x, 0);
 //        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
 //        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
 //        currentPlant->updateState();
@@ -526,15 +526,6 @@ void GameScene::update(float dt) {
         }
     }
     
-    
-//    if (ticks % 40 == 0){
-//        if(sunNode->getPositionX() + sunNode->getWidth() > SCENE_WIDTH - 40){
-//            sunNode->setPositionX(40);
-//        }
-//        else{
-//            sunNode->setPositionX(sunNode->getPositionX() + sunNode->getWidth()/4);
-//        }
-//    }
     // Turn the physics engine crank.
     _world->update(dt);
 

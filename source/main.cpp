@@ -28,7 +28,7 @@
 //  Version: 7/1/16
 
 // Include your application class
-#include "RGApp.h"
+#include "WDApp.h"
 
 using namespace cugl;
 
@@ -43,10 +43,10 @@ using namespace cugl;
  */
 int main(int argc, char * argv[]) {
     // Change this to your application class
-    RagdollApp app;
+    WeatherDefenderApp app;
     
     // Set the properties of your application
-    app.setName("Rocket Demo");
+    app.setName("Weather Defender");
     app.setOrganization("GDIAC");
     app.setHighDPI(true);
 

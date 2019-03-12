@@ -1,6 +1,6 @@
 //
-//  RGRagdollModel.h
-//  Ragdoll Demo
+//  RagdollModel.h
+//  Weather Defender
 //
 //  This module provides the infamous Walker White ragdoll from 3152.  This time it
 //  is fully assembled for you.
@@ -28,11 +28,11 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#ifndef _RG_RAGDOLL_MODEL_H
-#define _RG_RAGDOLL_MODEL_H
+#ifndef _RAGDOLL_MODEL_H
+#define _RAGDOLL_MODEL_H
 #include <cugl/cugl.h>
 #include <vector>
-#include "RGBubbleGenerator.h"
+#include "BubbleGenerator.h"
 
 #pragma mark -
 #pragma mark Body Part Indices
@@ -446,4 +446,4 @@ public:
     virtual void update(float delta) override;
 };
 
-#endif /* _RG_RAGDOLL_MODEL_H */
+#endif /* _RAGDOLL_MODEL_H */

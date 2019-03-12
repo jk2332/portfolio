@@ -1,6 +1,6 @@
 //
-//  RGBubbleGenerator.h
-//  RagdollDemo
+//  BubbleGenerator.h
+//  Weather Defender
 //
 //  This module provides a physics object that can generate bubbles from its current
 //  location.  It is a physics object so that we can weld it to another object to
@@ -21,7 +21,7 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#include "RGBubbleGenerator.h"
+#include "BubbleGenerator.h"
 #include <cugl/2d/CUPolygonNode.h>
 #include <cugl/assets/CUAssetManager.h>
 

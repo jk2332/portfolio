@@ -1,6 +1,6 @@
 //
 //  Plant.hpp
-//  RagdollDemo (Mac)
+//  Weather Defender (Mac)
 //
 //  Created by 김지원 on 2/23/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
-#include "Grid.hpp"
+#include "Board.hpp"
 #define noNeed 0
 #define needRain 1
 #define needSun 2

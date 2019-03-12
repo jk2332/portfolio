@@ -1,6 +1,6 @@
 //
-//  RGLoadingScene.h
-//  Ragdoll Demo
+//  LoadingController.h
+//  Weather Defender
 //
 //  This module provides a very barebones loading screen.  Most of the time you
 //  will not need a loading screen, because the assets will load so fast.  But
@@ -12,8 +12,8 @@
 //  Author: Walker White
 //  Version: 1/10/17
 //
-#ifndef __RG_LOADING_SCENE_H__
-#define __RG_LOADING_SCENE_H__
+#ifndef __LOADING_CONTROLLER_H__
+#define __LOADING_CONTROLLER_H__
 #include <cugl/cugl.h>
 
 #pragma mark -
@@ -113,4 +113,4 @@ public:
     bool isPending( ) const;
 };
 
-#endif /* __RG_LOADING_SCENE_H__ */
+#endif /* __LOADING_CONTROLLER_H__ */

@@ -1,6 +1,6 @@
 //
-//  RGApp.h
-//  Ragdoll Demo
+//  WDApp.h
+//  Weather Defender
 //  This is the root class for your game.  The file main.cpp accesses this class
 //  to run the application.  While you could put most of your game logic in
 //  this class, we prefer to break the game up into player modes and have a
@@ -11,16 +11,16 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#ifndef __RG_APP_H__
-#define __RG_APP_H__
+#ifndef __WD_APP_H__
+#define __WD_APP_H__
 #include <cugl/cugl.h>
-#include "RGGameScene.h"
-#include "RGLoadingScene.h"
+#include "GameController.h"
+#include "LoadingController.h"
 
 /**
  * This class represents the application root for the ragdoll demo.
  */
-class RagdollApp : public cugl::Application {
+class WeatherDefenderApp : public cugl::Application {
 protected:
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
@@ -47,7 +47,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    RagdollApp() : cugl::Application(), _loaded(false) {}
+    WeatherDefenderApp() : cugl::Application(), _loaded(false) {}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -56,7 +56,7 @@ public:
      * It simply calls the dispose() method in Application.  There is nothing
      * special to do here.
      */
-    ~RagdollApp() { }
+    ~WeatherDefenderApp() { }
     
     
 #pragma mark Application State
@@ -137,4 +137,4 @@ public:
      */
     virtual void draw() override;
 };
-#endif /* __RG_APP_H__ */
+#endif /* __WD_APP_H__ */

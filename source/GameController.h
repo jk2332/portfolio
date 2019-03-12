@@ -1,6 +1,6 @@
 //
-//  RGGameScene.h
-//  Ragdoll Demo
+//  GameController.h
+//  Weather Defender
 //
 //  This is the most important class in this demo.  This class manages the gameplay
 //  for this demo.  It also handles collision detection. There is not much to do for
@@ -21,16 +21,16 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#ifndef __RG_GAME_SCENE_H__
-#define __RG_GAME_SCENE_H__
+#ifndef __GAME_CONTROLLER_H__
+#define __GAME_CONTROLLER_H__
 #include <cugl/cugl.h>
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <vector>
-#include "RGRagdollModel.h"
-#include "RGInput.h"
+#include "RagdollModel.h"
+#include "InputController.h"
 #include "Plant.hpp"
 #include "Cloud.hpp"
-#include "Grid.hpp"
+#include "Board.hpp"
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -47,7 +47,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
-    std::shared_ptr<Plant> _plants[10];
+    std::shared_ptr<Plant> _plants[72];
     std::shared_ptr<Node> sunNode;
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -283,4 +283,4 @@ public:
     
 };
 
-#endif /* __RG_GAME_MODE_H__ */
+#endif /* __GAME_CONTROLLER_H__ */

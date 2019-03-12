@@ -1,6 +1,6 @@
 //
 //  Cloud.hpp
-//  RagdollDemo (Mac)
+//  Weather Defender (Mac)
 //
 //  Created by 김지원 on 2/25/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
-#include "RGBubbleGenerator.h"
+#include "BubbleGenerator.h"
 
 #define MAX_CLOUD_UNIT  3
 #define PART_NONE           -1

@@ -1,6 +1,6 @@
 //
-//  RGRagdollModel.h
-//  Ragdoll Demo
+//  RagdollModel.h
+//  Weather Defender
 //
 //  This module provides the infamous Walker White ragdoll from 3152.  This time it
 //  is fully assembled for you.
@@ -28,8 +28,8 @@
 //  Author: Walker White and Anthony Perello
 //  Version: 1/26/17
 //
-#include "RGBubbleGenerator.h"
-#include "RGRagdollModel.h"
+#include "BubbleGenerator.h"
+#include "RagdollModel.h"
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>

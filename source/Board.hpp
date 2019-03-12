@@ -1,6 +1,6 @@
 //
 //  Grid.hpp
-//  RagdollDemo (Mac)
+//  WeatherDefender (Mac)
 //
 //  Created by 김지원 on 3/8/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
