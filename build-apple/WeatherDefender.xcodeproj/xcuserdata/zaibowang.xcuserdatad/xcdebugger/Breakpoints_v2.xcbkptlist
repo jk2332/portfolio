@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "649"
             endingLineNumber = "649"
-            landmarkName = "GameScene::beginContact(b2Contact* contact)"
+            landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "648"
             endingLineNumber = "648"
-            landmarkName = "GameScene::beginContact(b2Contact* contact)"
+            landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -79,7 +79,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "643"
             endingLineNumber = "643"
-            landmarkName = "GameScene::beginContact(b2Contact* contact)"
+            landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -95,7 +95,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "638"
             endingLineNumber = "638"
-            landmarkName = "GameScene::beginContact(b2Contact* contact)"
+            landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

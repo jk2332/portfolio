@@ -67,8 +67,10 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 long ticks = 0l;
 long click1 = -1l;
 long click2 = -1l;
+long temp = 01;
 Obstacle * clicked_ob = nullptr;
 long rainingTicks = 0l;
+long shadeCoolDown = 50l;
 // std::vector<Obstacle *> toBeRemoved;
 
 
@@ -201,10 +203,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
-
     
     // Start up the input handler
     _assets = assets;
+    std::vector<std::shared_ptr<Texture>> textures;
+    for (int i = 1; i < 6; i++){
+        textures.push_back(_assets->get<Texture>("tile"));
+    }
+
+    _board = Board::alloc(32, textures, GRID_NUM_X, GRID_NUM_Y);
     
     _input.init();
     
@@ -294,8 +301,7 @@ void GameScene::dispose() {
         _selector = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
-        //_ragdoll = nullptr;
-//        _cloud = nullptr;
+        _cloud = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -507,6 +513,21 @@ void GameScene::update(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+
+    Vec2 v = _cloud->getBodies()[0]->getPosition();
+    
+    if (_board->isInBounds(v.x, v.y)){
+        Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
+        _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(0, 255, 255, 0));
+    }
+    
+    if (ticks % 50 == 0){
+        for (int i =0; i < GRID_NUM_X; i++){
+            for (int j=0; j < GRID_NUM_Y; j++){
+                _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
+            }
+        }
+    }
     
     //Get Input
     //If Clouds Dragged, Update Physics Location of Clouds
@@ -563,14 +584,21 @@ void GameScene::update(float dt) {
 
     }
 
-//    for (int i = 0; i < num_clouds; i++) {
-//        _cloud[i]->setWorld(*_world->getWorld());
-//    }
+   for (int i = 0; i < num_clouds; i++) {
+       _cloud[i]->setWorld(*_world->getWorld());
+   }
     
     if (_input.didSplit()) {
         auto v = _cloud[0]->getBodies()[0]->getPosition();
         CULog("%f, %f", v.x, v.y);
     }
+    
+    //shade
+//    Vec2 cloudPos = _cloud->getPosition();      //in box2d coord
+//    if (_board->isInBounds(cloudPos.x, cloudPos.y)){
+//        Vec2 gridp = _board->posToGridCoord(cloudPos.x, cloudPos.y);
+//        _board->getNodeAt(gridp.x, gridp.y)->setColor(Color4(255, 0, 0));
+//    }
     
     // Move an object if touched
     if (_input.didSelect()) {
@@ -587,8 +615,17 @@ void GameScene::update(float dt) {
         }
     } else {
         if (_selector->isSelected()) {
+
+//            std::cout <<"-------"<<endl;
+//            std::cout << _cloud->getPosition().x <<endl;
+//            std::cout << _cloud->getPosition().y <<endl;
+//            std::cout <<"--------"<<endl;
+            //_selector->getObstacle()->setPosition(_selector->getPosition());
             if (click1 == -1){
                 clicked_ob = _selector->getObstacle();
+                Vec2 pos = clicked_ob->getPosition();
+                std::cout << pos.x << endl;
+                std::cout << pos.y << endl;
                 click1 = ticks;
             }
             else if (click2 == -1){
@@ -601,13 +638,15 @@ void GameScene::update(float dt) {
                             _cloud[i]->decSize();
                         }
                     }
+                    _rainDrops.clear();
                     for (int i = -5; i < 5; i++){
                         Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
                         std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
+                        rainDrop->setName("bubble");
                         rainDrop->setMass(0);
                         rainDrop->setLinearVelocity(0, -1);
                         std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
-
+                        _toBeRemoved.push_back(rainDrop);
                         addObstacle(rainDrop, rainNode, 5);
                     }
                 }
@@ -620,9 +659,24 @@ void GameScene::update(float dt) {
 
     }
     
-    // Turn the physics engine crank.
-    _world->update(dt);
+    //assert (_rainDrops.size() == _toBeRemoved.size());
 
+//    if (ticks % 10 == 0){
+//        std::cout <<"here"<<endl;
+//        for (int i = 0; i < _toBeRemoved.size(); i++){
+//            std::shared_ptr<Obstacle> ob = _toBeRemoved.at(i);
+//            std::cout << _world->getObstacles().size() <<endl;
+//            std::cout << ob->getName() << endl;
+//            _world->removeObstacle(ob.get());
+//            _toBeRemoved.at(i)->markRemoved(true);
+//        }
+//        _toBeRemoved.clear();
+//    }
+    
+    // Turn the physics engine crank.
+    _cloud->update(dt);
+    _world->update(dt);
+    
 }
 
 /**
@@ -687,7 +741,6 @@ void GameScene::beginContact(b2Contact* contact) {
  * @param  oldManfold      The collision manifold before contact
  */
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-
 }
 
 /**
