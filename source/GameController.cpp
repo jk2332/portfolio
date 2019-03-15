@@ -301,7 +301,6 @@ void GameScene::dispose() {
         _selector = nullptr;
         _worldnode = nullptr;
         _debugnode = nullptr;
-        _cloud = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -398,17 +397,10 @@ void GameScene::populate() {
    wall2 *= _scale;
    sprite = PolygonNode::allocWithTexture(image,wall2);
    addObstacle(wallobj,sprite,1);  // All walls share the same texture
-
-   auto gridNode = Node::alloc();
-   for (int i = 0; i < GRID_NUM_X; i++){
-       for (int j = 0; j < GRID_NUM_Y; j++){
-           int rand = (std::rand() % 5) + 1;
-           std::cout << rand << endl;
-           auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
-           grid->setSceneNode(gridNode);
-       }
-   }
-   _worldnode->addChildWithName(gridNode, "gridNode");
+    
+    auto boardNode = Node::alloc();
+    _board->setSceneNode(boardNode);
+    _worldnode->addChildWithName(boardNode, "gridNode");
 
    auto plantNode = Node::alloc();
    for (int i = 0; i < GRID_NUM_X; i++){
@@ -514,19 +506,28 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
 
-    Vec2 v = _cloud->getBodies()[0]->getPosition();
-    
-    if (_board->isInBounds(v.x, v.y)){
-        Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
-        _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(0, 255, 255, 0));
-    }
-    
+    for (int x = 0; x < num_clouds; x++) {
+        if (_cloud[x] == nullptr) {
+                continue;
+        } else {
+            Vec2 v = _cloud[x]->getBodies()[0]->getPosition();
+        
+            if (_board->isInBounds(v.x, v.y)){
+                Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
+                _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(0, 255, 255, 0));
+            }
+
+        }
+        
     if (ticks % 50 == 0){
         for (int i =0; i < GRID_NUM_X; i++){
             for (int j=0; j < GRID_NUM_Y; j++){
                 _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
             }
         }
+    }
+
+
     }
     
     //Get Input
@@ -584,10 +585,7 @@ void GameScene::update(float dt) {
 
     }
 
-   for (int i = 0; i < num_clouds; i++) {
-       _cloud[i]->setWorld(*_world->getWorld());
-   }
-    
+
     if (_input.didSplit()) {
         auto v = _cloud[0]->getBodies()[0]->getPosition();
         CULog("%f, %f", v.x, v.y);
@@ -674,7 +672,9 @@ void GameScene::update(float dt) {
 //    }
     
     // Turn the physics engine crank.
-    _cloud->update(dt);
+//    for (int i =0; i < num_clouds; i++) {
+//        _cloud[i]->update(dt);
+//    }
     _world->update(dt);
     
 }

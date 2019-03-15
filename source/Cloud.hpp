@@ -124,8 +124,6 @@ public:
      */
     virtual ~Cloud(void) { dispose(); }
     
-    void setWorld(b2World& _world);
-
     /**
      * Disposes all resources and assets of this Ragdoll
      *

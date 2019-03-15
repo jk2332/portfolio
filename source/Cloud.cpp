@@ -70,10 +70,6 @@ void Cloud::dispose() {
     //_bubbler = nullptr;
 }
 
-void Cloud::setWorld(b2World& world) {
-    _world = &world;
-}
-
 
 #pragma mark -
 #pragma mark Part Initialization
