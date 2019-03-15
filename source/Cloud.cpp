@@ -57,8 +57,6 @@ bool Cloud::init(const Vec2& pos, float scale) {
     return true;
 }
 
-Cloud::~Cloud() {}
-
 void Cloud::BeginContact(b2Contact* contact) {
     CULog("contact detected");
     _contacting = true;
@@ -183,8 +181,9 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& pos) {
     std::shared_ptr<Texture> image = _texture;
     Size size = image->getSize();
-    size.width /= (_drawscale*2);
-    size.height /= (_drawscale*2);
+    size.width /= (_drawscale);
+    size.height /= (_drawscale);
+
     
     Vec2 pos2 = pos;
     if (connect != PART_NONE) {
@@ -278,7 +277,6 @@ void Cloud::update(float delta) {
             
             // Propagate the update to the bodies attached to the Ragdoll
             _bodies[i]->update(delta);
-            i++;
         }
     }
 }
@@ -388,6 +386,7 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     for (int ii = 0; ii < _unitNum; ii++) {
         std::shared_ptr<Texture> image = _texture;
         std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
+        sprite->setContentSize(_texture->getSize());
         if (ii == RIGHT) {
             sprite->flipHorizontal(true); // More reliable than rotating 90 degrees.
         }

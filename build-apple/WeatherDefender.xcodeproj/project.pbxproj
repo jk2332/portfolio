@@ -12,7 +12,6 @@
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
-		EB122DBA1E281F7E0019E2D1 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52D1E25281300A93BB5 /* textures */; };
 		EB122DBB1E281F850019E2D1 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC391DF8C8B600C353B0 /* iOS.xcassets */; };
 		EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC3A1DF8C8B600C353B0 /* Landscape.storyboard */; };
 		EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC3D1DF8C8B600C353B0 /* Portrait.storyboard */; };
@@ -23,7 +22,6 @@
 		EB3B95861E25B1FA00314284 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB59D52E1E25281300A93BB5 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB59D52F1E25281300A93BB5 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
-		EB59D5301E25281300A93BB5 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52D1E25281300A93BB5 /* textures */; };
 		EB602D0D221A525E006DE4D7 /* DeviceMargins.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB602D09221A525E006DE4D7 /* DeviceMargins.plist */; };
 		EB602D0F221A528D006DE4D7 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB602D0E221A528D006DE4D7 /* CoreFoundation.framework */; };
 		EB602D12221A52B4006DE4D7 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB602D10221A52B3006DE4D7 /* Metal.framework */; };
@@ -119,7 +117,6 @@
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		EB59D52C1E25281300A93BB5 /* json */ = {isa = PBXFileReference; lastKnownFileType = folder; path = json; sourceTree = "<group>"; };
-		EB59D52D1E25281300A93BB5 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		EB602D09221A525E006DE4D7 /* DeviceMargins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DeviceMargins.plist; sourceTree = "<group>"; };
 		EB602D0E221A528D006DE4D7 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		EB602D10221A52B3006DE4D7 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -325,7 +322,6 @@
 				EB3B95851E25B1FA00314284 /* sounds */,
 				EB59D52B1E25281300A93BB5 /* fonts */,
 				EB59D52C1E25281300A93BB5 /* json */,
-				EB59D52D1E25281300A93BB5 /* textures */,
 			);
 			name = Assets;
 			path = ../assets;
@@ -518,7 +514,6 @@
 				EB122DB81E281F7E0019E2D1 /* fonts in Resources */,
 				EB122DB91E281F7E0019E2D1 /* json in Resources */,
 				EB602D0D221A525E006DE4D7 /* DeviceMargins.plist in Resources */,
-				EB122DBA1E281F7E0019E2D1 /* textures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,7 +523,6 @@
 			files = (
 				EB3B95861E25B1FA00314284 /* sounds in Resources */,
 				EB59D52E1E25281300A93BB5 /* fonts in Resources */,
-				EB59D5301E25281300A93BB5 /* textures in Resources */,
 				EB350D301E05CC6400820A6F /* Mac.xcassets in Resources */,
 				EB59D52F1E25281300A93BB5 /* json in Resources */,
 			);
