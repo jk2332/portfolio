@@ -57,31 +57,33 @@ bool Cloud::init(const Vec2& pos, float scale) {
     return true;
 }
 
+Cloud::~Cloud() {}
+
 void Cloud::BeginContact(b2Contact* contact) {
     CULog("contact detected");
     _contacting = true;
     
-    b2RevoluteJointDef jointDef;
-    b2Joint* joint;
-    jointDef.bodyA = _bodies[LEFT]->getBody();
-    jointDef.bodyB = _bodies[BODY]->getBody();
-    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
-    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
-    jointDef.enableLimit = true;
-    jointDef.upperAngle = 0;
-    jointDef.lowerAngle = 0;
-    joint = _world->CreateJoint(&jointDef);
-    _joints.push_back(joint);
-    
-    b2WeldJointDef weldDef;
-    
-    // Weld center of mass to torso
-    weldDef.bodyA = _bodies[BODY]->getBody();
-    weldDef.bodyB = _body;
-    weldDef.localAnchorA.Set(0, 0);
-    weldDef.localAnchorB.Set(0, 0);
-    joint = _world->CreateJoint(&weldDef);
-    _joints.push_back(joint);
+//    b2RevoluteJointDef jointDef;
+//    b2Joint* joint;
+//    jointDef.bodyA = _bodies[LEFT]->getBody();
+//    jointDef.bodyB = _bodies[BODY]->getBody();
+//    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
+//    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
+//    jointDef.enableLimit = true;
+//    jointDef.upperAngle = 0;
+//    jointDef.lowerAngle = 0;
+//    joint = _world->CreateJoint(&jointDef);
+//    _joints.push_back(joint);
+//
+//    b2WeldJointDef weldDef;
+//
+//    // Weld center of mass to torso
+//    weldDef.bodyA = _bodies[BODY]->getBody();
+//    weldDef.bodyB = _body;
+//    weldDef.localAnchorA.Set(0, 0);
+//    weldDef.localAnchorB.Set(0, 0);
+//    joint = _world->CreateJoint(&weldDef);
+//    _joints.push_back(joint);
 }
 void Cloud::EndContact(b2Contact* contact) { _contacting = false; }
 

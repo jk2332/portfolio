@@ -290,6 +290,7 @@ void GameScene::dispose() {
         _debugnode = nullptr;
         //_ragdoll = nullptr;
         _cloud = nullptr;
+        _cloud2 = nullptr;
         _complete = false;
         _debug = false;
         Scene::dispose();
@@ -415,6 +416,15 @@ void GameScene::populate() {
     _cloud->setDebugColor(DYNAMIC_COLOR);
     _cloud->setDebugScene(_debugnode);
     _world->addObstacle(_cloud);
+    
+    _cloud2 = Cloud::alloc(Vec2(20, 10), _scale);
+    _cloud2->initialBuild(_assets);
+    auto cloudNode2 = Node::alloc();
+    _worldnode->addChildWithName(cloudNode2, "cloudNode");
+    _cloud2->setSceneNode(cloudNode2);
+    _cloud2->setDebugColor(DYNAMIC_COLOR);
+    _cloud2->setDebugScene(_debugnode);
+    _world->addObstacle(_cloud2);
 
 }
 
@@ -586,12 +596,19 @@ void GameScene::update(float dt) {
     
     // Turn the physics engine crank.
     _world->update(dt);
-
+    
 }
 
 void GameScene::beginContact(b2Contact* contact) {
-//    b2Body* body1 = contact->GetFixtureA()->GetBody();
-//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();
+    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+    
+    std::cout << b1->getName() << std::endl;
+    
+    std::cout << b2->getName() << std::endl;
+    
 //
 //
 //    // If we hit the "win" door, we are done

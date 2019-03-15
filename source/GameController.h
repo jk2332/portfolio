@@ -73,6 +73,7 @@ protected:
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
     std::shared_ptr<Cloud> _cloud;
+    std::shared_ptr<Cloud> _cloud2;
     
 	/** Selector to allow mouse control of the ragdoll */
 	std::shared_ptr<cugl::ObstacleSelector> _selector;
