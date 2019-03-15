@@ -78,18 +78,21 @@ bool Shader::compile() {
         CULogError("Unable to allocate shader program");
         return false;
     }
-    
+    _check_gl_error("CUShader", 81);
+
     //Create vertex shader and compile it
     _vertShader = glCreateShader( GL_VERTEX_SHADER );
     glShaderSource( _vertShader, 1, &_vertSource, nullptr );
     glCompileShader( _vertShader );
     
+    _check_gl_error("CUShader", 88);
     // Validate and quit if failed
     if (!validateShader(_vertShader, "vertex")) {
         dispose();
         return false;
     }
     
+    _check_gl_error("CUShader", 95);
     //Create fragment shader and compile it
     _fragShader = glCreateShader( GL_FRAGMENT_SHADER );
     glShaderSource( _fragShader, 1, &_fragSource, nullptr );
@@ -101,6 +104,7 @@ bool Shader::compile() {
         return false;
     }
     
+    _check_gl_error("CUShader", 106);
     // Now kiss
     glAttachShader( _program, _vertShader );
     glAttachShader( _program, _fragShader );
@@ -115,7 +119,7 @@ bool Shader::compile() {
         dispose();
         return false;
     }
-    
+    _check_gl_error("CUShader", 122);
     return true;
 }
 

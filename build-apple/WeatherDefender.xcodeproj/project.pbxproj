@@ -70,6 +70,10 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F86A31532239D6D700233ED5 /* particle.frag in Resources */ = {isa = PBXBuildFile; fileRef = F86A31512239D6D500233ED5 /* particle.frag */; };
+		F86A31542239D6D700233ED5 /* particle.vert in Resources */ = {isa = PBXBuildFile; fileRef = F86A31522239D6D600233ED5 /* particle.vert */; };
+		F86A31572239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
+		F86A31582239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -176,6 +180,10 @@
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
+		F86A31512239D6D500233ED5 /* particle.frag */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.frag; sourceTree = "<group>"; };
+		F86A31522239D6D600233ED5 /* particle.vert */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.vert; sourceTree = "<group>"; };
+		F86A31552239F82700233ED5 /* particleShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = particleShader.h; sourceTree = "<group>"; };
+		F86A31562239FAF300233ED5 /* particleShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleShader.cpp; sourceTree = "<group>"; };
 		F8939E9D2235FA5600199385 /* particleGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleGenerator.cpp; sourceTree = "<group>"; };
 		F8939E9E2235FA5600199385 /* particleGenerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = particleGenerator.hpp; sourceTree = "<group>"; };
 		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };
@@ -294,8 +302,12 @@
 				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
 				F8939EA22236FE2900199385 /* MenuController.cpp */,
 				F8939EA32236FE2900199385 /* MenuController.hpp */,
+				F86A31512239D6D500233ED5 /* particle.frag */,
+				F86A31522239D6D600233ED5 /* particle.vert */,
 				F8939E9D2235FA5600199385 /* particleGenerator.cpp */,
 				F8939E9E2235FA5600199385 /* particleGenerator.hpp */,
+				F86A31562239FAF300233ED5 /* particleShader.cpp */,
+				F86A31552239F82700233ED5 /* particleShader.h */,
 				F8939EA62236FEED00199385 /* Pest.cpp */,
 				F8939EA72236FEED00199385 /* Pest.hpp */,
 				F8939EB62237517400199385 /* PestController.cpp */,
@@ -526,6 +538,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F86A31532239D6D700233ED5 /* particle.frag in Resources */,
+				F86A31542239D6D700233ED5 /* particle.vert in Resources */,
 				EB3B95861E25B1FA00314284 /* sounds in Resources */,
 				EB59D52E1E25281300A93BB5 /* fonts in Resources */,
 				EB59D5301E25281300A93BB5 /* textures in Resources */,
@@ -550,6 +564,7 @@
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
 				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				F8939EB52237515400199385 /* WeatherController.cpp in Sources */,
+				F86A31582239FAF300233ED5 /* particleShader.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5792040ADD300238092 /* WDApp.cpp in Sources */,
 				F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */,
@@ -573,6 +588,7 @@
 				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
+				F86A31572239FAF300233ED5 /* particleShader.cpp in Sources */,
 				F8939EB0223750FC00199385 /* SoundController.cpp in Sources */,
 				F8939EB42237515400199385 /* WeatherController.cpp in Sources */,
 				F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */,

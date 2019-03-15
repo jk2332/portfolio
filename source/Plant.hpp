@@ -32,7 +32,6 @@ private:
 protected:
     int _health;
     float _drawscale;
-    //std::shared_ptr<cugl::Texture> _texture;
     int _x;
     int _y;
     std::shared_ptr<cugl::Texture> _texture;

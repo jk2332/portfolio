@@ -123,7 +123,7 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
     bool success = true;
     for(int ii = 0; ii < _unitNum; ii++) {
         //std::string name = getPartName(ii);
-        std::shared_ptr<Texture> image = assets->get<Texture>("cloud");
+        std::shared_ptr<Texture> image = assets->get<Texture>("cloudFace");
         if (image == nullptr) {
             success = false;
         } else {

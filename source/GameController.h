@@ -32,6 +32,7 @@
 #include "PestController.hpp"
 #include "WeatherController.hpp"
 #include "ResourceController.hpp"
+#include "particleGenerator.hpp"
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
@@ -56,6 +57,7 @@ protected:
     WeatherController _weather;
     ResourceController _resource;
     PestController _pest;
+    ParticleGenerator _pg;
     
     // VIEW
     /** Reference to the physics root of the scene graph */

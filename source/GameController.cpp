@@ -113,8 +113,10 @@ long rainingTicks = 0l;
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
+
 #define GRID_NUM_X          9
 #define GRID_NUM_Y          4
+#define PARTICLE_NUM        5
 
 std::shared_ptr<Plant> currentPlant;
 
@@ -250,7 +252,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
     
-
+    _pg = ParticleGenerator(_assets->get<Texture>("particle"), PARTICLE_NUM);
+    
 //    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
 //        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
 //        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
@@ -390,9 +393,9 @@ void GameScene::populate() {
     auto gridNode = Node::alloc();
     for (int i = 0; i < GRID_NUM_X; i++){
         for (int j = 0; j < GRID_NUM_Y; j++){
-            int rand = (std::rand() % 5) + 1;
-            std::cout << rand << endl;
-            auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
+//            int rand = (std::rand() % 5) + 1;
+//            std::cout << rand << endl;
+            auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile"), i, j);
             grid->setSceneNode(gridNode);
         }
     }
@@ -581,11 +584,13 @@ void GameScene::update(float dt) {
             }
             _selector->deselect();
         }
-        
     }
-    
+
     // Turn the physics engine crank.
     _world->update(dt);
+        
+    _pg.Update(dt, *_cloud, 1, Vec2(0,0));
+    _pg.Draw();
 
 }
 
