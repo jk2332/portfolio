@@ -63,10 +63,15 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 long ticks = 0l;
 long click1 = -1l;
 long click2 = -1l;
+<<<<<<< HEAD
 long temp = 01;
 Obstacle * clicked_ob = nullptr;
 long rainingTicks = 0l;
 long shadeCoolDown = 50l;
+=======
+Obstacle * clicked_ob = nullptr;
+long rainingTicks = 0l;
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 // std::vector<Obstacle *> toBeRemoved;
 
 
@@ -199,6 +204,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
+<<<<<<< HEAD
     
     // Start up the input handler
     _assets = assets;
@@ -208,15 +214,28 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     }
 
     _board = Board::alloc(32, textures, GRID_NUM_X, GRID_NUM_Y);
+=======
+
+    
+    // Start up the input handler
+    _assets = assets;
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     _input.init();
     
     // Create the world and attach the listeners.
     _world = ObstacleWorld::alloc(rect,gravity);
+<<<<<<< HEAD
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
         beginContact(contact);
     };
+=======
+//    _world->activateCollisionCallbacks(true);
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        beginContact(contact);
+//    };
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 //    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
 //        beforeSolve(contact,oldManifold);
 //    };
@@ -394,9 +413,22 @@ void GameScene::populate() {
     sprite = PolygonNode::allocWithTexture(image,wall2);
     addObstacle(wallobj,sprite,1);  // All walls share the same texture
     
+<<<<<<< HEAD
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "gridNode");
+=======
+    auto gridNode = Node::alloc();
+    for (int i = 0; i < GRID_NUM_X; i++){
+        for (int j = 0; j < GRID_NUM_Y; j++){
+            int rand = (std::rand() % 5) + 1;
+            std::cout << rand << endl;
+            auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile" + std::to_string(rand)), i, j);
+            grid->setSceneNode(gridNode);
+        }
+    }
+    _worldnode->addChildWithName(gridNode, "gridNode");
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     auto plantNode = Node::alloc();
     for (int i = 0; i < GRID_NUM_X; i++){
@@ -407,6 +439,7 @@ void GameScene::populate() {
     }
     _worldnode->addChildWithName(plantNode, "plantNode");
     
+<<<<<<< HEAD
     auto cloudNode = Node::alloc();
     
     _cloud = Cloud::alloc(Vec2(16, 10), _scale);
@@ -418,6 +451,17 @@ void GameScene::populate() {
     _worldnode->addChildWithName(cloudNode, "cloudNode");
     _world->addObstacle(_cloud);
     
+=======
+    _cloud = Cloud::alloc(Vec2(16, 10), _scale);
+    _cloud->initialBuild(_assets);
+    auto cloudNode = Node::alloc();
+    _worldnode->addChildWithName(cloudNode, "cloudNode");
+    _cloud->setSceneNode(cloudNode);
+    _cloud->setDebugColor(DYNAMIC_COLOR);
+    _cloud->setDebugScene(_debugnode);
+    _world->addObstacle(_cloud);
+
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 }
 
 /**
@@ -490,7 +534,10 @@ void GameScene::update(float dt) {
     _input.update(dt);
     ticks ++;
     
+<<<<<<< HEAD
     
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didReset()) { reset(); }
@@ -498,6 +545,7 @@ void GameScene::update(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+<<<<<<< HEAD
     Vec2 v = _cloud->getBodies()[0]->getPosition();
     
     if (_board->isInBounds(v.x, v.y)){
@@ -512,6 +560,8 @@ void GameScene::update(float dt) {
             }
         }
     }
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     //Get Input
     //If Clouds Dragged, Update Physics Location of Clouds
@@ -556,6 +606,7 @@ void GameScene::update(float dt) {
 //            getChildByName(childName)->setColor(Color4(0, 0, 0));
 //        }
 //    }
+<<<<<<< HEAD
     
     //shade
 //    Vec2 cloudPos = _cloud->getPosition();      //in box2d coord
@@ -563,6 +614,10 @@ void GameScene::update(float dt) {
 //        Vec2 gridp = _board->posToGridCoord(cloudPos.x, cloudPos.y);
 //        _board->getNodeAt(gridp.x, gridp.y)->setColor(Color4(255, 0, 0));
 //    }
+=======
+
+    _cloud->setWorld(*_world->getWorld());
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     // Move an object if touched
     if (_input.didSelect()) {
@@ -579,6 +634,7 @@ void GameScene::update(float dt) {
         }
     } else {
         if (_selector->isSelected()) {
+<<<<<<< HEAD
 //            std::cout <<"-------"<<endl;
 //            std::cout << _cloud->getPosition().x <<endl;
 //            std::cout << _cloud->getPosition().y <<endl;
@@ -590,12 +646,17 @@ void GameScene::update(float dt) {
                 std::cout << pos.x << endl;
                 std::cout << pos.y << endl;
 
+=======
+            if (click1 == -1){
+                clicked_ob = _selector->getObstacle();
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
                 click1 = ticks;
             }
             else if (click2 == -1){
                 click2 = ticks;
                 if (click2 - click1 <= 50 && clicked_ob == _selector->getObstacle()){
                     ((Cloud *) clicked_ob)->setIsRaining(true);
+<<<<<<< HEAD
                     _rainDrops.clear();
                     for (int i = -5; i < 5; i++){
                         Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
@@ -605,6 +666,15 @@ void GameScene::update(float dt) {
                         rainDrop->setLinearVelocity(0, -1);
                         std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
                         _toBeRemoved.push_back(rainDrop);
+=======
+                    for (int i = -5; i < 5; i++){
+                        Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
+                        std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
+                        rainDrop->setMass(0);
+                        rainDrop->setLinearVelocity(0, -1);
+                        std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
+                        
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
                         addObstacle(rainDrop, rainNode, 5);
                     }
                 }
@@ -617,6 +687,7 @@ void GameScene::update(float dt) {
         
     }
     
+<<<<<<< HEAD
     //assert (_rainDrops.size() == _toBeRemoved.size());
 
 //    if (ticks % 10 == 0){
@@ -633,16 +704,29 @@ void GameScene::update(float dt) {
     
     // Turn the physics engine crank.
     _cloud->update(dt);
+=======
+    // Turn the physics engine crank.
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     _world->update(dt);
 
 }
 
 void GameScene::beginContact(b2Contact* contact) {
+<<<<<<< HEAD
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
 
     Obstacle * b1 = (Obstacle *)(body1->GetUserData());
     Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+=======
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//
+//
+//    // If we hit the "win" door, we are done
+//    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+//    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 //
 //    if(body1->IsBullet() && (b2->getName() == "crop" || b2->getName() == "wall")) {
 //        Obstacle * b1 = (Obstacle *)(body1->GetUserData());
@@ -651,6 +735,7 @@ void GameScene::beginContact(b2Contact* contact) {
 //        std::cout << b2->getName() <<endl;
 //        //delete b1;
 //    }
+<<<<<<< HEAD
 
     assert (body1->GetUserData() != nullptr and body2->GetUserData() != nullptr);
     
@@ -664,6 +749,8 @@ void GameScene::beginContact(b2Contact* contact) {
             //delete b1;
     }
 
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 //    else if (body2->IsBullet() && (b1->getName() == "crop" || b1->getName() == "wall")){
 //        Obstacle * b2 = (Obstacle *)(body2->GetUserData());
 //        toBeRemoved.push_back(b2);
@@ -687,6 +774,7 @@ void GameScene::beginContact(b2Contact* contact) {
  */
 void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 //    float speed = 0;
+<<<<<<< HEAD
 ////
 ////    // Use Ian Parberry's method to compute a speed threshold
 //    b2Body* body1 = contact->GetFixtureA()->GetBody();
@@ -704,6 +792,25 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 //            speed = b2Dot(dv,worldManifold.normal);
 //        }
 //    }
+=======
+//
+//    // Use Ian Parberry's method to compute a speed threshold
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+////    b2WorldManifold worldManifold;
+////    contact->GetWorldManifold(&worldManifold);
+////    b2PointState state1[2], state2[2];
+////    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+////    for(int ii =0; ii < 2; ii++) {
+////        if (state2[ii] == b2_addState) {
+////            b2Vec2 wp = worldManifold.points[0];
+////            b2Vec2 v1 = body1->GetLinearVelocityFromWorldPoint(wp);
+////            b2Vec2 v2 = body2->GetLinearVelocityFromWorldPoint(wp);
+////            b2Vec2 dv = v1-v2;
+////            speed = b2Dot(dv,worldManifold.normal);
+////        }
+////    }
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 ////
 ////    // Play a sound if above threshold
 ////    if (speed > SOUND_THRESHOLD) {
@@ -722,8 +829,11 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 //    else{
 //        contact->SetEnabled(true);
 //    }
+<<<<<<< HEAD
     
     
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 }
 
 /**

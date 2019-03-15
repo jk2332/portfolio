@@ -181,8 +181,13 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& pos) {
     std::shared_ptr<Texture> image = _texture;
     Size size = image->getSize();
+<<<<<<< HEAD
     size.width /= (_drawscale);
     size.height /= (_drawscale);
+=======
+    size.width /= (_drawscale*2);
+    size.height /= (_drawscale*2);
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     Vec2 pos2 = pos;
     if (connect != PART_NONE) {
@@ -272,11 +277,18 @@ void Cloud::update(float delta) {
         // Update the nodes of the attached bodies
         for (auto it = children.begin(); it != children.end(); ++it) {
             (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
+<<<<<<< HEAD
             (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
             (*it)->setAngle(_bodies[i]->getAngle());
             
             // Propagate the update to the bodies attached to the Ragdoll
             _bodies[i]->update(delta);
+<<<<<<< HEAD
+=======
+            i++;
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
         }
     }
 }
@@ -386,7 +398,10 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     for (int ii = 0; ii < _unitNum; ii++) {
         std::shared_ptr<Texture> image = _texture;
         std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
+<<<<<<< HEAD
         sprite->setContentSize(_texture->getSize());
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
         if (ii == RIGHT) {
             sprite->flipHorizontal(true); // More reliable than rotating 90 degrees.
         }

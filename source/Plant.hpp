@@ -12,8 +12,12 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
+<<<<<<< HEAD
 #include "board.hpp"
 
+=======
+#include "Board.hpp"
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 #define noNeed 0
 #define needRain 1
 #define needSun 2
@@ -122,7 +126,10 @@ public:
     void updateState();
     void setState(int s);
     int getState() {return _state;}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 };
 
 

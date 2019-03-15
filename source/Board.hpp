@@ -12,6 +12,10 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
+<<<<<<< HEAD
+=======
+#include "Plant.hpp"
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 
 /** Width of the game world in Box2d units */
 #define DEFAULT_WIDTH   32.0f
@@ -19,8 +23,13 @@
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_WIDTH      3
 #define GRID_HEIGHT     2
+<<<<<<< HEAD
 #define DOWN_LEFT_CORNER_X    3
 #define DOWN_LEFT_CORNER_Y    4
+=======
+#define UP_LEFT_CORNER_X    3
+#define UP_LEFT_CORNER_Y    9
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 #define OFFSET_X         0
 #define OFFSET_Y         0
 
@@ -43,10 +52,17 @@ private:
     
 protected:
     float _drawscale;
+<<<<<<< HEAD
     std::vector<std::shared_ptr<cugl::Texture>> _textures;
     int _gridNumX;
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
+=======
+    std::shared_ptr<cugl::Texture> _texture;
+//    std::shared_ptr<Plant> _plants[5][5];
+    int _x;
+    int _y;
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
 public:
 #pragma mark -
@@ -85,7 +101,11 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
+<<<<<<< HEAD
     bool init(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY);
+=======
+    bool init(float scale, std::shared_ptr<cugl::Texture> texture, int x, int y);
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     
 #pragma mark -
@@ -103,9 +123,15 @@ public:
      *
      * @return a newly allocated Board
      */
+<<<<<<< HEAD
     static std::shared_ptr<Board> alloc(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY) {
         std::shared_ptr<Board> result = std::make_shared<Board>();
         return (result->init(scale, textures, gridNumX, gridNumY) ? result : nullptr);
+=======
+    static std::shared_ptr<Board> alloc(float scale, std::shared_ptr<cugl::Texture> texture, int x, int y) {
+        std::shared_ptr<Board> result = std::make_shared<Board>();
+        return (result->init(scale, texture, x, y) ? result : nullptr);
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     }
  
 #pragma mark -
@@ -119,9 +145,13 @@ public:
     
 #pragma mark -
 #pragma mark Animation
+<<<<<<< HEAD
 
 #pragma mark -
 #pragma mark Scene Graph Management
+=======
+    
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     /**
      * Sets the scene graph node representing this Board.
      *
@@ -142,6 +172,7 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
+<<<<<<< HEAD
     cugl::Vec2 gridCoordToPosition(cugl::Vec2 p){
         cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*p.x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*p.y - GRID_HEIGHT/2)*32.0f);
         return a;
@@ -192,6 +223,8 @@ public:
     
     std::shared_ptr<cugl::Node> getNodeAt(int x, int y);
     
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
@@ -206,6 +239,24 @@ public:
      */
     void setDrawScale(float scale);
     
+<<<<<<< HEAD
+=======
+    cugl::Vec2 getGridCenterPos(cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/3)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*_drawscale);
+        return a;
+    }
+    
+    cugl::Vec2 getGridCenterPos(float d, cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/3)*d, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT)*d);
+        return a;
+    }
+    
+    cugl::Vec2 gridCoordToPosition(cugl::Vec2 p){
+        cugl::Vec2 a = cugl::Vec2((UP_LEFT_CORNER_X + (GRID_WIDTH + OFFSET_X)*p.x + GRID_WIDTH/2)*_drawscale, (-(GRID_HEIGHT + OFFSET_Y)*p.y + UP_LEFT_CORNER_Y + GRID_HEIGHT/2)*_drawscale);
+        return a;
+    }
+    
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 };
 
 #endif

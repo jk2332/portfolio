@@ -52,12 +52,19 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
     std::shared_ptr<Plant> _plants[72];
+<<<<<<< HEAD
     std::shared_ptr<Board> _board;
     std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
+=======
+    Board _board;
+    WeatherController _weather;
+    ResourceController _resource;
+    PestController _pest;
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
     
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -128,8 +135,11 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
+<<<<<<< HEAD
     
 
+=======
+>>>>>>> 2738577ab3a091150ad30564d07830c30728a28a
 
 public:
 #pragma mark -
