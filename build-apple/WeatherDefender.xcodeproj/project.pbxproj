@@ -68,6 +68,8 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
+		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -173,6 +175,7 @@
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
+		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		F8939E9D2235FA5600199385 /* particleGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleGenerator.cpp; sourceTree = "<group>"; };
 		F8939E9E2235FA5600199385 /* particleGenerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = particleGenerator.hpp; sourceTree = "<group>"; };
 		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };
@@ -319,6 +322,7 @@
 		EBB1AC2E1DF8C81D00C353B0 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F867DC06223B9B8D0038F905 /* textures */,
 				EB3B95851E25B1FA00314284 /* sounds */,
 				EB59D52B1E25281300A93BB5 /* fonts */,
 				EB59D52C1E25281300A93BB5 /* json */,
@@ -443,7 +447,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = G6P7H83FK6;
+						DevelopmentTeam = TX52T47YPD;
 						ProvisioningStyle = Automatic;
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
@@ -511,6 +515,7 @@
 				EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */,
 				EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */,
 				EB122DB71E281F7E0019E2D1 /* sounds in Resources */,
+				F867DC08223B9B8D0038F905 /* textures in Resources */,
 				EB122DB81E281F7E0019E2D1 /* fonts in Resources */,
 				EB122DB91E281F7E0019E2D1 /* json in Resources */,
 				EB602D0D221A525E006DE4D7 /* DeviceMargins.plist in Resources */,
@@ -522,6 +527,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB3B95861E25B1FA00314284 /* sounds in Resources */,
+				F867DC07223B9B8D0038F905 /* textures in Resources */,
 				EB59D52E1E25281300A93BB5 /* fonts in Resources */,
 				EB350D301E05CC6400820A6F /* Mac.xcassets in Resources */,
 				EB59D52F1E25281300A93BB5 /* json in Resources */,
@@ -591,7 +597,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -613,7 +619,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
