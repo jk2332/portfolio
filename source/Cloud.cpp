@@ -54,7 +54,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _size = 1.0f;
+    _size = .8f;
     return true;
 }
 
@@ -129,9 +129,10 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
     _texture = texture;
 }
 
-void Cloud::markForRemoval(b2World& world) {
+void Cloud::markForRemoval() {
     CULog("cloud to be removed");
     markRemoved(true);
+    CULog("remove is? %i", isRemoved());
 }
 
 
@@ -325,18 +326,18 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
     std::shared_ptr<Texture> image = _texture;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
-    sprite->setContentSize(_texture->getSize() *_size);
+    sprite->setContentSize(_texture->getSize()*_size);
     _node->addChildWithName(sprite, "cloud");
 }
 
-void Cloud::incSize() {
+void Cloud::incSize(float f) {
     CULog("increased size");
-    _size += 0.2;
+    _size += 0.35 + f;
 }
 
 void Cloud::decSize() {
     CULog("decreased size");
-    _size -= 0.2;
+    _size -= 0.35;
 }
 
 /**

@@ -291,7 +291,7 @@ public:
     
     bool joinUnit(b2World& world);
 
-    void markForRemoval(b2World& world);
+    void markForRemoval();
     
     
 #pragma mark -
@@ -337,8 +337,8 @@ public:
 //     */
 //    void makeBubbleGenerator(const std::shared_ptr<Texture>& bubble);
     
-    int getSize() {return _size;}
-    void setSize(int s) {_size = s;}
+    float getSize() {return _size;}
+    void setSize(float s) {_size = s;}
     
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
@@ -395,7 +395,7 @@ public:
     void setIsRaining(float b){_isRaining = b;}
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
-    void incSize();
+    void incSize(float f);
     void decSize();
 
     

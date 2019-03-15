@@ -424,6 +424,7 @@ void GameScene::populate() {
         _cloud[i]->setDebugColor(Color4::BLUE);
         _cloud[i]->setDebugScene(_debugnode);
         _cloud[i]->setSize(1.0f);
+        _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
         _world->addObstacle(_cloud[i]);
 
     }
@@ -594,9 +595,12 @@ void GameScene::update(float dt) {
                 click2 = ticks;
                 if (click2 - click1 <= 50 && clicked_ob == _selector->getObstacle()){
                     ((Cloud *) clicked_ob)->setIsRaining(true);
-                    auto cloudx = static_cast<Cloud*>(_selector->getObstacle());
-                    cloudx->decSize();
-//                    (static_cast<Cloud*>(clicked_ob))->decSize();
+                    std::string cloud_name = _selector->getObstacle()->getName();
+                    for (int i = 0; i < num_clouds; i++) {
+                        if (_cloud[i] != nullptr && _cloud[i]->getName() == cloud_name) {
+                            _cloud[i]->decSize();
+                        }
+                    }
                     for (int i = -5; i < 5; i++){
                         Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
                         std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
@@ -641,16 +645,33 @@ void GameScene::beginContact(b2Contact* contact) {
         cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
     }
     
-    if (cloud1 == nullptr || cloud2 == nullptr || cloud1 == cloud2) {
+    if (cloud1 == nullptr || cloud2 == nullptr || cloud1 == cloud2 || cloud1->getName() == cloud2->getName()) {
         CULog("clouds null");
         return;
     }
     
 //    CULog("%s %s\n", cloud1->getName().c_str(), cloud2->getName().c_str());
     if (cloud1->getName().find("cloud") == 0 && cloud2->getName().find("cloud") == 0) {
-        CULog("contact between clouds");
-        cloud1->markForRemoval(*_world->getWorld());
-        cloud2->incSize();
+        CULog("contact between %s and %s", cloud1->getName().c_str(), cloud2->getName().c_str());
+        int toDelete = 0;
+        int toGrow = 0;
+        for (int i = 0; i < num_clouds; i++) {
+            if (_cloud[i] == nullptr) {
+                continue;
+            }
+            if (_cloud[i]->getName() == cloud1->getName()) {
+//                _cloud[i]->markForRemoval();
+                toDelete = i;
+                continue;
+            }
+            if (_cloud[i]->getName() == cloud2->getName()) {
+//                _cloud[i]->incSize();
+                toGrow = i;
+                continue;
+            }
+        }
+        _cloud[toDelete]->markForRemoval();
+        _cloud[toGrow]->incSize(_cloud[toDelete]->getSize() - 1.0f);
     }
 
 }
