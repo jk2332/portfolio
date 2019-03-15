@@ -35,6 +35,7 @@
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
+#include <set>
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -72,7 +73,16 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    std::shared_ptr<Cloud> _cloud;
+    int num_clouds = 5;
+    std::shared_ptr<Cloud> _cloud[5];
+    
+    std::set<Cloud*> _cloudsToRemove;
+    
+    std::set<Cloud*> _cloudsToGrow;
+    
+    std::set<b2Body*> _foo;
+
+
     
 	/** Selector to allow mouse control of the ragdoll */
 	std::shared_ptr<cugl::ObstacleSelector> _selector;

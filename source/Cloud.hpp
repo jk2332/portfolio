@@ -81,7 +81,7 @@ protected:
     long _rainCoolDown;
     int _type;
     Vec2 _velocity;
-    int _size;
+    float _size;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -269,11 +269,6 @@ public:
     virtual void releaseFixtures() override;
     
     
-    virtual void BeginContact(b2Contact* contact);
-    
-    // Called when two fixtures cease to touch
-    virtual void EndContact(b2Contact* contact);
-    
     b2Fixture* GetFixtureA();
     
     // Get the second fixture in this contact
@@ -296,6 +291,7 @@ public:
     
     bool joinUnit(b2World& world);
 
+    void markForRemoval(b2World& world);
     
     
 #pragma mark -
@@ -399,6 +395,9 @@ public:
     void setIsRaining(float b){_isRaining = b;}
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
+    void incSize();
+    void decSize();
+
     
 #pragma mark -
 #pragma mark Physics
