@@ -70,6 +70,10 @@
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
 		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
+		F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
+		F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
+		F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -447,7 +451,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = TX52T47YPD;
+						DevelopmentTeam = G6P7H83FK6;
 						ProvisioningStyle = Automatic;
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
@@ -541,6 +545,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */,
+				F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */,
+				F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */,
+				F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */,
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
@@ -597,12 +605,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TX52T47YPD;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -619,12 +629,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TX52T47YPD;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

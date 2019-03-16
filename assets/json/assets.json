@@ -26,7 +26,7 @@
             "file":     "textures/_Crops-512.png"
         },
         "cloud": {
-            "file":     "textures/shadowCloud.png"
+            "file":     "textures/shadowcloud.png"
         },
         "tile": {
             "file":     "textures/tile.png"
