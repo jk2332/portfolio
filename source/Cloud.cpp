@@ -55,6 +55,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _rainCoolDown = 50l;
     _world = nullptr;
     _size = .8f;
+    _ob = nullptr;
     return true;
 }
 
@@ -66,7 +67,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
  */
 void Cloud::dispose() {
     _node = nullptr;
-    _bodies.clear();
+//    _bodies.clear();
     //_bubbler = nullptr;
 }
 
@@ -85,7 +86,7 @@ void Cloud::dispose() {
  * @return true if the body parts were successfully created
  */
 bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
-    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
+//    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
     
     // Get the images from the asset manager
     bool success = true;
@@ -103,12 +104,23 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
     }
     
     // Now make everything
-    std::shared_ptr<BoxObstacle> part;
+//    std::shared_ptr<BoxObstacle> part;
     
     // TORSO
     Vec2 pos = getPosition();
-    part = makeUnit(BODY, PART_NONE, pos);
-    part->setFixedRotation(true);
+//    part = makeUnit(BODY, PART_NONE, pos);
+//    part->setFixedRotation(true);
+    
+    Size size = _texture->getSize();
+    size.width /= (_drawscale*1.5);
+    size.height /= (_drawscale*1.5);
+    
+    std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos, size);
+    body->setDensity(DEFAULT_DENSITY);
+    CULog("created");
+    
+    //    _bodies.push_back(body);
+    _ob = body;
     
     return true;
 }
@@ -152,66 +164,13 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
     size.height /= (_drawscale*1.5);
     
     Vec2 pos2 = pos;
-    if (connect != PART_NONE) {
-        pos2 += _bodies[connect]->getPosition();
-    }
     
     std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos2, size);
     body->setDensity(DEFAULT_DENSITY);
     
-    _bodies.push_back(body);
+//    _bodies.push_back(body);
+    _ob = body;
     return body;
-}
-
-//void Cloud::makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture){
-//    std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(pos.x, pos.y - 1), rainTexture->getSize());
-//    rainDrop->setLinearVelocity(0, -100);
-//    rainDrop->cugl::Obstacle::setGravityScale(10);
-//    rainDrop->setFriction(0);
-//    rainDrop->setMass(0.1);
-//    _bodies.push_back(rainDrop);
-//}
-
-
-bool Cloud::dropUnit(b2World& world){
-    if (_unitNum > 1){
-        _unitNum -= 1;
-        world.DestroyJoint(_joints[0]);
-        _joints.clear();
-        return true;
-    }
-    return false;
-}
-
-bool Cloud::joinUnit(b2World& world){
-    CULog("Join clouds");
-    _unitNum += 1;
-    
-//    Cloud::createJoints(world);
-    b2RevoluteJointDef jointDef;
-    b2Joint* joint;
-    
-    // SHOULDERS
-    jointDef.bodyA = _bodies[LEFT]->getBody();
-    jointDef.bodyB = _bodies[BODY]->getBody();
-    jointDef.localAnchorA.Set(ARM_XOFFSET / 4, 0);
-    jointDef.localAnchorB.Set(-ARM_XOFFSET / 3, ARM_YOFFSET);
-    jointDef.enableLimit = true;
-    jointDef.upperAngle = 0;
-    jointDef.lowerAngle = 0;
-    joint = world.CreateJoint(&jointDef);
-    _joints.push_back(joint);
-    
-    b2WeldJointDef weldDef;
-    
-    // Weld center of mass to torso
-    weldDef.bodyA = _bodies[BODY]->getBody();
-    weldDef.bodyB = _body;
-    weldDef.localAnchorA.Set(0, 0);
-    weldDef.localAnchorB.Set(0, 0);
-    joint = world.CreateJoint(&weldDef);
-    _joints.push_back(joint);
-    return true;
 }
 
 #pragma mark -
@@ -233,68 +192,21 @@ void Cloud::update(float delta) {
     Obstacle::update(delta);
     if (_node != nullptr) {
         std::vector<std::shared_ptr<Node>> children = _node->getChildren();
-        int i = 0;
         // Update the nodes of the attached bodies
         for (auto it = children.begin(); it != children.end(); ++it) {
-            (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
+//            CULog("iter");
+//            CULog("%f, %f pos", _ob->getPosition().x, _ob->getPosition().y);
+            (*it)->setPosition(_ob->getPosition()*_drawscale);
             (*it)->setContentSize(_texture->getSize() * _size);
             
             // Propagate the update to the bodies attached to the Ragdoll
-            _bodies[i]->update(delta);
+            _ob->update(delta);
         }
     }
 }
 
-/**
- * Creates the joints for this object.
- *
- * This method is executed as part of activePhysics. This is the primary method to
- * override for custom physics objects.
- *
- * @param world Box2D world to store joints
- *
- * @return true if object allocation succeeded
- */
-bool Cloud::createJoints(b2World& world) {
-    return true;
-}
-
-/**
- * Create new fixtures for this body, defining the shape
- *
- * This method is typically undefined for complex objects.  However, it
- * is necessary if we want to weld the body to track the center of mass.
- * Joints without fixtures are undefined.
- */
-void Cloud::createFixtures() {
-    if (_body == nullptr) {
-        return;
-    }
-    
-    releaseFixtures();
-    
-    // Create the fixture for the center of mass
-    b2CircleShape shape;
-    shape.m_radius = CENTROID_RADIUS;
-    _fixture.shape = &shape;
-    _fixture.density = CENTROID_DENSITY;
-    _centroid = _body->CreateFixture(&_fixture);
-    
-    markDirty(false);
-}
-
-/**
- * Release the fixtures for this body, reseting the shape
- *
- * This method is typically undefined for complex objects.  However, it
- * is necessary if we want to weld the body to track the center of mass.
- * Joints without fixtures are undefined.
- */
-void Cloud::releaseFixtures() {
-    if (_centroid != nullptr) {
-        _body->DestroyFixture(_centroid);
-        _centroid = nullptr;
-    }
+std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
+    return _ob;
 }
 
 #pragma mark -

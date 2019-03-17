@@ -420,9 +420,8 @@ void GameScene::populate() {
         _cloud[i]->setName("cloud" + std::to_string(i));
         _cloud[i]->setSceneNode(cloudNode);
         _cloud[i]->setDebugColor(Color4::BLUE);
-        _cloud[i]->setDebugScene(_debugnode);
         _cloud[i]->setSize(1.0f);
-        _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
+        _cloud[i]->getObstacle()->setName("cloud" + std::to_string(i));
         _world->addObstacle(_cloud[i]);
 
     }
@@ -510,7 +509,7 @@ void GameScene::update(float dt) {
         if (_cloud[x] == nullptr) {
                 continue;
         } else {
-            Vec2 v = _cloud[x]->getBodies()[0]->getPosition();
+            Vec2 v = _cloud[x]->getObstacle()->getPosition();
         
             if (_board->isInBounds(v.x, v.y)){
                 Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
@@ -587,7 +586,7 @@ void GameScene::update(float dt) {
 
 
     if (_input.didSplit()) {
-        auto v = _cloud[0]->getBodies()[0]->getPosition();
+        auto v = _cloud[0]->getObstacle()->getPosition();
         CULog("%f, %f", v.x, v.y);
     }
     
@@ -603,10 +602,11 @@ void GameScene::update(float dt) {
         // Transform from screen to physics coords
         auto pos =  _input.getSelection();
         pos = _worldnode->screenToNodeCoords(pos);
+        CULog("%f, %f", pos.x, pos.y);
 
         // Place the cross hair
         _selector->setPosition(pos/_scale);
-
+        
         // Attempt to select an obstacle at the current position
         if (!_selector->isSelected()) {
             _selector->select();
@@ -672,9 +672,9 @@ void GameScene::update(float dt) {
 //    }
     
     // Turn the physics engine crank.
-//    for (int i =0; i < num_clouds; i++) {
-//        _cloud[i]->update(dt);
-//    }
+    for (int i =0; i < num_clouds; i++) {
+        _cloud[i]->update(dt);
+    }
     _world->update(dt);
     
 }

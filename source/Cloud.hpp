@@ -54,7 +54,7 @@
  *
  * For the construction, see the ragdoll diagram above, with the position offsets.
  */
-class Cloud : public ComplexObstacle {
+class Cloud : public SimpleObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Cloud);
@@ -69,6 +69,9 @@ protected:
     
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
     std::shared_ptr<cugl::Node> _node;
+    
+    // Represents the box obstacle representing the cloud
+    std::shared_ptr<BoxObstacle> _ob;
     
 //    /** Cache object for transforming the force according the object angle */
 //    cugl::Mat4 _affine;
@@ -117,7 +120,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Cloud(void) : ComplexObstacle() { }
+    Cloud(void) : SimpleObstacle() { }
     
     /**
      * Destroys this Ragdoll, releasing all resources.
@@ -177,6 +180,7 @@ public:
      */
     bool init(const cugl::Vec2& pos, float scale);
     
+    std::shared_ptr<BoxObstacle> getObstacle();
     
 #pragma mark -
 #pragma mark Static Constructors
@@ -235,43 +239,7 @@ public:
     }
     
     
-#pragma mark Physics Methods
-    /**
-     * Creates the joints for this object.
-     *
-     * This method is executed as part of activePhysics. This is the primary method to
-     * override for custom physics objects.
-     *
-     * @param world Box2D world to store joints
-     *
-     * @return true if object allocation succeeded
-     */
-    bool createJoints(b2World& world) override;
-    
-    /**
-     * Create new fixtures for this body, defining the shape
-     *
-     * This method is typically undefined for complex objects.  While they
-     * need a root body, they rarely need a root shape.  However, we provide
-     * this method for maximum flexibility.
-     */
-    virtual void createFixtures() override;
-    
-    /**
-     * Release the fixtures for this body, reseting the shape
-     *
-     * This method is typically undefined for complex objects.  While they
-     * need a root body, they rarely need a root shape.  However, we provide
-     * this method for maximum flexibility.
-     */
-    virtual void releaseFixtures() override;
-    
-    
-    b2Fixture* GetFixtureA();
-    
-    // Get the second fixture in this contact
-    b2Fixture* GetFixtureB();
-    
+#pragma mark Physics Methods    
     /**
      * Creates the individual body parts for this ragdoll
      *
@@ -374,9 +342,7 @@ public:
      * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
-    
-    void makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture);
-    
+        
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
