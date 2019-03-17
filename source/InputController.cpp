@@ -155,13 +155,13 @@ void RagdollInput::update(float dt) {
     _keyReset  = keys->keyPressed(RESET_KEY);
     _keySplit = keys->keyPressed(SPLIT_KEY);
     _keyJoin = keys->keyPressed(JOIN_KEY);
-    _keyDebug  = keys->keyPressed(DEBUG_KEY);
+//    _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
     
 #endif
 
     _resetPressed = _keyReset;
-    _debugPressed = _keyDebug;
+//    _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     _splitPressed = _keySplit;
     _joinPressed = _keyJoin;
