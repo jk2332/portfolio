@@ -67,7 +67,8 @@
 		EBE28ECE1DFEDCFA00C059A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */; };
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
-		F1EF3DF1223EE0C5000E92D7 /* InputController2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1EF3DEF223EE0C5000E92D7 /* InputController2.cpp */; };
+		F1EF3DFC223EE2BE000E92D7 /* InputController2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */; };
+		F1EF3DFD223EE2BE000E92D7 /* InputController2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
 		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
@@ -174,8 +175,8 @@
 		F15F4AB522223516006D5CD3 /* Plant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Plant.hpp; sourceTree = "<group>"; };
 		F1B4E5482224517700D807D5 /* Cloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cloud.cpp; sourceTree = "<group>"; };
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
-		F1EF3DEF223EE0C5000E92D7 /* InputController2.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InputController2.cpp; sourceTree = "<group>"; };
-		F1EF3DF0223EE0C5000E92D7 /* InputController2.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = InputController2.hpp; sourceTree = "<group>"; };
+		F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputController2.cpp; path = ../../../Desktop/InputController2.cpp; sourceTree = "<group>"; };
+		F1EF3DFB223EE2BE000E92D7 /* InputController2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InputController2.hpp; path = ../../../Desktop/InputController2.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
 		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
@@ -261,8 +262,6 @@
 		EBB1ABFD1DF8C6BC00C353B0 = {
 			isa = PBXGroup;
 			children = (
-				F1EF3DEF223EE0C5000E92D7 /* InputController2.cpp */,
-				F1EF3DF0223EE0C5000E92D7 /* InputController2.hpp */,
 				EBB1AC281DF8C75400C353B0 /* Source */,
 				EBB1AC2E1DF8C81D00C353B0 /* Assets */,
 				EBB1AC341DF8C86C00C353B0 /* Resources */,
@@ -284,6 +283,8 @@
 		EBB1AC281DF8C75400C353B0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */,
+				F1EF3DFB223EE2BE000E92D7 /* InputController2.hpp */,
 				F1F2EDA0223331F600ECCD4B /* Board.cpp */,
 				F1F2EDA1223331F600ECCD4B /* Board.hpp */,
 				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
@@ -553,6 +554,7 @@
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
+				F1EF3DFD223EE2BE000E92D7 /* InputController2.cpp in Sources */,
 				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				F8939EB52237515400199385 /* WeatherController.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
@@ -576,7 +578,7 @@
 				F8939EB82237517400199385 /* PestController.cpp in Sources */,
 				EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */,
 				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
-				F1EF3DF1223EE0C5000E92D7 /* InputController2.cpp in Sources */,
+				F1EF3DFC223EE2BE000E92D7 /* InputController2.cpp in Sources */,
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
 				F8939EB0223750FC00199385 /* SoundController.cpp in Sources */,
