@@ -493,7 +493,7 @@ void GameScene::update(float dt) {
             }
             if (_board->isInBounds(v.x, v.y)){
                 Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
-                _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(0, 255, 255, 0));
+                _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(230, 230, 230, 0));
             }
 
         }
