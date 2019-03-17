@@ -56,12 +56,12 @@ using namespace cugl;
 // In an actual game, this information would go in a data file.
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
-float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-				   1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-					0.f,  0.0f,  0.0f, 18.0f };
-float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
-			      16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
-				  16.0f, 17.0f, 16.0f, 18.0f };
+float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
+                   0.0f,  10.0f, 16.0f,  10.0f, 16.0f,  9.0f,
+                   -1.0f,  9.0f,  -1.0f, 19.0f };
+float WALL2[] = { 33.0f, 19.0f, 33.0f,  9.0f, 16.0f,  9.0f,
+			      16.0f,  10.0f, 32.0f,  10.0f, 32.0f, 18.0f,
+				  16.0f, 18.0f, 16.0f, 19.0f };
 
 /** The initial position of the ragdoll head */
 long ticks = 0l;
@@ -215,8 +215,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     _input.init();
     
-
-    
     // Create the world and attach the listeners.
     _world = ObstacleWorld::alloc(rect,gravity);
     _world->activateCollisionCallbacks(true);
@@ -249,37 +247,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
-
-//    // Add foreground layer
-//    image = _assets->get<Texture>(FRGD_TEXTURE);
-//    std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-//    node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//    node->setPosition(offset);
-//    node->setColor(Color4(255, 255, 255, FRGD_OPACITY));
-//    addChild(node, 2);
     
     // Create selector
     _selector = ObstacleSelector::alloc(_world);
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
-    
-
-//    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
-//        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-//        node->setScale(0.3f);
-//        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        addChildWithName(node, "plant" + std::to_string(i));
-//    }
-    
-//    _assets->load<Texture>("sun", "/textures/bestsun.png");
-//    image = _assets->get<Texture>("sun");
-//    sunNode = PolygonNode::allocWithTexture(image);
-//    sunNode->setName("sun");
-//    sunNode->setScale(0.4f);
-//    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-//    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
-//    addChild(sunNode, 4);
   
     populate();
     _active = true;
@@ -319,7 +291,6 @@ void GameScene::dispose() {
 void GameScene::reset() {
     _selector->deselect();
     _world->clear();
-    //_ragdoll = nullptr;
 //    _cloud = nullptr;
     _selector->setDebugScene(nullptr);
     _worldnode->removeAllChildren();
@@ -506,28 +477,26 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
 
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
+        }
+    }
     for (int x = 0; x < num_clouds; x++) {
         if (_cloud[x] == nullptr) {
-                continue;
-        } else {
+            continue;
+        }
+        else {
             Vec2 v = _cloud[x]->getBodies()[0]->getPosition();
-        
+            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+                v.y = v.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
+            }
             if (_board->isInBounds(v.x, v.y)){
                 Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
                 _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(0, 255, 255, 0));
             }
 
         }
-        
-    if (ticks % 50 == 0){
-        for (int i =0; i < GRID_NUM_X; i++){
-            for (int j=0; j < GRID_NUM_Y; j++){
-                _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
-            }
-        }
-    }
-
-
     }
     
     //Get Input

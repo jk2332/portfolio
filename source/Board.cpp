@@ -96,12 +96,6 @@ void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 }
 
 std::shared_ptr<Node> Board::getNodeAt(int x, int y){
-    if (x < 0 || x >= _gridNumX || y < 0 || y >= _gridNumY + BONUS_HEIGHT){
-        throw "out of bound";
-    }
-    if (y >= _gridNumY){
-        y = _gridNumY - 1;
-    }
     return _nodes.at(_gridNumY*x + y);
 }
 

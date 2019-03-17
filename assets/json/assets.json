@@ -1,7 +1,7 @@
 {
 	"textures": {
 		"earth": {
-			"file":     "textures/earthtile.png",
+			"file":     "textures/t.png",
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
