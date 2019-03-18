@@ -18,7 +18,7 @@ ParticleGenerator::ParticleGenerator(std::shared_ptr<cugl::Texture> texture, GLu
     this->init();
 }
 
-void ParticleGenerator::Update(GLfloat dt, Cloud &object, GLuint newParticles, Vec2 offset){
+void ParticleGenerator::Update(GLfloat dt, std::shared_ptr<Cloud> object, GLuint newParticles, Vec2 offset){
     // Add new particles
     for (GLuint i = 0; i < newParticles; ++i)
     {
@@ -120,12 +120,12 @@ int ParticleGenerator::firstUnusedParticle(){
     return 0;
 }
 
-void ParticleGenerator::respawnParticle(Particle &particle, Cloud &object, Vec2 offset)
+void ParticleGenerator::respawnParticle(Particle &particle, std::shared_ptr<Cloud> object, Vec2 offset)
 {
     GLfloat random = ((rand() % 100) - 50) / 10.0f;
     GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
-    particle.position = object.getPosition() + Vec2(random,random) + offset;
+    particle.position = object->getPosition() + Vec2(random,random) + offset;
     particle.color = Vec4(rColor, rColor, rColor, 1.0f);
     particle.life = 1.0f;
-    particle.velocity = object.getVelocity() * 0.1f;
+    particle.velocity = object->getVelocity() * 0.1f;
 }

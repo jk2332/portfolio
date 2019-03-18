@@ -68,19 +68,16 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
-<<<<<<< HEAD
 		F86A31532239D6D700233ED5 /* particle.frag in Resources */ = {isa = PBXBuildFile; fileRef = F86A31512239D6D500233ED5 /* particle.frag */; };
 		F86A31542239D6D700233ED5 /* particle.vert in Resources */ = {isa = PBXBuildFile; fileRef = F86A31522239D6D600233ED5 /* particle.vert */; };
 		F86A31572239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
 		F86A31582239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
-=======
 		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
 		F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -186,14 +183,11 @@
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
-<<<<<<< HEAD
 		F86A31512239D6D500233ED5 /* particle.frag */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.frag; sourceTree = "<group>"; };
 		F86A31522239D6D600233ED5 /* particle.vert */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.vert; sourceTree = "<group>"; };
 		F86A31552239F82700233ED5 /* particleShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = particleShader.h; sourceTree = "<group>"; };
 		F86A31562239FAF300233ED5 /* particleShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleShader.cpp; sourceTree = "<group>"; };
-=======
 		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
 		F8939E9D2235FA5600199385 /* particleGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleGenerator.cpp; sourceTree = "<group>"; };
 		F8939E9E2235FA5600199385 /* particleGenerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = particleGenerator.hpp; sourceTree = "<group>"; };
 		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };

@@ -39,7 +39,7 @@ public:
     ParticleGenerator();
     ParticleGenerator(std::shared_ptr<cugl::Texture> texture, GLuint amount);
     // Update all particles
-    void Update(GLfloat dt, Cloud &object, GLuint newParticles, Vec2 offset = Vec2(0.0f, 0.0f));
+    void Update(GLfloat dt, std::shared_ptr<Cloud> object, GLuint newParticles, Vec2 offset = Vec2(0.0f, 0.0f));
     // Render all particles
     void Draw();
 private:
@@ -55,7 +55,7 @@ private:
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
-    void respawnParticle(Particle &particle, Cloud &object, Vec2 offset = Vec2(0.0f, 0.0f));
+    void respawnParticle(Particle &particle, std::shared_ptr<Cloud> object, Vec2 offset = Vec2(0.0f, 0.0f));
 };
 
 #endif /* particleGenerator_hpp */

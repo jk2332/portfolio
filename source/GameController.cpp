@@ -254,7 +254,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _selector = ObstacleSelector::alloc(_world);
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
-<<<<<<< HEAD
     
     _pg = ParticleGenerator(_assets->get<Texture>("particle"), PARTICLE_NUM);
     
@@ -274,8 +273,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 //    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
 //    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
 //    addChild(sunNode, 4);
-=======
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
   
     populate();
     _active = true;
@@ -372,57 +369,6 @@ void GameScene::populate() {
    addObstacle(wallobj,sprite,1);  // All walls share the same texture
 
 #pragma mark : Wall polygon 2
-<<<<<<< HEAD
-    Poly2 wall2(WALL2,16);
-    triangulator.set(wall2);
-    triangulator.calculate();
-    wall2.setIndices(triangulator.getTriangulation());
-    wall2.setType(Poly2::Type::SOLID);
-    
-    wallobj = PolygonObstacle::alloc(wall2);
-    wallobj->setDebugColor(STATIC_COLOR);
-    wallobj->setName(wname);
-    
-    // Set the physics attributes
-    wallobj->setBodyType(b2_staticBody);
-    wallobj->setDensity(BASIC_DENSITY);
-    wallobj->setFriction(BASIC_FRICTION);
-    wallobj->setRestitution(BASIC_RESTITUTION);
-    
-    // Add the scene graph nodes to this object
-    wall2 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall2);
-    addObstacle(wallobj,sprite,1);  // All walls share the same texture
-    
-    auto gridNode = Node::alloc();
-    for (int i = 0; i < GRID_NUM_X; i++){
-        for (int j = 0; j < GRID_NUM_Y; j++){
-//            int rand = (std::rand() % 5) + 1;
-//            std::cout << rand << endl;
-            auto grid = Board::alloc(32.0f, _assets->get<Texture>("tile"), i, j);
-            grid->setSceneNode(gridNode);
-        }
-    }
-    _worldnode->addChildWithName(gridNode, "gridNode");
-    
-    auto plantNode = Node::alloc();
-    for (int i = 0; i < GRID_NUM_X; i++){
-        for (int j = 0; j < GRID_NUM_Y; j++){
-            auto plant = Plant::alloc(i, j, _assets->get<Texture>("plant"), 32.0f);
-            plant->setSceneNode(plantNode);
-        }
-    }
-    _worldnode->addChildWithName(plantNode, "plantNode");
-    
-    _cloud = Cloud::alloc(Vec2(16, 10), _scale);
-    _cloud->initialBuild(_assets);
-    auto cloudNode = Node::alloc();
-    _worldnode->addChildWithName(cloudNode, "cloudNode");
-    _cloud->setSceneNode(cloudNode);
-    _cloud->setDebugColor(DYNAMIC_COLOR);
-    _cloud->setDebugScene(_debugnode);
-    _world->addObstacle(_cloud);
-=======
    Poly2 wall2(WALL2,16);
    triangulator.set(wall2);
    triangulator.calculate();
@@ -470,7 +416,6 @@ void GameScene::populate() {
         _cloud[i]->setSize(1.0f);
         _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
         _world->addObstacle(_cloud[i]);
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
 
     }
 }
@@ -699,13 +644,8 @@ void GameScene::update(float dt) {
             }
             _selector->deselect();
         }
-<<<<<<< HEAD
-    }
-
-=======
 
     }
-    
     //assert (_rainDrops.size() == _toBeRemoved.size());
 
 //    if (ticks % 10 == 0){
@@ -719,21 +659,17 @@ void GameScene::update(float dt) {
 //        }
 //        _toBeRemoved.clear();
 //    }
-    
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
+
     // Turn the physics engine crank.
 //    for (int i =0; i < num_clouds; i++) {
 //        _cloud[i]->update(dt);
 //    }
     _world->update(dt);
-<<<<<<< HEAD
-        
-    _pg.Update(dt, *_cloud, 1, Vec2(0,0));
-    _pg.Draw();
-
-=======
     
->>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
+    for (int i = 0; i < num_clouds; i++) {
+        _pg.Update(dt, _cloud[i], 1, Vec2(0,0));
+    }
+    _pg.Draw();
 }
 
 /**
