@@ -31,8 +31,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "159"
             endingLineNumber = "159"
-            landmarkName = "getGridCenterPos(cugl::Vec2 p)"
-            landmarkType = "7">
+            landmarkName = "Board"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "169"
             endingLineNumber = "169"
-            landmarkName = "gridCoordToPosition(cugl::Vec2 p)"
+            landmarkName = "posToGridCoord(float x, float y)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

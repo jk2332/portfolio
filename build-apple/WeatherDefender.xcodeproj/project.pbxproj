@@ -12,7 +12,6 @@
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB122DB81E281F7E0019E2D1 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB122DB91E281F7E0019E2D1 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
-		EB122DBA1E281F7E0019E2D1 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52D1E25281300A93BB5 /* textures */; };
 		EB122DBB1E281F850019E2D1 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC391DF8C8B600C353B0 /* iOS.xcassets */; };
 		EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC3A1DF8C8B600C353B0 /* Landscape.storyboard */; };
 		EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBB1AC3D1DF8C8B600C353B0 /* Portrait.storyboard */; };
@@ -23,7 +22,6 @@
 		EB3B95861E25B1FA00314284 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
 		EB59D52E1E25281300A93BB5 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52B1E25281300A93BB5 /* fonts */; };
 		EB59D52F1E25281300A93BB5 /* json in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52C1E25281300A93BB5 /* json */; };
-		EB59D5301E25281300A93BB5 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = EB59D52D1E25281300A93BB5 /* textures */; };
 		EB602D0D221A525E006DE4D7 /* DeviceMargins.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB602D09221A525E006DE4D7 /* DeviceMargins.plist */; };
 		EB602D0F221A528D006DE4D7 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB602D0E221A528D006DE4D7 /* CoreFoundation.framework */; };
 		EB602D12221A52B4006DE4D7 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB602D10221A52B3006DE4D7 /* Metal.framework */; };
@@ -70,10 +68,19 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+<<<<<<< HEAD
 		F86A31532239D6D700233ED5 /* particle.frag in Resources */ = {isa = PBXBuildFile; fileRef = F86A31512239D6D500233ED5 /* particle.frag */; };
 		F86A31542239D6D700233ED5 /* particle.vert in Resources */ = {isa = PBXBuildFile; fileRef = F86A31522239D6D600233ED5 /* particle.vert */; };
 		F86A31572239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
 		F86A31582239FAF300233ED5 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F86A31562239FAF300233ED5 /* particleShader.cpp */; };
+=======
+		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
+		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
+		F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
+		F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
+		F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
+>>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -123,7 +130,6 @@
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		EB59D52C1E25281300A93BB5 /* json */ = {isa = PBXFileReference; lastKnownFileType = folder; path = json; sourceTree = "<group>"; };
-		EB59D52D1E25281300A93BB5 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		EB602D09221A525E006DE4D7 /* DeviceMargins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DeviceMargins.plist; sourceTree = "<group>"; };
 		EB602D0E221A528D006DE4D7 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		EB602D10221A52B3006DE4D7 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -180,10 +186,14 @@
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
+<<<<<<< HEAD
 		F86A31512239D6D500233ED5 /* particle.frag */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.frag; sourceTree = "<group>"; };
 		F86A31522239D6D600233ED5 /* particle.vert */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = particle.vert; sourceTree = "<group>"; };
 		F86A31552239F82700233ED5 /* particleShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = particleShader.h; sourceTree = "<group>"; };
 		F86A31562239FAF300233ED5 /* particleShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleShader.cpp; sourceTree = "<group>"; };
+=======
+		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
+>>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
 		F8939E9D2235FA5600199385 /* particleGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = particleGenerator.cpp; sourceTree = "<group>"; };
 		F8939E9E2235FA5600199385 /* particleGenerator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = particleGenerator.hpp; sourceTree = "<group>"; };
 		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };
@@ -334,10 +344,10 @@
 		EBB1AC2E1DF8C81D00C353B0 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F867DC06223B9B8D0038F905 /* textures */,
 				EB3B95851E25B1FA00314284 /* sounds */,
 				EB59D52B1E25281300A93BB5 /* fonts */,
 				EB59D52C1E25281300A93BB5 /* json */,
-				EB59D52D1E25281300A93BB5 /* textures */,
 			);
 			name = Assets;
 			path = ../assets;
@@ -527,10 +537,10 @@
 				EB122DBC1E281F850019E2D1 /* Landscape.storyboard in Resources */,
 				EB122DBD1E281F850019E2D1 /* Portrait.storyboard in Resources */,
 				EB122DB71E281F7E0019E2D1 /* sounds in Resources */,
+				F867DC08223B9B8D0038F905 /* textures in Resources */,
 				EB122DB81E281F7E0019E2D1 /* fonts in Resources */,
 				EB122DB91E281F7E0019E2D1 /* json in Resources */,
 				EB602D0D221A525E006DE4D7 /* DeviceMargins.plist in Resources */,
-				EB122DBA1E281F7E0019E2D1 /* textures in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,8 +551,8 @@
 				F86A31532239D6D700233ED5 /* particle.frag in Resources */,
 				F86A31542239D6D700233ED5 /* particle.vert in Resources */,
 				EB3B95861E25B1FA00314284 /* sounds in Resources */,
+				F867DC07223B9B8D0038F905 /* textures in Resources */,
 				EB59D52E1E25281300A93BB5 /* fonts in Resources */,
-				EB59D5301E25281300A93BB5 /* textures in Resources */,
 				EB350D301E05CC6400820A6F /* Mac.xcassets in Resources */,
 				EB59D52F1E25281300A93BB5 /* json in Resources */,
 			);
@@ -555,6 +565,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */,
+				F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */,
+				F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */,
+				F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */,
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
@@ -613,12 +627,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -635,12 +651,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -770,7 +788,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
 			};
 			name = Debug;
 		};
@@ -784,7 +802,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
 			};
 			name = Release;
 		};

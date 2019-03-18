@@ -36,6 +36,7 @@
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
+#include <set>
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -53,12 +54,22 @@ protected:
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
     std::shared_ptr<Plant> _plants[72];
+<<<<<<< HEAD
     Board _board;
     WeatherController _weather;
     ResourceController _resource;
     PestController _pest;
     ParticleGenerator _pg;
     
+=======
+    std::shared_ptr<Board> _board;
+    std::shared_ptr<WeatherController> _weather;
+    std::shared_ptr<ResourceController> _resource;
+    std::shared_ptr<PestController> _pest;
+    std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
+    std::vector<std::shared_ptr<Obstacle>> _rainDrops;
+
+>>>>>>> 09cfc7a8413acccdd3351f0a3eee35f45266fed4
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
@@ -74,7 +85,11 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    std::shared_ptr<Cloud> _cloud;
+    int num_clouds = 5;
+    std::shared_ptr<Cloud> _cloud[5];
+   
+
+
     
 	/** Selector to allow mouse control of the ragdoll */
 	std::shared_ptr<cugl::ObstacleSelector> _selector;

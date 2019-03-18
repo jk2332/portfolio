@@ -1,7 +1,7 @@
 {
 	"textures": {
 		"earth": {
-			"file":     "textures/earthtile.png",
+			"file":     "textures/t.png",
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
@@ -26,7 +26,10 @@
             "file":     "textures/_Crops-512.png"
         },
         "cloud": {
-            "file":     "textures/shadowCloud.png"
+            "file":     "textures/shadowcloud.png"
+        },
+        "tile": {
+            "file":     "textures/tile.png"
         },
         "tile": {
             "file":     "textures/tile.png"

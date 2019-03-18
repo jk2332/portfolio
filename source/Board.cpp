@@ -39,11 +39,12 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool Board::init(float scale, std::shared_ptr<Texture> texture, int x, int y) {
+
+bool Board::init(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY) {
     _drawscale = scale;
-    _texture = texture;
-    _x = x;
-    _y = y;
+    _textures = textures;
+    _gridNumX = gridNumX;
+    _gridNumY = gridNumY;
     
     return true;
 }
@@ -55,7 +56,7 @@ bool Board::init(float scale, std::shared_ptr<Texture> texture, int x, int y) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Board::dispose() {
-    _texture = nullptr;
+    _textures.clear();
 }
 
 
@@ -82,12 +83,21 @@ void Board::dispose() {
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
 void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
-    std::shared_ptr<PolygonNode> grid_node = PolygonNode::allocWithTexture(_texture);
-    grid_node->setPosition(gridCoordToPosition(Vec2(_x,_y)));
-    grid_node->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
-    node->addChildWithName(grid_node, "grid"+std::to_string(_x) + std::to_string(_y));
+    for (int i = 0; i < _gridNumX; i++){
+        for (int j = 0; j < _gridNumY; j++){
+            int rand = std::rand() % 5;
+            std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_textures.at(rand));
+            single_grid->setPosition(gridCoordToPosition(Vec2(i, j)));
+            single_grid->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
+            _nodes.push_back(single_grid);
+            node->addChildWithName(single_grid, "grid"+std::to_string(i) + std::to_string(j));
+        }
+    }
 }
 
+std::shared_ptr<Node> Board::getNodeAt(int x, int y){
+    return _nodes.at(_gridNumY*x + y);
+}
 
 /**
  * Sets the ratio of the Ragdoll sprite to the physics body
