@@ -75,8 +75,8 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    int num_clouds = 5;
-    std::shared_ptr<Cloud> _cloud[5];
+    int num_clouds = 1;
+    std::shared_ptr<Cloud> _cloud[1];
    
 	/** Selector to allow mouse control of the ragdoll */
 	std::shared_ptr<cugl::ObstacleSelector> _selector;
