@@ -78,7 +78,8 @@ void Plant::setState(int s){
 
 void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_texture);
-    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+//    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    cugl::Vec2 a = cugl::Vec2(GRID_WIDTH*_drawscale/2,GRID_HEIGHT*_drawscale);
     plant_node->setPosition(a);
     plant_node->setScale(0.15f);
     node->addChildWithName(plant_node, "plant"+std::to_string(_x) + std::to_string(_y));

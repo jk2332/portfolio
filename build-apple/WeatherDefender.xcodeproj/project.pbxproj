@@ -87,8 +87,6 @@
 		F8939EA92236FEED00199385 /* Pest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA62236FEED00199385 /* Pest.cpp */; };
 		F8939EAC2236FEFE00199385 /* ResourceCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */; };
 		F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */; };
-		F8939EB0223750FC00199385 /* SoundController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAE223750FC00199385 /* SoundController.cpp */; };
-		F8939EB1223750FC00199385 /* SoundController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAE223750FC00199385 /* SoundController.cpp */; };
 		F8939EB42237515400199385 /* WeatherController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB22237515400199385 /* WeatherController.cpp */; };
 		F8939EB52237515400199385 /* WeatherController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB22237515400199385 /* WeatherController.cpp */; };
 		F8939EB82237517400199385 /* PestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EB62237517400199385 /* PestController.cpp */; };
@@ -200,8 +198,6 @@
 		F8939EA72236FEED00199385 /* Pest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Pest.hpp; sourceTree = "<group>"; };
 		F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceCloud.cpp; sourceTree = "<group>"; };
 		F8939EAB2236FEFE00199385 /* ResourceCloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourceCloud.hpp; sourceTree = "<group>"; };
-		F8939EAE223750FC00199385 /* SoundController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundController.cpp; sourceTree = "<group>"; };
-		F8939EAF223750FC00199385 /* SoundController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SoundController.hpp; sourceTree = "<group>"; };
 		F8939EB22237515400199385 /* WeatherController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WeatherController.cpp; sourceTree = "<group>"; };
 		F8939EB32237515400199385 /* WeatherController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = WeatherController.hpp; sourceTree = "<group>"; };
 		F8939EB62237517400199385 /* PestController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PestController.cpp; sourceTree = "<group>"; };
@@ -330,8 +326,6 @@
 				F8939EAB2236FEFE00199385 /* ResourceCloud.hpp */,
 				F8939EBA22375A9E00199385 /* ResourceController.cpp */,
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
-				F8939EAE223750FC00199385 /* SoundController.cpp */,
-				F8939EAF223750FC00199385 /* SoundController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
 				F8939EB22237515400199385 /* WeatherController.cpp */,
@@ -572,7 +566,6 @@
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
-				F8939EB1223750FC00199385 /* SoundController.cpp in Sources */,
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
@@ -604,7 +597,6 @@
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
 				F86A31572239FAF300233ED5 /* particleShader.cpp in Sources */,
-				F8939EB0223750FC00199385 /* SoundController.cpp in Sources */,
 				F8939EB42237515400199385 /* WeatherController.cpp in Sources */,
 				F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */,
 				F867DC32224013500038F905 /* CloudNode.cpp in Sources */,

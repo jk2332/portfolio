@@ -183,37 +183,6 @@ bool Cloud::dropUnit(b2World& world){
     return false;
 }
 
-bool Cloud::joinUnit(b2World& world){
-    CULog("Join clouds");
-    _unitNum += 1;
-    
-//    Cloud::createJoints(world);
-    b2RevoluteJointDef jointDef;
-    b2Joint* joint;
-    
-    // SHOULDERS
-    jointDef.bodyA = _bodies[LEFT]->getBody();
-    jointDef.bodyB = _bodies[BODY]->getBody();
-    jointDef.localAnchorA.Set(ARM_XOFFSET / 4, 0);
-    jointDef.localAnchorB.Set(-ARM_XOFFSET / 3, ARM_YOFFSET);
-    jointDef.enableLimit = true;
-    jointDef.upperAngle = 0;
-    jointDef.lowerAngle = 0;
-    joint = world.CreateJoint(&jointDef);
-    _joints.push_back(joint);
-    
-    b2WeldJointDef weldDef;
-    
-    // Weld center of mass to torso
-    weldDef.bodyA = _bodies[BODY]->getBody();
-    weldDef.bodyB = _body;
-    weldDef.localAnchorA.Set(0, 0);
-    weldDef.localAnchorB.Set(0, 0);
-    joint = world.CreateJoint(&weldDef);
-    _joints.push_back(joint);
-    return true;
-}
-
 #pragma mark -
 #pragma mark Physics
 /**
@@ -231,6 +200,7 @@ bool Cloud::joinUnit(b2World& world){
  */
 void Cloud::update(float delta) {
     Obstacle::update(delta);
+    _node->pg.Update(delta, 1);
     if (_node != nullptr) {
         std::vector<std::shared_ptr<Node>> children = _node->getChildren();
         int i = 0;
@@ -318,12 +288,12 @@ void Cloud::releaseFixtures() {
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
-void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
+void Cloud::setSceneNode(const std::shared_ptr<cugl::CloudNode>& node){
     _node = node;
     std::shared_ptr<Texture> image = _texture;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
     sprite->setContentSize(_texture->getSize()*_size);
-    _node->addChildWithName(sprite, "cloud");
+    _node->addChildWithName(sprite, "cloudFace");
 }
 
 void Cloud::incSize(float f) {

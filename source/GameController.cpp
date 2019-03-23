@@ -22,14 +22,12 @@
 //  Version: 1/26/17
 //
 #include "GameController.h"
-#include "Plant.hpp"
+#include "CloudNode.hpp"
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
-
 #include <Box2D/Collision/b2Collision.h>
-#include "Board.hpp"
 
 #include <ctime>
 #include <string>
@@ -122,7 +120,6 @@ long shadeCoolDown = 50l;
 
 #define GRID_NUM_X          9
 #define GRID_NUM_Y          4
-#define PARTICLE_NUM        5
 
 std::shared_ptr<Plant> currentPlant;
 
@@ -207,14 +204,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     }
     
     // Start up the input handler
-    _assets = assets;
-    std::vector<std::shared_ptr<Texture>> textures;
-    for (int i = 1; i < 6; i++){
-        textures.push_back(_assets->get<Texture>("tile"));
-    }
-
-    _board = Board::alloc(32, textures, GRID_NUM_X, GRID_NUM_Y);
-    
     _input.init();
     
     // Create the world and attach the listeners.
@@ -226,7 +215,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
         beforeSolve(contact,oldManifold);
     };
-
   
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -234,6 +222,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
+    _assets = assets;
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("backg");
     _worldnode = PolygonNode::allocWithTexture(image);
@@ -254,26 +243,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _selector = ObstacleSelector::alloc(_world);
     _selector->setDebugColor(DYNAMIC_COLOR);
     _selector->setDebugScene(_debugnode);
-    
-    _pg = ParticleGenerator(_assets->get<Texture>("particle"), PARTICLE_NUM);
-    
-//    for (unsigned int i = 0; i < sizeof(PLANT_POS_X)/sizeof(PLANT_POS_X[0]); i++){
-//        _plants[i] = Plant::alloc(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-//        node->setScale(0.3f);
-//        node->setPosition(Vec2(PLANT_POS_X[i], PLANT_POS_Y[i]));
-//        addChildWithName(node, "plant" + std::to_string(i));
-//    }
-    
-//    _assets->load<Texture>("sun", "/textures/bestsun.png");
-//    image = _assets->get<Texture>("sun");
-//    sunNode = PolygonNode::allocWithTexture(image);
-//    sunNode->setName("sun");
-//    sunNode->setScale(0.4f);
-//    sunNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-//    sunNode->setPosition(Vec2(40,SCENE_HEIGHT - 40));
-//    addChild(sunNode, 4);
   
+    std::vector<std::shared_ptr<Texture>> textures;
+    textures.push_back(_assets->get<Texture>("tile"));
+    textures.push_back(_assets->get<Texture>("plant"));
+    _board = Board::alloc(32, textures, GRID_NUM_X, GRID_NUM_Y);
+    
     populate();
     _active = true;
     _complete = false;
@@ -392,22 +367,12 @@ void GameScene::populate() {
     
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
-    _worldnode->addChildWithName(boardNode, "gridNode");
-
-   auto plantNode = Node::alloc();
-   for (int i = 0; i < GRID_NUM_X; i++){
-       for (int j = 0; j < GRID_NUM_Y; j++){
-           auto plant = Plant::alloc(i, j, _assets->get<Texture>("plant"), 32.0f);
-           plant->setSceneNode(plantNode);
-           plant->setName("plant" + std::to_string(i) + std::to_string(j));
-       }
-   }
-   _worldnode->addChildWithName(plantNode, "plantNode");
+    _worldnode->addChildWithName(boardNode, "boardNode");
     
     for (int i = 0; i < num_clouds; i++) {
         _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
         _cloud[i]->initialBuild(_assets);
-        auto cloudNode = Node::alloc();
+        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _cloud[i]);
         _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
         _cloud[i]->setName("cloud" + std::to_string(i));
         _cloud[i]->setSceneNode(cloudNode);
@@ -416,7 +381,6 @@ void GameScene::populate() {
         _cloud[i]->setSize(1.0f);
         _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
         _world->addObstacle(_cloud[i]);
-
     }
 }
 
@@ -666,10 +630,6 @@ void GameScene::update(float dt) {
 //    }
     _world->update(dt);
     
-    for (int i = 0; i < num_clouds; i++) {
-        _pg.Update(dt, _cloud[i], 1, Vec2(0,0));
-    }
-    _pg.Draw();
 }
 
 /**

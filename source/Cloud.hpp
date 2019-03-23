@@ -13,6 +13,7 @@
 #include <cugl/cugl.h>
 #include <vector>
 #include "BubbleGenerator.h"
+#include "CloudNode.hpp"
 
 #define MAX_CLOUD_UNIT  3
 #define PART_NONE           -1
@@ -23,25 +24,12 @@
 //#define DOWN        4
 /** Distance between torso center and face center */
 #define TORSO_OFFSET    3.8f
-/** Y-distance between torso center and arm center */
-#define ARM_YOFFSET     0.0f
-/** X-distance between torso center and arm center */
-#define ARM_XOFFSET     4.0f
-/** Distance between center of arm and center of forearm */
-#define FOREARM_OFFSET  2.75f
-/** X-distance from center of torso to center of leg */
-#define THIGH_XOFFSET   0.75f
-/** Y-distance from center of torso to center of thigh */
-#define THIGH_YOFFSET   3.5f
-/** Distance between center of thigh and center of shin */
-#define SHIN_OFFSET     2.25f
 /** The density for each body part */
 #define DEFAULT_DENSITY  1.0f
 /** The density for the center of mass */
 #define CENTROID_DENSITY 0.1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
-
 
 #pragma mark -
 #pragma mark Ragdoll
@@ -68,7 +56,7 @@ protected:
     std::shared_ptr<cugl::Texture> _texture;
     
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
-    std::shared_ptr<cugl::Node> _node;
+    std::shared_ptr<CloudNode> _node;
     
 //    /** Cache object for transforming the force according the object angle */
 //    cugl::Mat4 _affine;
@@ -82,15 +70,6 @@ protected:
     int _type;
     Vec2 _velocity;
     float _size;
-    
-//    /**
-//     * Returns the texture key for the given body part.
-//     *
-//     * As some body parts are symmetrical, we reuse textures.
-//     *
-//     * @return the texture key for the given body part
-//     */
-//    std::string getPartName(int part);
     
     /**
      * Returns a single body part
@@ -286,8 +265,6 @@ public:
     bool initialBuild(const std::shared_ptr<AssetManager>& assets);
     
     bool dropUnit(b2World& world);
-    
-    bool joinUnit(b2World& world);
 
     void markForRemoval();
     
@@ -352,7 +329,7 @@ public:
      *
      * @return the scene graph node representing this Ragdoll.
      */
-    const std::shared_ptr<cugl::Node>& getNode() const { return _node; }
+    const std::shared_ptr<CloudNode>& getNode() const { return _node; }
 
     
     /**
@@ -373,7 +350,7 @@ public:
      *
      * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
      */
-    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+    void setSceneNode(const std::shared_ptr<cugl::CloudNode>& node);
     
     void makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture);
     

@@ -26,9 +26,7 @@
 #include <cugl/cugl.h>
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <vector>
-#include "RagdollModel.h"
 #include "InputController.h"
-#include "SoundController.hpp"
 #include "PestController.hpp"
 #include "WeatherController.hpp"
 #include "ResourceController.hpp"

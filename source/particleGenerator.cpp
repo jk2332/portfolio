@@ -13,25 +13,22 @@
 
 ParticleGenerator::ParticleGenerator(){}
 
-ParticleGenerator::ParticleGenerator(std::shared_ptr<cugl::Texture> texture, GLuint amount): texture(texture), amount(amount)
+ParticleGenerator::ParticleGenerator(std::shared_ptr<cugl::Texture> texture, std::shared_ptr<Obstacle> object, GLuint amount): object(object), texture(texture), amount(amount)
 {
     this->init();
 }
 
-void ParticleGenerator::Update(GLfloat dt, std::shared_ptr<Cloud> object, GLuint newParticles, Vec2 offset){
+void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
     // Add new particles
-    for (GLuint i = 0; i < newParticles; ++i)
-    {
+    for (GLuint i = 0; i < newParticles; ++i){
         int unusedParticle = this->firstUnusedParticle();
-        this->respawnParticle(this->particles[unusedParticle], object, offset);
+        this->respawnParticle(this->particles[unusedParticle], offset);
     }
     // Update all particles
-    for (GLuint i = 0; i < this->amount; ++i)
-    {
+    for (GLuint i = 0; i < this->amount; ++i){
         Particle &p = this->particles[i];
         p.life -= dt; // reduce life
-        if (p.life > 0.0f)
-        {    // particle is alive, thus update
+        if (p.life > 0.0f){    // particle is alive, thus update
             p.position -= p.velocity * dt;
             p.color.w -= dt * 2.5;
         }
@@ -44,7 +41,7 @@ void ParticleGenerator::Draw(){
     if (this->shader.isReady()){
         CULog("I'm ready");
         // Use additive blending to give it a 'glow' effect
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         _check_gl_error("particleGenerator", 48);
         this->shader.bind();
         for (Particle particle : this->particles){
@@ -120,12 +117,11 @@ int ParticleGenerator::firstUnusedParticle(){
     return 0;
 }
 
-void ParticleGenerator::respawnParticle(Particle &particle, std::shared_ptr<Cloud> object, Vec2 offset)
-{
+void ParticleGenerator::respawnParticle(Particle &particle, Vec2 offset){
     GLfloat random = ((rand() % 100) - 50) / 10.0f;
     GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
     particle.position = object->getPosition() + Vec2(random,random) + offset;
     particle.color = Vec4(rColor, rColor, rColor, 1.0f);
     particle.life = 1.0f;
-    particle.velocity = object->getVelocity() * 0.1f;
+    particle.velocity = Vec2(5.0f,5.0f);
 }
