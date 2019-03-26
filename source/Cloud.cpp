@@ -40,8 +40,9 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool Cloud::init(const Vec2& pos, float scale) {
-    Obstacle::init(pos);
+bool Cloud::init(Poly2 p, Vec2 pos) {
+    PolygonObstacle::init(p);
+    setPosition(pos);
     
     setName("cloud");
     setGravityScale(0);
@@ -49,7 +50,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
-    _drawscale = scale;
+//    _drawscale = scale;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
@@ -58,6 +59,7 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _ob = nullptr;
     return true;
 }
+
 
 /**
  * Disposes all resources and assets of this Ragdoll

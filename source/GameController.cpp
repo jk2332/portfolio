@@ -59,6 +59,7 @@ using namespace cugl;
 float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
 				   1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
 					0.f,  0.0f,  0.0f, 18.0f };
+float CLOUD[] = { 0.f, 0.f, 3.0f, 0.f, 3.0f, 2.0f, 0.f, 2.0};
 float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 			      16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
 				  16.0f, 17.0f, 16.0f, 18.0f };
@@ -249,14 +250,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
-
-//    // Add foreground layer
-//    image = _assets->get<Texture>(FRGD_TEXTURE);
-//    std::shared_ptr<Node> node  = PolygonNode::allocWithTexture(image);
-//    node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//    node->setPosition(offset);
-//    node->setColor(Color4(255, 255, 255, FRGD_OPACITY));
-//    addChild(node, 2);
     
     // Create selector
     _selector = ObstacleSelector::alloc(_world);
@@ -413,16 +406,40 @@ void GameScene::populate() {
    _worldnode->addChildWithName(plantNode, "plantNode");
     
     for (int i = 0; i < num_clouds; i++) {
-        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
-        _cloud[i]->initialBuild(_assets);
-        auto cloudNode = Node::alloc();
-        _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
-        _cloud[i]->setName("cloud" + std::to_string(i));
-        _cloud[i]->setSceneNode(cloudNode);
-        _cloud[i]->setDebugColor(Color4::BLUE);
-        _cloud[i]->setSize(1.0f);
-        _cloud[i]->getObstacle()->setName("cloud" + std::to_string(i));
-        _world->addObstacle(_cloud[i]);
+        // Create the polygon outline
+        Poly2 wall1(CLOUD, 8);
+        SimpleTriangulator triangulator;
+        triangulator.set(wall1);
+        triangulator.calculate();
+        wall1.setIndices(triangulator.getTriangulation());
+        wall1.setType(Poly2::Type::SOLID);
+        
+        std::shared_ptr<Cloud> cloud = Cloud::alloc(wall1, Vec2(28-i*6, 10));
+        cloud->setDebugColor(DYNAMIC_COLOR);
+        cloud->setName("cloud" + std::to_string(i));
+        _cloud[i] = cloud;
+        
+        // Set the physics attributes
+        wallobj->setBodyType(b2_dynamicBody);
+//        wallobj->setDensity(BASIC_DENSITY);
+//        wallobj->setFriction(BASIC_FRICTION);
+//        wallobj->setRestitution(BASIC_RESTITUTION);
+        
+        // Add the scene graph nodes to this object
+        wall1 *= _scale;
+        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("shadowcloud"),wall1);
+        addObstacle(cloud,sprite,1);  // All walls share the same texture
+
+//        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
+//        _cloud[i]->initialBuild(_assets);
+//        auto cloudNode = Node::alloc();
+//        _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
+//        _cloud[i]->setName("cloud" + std::to_string(i));
+//        _cloud[i]->setSceneNode(cloudNode);
+//        _cloud[i]->setDebugColor(Color4::BLUE);
+//        _cloud[i]->setSize(1.0f);
+//        _cloud[i]->getObstacle()->setName("cloud" + std::to_string(i));
+//        _world->addObstacle(_cloud[i]);
 
     }
 }
@@ -509,7 +526,7 @@ void GameScene::update(float dt) {
         if (_cloud[x] == nullptr) {
                 continue;
         } else {
-            Vec2 v = _cloud[x]->getObstacle()->getPosition();
+            Vec2 v = _cloud[x]->getPosition();
         
             if (_board->isInBounds(v.x, v.y)){
                 Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
@@ -602,7 +619,7 @@ void GameScene::update(float dt) {
         // Transform from screen to physics coords
         auto pos =  _input.getSelection();
         pos = _worldnode->screenToNodeCoords(pos);
-        CULog("%f, %f", pos.x, pos.y);
+//        CULog("%f, %f", pos.x, pos.y);
 
         // Place the cross hair
         _selector->setPosition(pos/_scale);
@@ -689,13 +706,14 @@ void GameScene::update(float dt) {
  * @param  contact  The two bodies that collided
  */
 void GameScene::beginContact(b2Contact* contact) {
+    return;
     Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
-    if (cloud1->getName().empty()) {
+    if (cloud1 != nullptr && cloud1->getName().empty()) {
         cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
     }
     
     Cloud *cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetUserData());
-    if (cloud2->getName().empty()) {
+    if (cloud2 != nullptr && cloud2->getName().empty()) {
         cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
     }
     

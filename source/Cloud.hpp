@@ -54,7 +54,7 @@
  *
  * For the construction, see the ragdoll diagram above, with the position offsets.
  */
-class Cloud : public SimpleObstacle {
+class Cloud : public PolygonObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Cloud);
@@ -120,7 +120,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Cloud(void) : SimpleObstacle() { }
+    Cloud(void) : PolygonObstacle() { }
     
     /**
      * Destroys this Ragdoll, releasing all resources.
@@ -147,7 +147,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init() override { return init(cugl::Vec2::ZERO, 1.0f); }
+//    virtual bool init() override { return init(cugl::Poly2::Poly2()); }
     
     /**
      * Initializes a new Ragdoll with the given position
@@ -163,8 +163,8 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos) override { return init(pos,1.0f); }
-    
+    bool init(const cugl::Poly2, const cugl::Vec2);
+        
     /**
      * Initializes a new Ragdoll with the given position and scale
      *
@@ -178,7 +178,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos, float scale);
+//    bool init(const cugl::Vec2& pos, float scale);
     
     std::shared_ptr<BoxObstacle> getObstacle();
     
@@ -196,10 +196,10 @@ public:
      *
      * @return a newly allocated Ragdoll at the origin.
      */
-    static std::shared_ptr<Cloud> alloc() {
-        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init() ? result : nullptr);
-    }
+//    static std::shared_ptr<Cloud> alloc() {
+//        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
+//        return (result->init(cugl::Poly2::Poly2()) ? result : nullptr);
+//    }
     
     /**
      * Returns a newly allocated Ragdoll with the given position
@@ -215,9 +215,9 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Cloud> alloc(const cugl::Vec2& pos) {
+    static std::shared_ptr<Cloud> alloc(Poly2 p) {
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init(pos, 1.0f) ? result : nullptr);
+        return (result->init(p, Vec2(0.5f, 0.5f)) ? result : nullptr);
     }
     
     /**
@@ -233,9 +233,9 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Cloud> alloc(const cugl::Vec2& pos, float scale) {
+    static std::shared_ptr<Cloud> alloc(Poly2 p, const cugl::Vec2& pos) {
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init(pos, scale) ? result : nullptr);
+        return (result->init(p, pos) ? result : nullptr);
     }
     
     
