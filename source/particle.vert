@@ -24,10 +24,12 @@ uniform vec2 offset;
 uniform vec4 color;
 
 void main(){
- float scale = 10.0f;
- TexCoords = texCoords;
- ParticleColor = color;
- gl_Position = projection * vec4((position * scale) + offset, 0.0, 1.0);
+    float scale = 10.0f;
+    TexCoords = texCoords;
+    ParticleColor = color;
+// gl_Position = projection * vec4((position * scale) + offset, 0.0, 1.0);
+    gl_Position = vec4(position.x,position.y,0,1);//vec4((position * scale) + offset, 0.0, 1.0);
+
 }
 
 /////////// SHADER END //////////

@@ -74,6 +74,7 @@ using namespace cugl;
 bool SpriteShader::init() {
     _vertSource = oglColorTextureVert;
     _fragSource = oglColorTextureFrag;
+    CULogGLError();
     return compile();
 }
 /**
@@ -155,13 +156,18 @@ void SpriteShader::attach(GLuint vArray, GLuint vBuffer) {
  */
 void SpriteShader::bind() {
     Shader::bind();
+    CULogGLError();
     glEnableVertexAttribArray(_aPosition);
+    CULogGLError();
     glEnableVertexAttribArray(_aColor);
+    CULogGLError();
     glEnableVertexAttribArray(_aTexCoord);
+    CULogGLError();
     if (_mTexture != nullptr) {
         glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
         glBindTexture(GL_TEXTURE_2D, _mTexture->getBuffer());
     }
+    CULogGLError();
 }
 
 /**
@@ -172,8 +178,11 @@ void SpriteShader::bind() {
 void SpriteShader::unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableVertexAttribArray(_aPosition);
+    CULogGLError();
     glDisableVertexAttribArray(_aColor);
+    CULogGLError();
     glDisableVertexAttribArray(_aTexCoord);
+    CULogGLError();
     Shader::unbind();
 }
 
@@ -194,44 +203,47 @@ void SpriteShader::unbind() {
  */
 bool SpriteShader::compile() {
     if (!Shader::compile()) return false;
-    
+    CULogGLError();
     // Find each of the attributes
     _aPosition = glGetAttribLocation( _program, POSITION_ATTRIBUTE );
     if( !validateVariable(_aPosition, POSITION_ATTRIBUTE)) {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     _aColor = glGetAttribLocation( _program, COLOR_ATTRIBUTE );
     if( !validateVariable(_aColor, COLOR_ATTRIBUTE)) {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     _aTexCoord = glGetAttribLocation( _program, TEXCOORD_ATTRIBUTE );
     if( !validateVariable(_aTexCoord, TEXCOORD_ATTRIBUTE)) {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     _uPerspective = glGetUniformLocation( _program, PERSPECTIVE_UNIFORM );
     if( !validateVariable(_uPerspective, PERSPECTIVE_UNIFORM)) {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     _uTexture = glGetUniformLocation( _program, TEXTURE_UNIFORM );
     if( !validateVariable(_uTexture, TEXTURE_UNIFORM)) {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     // Set the texture location and matrix
     bind();
+    CULogGLError();
     glUniformMatrix4fv(_uPerspective,1,false,_mPerspective.m);
+    CULogGLError();
     glUniform1i(_uTexture, TEXTURE_POSITION);
+    CULogGLError();
     unbind();
-    
+    CULogGLError();
     return true;
 }
 

@@ -82,6 +82,7 @@ namespace cugl {
 #pragma mark Static Constructors
         static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture, std::shared_ptr<Obstacle> object){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
+            CULogGLError();
             node->pg = ParticleGenerator(texture, object, PARTICLE_NUM);
             return (node->init() ? node : nullptr);
         }

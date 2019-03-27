@@ -23,7 +23,7 @@ out vec4 color;
 uniform sampler2D sprite;
 
 void main(){
- color = (texture(sprite, TexCoords) * ParticleColor);
+    color = vec4(1.0,1.0,1.0,1.0);//(texture(sprite, TexCoords) * ParticleColor);
 }
 
 /////////// SHADER END //////////
@@ -34,13 +34,13 @@ void main(){
 /**
  * The fragment shader for OpenGL ES
  */
-const char* oglColorTextureFrag = SHADER(
+const char* oglCTFrag = SHADER(
 ////////// SHADER BEGIN /////////
 
 // This one line is all the difference
 precision mediump float;
 
-#version 330 core
+//#version 330 core
 in vec2 TexCoords;
 in vec4 ParticleColor;
 out vec4 color;

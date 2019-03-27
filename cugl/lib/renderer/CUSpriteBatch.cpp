@@ -142,6 +142,7 @@ void SpriteBatch::dispose() {
  * @return true if initialization was successful.
  */
 bool SpriteBatch::init() {
+    CULogGLError();
     return init(DEFAULT_CAPACITY,SpriteShader::alloc());
 }
 
@@ -188,7 +189,7 @@ bool SpriteBatch::init(unsigned int capacity, std::shared_ptr<SpriteShader> shad
         CUAssertLog(false, "SpriteBatch is already initialized");
         return false; // If asserts are turned off.
     }
-    
+    CULogGLError();
     // Set up a default shader
     _shader = shader;
     if (_shader == nullptr) {

@@ -13,8 +13,8 @@
 #include <cugl/util/CUDebug.h>
 
 // The shaders
-#include "particle.vert"
-#include "particle.frag"
+//#include "particle.vert"
+//#include "particle.frag"
 
 // The names of the shader attributes and uniforms
 #define POSITION_ATTRIBUTE  "position"
@@ -41,11 +41,11 @@ using namespace cugl;
  * @return true if initialization was successful.
  */
 bool ParticleShader::init() {
-    _vertSource = oglCTVert;
-    _fragSource = oglCTFrag;
+//    _vertSource = oglCTVert;
+//    _fragSource = oglCTFrag;
+    CULogGLError();
     bool b = compile();
-    _check_gl_error("particleShader", 47);
-    CULog("%d", b);
+    CULogGLError();
     return b;
 }
 /**
@@ -126,10 +126,14 @@ void ParticleShader::attach(GLuint vArray, GLuint vBuffer) {
 void ParticleShader::bind() {
     Shader::bind();
     glEnableVertexAttribArray(_aPosition);
+    CULogGLError();
     glEnableVertexAttribArray(_aTexCoords);
+    CULogGLError();
     if (_mTexture != nullptr) {
         glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
+        CULogGLError();
         glBindTexture(GL_TEXTURE_2D, _mTexture->getBuffer());
+        CULogGLError();
     }
 }
 
@@ -140,12 +144,14 @@ void ParticleShader::bind() {
  */
 void ParticleShader::unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
+    CULogGLError();
     glDisableVertexAttribArray(_aPosition);
+    CULogGLError();
     glDisableVertexAttribArray(_aTexCoords);
+    CULogGLError();
     Shader::unbind();
+    CULogGLError();
 }
-
-
 
 #pragma mark -
 #pragma mark Compilation
@@ -161,8 +167,9 @@ void ParticleShader::unbind() {
  * @return true if compilation was successful.
  */
 bool ParticleShader::compile() {
+    CULogGLError();
     if (!Shader::compile()) return false;
-    _check_gl_error("particleShader", 165);
+    CULogGLError();
     // Find each of the attributes
     _aPosition = glGetAttribLocation( _program, POSITION_ATTRIBUTE );
     if( !validateVariable(_aPosition, POSITION_ATTRIBUTE)) {
@@ -238,7 +245,6 @@ void ParticleShader::dispose() {
     Shader::dispose();
 }
 
-
 void ParticleShader::SetFloat(const GLchar *name, GLfloat value, GLboolean useShader){
     if (useShader)
     this->bind();
@@ -257,6 +263,16 @@ void ParticleShader::SetVector2f(const GLchar *name, GLfloat x, GLfloat y, GLboo
 void ParticleShader::SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader){
     if (useShader)
     this->bind();
+    glGetError();
+    GLuint x = glGetUniformLocation(_program, name);
+    if (glGetError() != GL_NO_ERROR) {
+        GLint id;
+        glGetIntegerv(GL_CURRENT_PROGRAM,&id);
+        CULog("Program is %d vs %d",_program,id);
+        CULog("%s at %d",name,x);
+        CULogGLError();
+        CUAssert(false);
+    }
     glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
 }
 void ParticleShader::SetVector3f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader){
@@ -268,6 +284,7 @@ void ParticleShader::SetVector3f(const GLchar *name, const Vec3 &value, GLboolea
     if (useShader)
     this->bind();
     glUniform3f(glGetUniformLocation(_program, name), value.x, value.y, value.z);
+    CULogGLError();
 }
 void ParticleShader::SetVector4f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader){
     if (useShader)
@@ -278,6 +295,7 @@ void ParticleShader::SetVector4f(const GLchar *name, const Vec4 &value, GLboolea
     if (useShader)
     this->bind();
     glUniform4f(glGetUniformLocation(_program, name), value.x, value.y, value.z, value.w);
+    
 }
 //void ParticleShader::SetMatrix4(const GLchar *name, const Mat4 &matrix, GLboolean useShader){
 //    if (useShader)

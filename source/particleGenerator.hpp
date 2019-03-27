@@ -25,7 +25,7 @@ struct Particle {
     float life;
     Vec4 color;
 
-    Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,0.0f)), opacity(1.0f), life(0.0f) { }
+    Particle() : position(Vec2(500.0f,500.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), opacity(1.0f), life(1.0f) { }
 };
 
 
@@ -47,7 +47,7 @@ private:
     GLuint amount;
     std::shared_ptr<Obstacle> object;
     // Render state
-    ParticleShader shader;
+    shared_ptr<ParticleShader> shader;
     std::shared_ptr<cugl::Texture> texture;
     GLuint VAO;
     // Initializes buffer and vertex attributes
