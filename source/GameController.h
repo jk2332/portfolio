@@ -75,14 +75,15 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    int num_clouds = 5;
-    std::shared_ptr<Cloud> _cloud[5];
+    int num_clouds = 2;
+    std::shared_ptr<Cloud> _cloud[2];
    
 
 
     
 	/** Selector to allow mouse control of the ragdoll */
-	std::shared_ptr<cugl::ObstacleSelector> _selector;
+    std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
+
     /** The node referencing the crosshair */
     std::shared_ptr<cugl::PolygonNode> _crosshair;
 
@@ -267,6 +268,8 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact* contact);
+    void endContact(b2Contact* contact);
+
     
     /**
      * Handles any modifications necessary before collision resolution

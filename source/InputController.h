@@ -15,6 +15,8 @@
 #ifndef __INPUT_CONTROLLER_H__
 #define __INPUT_CONTROLLER_H__
 #include <cugl/cugl.h>
+#include <map>
+#include <unordered_set>
 
 /**
  * This class represents player input in the Ragdollk demo.
@@ -49,50 +51,56 @@ private:
     bool  _keyExit;
     bool _keySplit;
     bool _keyJoin;
-
-
-    // TOUCH SUPPORT
-    /** The initial touch location for the current gesture, IN SCREEN COORDINATES */
-    cugl::Vec2 _dtouch;
-    /** The timestamp for the beginning of the current gesture */
-    cugl::Timestamp _timestamp;
-  
-
-	/**
-	 * Handles touchBegan and mousePress events using shared logic.
-	 *
-	 * Depending on the platform, the appropriate callback (i.e. touch or mouse) 
+    bool _isBeingPinched;
+    //    bool _endedPinch;
+    
+    
+    
+    //    // TOUCH SUPPORT
+    //    /** The initial touch location for the current gesture, IN SCREEN COORDINATES */
+    //    cugl::Vec2 _dtouch;
+    //    /** The timestamp for the beginning of the current gesture */
+    //    cugl::Timestamp _timestamp;
+    std::map<long, cugl::Vec2> _dtouches;
+    cugl::Vec2 _dpinch;
+    std::map<long, cugl::Timestamp> _timestamps;
+    cugl::Timestamp _pinchTimestamp;
+    
+    /**
+     * Handles touchBegan and mousePress events using shared logic.
+     *
+     * Depending on the platform, the appropriate callback (i.e. touch or mouse)
      * will call into this method to handle the Event.
-	 *
-	 * @param timestamp	 the timestamp of the event
-	 * @param pos		 the position of the touch
-	 */
-    void touchBegan(const cugl::Timestamp timestamp, const cugl::Vec2& pos);
-
-
-	/**
-	 * Handles touchEnded and mouseReleased events using shared logic.
-	 *
-	 * Depending on the platform, the appropriate callback (i.e. touch or mouse) 
+     *
+     * @param timestamp     the timestamp of the event
+     * @param pos         the position of the touch
+     */
+    void touchBegan(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos);
+    
+    
+    /**
+     * Handles touchEnded and mouseReleased events using shared logic.
+     *
+     * Depending on the platform, the appropriate callback (i.e. touch or mouse)
      * will call into this method to handle the Event.
-	 *
-	 * @param timestamp	 the timestamp of the event
-	 * @param pos		 the position of the touch
-	 */
-    void touchEnded(const cugl::Timestamp timestamp, const cugl::Vec2& pos);
-
-	/**
-	 * Handles touchMoved and mouseDragged events using shared logic.
-	 *
-	 * Depending on the platform, the appropriate callback (i.e. touch or mouse) 
+     *
+     * @param timestamp     the timestamp of the event
+     * @param pos         the position of the touch
+     */
+    void touchEnded(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos);
+    
+    /**
+     * Handles touchMoved and mouseDragged events using shared logic.
+     *
+     * Depending on the platform, the appropriate callback (i.e. touch or mouse)
      * will call into this method to handle the Event.
-	 *
-	 * @param timestamp	 the timestamp of the event
-	 * @param pos		 the position of the touch
-	 */
-    void touchMoved(const cugl::Vec2& pos);
-  
-
+     *
+     * @param timestamp     the timestamp of the event
+     * @param pos         the position of the touch
+     */
+    void touchMoved(long touchID, const cugl::Vec2& pos);
+    
+    
 protected:
     // INPUT RESULTS
     /** Whether the reset action was chosen. */
@@ -103,10 +111,13 @@ protected:
     bool _debugPressed;
     /** Whether the exit action was chosen. */
     bool _exitPressed;
-	/** Are we registering an object selection? */
-	bool _select;
+    /** Are we registering an object selection? */
+    std::unordered_set<long> _selects;
+    bool _pinchSelect;
     /** The id of the current selection touch */
-    long long _touchID;
+    long _touchID;
+    std::unordered_set<long> _touchIDs;
+    bool _pinched;
     
 public:
 #pragma mark -
@@ -148,19 +159,19 @@ public:
      * @return true if the input handler is currently active
      */
     bool isActive( ) const { return _active; }
-
+    
     /**
      * Processes the currently cached inputs.
      *
      * This method is used to to poll the current input state.  This will poll the
      * keyboad and accelerometer.
-     * 
-     * This method also gathers the delta difference in the touches. Depending on 
+     *
+     * This method also gathers the delta difference in the touches. Depending on
      * the OS, we may see multiple updates of the same touch in a single animation
      * frame, so we need to accumulate all of the data together.
      */
     void  update(float dt);
-
+    
     /**
      * Clears any buffered inputs so that we may start fresh.
      */
@@ -168,26 +179,30 @@ public:
     
 #pragma mark -
 #pragma mark Input Results
-	/**
-	 * Returns the amount of vertical movement.
-	 *
-	 * -1 = down, 1 = up, 0 = still
-	 *
-	 * @return the amount of vertical movement.
-	 */
-	bool didSelect() const { return _select; }
-
-	/**
-	 * Returns the location (in world space) of the selection.
+    /**
+     * Returns the amount of vertical movement.
+     *
+     * -1 = down, 1 = up, 0 = still
+     *
+     * @return the amount of vertical movement.
+     */
+    std::unordered_set<long> didSelect() { return _selects; }
+    bool didPinchSelect() {return _pinchSelect;}
+    
+    std::unordered_set<long> getTouchIDs() {return _touchIDs;}
+    
+    /**
+     * Returns the location (in world space) of the selection.
      *
      * The origin of the coordinate space is the top left corner of the
      * screen.  This will need to be transformed to world coordinates
      * (via the scene graph) to be useful
      *
-	 * @return the location (in world space) of the selection.
-	 */
-	const cugl::Vec2& getSelection() const { return _dtouch; }
-
+     * @return the location (in world space) of the selection.
+     */
+    cugl::Vec2 getSelection(long touchID) { return _dtouches.at(touchID); }
+    cugl::Vec2 getPinchSelection() {return _dpinch;}
+    
     /**
      * Returns true if the reset button was pressed.
      *
@@ -197,7 +212,7 @@ public:
     bool didSplit()const {return _splitPressed;}
     
     bool didJoin()const {return _joinPressed;}
-
+    
     
     /**
      * Returns true if the player wants to go toggle the debug mode.
@@ -223,15 +238,18 @@ public:
      * @param event The associated event
      */
     void touchBeganCB(const cugl::TouchEvent& event, bool focus);
-
-	/**
-	 * Callback for a mouse press event.
-	 *
-	 * @param t     The touch information
-	 * @param event The associated event
-	 */
+    
+    /**
+     * Callback for a mouse press event.
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
     void mousePressBeganCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
-  
+    void pinchBeganCB(const cugl::PinchEvent &event, bool focus);
+    void pinchEndCB(const cugl::PinchEvent &event, bool focus);
+    void pinchChangeCB(const cugl::PinchEvent &event, bool focus);
+    
     /**
      * Callback for the end of a touch event
      *
@@ -239,32 +257,39 @@ public:
      * @param event The associated event
      */
     void touchEndedCB(const cugl::TouchEvent& event, bool focus);
-  
-	/**
-	 * Callback for a mouse release event.
-	 *
-	 * @param t     The touch information
-	 * @param event The associated event
-	 */
+    
+    /**
+     * Callback for a mouse release event.
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
     void mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
-
-	/**
-	 * Callback for a mouse release event.
-	 *
-	 * @param t     The touch information
-	 * @param event The associated event
-	 */
-	void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
-  
-	/**
-	 * Callback for a mouse drag event.
-	 *
-	 * @param t     The touch information
-	 * @param event The associated event
-	 */
-	void mouseDraggedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
-
-
+    
+    /**
+     * Callback for a mouse release event.
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void touchesMovedCB(const cugl::TouchEvent& event, const cugl::Vec2& previous, bool focus);
+    
+    /**
+     * Callback for a mouse drag event.
+     *
+     * @param t     The touch information
+     * @param event The associated event
+     */
+    void mouseDraggedCB(const cugl::MouseEvent& event, const cugl::Vec2& previous, bool focus);
+    
+    
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */
+
+
+
+
+
+
+
