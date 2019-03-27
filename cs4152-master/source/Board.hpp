@@ -21,7 +21,6 @@
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_WIDTH      3
 #define GRID_HEIGHT     2
-#define BONUS_HEIGHT    10
 #define DOWN_LEFT_CORNER_X    3
 #define DOWN_LEFT_CORNER_Y    4
 #define OFFSET_X         0
@@ -50,7 +49,7 @@ protected:
     int _gridNumX;
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
-    
+    std::shared_ptr<cugl::Node> nullSpace;
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -146,8 +145,7 @@ public:
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
     cugl::Vec2 gridCoordToPosition(cugl::Vec2 p){
-        cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*p.x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*p.y - GRID_HEIGHT/2)*32.0f);
-        return a;
+        return gridCoordToPosition(p.x, p.y);
     }
     
     cugl::Vec2 gridCoordToPosition(float x, float y){
@@ -156,14 +154,7 @@ public:
     }
     
     cugl::Vec2 posToGridCoord(cugl::Vec2 p){
-        if (!isInBounds(p)){
-            throw "out of bound";
-        }
-        else {
-            int x = int((p.x - DOWN_LEFT_CORNER_X - BONUS_HEIGHT)/GRID_WIDTH);
-            int y = int((p.y - DOWN_LEFT_CORNER_Y - BONUS_HEIGHT)/GRID_HEIGHT);
-            return cugl::Vec2(x, y);
-        }
+        return posToGridCoord(p.x, p.y);
     }
     
     cugl::Vec2 posToGridCoord(float x, float y){
@@ -178,16 +169,11 @@ public:
     }
     
     bool isInBounds(cugl::Vec2 p){
-        std::cout << DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX << endl;
-        
-        if (p.x <= DOWN_LEFT_CORNER_X || p.x >= DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX || p.y <= DOWN_LEFT_CORNER_Y || p.y >= DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_gridNumY  + BONUS_HEIGHT){
-            return false;
-        }
-        return true;
+        return isInBounds(p.x, p.y);
     }
     
     bool isInBounds(float x, float y){
-        if (x <= DOWN_LEFT_CORNER_X || x >= DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX || y <= DOWN_LEFT_CORNER_Y || y >= DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_gridNumY + BONUS_HEIGHT){
+        if (x <= DOWN_LEFT_CORNER_X || x >= DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX || y <= DOWN_LEFT_CORNER_Y || y >= DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_gridNumY){
             return false;
         }
         return true;
@@ -208,7 +194,6 @@ public:
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
     void setDrawScale(float scale);
-    
 };
 
 #endif

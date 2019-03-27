@@ -15,6 +15,8 @@
 #ifndef __INPUT_CONTROLLER_H__
 #define __INPUT_CONTROLLER_H__
 #include <cugl/cugl.h>
+#include <map>
+#include <unordered_set>
 
 /**
  * This class represents player input in the Ragdollk demo.
@@ -49,14 +51,20 @@ private:
     bool  _keyExit;
     bool _keySplit;
     bool _keyJoin;
+    bool _isBeingPinched;
+    //    bool _endedPinch;
     
     
-    // TOUCH SUPPORT
-    /** The initial touch location for the current gesture, IN SCREEN COORDINATES */
-    cugl::Vec2 _dtouch;
-    /** The timestamp for the beginning of the current gesture */
-    cugl::Timestamp _timestamp;
     
+    //    // TOUCH SUPPORT
+    //    /** The initial touch location for the current gesture, IN SCREEN COORDINATES */
+    //    cugl::Vec2 _dtouch;
+    //    /** The timestamp for the beginning of the current gesture */
+    //    cugl::Timestamp _timestamp;
+    std::map<long, cugl::Vec2> _dtouches;
+    cugl::Vec2 _dpinch;
+    std::map<long, cugl::Timestamp> _timestamps;
+    cugl::Timestamp _pinchTimestamp;
     
     /**
      * Handles touchBegan and mousePress events using shared logic.
@@ -67,7 +75,7 @@ private:
      * @param timestamp     the timestamp of the event
      * @param pos         the position of the touch
      */
-    void touchBegan(const cugl::Timestamp timestamp, const cugl::Vec2& pos);
+    void touchBegan(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos);
     
     
     /**
@@ -79,7 +87,7 @@ private:
      * @param timestamp     the timestamp of the event
      * @param pos         the position of the touch
      */
-    void touchEnded(const cugl::Timestamp timestamp, const cugl::Vec2& pos);
+    void touchEnded(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos);
     
     /**
      * Handles touchMoved and mouseDragged events using shared logic.
@@ -90,7 +98,7 @@ private:
      * @param timestamp     the timestamp of the event
      * @param pos         the position of the touch
      */
-    void touchMoved(const cugl::Vec2& pos);
+    void touchMoved(long touchID, const cugl::Vec2& pos);
     
     
 protected:
@@ -104,9 +112,12 @@ protected:
     /** Whether the exit action was chosen. */
     bool _exitPressed;
     /** Are we registering an object selection? */
-    bool _select;
+    std::unordered_set<long> _selects;
+    bool _pinchSelect;
     /** The id of the current selection touch */
-    long long _touchID;
+    long _touchID;
+    std::unordered_set<long> _touchIDs;
+    bool _pinched;
     
 public:
 #pragma mark -
@@ -175,7 +186,10 @@ public:
      *
      * @return the amount of vertical movement.
      */
-    bool didSelect() const { return _select; }
+    std::unordered_set<long> didSelect() { return _selects; }
+    bool didPinchSelect() {return _pinchSelect;}
+    
+    std::unordered_set<long> getTouchIDs() {return _touchIDs;}
     
     /**
      * Returns the location (in world space) of the selection.
@@ -186,7 +200,8 @@ public:
      *
      * @return the location (in world space) of the selection.
      */
-    const cugl::Vec2& getSelection() const { return _dtouch; }
+    cugl::Vec2 getSelection(long touchID) { return _dtouches.at(touchID); }
+    cugl::Vec2 getPinchSelection() {return _dpinch;}
     
     /**
      * Returns true if the reset button was pressed.
@@ -231,6 +246,9 @@ public:
      * @param event The associated event
      */
     void mousePressBeganCB(const cugl::MouseEvent& event, Uint8 clicks, bool focus);
+    void pinchBeganCB(const cugl::PinchEvent &event, bool focus);
+    void pinchEndCB(const cugl::PinchEvent &event, bool focus);
+    void pinchChangeCB(const cugl::PinchEvent &event, bool focus);
     
     /**
      * Callback for the end of a touch event
@@ -268,3 +286,9 @@ public:
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */
+
+
+
+
+
+

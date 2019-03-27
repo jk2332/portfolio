@@ -81,7 +81,7 @@ protected:
     long _rainCoolDown;
     int _type;
     Vec2 _velocity;
-    int _size;
+    float _size;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -124,8 +124,6 @@ public:
      */
     virtual ~Cloud(void) { dispose(); }
     
-    void setWorld(b2World& _world);
-
     /**
      * Disposes all resources and assets of this Ragdoll
      *
@@ -269,11 +267,6 @@ public:
     virtual void releaseFixtures() override;
     
     
-    virtual void BeginContact(b2Contact* contact);
-    
-    // Called when two fixtures cease to touch
-    virtual void EndContact(b2Contact* contact);
-    
     b2Fixture* GetFixtureA();
     
     // Get the second fixture in this contact
@@ -296,6 +289,7 @@ public:
     
     bool joinUnit(b2World& world);
 
+    void markForRemoval();
     
     
 #pragma mark -
@@ -341,8 +335,8 @@ public:
 //     */
 //    void makeBubbleGenerator(const std::shared_ptr<Texture>& bubble);
     
-    int getSize() {return _size;}
-    void setSize(int s) {_size = s;}
+    float getSize() {return _size;}
+    void setSize(float s) {_size = s;}
     
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
@@ -399,6 +393,9 @@ public:
     void setIsRaining(float b){_isRaining = b;}
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
+    void incSize(float f);
+    void decSize();
+
     
 #pragma mark -
 #pragma mark Physics

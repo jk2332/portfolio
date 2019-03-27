@@ -27,7 +27,7 @@
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <vector>
 #include "RagdollModel.h"
-#include "InputController2.hpp"
+#include "InputController.h"
 #include "SoundController.hpp"
 #include "PestController.hpp"
 #include "WeatherController.hpp"
@@ -35,6 +35,7 @@
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
+#include <set>
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -58,7 +59,7 @@ protected:
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
-
+    
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
@@ -70,26 +71,27 @@ protected:
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _scale;
-
-    // Physics objects for the game
-	/** Reference to the ragdoll model */
-	//std::shared_ptr<RagdollModel> _ragdoll;
-    std::shared_ptr<Cloud> _cloud;
-    std::shared_ptr<Cloud> _cloud2;
     
-	/** Selector to allow mouse control of the ragdoll */
-    std::shared_ptr<cugl::ObstacleSelector> _selectors[10];
+    // Physics objects for the game
+    /** Reference to the ragdoll model */
+    //std::shared_ptr<RagdollModel> _ragdoll;
+    int num_clouds = 2;
+    std::shared_ptr<Cloud> _cloud[2];
+    
+    
+    
+    
+    /** Selector to allow mouse control of the ragdoll */
+    std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
     /** The node referencing the crosshair */
     std::shared_ptr<cugl::PolygonNode> _crosshair;
-
+    
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
-	/** Counter to timestamp sound generation */
-	unsigned long _counter;
-    
-//    cugl::PinchInput _pinput;
+    /** Counter to timestamp sound generation */
+    unsigned long _counter;
     
 #pragma mark Internal Object Management
     /**
@@ -115,7 +117,7 @@ protected:
      *
      * In addition, scene graph nodes have a z-order.  This is the order they are
      * drawn in the scene graph node.  Objects with the different textures should
-     * have different z-orders whenever possible.  This will cut down on the 
+     * have different z-orders whenever possible.  This will cut down on the
      * amount of drawing done
      *
      * param obj    The physics object to add
@@ -123,7 +125,7 @@ protected:
      * param zOrder The drawing order
      */
     void addObstacle(const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
-
+    
     /**
      * Returns the active screen size of this scene.
      *
@@ -131,7 +133,7 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
-
+    
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -171,7 +173,7 @@ public:
      * @return true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
-
+    
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -218,7 +220,7 @@ public:
      * @return true if the gameplay controller is currently active
      */
     bool isActive( ) const { return _active; }
-
+    
     /**
      * Returns true if debug mode is active.
      *
@@ -265,6 +267,7 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact* contact);
+    void endContact(b2Contact* contact);
     
     /**
      * Handles any modifications necessary before collision resolution
@@ -277,7 +280,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
-
+    
     
 #pragma mark -
 #pragma mark Gameplay Handling
@@ -298,3 +301,5 @@ public:
 };
 
 #endif /* __GAME_CONTROLLER_H__ */
+
+

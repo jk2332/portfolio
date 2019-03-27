@@ -67,11 +67,13 @@
 		EBE28ECE1DFEDCFA00C059A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */; };
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
-		F1EF3DFC223EE2BE000E92D7 /* InputController2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */; };
-		F1EF3DFD223EE2BE000E92D7 /* InputController2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
 		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
+		F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
+		F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
+		F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939E9D2235FA5600199385 /* particleGenerator.cpp */; };
 		F8939EA42236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
 		F8939EA52236FE2900199385 /* MenuController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EA22236FE2900199385 /* MenuController.cpp */; };
@@ -175,8 +177,6 @@
 		F15F4AB522223516006D5CD3 /* Plant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Plant.hpp; sourceTree = "<group>"; };
 		F1B4E5482224517700D807D5 /* Cloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cloud.cpp; sourceTree = "<group>"; };
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
-		F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputController2.cpp; path = ../../../Desktop/InputController2.cpp; sourceTree = "<group>"; };
-		F1EF3DFB223EE2BE000E92D7 /* InputController2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = InputController2.hpp; path = ../../../Desktop/InputController2.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
 		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
@@ -283,8 +283,6 @@
 		EBB1AC281DF8C75400C353B0 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				F1EF3DFA223EE2BE000E92D7 /* InputController2.cpp */,
-				F1EF3DFB223EE2BE000E92D7 /* InputController2.hpp */,
 				F1F2EDA0223331F600ECCD4B /* Board.cpp */,
 				F1F2EDA1223331F600ECCD4B /* Board.hpp */,
 				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
@@ -453,7 +451,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = TX52T47YPD;
+						DevelopmentTeam = G6P7H83FK6;
 						ProvisioningStyle = Automatic;
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
@@ -547,6 +545,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F867DC1D223BEC1C0038F905 /* particleGenerator.cpp in Sources */,
+				F867DC1C223BEC0F0038F905 /* Board.cpp in Sources */,
+				F867DC1B223BEC0B0038F905 /* Plant.cpp in Sources */,
+				F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */,
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
@@ -554,7 +556,6 @@
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
-				F1EF3DFD223EE2BE000E92D7 /* InputController2.cpp in Sources */,
 				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				F8939EB52237515400199385 /* WeatherController.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
@@ -578,7 +579,6 @@
 				F8939EB82237517400199385 /* PestController.cpp in Sources */,
 				EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */,
 				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
-				F1EF3DFC223EE2BE000E92D7 /* InputController2.cpp in Sources */,
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
 				F8939EB0223750FC00199385 /* SoundController.cpp in Sources */,
@@ -605,12 +605,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TX52T47YPD;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -627,12 +629,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TX52T47YPD;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = G6P7H83FK6;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.ios.Ragdoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -762,7 +766,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
 			};
 			name = Debug;
 		};
@@ -776,7 +780,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = WeatherDefenderTechnicalPrototype;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
 			};
 			name = Release;
 		};

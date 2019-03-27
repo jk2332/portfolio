@@ -54,37 +54,9 @@ bool Cloud::init(const Vec2& pos, float scale) {
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
+    _size = .8f;
     return true;
 }
-
-void Cloud::BeginContact(b2Contact* contact) {
-    CULog("contact detected");
-    _contacting = true;
-    
-//    b2RevoluteJointDef jointDef;
-//    b2Joint* joint;
-//    jointDef.bodyA = _bodies[LEFT]->getBody();
-//    jointDef.bodyB = _bodies[BODY]->getBody();
-//    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
-//    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
-//    jointDef.enableLimit = true;
-//    jointDef.upperAngle = 0;
-//    jointDef.lowerAngle = 0;
-//    joint = _world->CreateJoint(&jointDef);
-//    _joints.push_back(joint);
-//
-//    b2WeldJointDef weldDef;
-//
-//    // Weld center of mass to torso
-//    weldDef.bodyA = _bodies[BODY]->getBody();
-//    weldDef.bodyB = _body;
-//    weldDef.localAnchorA.Set(0, 0);
-//    weldDef.localAnchorB.Set(0, 0);
-//    joint = _world->CreateJoint(&weldDef);
-//    _joints.push_back(joint);
-}
-void Cloud::EndContact(b2Contact* contact) { _contacting = false; }
-
 
 /**
  * Disposes all resources and assets of this Ragdoll
@@ -96,10 +68,6 @@ void Cloud::dispose() {
     _node = nullptr;
     _bodies.clear();
     //_bubbler = nullptr;
-}
-
-void Cloud::setWorld(b2World& world) {
-    _world = &world;
 }
 
 
@@ -142,13 +110,6 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
     part = makeUnit(BODY, PART_NONE, pos);
     part->setFixedRotation(true);
     
-//    // HEAD
-//    makeUnit(UP, BODY, Vec2(0, TORSO_OFFSET));
-    // ARMS
-//    part = makeUnit(LEFT, BODY, Vec2(-ARM_XOFFSET, ARM_YOFFSET));
-//    part->setFixedRotation(true);
-//    makeUnit(RIGHT, BODY, Vec2(ARM_XOFFSET, ARM_YOFFSET));
-//    makeUnit(DOWN, BODY, Vec2(0, -TORSO_OFFSET));
     return true;
 }
 
@@ -162,6 +123,12 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
  */
 void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
     _texture = texture;
+}
+
+void Cloud::markForRemoval() {
+    CULog("cloud to be removed");
+    markRemoved(true);
+    CULog("remove is? %i", isRemoved());
 }
 
 
@@ -181,9 +148,8 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& pos) {
     std::shared_ptr<Texture> image = _texture;
     Size size = image->getSize();
-    size.width /= (_drawscale);
-    size.height /= (_drawscale);
-
+    size.width /= (_drawscale*1.5);
+    size.height /= (_drawscale*1.5);
     
     Vec2 pos2 = pos;
     if (connect != PART_NONE) {
@@ -191,7 +157,6 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
     }
     
     std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos2, size);
-    //body->setName(getPartName(part));
     body->setDensity(DEFAULT_DENSITY);
     
     _bodies.push_back(body);
@@ -269,11 +234,10 @@ void Cloud::update(float delta) {
     if (_node != nullptr) {
         std::vector<std::shared_ptr<Node>> children = _node->getChildren();
         int i = 0;
-        
         // Update the nodes of the attached bodies
         for (auto it = children.begin(); it != children.end(); ++it) {
             (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
-            (*it)->setAngle(_bodies[i]->getAngle());
+            (*it)->setContentSize(_texture->getSize() * _size);
             
             // Propagate the update to the bodies attached to the Ragdoll
             _bodies[i]->update(delta);
@@ -292,33 +256,6 @@ void Cloud::update(float delta) {
  * @return true if object allocation succeeded
  */
 bool Cloud::createJoints(b2World& world) {
-    CULog("Create joints calleds");
-    return true;
-
-    b2RevoluteJointDef jointDef;
-    b2Joint* joint;
-    
-    // SHOULDERS
-    jointDef.bodyA = _bodies[LEFT]->getBody();
-    jointDef.bodyB = _bodies[BODY]->getBody();
-    jointDef.localAnchorA.Set(ARM_XOFFSET / 2, 0);
-    jointDef.localAnchorB.Set(-ARM_XOFFSET / 2, ARM_YOFFSET);
-    jointDef.enableLimit = true;
-    jointDef.upperAngle = 0;
-    jointDef.lowerAngle = 0;
-    joint = world.CreateJoint(&jointDef);
-    _joints.push_back(joint);
-    
-    b2WeldJointDef weldDef;
-
-    // Weld center of mass to torso
-    weldDef.bodyA = _bodies[BODY]->getBody();
-    weldDef.bodyB = _body;
-    weldDef.localAnchorA.Set(0, 0);
-    weldDef.localAnchorB.Set(0, 0);
-    joint = world.CreateJoint(&weldDef);
-    _joints.push_back(joint);
-    
     return true;
 }
 
@@ -383,14 +320,21 @@ void Cloud::releaseFixtures() {
  */
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
-    for (int ii = 0; ii < _unitNum; ii++) {
-        std::shared_ptr<Texture> image = _texture;
-        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
-        sprite->setContentSize(_texture->getSize());
-        if (ii == RIGHT) {
-            sprite->flipHorizontal(true); // More reliable than rotating 90 degrees.
-        }
-        _node->addChildWithName(sprite, "cloud");
+    std::shared_ptr<Texture> image = _texture;
+    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
+    sprite->setContentSize(_texture->getSize()*_size);
+    _node->addChildWithName(sprite, "cloud");
+}
+
+void Cloud::incSize(float f) {
+    CULog("increased size");
+    _size += 0.35 + f;
+}
+
+void Cloud::decSize() {
+    CULog("decreased size");
+    if (_size > 0.35){
+      _size -= 0.35;
     }
 }
 
