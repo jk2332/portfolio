@@ -193,17 +193,10 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
 void Cloud::update(float delta) {
     Obstacle::update(delta);
     if (_node != nullptr) {
-        std::vector<std::shared_ptr<Node>> children = _node->getChildren();
-        // Update the nodes of the attached bodies
-        for (auto it = children.begin(); it != children.end(); ++it) {
-//            CULog("iter");
-//            CULog("%f, %f pos", _ob->getPosition().x, _ob->getPosition().y);
-            (*it)->setPosition(_ob->getPosition()*_drawscale);
-            (*it)->setContentSize(_texture->getSize() * _size);
-            
-            // Propagate the update to the bodies attached to the Ragdoll
-            _ob->update(delta);
-        }
+        //_node->setPosition(getPosition());
+//        _node->setPosition(getPosition()*_scale);
+//
+        _node->setAngle(getAngle());
     }
 }
 

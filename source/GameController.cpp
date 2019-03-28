@@ -277,7 +277,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(false);
+    setDebug(true);
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -405,7 +405,7 @@ void GameScene::populate() {
    }
    _worldnode->addChildWithName(plantNode, "plantNode");
     
-    for (int i = 0; i < num_clouds; i++) {
+    for (int i = 0; i < 1; i++) {
         // Create the polygon outline
         Poly2 wall1(CLOUD, 8);
         SimpleTriangulator triangulator;
@@ -427,7 +427,7 @@ void GameScene::populate() {
         
         // Add the scene graph nodes to this object
         wall1 *= _scale;
-        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("shadowcloud"),wall1);
+        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),wall1);
         addObstacle(cloud,sprite,1);  // All walls share the same texture
 
 //        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
@@ -469,15 +469,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
     // Position the scene graph node (enough for static objects)
     node->setPosition(obj->getPosition()*_scale);
     _worldnode->addChild(node,zOrder);
-    
-    // Dynamic objects need constant updating
-    if (obj->getBodyType() == b2_dynamicBody) {
-        Node* weak = node.get(); // No need for smart pointer in callback
-        obj->setListener([=](Obstacle* obs){
-            weak->setPosition(obs->getPosition()*_scale);
-            weak->setAngle(obs->getAngle());
-        });
-    }
 }
 
 
@@ -619,7 +610,7 @@ void GameScene::update(float dt) {
         // Transform from screen to physics coords
         auto pos =  _input.getSelection();
         pos = _worldnode->screenToNodeCoords(pos);
-//        CULog("%f, %f", pos.x, pos.y);
+        //CULog("selector position %f, %f", pos.x, pos.y);
 
         // Place the cross hair
         _selector->setPosition(pos/_scale);
@@ -689,9 +680,9 @@ void GameScene::update(float dt) {
 //    }
     
     // Turn the physics engine crank.
-    for (int i =0; i < num_clouds; i++) {
-        _cloud[i]->update(dt);
-    }
+    //for (int i =0; i < 1; i++) {
+    //    _cloud[i]->update(dt);
+    //}
     _world->update(dt);
     
 }
