@@ -193,11 +193,13 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
 void Cloud::update(float delta) {
     Obstacle::update(delta);
     if (_node != nullptr) {
-        //_node->setPosition(getPosition());
-//        _node->setPosition(getPosition()*_scale);
-//
+        _node->setPosition(getPosition()*_scale);
         _node->setAngle(getAngle());
     }
+}
+
+void Cloud::setScale(float s) {
+    _scale = s;
 }
 
 std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
@@ -227,10 +229,10 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  */
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
-    std::shared_ptr<Texture> image = _texture;
-    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
-    sprite->setContentSize(_texture->getSize()*_size);
-    _node->addChildWithName(sprite, "cloud");
+//    std::shared_ptr<Texture> image = _texture;
+//    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
+//    sprite->setContentSize(_texture->getSize()*_size);
+//    _node->addChildWithName(sprite, "cloud");
 }
 
 void Cloud::incSize(float f) {

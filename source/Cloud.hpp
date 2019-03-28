@@ -85,6 +85,7 @@ protected:
     int _type;
     Vec2 _velocity;
     float _size;
+    float _scale;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -259,6 +260,7 @@ public:
 
     void markForRemoval();
     
+    void setScale(float s);
     
 #pragma mark -
 #pragma mark Attribute Accessors

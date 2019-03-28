@@ -59,7 +59,7 @@ using namespace cugl;
 float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
 				   1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
 					0.f,  0.0f,  0.0f, 18.0f };
-float CLOUD[] = { 0.f, 0.f, 3.0f, 0.f, 3.0f, 2.0f, 0.f, 2.0};
+float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 			      16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
 				  16.0f, 17.0f, 16.0f, 18.0f };
@@ -405,18 +405,19 @@ void GameScene::populate() {
    }
    _worldnode->addChildWithName(plantNode, "plantNode");
     
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < num_clouds; i++) {
         // Create the polygon outline
-        Poly2 wall1(CLOUD, 8);
+        Poly2 cloudpoly(CLOUD, 8);
         SimpleTriangulator triangulator;
-        triangulator.set(wall1);
+        triangulator.set(cloudpoly);
         triangulator.calculate();
-        wall1.setIndices(triangulator.getTriangulation());
-        wall1.setType(Poly2::Type::SOLID);
+        cloudpoly.setIndices(triangulator.getTriangulation());
+        cloudpoly.setType(Poly2::Type::SOLID);
         
-        std::shared_ptr<Cloud> cloud = Cloud::alloc(wall1, Vec2(28-i*6, 10));
+        std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(28-i*6, 10));
         cloud->setDebugColor(DYNAMIC_COLOR);
         cloud->setName("cloud" + std::to_string(i));
+        cloud->setScale(_scale);
         _cloud[i] = cloud;
         
         // Set the physics attributes
@@ -426,10 +427,11 @@ void GameScene::populate() {
 //        wallobj->setRestitution(BASIC_RESTITUTION);
         
         // Add the scene graph nodes to this object
-        wall1 *= _scale;
-        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),wall1);
+        cloudpoly *= _scale;
+        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
+        cloud->setSceneNode(sprite);
         addObstacle(cloud,sprite,1);  // All walls share the same texture
-
+//
 //        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
 //        _cloud[i]->initialBuild(_assets);
 //        auto cloudNode = Node::alloc();
@@ -680,9 +682,9 @@ void GameScene::update(float dt) {
 //    }
     
     // Turn the physics engine crank.
-    //for (int i =0; i < 1; i++) {
-    //    _cloud[i]->update(dt);
-    //}
+    for (int i =0; i < num_clouds; i++) {
+        _cloud[i]->update(dt);
+    }
     _world->update(dt);
     
 }
