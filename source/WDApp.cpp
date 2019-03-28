@@ -44,7 +44,6 @@ void WeatherDefenderApp::onStartup() {
     CULogGLError();
     _assets = AssetManager::alloc();
     CULogGLError();
-    CULogGLError();
     // Start-up basic input
 #ifdef CU_TOUCH_SCREEN
     Input::activate<Touchscreen>();
@@ -78,7 +77,7 @@ void WeatherDefenderApp::onStartup() {
     CULogGLError();
     glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
 
-    GLint pos = glGetAttribLocation(_program, "position");
+    GLint pos = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
     glEnableVertexAttribArray(pos);
     glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
     _batch  = SpriteBatch::alloc();
@@ -325,14 +324,13 @@ void WeatherDefenderApp::draw() {
         glUseProgram( _program );
         CULog("Program is %d",_program);
         CULogGLError();
-        GLint pos = glGetAttribLocation(_program, "position");
+        GLint pos = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
         CULog("Variable address is %d",pos);
         CULogGLError();
 
         glBindVertexArray(this->VAO);
         CULogGLError();
 
-        CULogGLError();
         glEnableVertexAttribArray(pos);
         CULogGLError();
         glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
