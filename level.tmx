@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="200" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="8">
+ <tileset firstgid="1" source="Tileset.tsx"/>
+ <imagelayer id="2" name="Image Layer 1" locked="1" offsetx="26.6667" offsety="2.66667">
+  <image source="../code/cs4152/assets/textures/technical-background.png" width="1024" height="576"/>
+ </imagelayer>
+ <layer id="4" name="Ground tiles" width="200" height="100" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt1zERAAAIA7Hi3zQmuC4k01v4BAAAAAAAAPhoig0AAPzmPwAAgBb/AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHBvAeB/ABw=
+  </data>
+ </layer>
+ <objectgroup id="9" name="Plant object layer">
+  <object id="4" type="Apple tree" gid="5" x="96" y="288" width="94" height="126"/>
+  <object id="5" type="Apple tree" gid="5" x="288" y="416" width="94" height="126"/>
+  <object id="6" type="Apple tree" gid="5" x="672" y="544" width="94" height="126"/>
+  <object id="7" type="Apple tree" gid="5" x="768" y="416" width="94" height="126"/>
+ </objectgroup>
+ <objectgroup id="8" name="Cloud object layer">
+  <object id="1" gid="3" x="61" y="96" width="165" height="84"/>
+  <object id="2" gid="6" x="275" y="182" width="248" height="126"/>
+  <object id="3" gid="9" x="608" y="131" width="206" height="105"/>
+ </objectgroup>
+</map>
