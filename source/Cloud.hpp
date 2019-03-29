@@ -80,6 +80,7 @@ protected:
     bool _isRaining;
     long _rainCoolDown;
     int _type;
+    int _id;
     Vec2 _velocity;
     float _size;
     
@@ -391,6 +392,8 @@ public:
      */
     void setDrawScale(float scale);
     void setIsRaining(float b){_isRaining = b;}
+    void setId(int id){_id = id;}
+    int getId(){return _id;}
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     void incSize(float f);

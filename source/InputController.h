@@ -51,9 +51,6 @@ private:
     bool  _keyExit;
     bool _keySplit;
     bool _keyJoin;
-    bool _isBeingPinched;
-    //    bool _endedPinch;
-    
     
     
     //    // TOUCH SUPPORT
@@ -64,7 +61,10 @@ private:
     std::map<long, cugl::Vec2> _dtouches;
     cugl::Vec2 _dpinch;
     std::map<long, cugl::Timestamp> _timestamps;
+    cugl::Vec2 _dpan;
     cugl::Timestamp _pinchTimestamp;
+    cugl::Timestamp _panTimestamp;
+    
     
     /**
      * Handles touchBegan and mousePress events using shared logic.
@@ -114,10 +114,13 @@ protected:
     /** Are we registering an object selection? */
     std::unordered_set<long> _selects;
     bool _pinchSelect;
+    bool _panSelect;
     /** The id of the current selection touch */
     long _touchID;
     std::unordered_set<long> _touchIDs;
     bool _pinched;
+    bool _panned;
+    std::unordered_set<long> _longerSelects;
     
 public:
 #pragma mark -
@@ -188,6 +191,9 @@ public:
      */
     std::unordered_set<long> didSelect() { return _selects; }
     bool didPinchSelect() {return _pinchSelect;}
+    bool didPanSelect() {return _panSelect;}
+    std::unordered_set<long> didLongerSelect() {return _longerSelects;}
+    std::map<long, int> longSelectCounter;
     
     std::unordered_set<long> getTouchIDs() {return _touchIDs;}
     
@@ -249,6 +255,9 @@ public:
     void pinchBeganCB(const cugl::PinchEvent &event, bool focus);
     void pinchEndCB(const cugl::PinchEvent &event, bool focus);
     void pinchChangeCB(const cugl::PinchEvent &event, bool focus);
+    void panBeganCB(const cugl::PanEvent &event, bool focus);
+    void panEndCB(const cugl::PanEvent &event, bool focus);
+    void panChangedCB(const cugl::PanEvent &event, bool focus);
     
     /**
      * Callback for the end of a touch event

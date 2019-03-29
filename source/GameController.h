@@ -67,6 +67,7 @@ protected:
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<Node> sunNode;
     
+    
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
@@ -282,6 +283,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+    
 
     
 #pragma mark -
