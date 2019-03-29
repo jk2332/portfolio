@@ -38,7 +38,7 @@
 /** The density for each body part */
 #define DEFAULT_DENSITY  1.0f
 /** The density for the center of mass */
-#define CENTROID_DENSITY 0.1f
+#define CENTROID_DENSITY 1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
 
@@ -83,6 +83,7 @@ protected:
     bool _isRaining;
     long _rainCoolDown;
     int _type;
+    int _id;
     Vec2 _velocity;
     float _size;
     float _scale;
@@ -359,6 +360,8 @@ public:
      */
     void setDrawScale(float scale);
     void setIsRaining(float b){_isRaining = b;}
+    void setId(int id){_id = id;}
+    int getId(){return _id;}
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     void incSize(float f);

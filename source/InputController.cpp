@@ -39,6 +39,8 @@ using namespace cugl;
 #define EVENT_ACCEL_THRESH  M_PI/10.0f
 /** The key for the event handlers */
 #define LISTENER_KEY        1
+#define LONG_PRESS_COUNT     20
+
 
 #pragma mark -
 #pragma mark Input Controller
@@ -62,6 +64,7 @@ _keyJoin(false),
 _splitPressed(false),
 _keyDebug(false),
 _keyExit(false),
+_pinchSelect(false),
 //_isBeingPinched(false),
 //_endedPinch(false),
 _touchID(-1) {
@@ -90,6 +93,10 @@ void RagdollInput::dispose() {
         pi->removeEndListener(LISTENER_KEY);
         pi->removeBeginListener(LISTENER_KEY);
         pi->removeChangeListener(LISTENER_KEY);
+//        PanInput* pani = Input::get<PanInput>();
+//        pani->removeEndListener(LISTENER_KEY);
+//        pani->removeMotionListener(LISTENER_KEY);
+//        pani->removeBeginListener(LISTENER_KEY);
 #endif
         _active = false;
     }
@@ -141,6 +148,7 @@ bool RagdollInput::init() {
     });
     success = success && Input::activate<PinchInput>();
     PinchInput* pinput = Input::get<PinchInput>();
+    pinput->setThreshold(0);
     pinput->addBeginListener(LISTENER_KEY, [=](const cugl::PinchEvent& event, bool focus) {
         this->pinchBeganCB(event, focus);
     });
@@ -150,6 +158,18 @@ bool RagdollInput::init() {
     pinput->addChangeListener(LISTENER_KEY, [=](const PinchEvent& event, bool focus){
         this->pinchChangeCB(event, focus);
     });
+//    success = success && Input::activate<PanInput>();
+//    PanInput* paninput = Input::get<PanInput>();
+//    paninput->setThreshold(300);
+//    paninput->addEndListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
+//        this->panEndCB(event, focus);
+//    });
+//    paninput->addBeginListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
+//        this->panBeganCB(event, focus);
+//    });
+//    paninput->addMotionListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
+//        this->panChangedCB(event, focus);
+//    });
 #endif
     _active = success;
     return success;
@@ -291,18 +311,47 @@ void RagdollInput::pinchEndCB(const cugl::PinchEvent& event, bool focus){
     //    _dpinch = event.position;
     //    CULog("dpinch x: %f", _dpinch.x/41.6875);
     //    CULog("dpinch y: %f", 18 - _dpinch.y/41.666667);
+//    CULog("distance pinch %i", event.pinch);
+
     _pinchSelect = false;
     _pinched = false;
     
 }
 
 void RagdollInput::pinchChangeCB(const cugl::PinchEvent& event, bool focus){
-    //    CULog("pinch changed");
     if (event.timestamp.ellapsedMillis(_pinchTimestamp) > 600){
         _pinched = false;
         _pinchSelect = false;
     }
 }
+
+//void RagdollInput::panBeganCB(const cugl::PanEvent& event, bool focus){
+//    CULog("%f pan disttance", event.pan.distance(Vec2::ZERO));
+//    _panTimestamp.mark();
+//    _panned = true;
+//    if (!_panSelect){
+//        _dpan = event.position;
+//    }
+//    _panSelect = true;
+//}
+//
+//void RagdollInput::panEndCB(const cugl::PanEvent& event, bool focus){
+//    //    CULog("pinch ended");
+//    //    _dpinch = event.position;
+//    //    CULog("dpinch x: %f", _dpinch.x/41.6875);
+//    //    CULog("dpinch y: %f", 18 - _dpinch.y/41.666667);
+//    _panSelect = false;
+//    _panned = false;
+//    
+//}
+//
+//void RagdollInput::panChangedCB(const cugl::PanEvent& event, bool focus){
+//    //    CULog("pinch changed");
+////    if (event.timestamp.ellapsedMillis(_panTimestamp) > 100){
+////        _panned = false;
+////        _panSelect = false;
+////    }
+//}
 
 
 
@@ -318,7 +367,7 @@ void RagdollInput::touchBegan(long touchID, const cugl::Timestamp timestamp, con
     // All touches correspond to key up
     _keyUp = true;
     //    _timestamps.at(touchID) = timestamp;
-    //    CULog("touch began %i", touchID);
+//        CULog("touch began %i", touchID);
     if (!_timestamps.count(touchID)){
         _timestamps.insert({touchID, timestamp});
     } else {
@@ -377,8 +426,12 @@ void RagdollInput::mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, 
  * @param pos         the position of the touch
  */
 void RagdollInput::touchEnded(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos) {
-    //    CULog("touch ended %i", touchID);
+//    CULog("touch ended %i", touchID);
     _selects.erase(touchID);
+//    if (_longerSelects.count(touchID)){
+//        _longerSelects.erase(touchID);
+//        longSelectCounter.erase(touchID);
+//    }
     if (_touchIDs.empty()){
         _keyUp = false;
     }
@@ -420,10 +473,17 @@ void RagdollInput::mouseDraggedCB(const cugl::MouseEvent& event, const Vec2& pre
  * @param pos         the position of the touch
  */
 void RagdollInput::touchMoved(long touchID, const cugl::Vec2& pos) {
-    //    CULog("touch moved %i", touchID);
+//        CULog("touch moved %i", touchID);
+    
     if (!_dtouches.count(touchID)){
         _dtouches.insert({touchID, pos});
     } else {
+//        if (_dtouches.at(touchID).x - 3 <= pos.x && pos.x <= _dtouches.at(touchID).x && _dtouches.at(touchID).y - 3 <= pos.y && pos.y <= _dtouches.at(touchID).y){
+//            longSelectCounter.at(touchID) ++;
+//            if (longSelectCounter.at(touchID) == LONG_PRESS_COUNT && !_longerSelects.count(touchID)){
+//                _longerSelects.insert(touchID);
+//            }
+//        }
         _dtouches.at(touchID) = pos;
     }
 }

@@ -67,6 +67,7 @@ protected:
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<Node> sunNode;
     
+    
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
@@ -90,6 +91,8 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
+    int cloudToBeCombined1 = -1;
+    int cloudToBeCombined2 = -1;
     
 #pragma mark Internal Object Management
     /**
@@ -266,6 +269,7 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
+    void combineByPinch(int cind1, int cind2, Vec2 pinchpos);
 
     
     /**
@@ -279,6 +283,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
+    
 
     
 #pragma mark -
