@@ -12,7 +12,7 @@
 /**
  * The fragment shader for OpenGL
  */
-const char* oglCTFrag = SHADER(
+const char* const oglCTFrag = SHADER(
 ////////// SHADER BEGIN /////////
 
 //#version 330 core
@@ -35,7 +35,7 @@ void main(){
 /**
  * The fragment shader for OpenGL ES
  */
-const char* oglCTFrag = SHADER(
+const char* const oglCTFrag = SHADER(
 ////////// SHADER BEGIN /////////
 
 // This one line is all the difference

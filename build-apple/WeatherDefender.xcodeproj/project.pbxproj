@@ -68,6 +68,8 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
+		F85C7948224DCBA200E1E679 /* NEWPARTICLESHADER.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F85C7946224DCBA200E1E679 /* NEWPARTICLESHADER.cpp */; };
+		F85C7949224DCBA200E1E679 /* NEWPARTICLESHADER.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F85C7946224DCBA200E1E679 /* NEWPARTICLESHADER.cpp */; };
 		F867DC07223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC08223B9B8D0038F905 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = F867DC06223B9B8D0038F905 /* textures */; };
 		F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
@@ -183,6 +185,8 @@
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
 		F1F2EDA1223331F600ECCD4B /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
+		F85C7946224DCBA200E1E679 /* NEWPARTICLESHADER.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NEWPARTICLESHADER.cpp; sourceTree = "<group>"; };
+		F85C7947224DCBA200E1E679 /* NEWPARTICLESHADER.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NEWPARTICLESHADER.hpp; sourceTree = "<group>"; };
 		F867DC06223B9B8D0038F905 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; path = textures; sourceTree = "<group>"; };
 		F867DC30224013500038F905 /* CloudNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloudNode.cpp; sourceTree = "<group>"; };
 		F867DC31224013500038F905 /* CloudNode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CloudNode.hpp; sourceTree = "<group>"; };
@@ -330,6 +334,8 @@
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
 				F8939EB22237515400199385 /* WeatherController.cpp */,
 				F8939EB32237515400199385 /* WeatherController.hpp */,
+				F85C7946224DCBA200E1E679 /* NEWPARTICLESHADER.cpp */,
+				F85C7947224DCBA200E1E679 /* NEWPARTICLESHADER.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -475,7 +481,7 @@
 			};
 			buildConfigurationList = EBB1AC011DF8C6BC00C353B0 /* Build configuration list for PBXProject "WeatherDefender" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -574,6 +580,7 @@
 				F86A31582239FAF300233ED5 /* particleShader.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
 				F867DC33224013500038F905 /* CloudNode.cpp in Sources */,
+				F85C7949224DCBA200E1E679 /* NEWPARTICLESHADER.cpp in Sources */,
 				EBB4B5792040ADD300238092 /* WDApp.cpp in Sources */,
 				F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */,
 				F8939EA52236FE2900199385 /* MenuController.cpp in Sources */,
@@ -600,6 +607,7 @@
 				F8939EB42237515400199385 /* WeatherController.cpp in Sources */,
 				F8939E9F2235FA5600199385 /* particleGenerator.cpp in Sources */,
 				F867DC32224013500038F905 /* CloudNode.cpp in Sources */,
+				F85C7948224DCBA200E1E679 /* NEWPARTICLESHADER.cpp in Sources */,
 				F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */,
 				F8939EA82236FEED00199385 /* Pest.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,

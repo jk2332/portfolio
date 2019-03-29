@@ -9,7 +9,7 @@
 /**
  * Uniform texture shader for OpenGL and OpenGL ES
  */
-const char* oglCTVert = SHADER(
+const char* const oglCTVert = SHADER(
 ////////// SHADER BEGIN /////////
 
 //layout (location = 0)
