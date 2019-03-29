@@ -13,7 +13,7 @@
 #include <string>
 #include <cugl/2d/CUTexturedNode.h>
 #include <cugl/math/polygon/CUSimpleTriangulator.h>
-#include "particleGenerator.hpp"
+#include "particleShader.hpp"
 
 #define PARTICLE_NUM 5
 namespace cugl {
@@ -54,7 +54,8 @@ namespace cugl {
         
     public:
 #pragma mark -
-        ParticleGenerator pg;
+        ParticleShader ps;
+        
 #pragma mark Constructor
         /**
          * Creates an empty polygon with the degenerate texture.
@@ -83,7 +84,8 @@ namespace cugl {
         static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture, std::shared_ptr<Obstacle> object){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
             CULogGLError();
-            node->pg = ParticleGenerator(texture, object, PARTICLE_NUM);
+            node->ps = ParticleShader(object, PARTICLE_NUM);
+            node->ps.onStartup();
             return (node->init() ? node : nullptr);
         }
         

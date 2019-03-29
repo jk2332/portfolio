@@ -2,21 +2,12 @@
 //  particleShader.cpp
 //  WeatherDefender
 //
-//  Created by Stefan Joseph on 3/13/19.
+//  Created by Stefan Joseph on 3/28/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
 //
 
-#include <stdio.h>
-#include "particleShader.h"
-#include <cugl/renderer/CUSpriteShader.h>
-#include <cugl/renderer/CUVertex.h>
-#include <cugl/util/CUDebug.h>
+#include "particleShader.hpp"
 
-// The shaders
-//#include "particle.vert"
-//#include "particle.frag"
-
-// The names of the shader attributes and uniforms
 #define POSITION_ATTRIBUTE  "position"
 #define TEXCOORDS_ATTRIBUTE  "texCoords"
 #define PROJECTION_UNIFORM  "projection"
@@ -27,292 +18,254 @@
 
 using namespace cugl;
 
+ParticleGenerator::ParticleGenerator(){}
 
-#pragma mark -
-#pragma mark Initialization
-/**
- * Initializes this shader with the default vertex and fragment source.
- *
- * The shader will compile the vertex and fragment sources and link
- * them together. When compilation is complete, the shader will not be
- * bound.  However, any shader that was actively bound during compilation
- * also be unbound as well.
- *
- * @return true if initialization was successful.
- */
-bool ParticleShader::init() {
-//    _vertSource = oglCTVert;
-//    _fragSource = oglCTFrag;
+ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount)
+{
     CULogGLError();
-    bool b = compile();
-    CULogGLError();
-    return b;
-}
-/**
- * Initializes this shader with the given vertex and fragment source.
- *
- * The shader will compile the vertex and fragment sources and link
- * them together. When compilation is complete, the shader will not be
- * bound.  However, any shader that was actively bound during compilation
- * also be unbound as well.
- *
- * @param vsource   The source string for the vertex shader.
- * @param fsource   The source string for the fragment shader.
- *
- * @return true if initialization was successful.
- */
-bool ParticleShader::init(const char* vsource, const char* fsource) {
-    _vertSource = vsource;
-    _fragSource = fsource;
-    return compile();
+    this->init();
 }
 
-#pragma mark -
-#pragma mark Attributes
-/**
- * Sets the perspective matrix to use in the shader.
- *
- * @param matrix    The perspective matrix
- */
-void ParticleShader::setPerspective(const Mat4& matrix) {
-    _mPerspective = matrix;
-    if (_active) {
-        glUniformMatrix4fv(_uProjection,1,false,_mPerspective.m);
+void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
+    // Add new particles
+    for (GLuint i = 0; i < newParticles; ++i){
+        int unusedParticle = this->firstUnusedParticle();
+        this->respawnParticle(this->particles[unusedParticle], offset);
+    }
+    // Update all particles
+    //    for (GLuint i = 0; i < this->amount; ++i){
+    //        Particle &p = this->particles[i];
+    //        p.life -= dt; // reduce life
+    //        if (p.life > 0.0f){    // particle is alive, thus update
+    //            p.position -= p.velocity * dt;
+    //            p.color.w -= dt * 2.5;
+    //        }
+    //    }
+}
+
+// Render all particles
+void ParticleGenerator::Draw(){
+    CULog("Begin Draw");
+    CULogGLError();
+    for (Particle particle : this->particles){
+        if (particle.life > 0.0f){
+
+        }
     }
 }
 
-/**
- * Sets the texture in use in the shader
- *
- * @param texture   The shader texture
- */
-void ParticleShader::setTexture(const std::shared_ptr<Texture>& texture) {
-    _mTexture = texture;
-    if (_active) {
-        glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
-        glBindTexture(GL_TEXTURE_2D, _mTexture->getBuffer());
-    }
+void ParticleGenerator::init(){
+    CULogGLError();
+    for (GLuint i = 0; i < this->amount; ++i)
+        this->particles.push_back(Particle());
 }
 
-#pragma mark -
-#pragma mark Rendering
-
-/**
- * Attaches the given memory buffer to this shader.
- *
- * Because of limitations in OpenGL ES, we cannot draw anything without
- * both a vertex buffer object and an vertex array object.
- *
- * @param vArray    The vertex array object
- * @param vBuffer   The vertex buffer object
- */
-void ParticleShader::attach(GLuint vArray, GLuint vBuffer) {
-    CUAssertLog(_active, "This shader is not currently active");
-    
-    glBindVertexArray(vArray);
-    glBindBuffer(GL_ARRAY_BUFFER, vBuffer);
-    
-    glVertexAttribPointer( _aPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2),
-                          Vertex2::positionOffset());
-    glVertexAttribPointer( _aTexCoords, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2),
-                          Vertex2::texcoordOffset());
+// Stores the index of the last particle used (for quick access to next dead particle)
+int lastUsedParticle = 0;
+int ParticleGenerator::firstUnusedParticle(){
+    // First search from last used particle, this will usually return almost instantly
+    for (int i = lastUsedParticle; i < this->amount; ++i){
+        if (this->particles[i].life <= 0.0f){
+            lastUsedParticle = i;
+            return i;
+        }
+    }
+    // Otherwise, do a linear search
+    for (int i = 0; i < lastUsedParticle; ++i){
+        if (this->particles[i].life <= 0.0f){
+            lastUsedParticle = i;
+            return i;
+        }
+    }
+    // All particles are taken, override the first one (note that if it repeatedly hits this case, more particles should be reserved)
+    lastUsedParticle = 0;
+    return 0;
 }
 
-/**
- * Binds this shader, making it active.
- *
- * Once bound, any OpenGL calls will then be sent to this shader.
- */
-void ParticleShader::bind() {
-    Shader::bind();
-    glEnableVertexAttribArray(_aPosition);
-    CULogGLError();
-    glEnableVertexAttribArray(_aTexCoords);
-    CULogGLError();
-    if (_mTexture != nullptr) {
-        glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
-        CULogGLError();
-        glBindTexture(GL_TEXTURE_2D, _mTexture->getBuffer());
-        CULogGLError();
-    }
+void ParticleGenerator::respawnParticle(Particle &particle, Vec2 offset){
+    GLfloat random = ((rand() % 100) - 50) / 10.0f;
+    GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
+    particle.position = Vec2(500,500);// object->getPosition() + Vec2(random,random) + offset;
+    particle.color = Vec4(rColor, rColor, rColor, 1.0f);
+    particle.life = 1.0f;
+    particle.velocity = Vec2(5.0f,5.0f);
 }
 
-/**
- * Unbinds this shader, making it no longer active.
- *
- * Once unbound, OpenGL calls will no longer be sent to this shader.
- */
-void ParticleShader::unbind() {
-    glBindTexture(GL_TEXTURE_2D, 0);
-    CULogGLError();
-    glDisableVertexAttribArray(_aPosition);
-    CULogGLError();
-    glDisableVertexAttribArray(_aTexCoords);
-    CULogGLError();
-    Shader::unbind();
-    CULogGLError();
-}
-
-#pragma mark -
-#pragma mark Compilation
-/**
- * Compiles this shader from the given vertex and fragment shader sources.
- *
- * When compilation is complete, the shader will not be bound.  However,
- * any shader that was actively bound during compilation also be unbound
- * as well.
- *
- * If compilation fails, it will display error messages on the log.
- *
- * @return true if compilation was successful.
- */
-bool ParticleShader::compile() {
-    CULogGLError();
-    if (!Shader::compile()) return false;
-    CULogGLError();
-    // Find each of the attributes
-    _aPosition = glGetAttribLocation( _program, POSITION_ATTRIBUTE );
-    if( !validateVariable(_aPosition, POSITION_ATTRIBUTE)) {
-        dispose();
-        return false;
-    }
-    
-    _aTexCoords = glGetAttribLocation( _program, TEXCOORDS_ATTRIBUTE );
-    if( !validateVariable(_aTexCoords, TEXCOORDS_ATTRIBUTE)) {
-        dispose();
-        return false;
-    }
-    
-    _uProjection = glGetUniformLocation( _program, PROJECTION_UNIFORM );
-    if( !validateVariable(_uProjection, PROJECTION_UNIFORM)) {
-        dispose();
-        return false;
-    }
-    
-    _uOffset = glGetUniformLocation( _program, OFFSET_UNIFORM );
-    if( !validateVariable(_uOffset, OFFSET_UNIFORM)) {
-        dispose();
-        return false;
-    }
-    
-    _uColor = glGetUniformLocation( _program, COLOR_UNIFORM );
-    if( !validateVariable(_uColor, COLOR_UNIFORM)) {
-        dispose();
-        return false;
-    }
-    
-    _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
-    if( !validateVariable(_uSprite, SPRITE_UNIFORM)) {
-        dispose();
-        return false;
-    }
-    
-    // Set the texture location and matrix
-    bind();
-    glUniformMatrix4fv(_uProjection,1,false,_mPerspective.m);
-    glUniform1i(_uSprite, TEXTURE_POSITION);
-    unbind();
-    
-    return true;
-}
-
-/**
- * Returns true if the GLSL variable was found in this shader.
- *
- * If variable is not found, it will display error messages on the log.
- *
- * @param variable  The variable (reference) to test
- * @param name      The variable (name) to test
- *
- * @return true if the GLSL variable was found in this shader.
- */
-bool ParticleShader::validateVariable(GLint variable, const char* name) {
-    if( variable == -1 ) {
-        CULogError( "%s is not a valid GLSL program variable.\n", name );
-        Shader::logProgramError(_program);
-        return false;
-    }
-    return true;
-}
-
-/**
- * Deletes the OpenGL shader and resets all attributes.
- *
- * You must reinitialize the shader to use it.
- */
 void ParticleShader::dispose() {
     if (_mTexture != nullptr) { _mTexture.reset(); }
     Shader::dispose();
-}
-
-void ParticleShader::SetFloat(const GLchar *name, GLfloat value, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform1f(glGetUniformLocation(_program, name), value);
-}
-void ParticleShader::SetInteger(const GLchar *name, GLint value, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform1i(glGetUniformLocation(_program, name), value);
-}
-void ParticleShader::SetVector2f(const GLchar *name, GLfloat x, GLfloat y, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform2f(glGetUniformLocation(_program, name), x, y);
-}
-void ParticleShader::SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glGetError();
-    GLuint x = glGetUniformLocation(_program, name);
-    if (glGetError() != GL_NO_ERROR) {
-        GLint id;
-        glGetIntegerv(GL_CURRENT_PROGRAM,&id);
-        CULog("Program is %d vs %d",_program,id);
-        CULog("%s at %d",name,x);
-        CULogGLError();
-        CUAssert(false);
-    }
-    glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
-}
-void ParticleShader::SetVector3f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform3f(glGetUniformLocation(_program, name), x, y, z);
-}
-void ParticleShader::SetVector3f(const GLchar *name, const Vec3 &value, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform3f(glGetUniformLocation(_program, name), value.x, value.y, value.z);
+    //glDeleteTextures(1, texture);
+    glDeleteProgram(_program);
+    CULogGLError();
+    glDeleteShader(_fragShader);
+    CULogGLError();
+    glDeleteShader(_vertShader);
+    CULogGLError();
+    glDeleteBuffers(1, &EBO);
+    CULogGLError();
+    glDeleteBuffers(1, &VBO);
+    CULogGLError();
+    glDeleteVertexArrays(1, &VAO);
     CULogGLError();
 }
-void ParticleShader::SetVector4f(const GLchar *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform4f(glGetUniformLocation(_program, name), x, y, z, w);
-}
-void ParticleShader::SetVector4f(const GLchar *name, const Vec4 &value, GLboolean useShader){
-    if (useShader)
-    this->bind();
-    glUniform4f(glGetUniformLocation(_program, name), value.x, value.y, value.z, value.w);
+
+void ParticleShader::onStartup(){
+//    CULogGLError();
+//    glGenVertexArrays(1, &this->VAO);
+//    CULogGLError();
+//    glBindVertexArray(this->VAO);
+//    CULogGLError();
+//
+//    glGenBuffers(1, &VBO);
+//    CULogGLError();
+//    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//    CULogGLError();
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+//
+//    //set up element buffer
+//    glGenBuffers(1, &EBO);
+//    CULogGLError();
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+//    CULogGLError();
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+//    CULogGLError();
     
+    compileProgram();
 }
-//void ParticleShader::SetMatrix4(const GLchar *name, const Mat4 &matrix, GLboolean useShader){
-//    if (useShader)
-//    this->bind();
-//    glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE, glm::value_ptr(matrix));
-//}
 
+void ParticleShader::compileProgram(){
+    _vertSource = oglCTVert;
+    _fragSource = oglCTFrag;
+    _program = glCreateProgram();
+    if (!_program) {
+        CULogError("Unable to allocate shader program");
+    }
+    CULogGLError();
+    
+    //Create vertex shader and compile it
+    _vertShader = glCreateShader( GL_VERTEX_SHADER );
+    glShaderSource( _vertShader, 1, &_vertSource, nullptr );
+    glCompileShader( _vertShader );
+    
+    CULogGLError();
+    // Validate and quit if failed
+    if (!validateShader(_vertShader, "vertex")) {
+        dispose();
+    }
+    
+    CULogGLError();
+    //Create fragment shader and compile it
+    _fragShader = glCreateShader( GL_FRAGMENT_SHADER );
+    glShaderSource( _fragShader, 1, &_fragSource, nullptr );
+    glCompileShader( _fragShader );
+    
+    // Validate and quit if failed
+    if (!validateShader(_fragShader, "fragment")) {
+        dispose();
+    }
+    
+    CULogGLError();
+    // Now kiss
+    glAttachShader( _program, _vertShader );
+    glAttachShader( _program, _fragShader );
+    glLinkProgram( _program );
+    
+    //Check for errors
+    GLint programSuccess = GL_TRUE;
+    glGetProgramiv( _program, GL_LINK_STATUS, &programSuccess );
+    if( programSuccess != GL_TRUE ) {
+        CULogError( "Unable to link program %d.\n", _program );
+        dispose();
+    }
+}
 
-//dispose(){
-//    glDeleteTextures(2, textures);
-//
-//    glDeleteProgram(shaderProgram);
-//    glDeleteShader(fragmentShader);
-//    glDeleteShader(vertexShader);
-//
-//    glDeleteBuffers(1, &ebo);
-//    glDeleteBuffers(1, &vbo);
-//
-//    glDeleteVertexArrays(1, &vao);
-//}
+//do the thing
+void ParticleShader::beginShading(){ 
+    CULogGLError();
+    // Find each of the attributes
+    //        _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE );
+    //        if( !validateVariable(_aPosition, POSITION_ATTRIBUTE)) {
+    //            dispose();
+    //        }
+    //        CULogGLError();
+    //        _aTexCoords = glGetAttribLocation( _program, TEXCOORDS_ATTRIBUTE );
+    //        if( !validateVariable(_aTexCoords, TEXCOORDS_ATTRIBUTE)) {
+    //            dispose();
+    //        }
+    //        CULogGLError();
+    //        _uProjection = glGetUniformLocation( _program, PROJECTION_UNIFORM );
+    //        if( !validateVariable(_uProjection, PROJECTION_UNIFORM)) {
+    //            dispose();
+    //        }
+    //        CULogGLError();
+    //        _uOffset = glGetUniformLocation( _program, OFFSET_UNIFORM );
+    //        if( !validateVariable(_uOffset, OFFSET_UNIFORM)) {
+    //            dispose();
+    //        }
+    //        CULogGLError();
+    //        _uColor = glGetUniformLocation( _program, COLOR_UNIFORM );
+    //        if( !validateVariable(_uColor, COLOR_UNIFORM)) {
+    //            dispose();
+    //        }
+    //        CULogGLError();
+    //        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
+    //        if( !validateVariable(_uSprite, SPRITE_UNIFORM)) {
+    //            dispose();
+    //        }
+    // Set mesh attributes
+    
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //CULogGLError();
+    
+    //rebinding presumably because of the spritebatch that left itself bound
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    CULogGLError();
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    CULogGLError();
+    //reusing the particle shader program
+    glUseProgram( _program );
+    CULog("Program is %d",_program);
+    CULogGLError();
+    GLint _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
+    CULogGLError();
+    CULog("Variable address is %d",_aPosition);
+    
+    glBindVertexArray(this->VAO);
+    CULogGLError();
+    
+    glEnableVertexAttribArray(_aPosition);
+    CULogGLError();
+    glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    CULogGLError();
+    
+    //SetVector2f(OFFSET_UNIFORM, Vec2(500,500));
+    //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
+    
+    glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
+    
+    GLint texAttrib = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
+    CULogGLError();
+    glEnableVertexAttribArray(texAttrib);
+    CULogGLError();
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+    CULogGLError();
+    
+    Texture particle = Texture();
+    particle.initWithFile("textures/particle1.png");
+    particle.bind();
+    
+    _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
+    CULogGLError();
+    glUniform1i(_uSprite, TEXTURE_POSITION);
+    CULogGLError();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    CULogGLError();
+    particle.unbind();
+    glBindVertexArray(NULL);
+    CULogGLError();
+    glUseProgram(NULL);
+    CULogGLError();
+    // Don't forget to reset to default blending mode
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    CULogGLError();
+}

@@ -16,7 +16,6 @@
 #include <cugl/cugl.h>
 #include "GameController.h"
 #include "LoadingController.h"
-#include "NEWPARTICLESHADER.hpp"
 
 /**
  * This class represents the application root for the ragdoll demo.
@@ -36,9 +35,7 @@ protected:
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
-    
-    newParticleShader nps = newParticleShader();
-    
+
 public:
 #pragma mark Constructors
     /**

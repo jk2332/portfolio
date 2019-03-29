@@ -370,20 +370,20 @@ void GameScene::populate() {
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
-//    for (int i = 0; i < num_clouds; i++) {
-//        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
-//        _cloud[i]->initialBuild(_assets);
-//        CULogGLError();
-//        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _cloud[i]);
-//        _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
-//        _cloud[i]->setName("cloud" + std::to_string(i));
-//        _cloud[i]->setSceneNode(cloudNode);
-//        _cloud[i]->setDebugColor(Color4::BLUE);
-//        _cloud[i]->setDebugScene(_debugnode);
-//        _cloud[i]->setSize(1.0f);
-//        _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
-//        _world->addObstacle(_cloud[i]);
-//    }
+    for (int i = 0; i < num_clouds; i++) {
+        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
+        _cloud[i]->initialBuild(_assets);
+        CULogGLError();
+        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _cloud[i]);
+        _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
+        _cloud[i]->setName("cloud" + std::to_string(i));
+        _cloud[i]->setSceneNode(cloudNode);
+        _cloud[i]->setDebugColor(Color4::BLUE);
+        _cloud[i]->setDebugScene(_debugnode);
+        _cloud[i]->setSize(1.0f);
+        _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
+        _world->addObstacle(_cloud[i]);
+    }
 }
 
 /**

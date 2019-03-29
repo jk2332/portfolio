@@ -200,7 +200,7 @@ bool Cloud::dropUnit(b2World& world){
  */
 void Cloud::update(float delta) {
     Obstacle::update(delta);
-    _node->pg.Update(delta, 1);
+//    _node->pg.Update(delta, 1);
     if (_node != nullptr) {
         std::vector<std::shared_ptr<Node>> children = _node->getChildren();
         int i = 0;

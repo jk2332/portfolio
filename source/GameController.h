@@ -30,7 +30,7 @@
 #include "PestController.hpp"
 #include "WeatherController.hpp"
 #include "ResourceController.hpp"
-#include "particleGenerator.hpp"
+#include "particleShader.hpp"
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
@@ -58,7 +58,6 @@ protected:
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
-    ParticleGenerator _pg;
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;

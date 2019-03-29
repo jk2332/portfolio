@@ -1,30 +1,69 @@
 //
-//  NEWPARTICLESHADER.hpp
+//  particleShader.hpp
 //  WeatherDefender
 //
 //  Created by Stefan Joseph on 3/28/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef NEWPARTICLESHADER_hpp
-#define NEWPARTICLESHADER_hpp
+#ifndef particleShader_hpp
+#define particleShader_hpp
 
 #include <cugl/cugl.h>
 #include <stdio.h>
 #include "particle.vert"
 #include "particle.frag"
-
-//                                  Position        Texcoords
-static GLfloat particle_quad[] = {  0.0f,0.0f,      0.0f,0.0f,
-                                    0.0f,50.0f,     0.0f,1.0f,
-                                    50.0f,0.0f,     1.0f,0.0f,
-                                    50.0f,50.0f,    1.0f,1.0f};
+#include <vector>
+#include "cugl/2d/physics/CUObstacle.h"
+using namespace cugl;
+//                                  Position      Texcoords
+static GLfloat particle_quad[] = {  0.0f,0.0f,    0.0f,0.0f,
+                                    0.0f,5.0f,    0.0f,1.0f,
+                                    5.0f,0.0f,    1.0f,0.0f,
+                                    5.0f,5.0f,    1.0f,1.0f};
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 
-using namespace cugl;
+static GLuint VAO;
+static GLuint VBO;
+static GLuint EBO;
 
-class newParticleShader : public Shader {
+// Represents a single particle and its state
+struct Particle {
+    Vec2 position, velocity;
+    float opacity;
+    float life;
+    Vec4 color;
+
+    Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), opacity(1.0f), life(1.0f) { }
+};
+
+// ParticleGenerator acts as a container for rendering a large number of
+// particles by repeatedly spawning and updating particles and killing
+// them after a given amount of time.
+class ParticleGenerator {
+public:
+    // Constructors
+    ParticleGenerator();
+    ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount);
+    // Update all particles
+    void Update(GLfloat dt, GLuint newParticles, Vec2 offset = Vec2(0.0f, 0.0f));
+    // Render all particles
+    void Draw();
+private:
+    // State
+    std::vector<Particle> particles;
+    GLuint amount;
+    std::shared_ptr<Obstacle> object;
+    // Initializes buffer and vertex attributes
+    void init();
+    // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
+    int firstUnusedParticle();
+    // Respawns particle
+    void respawnParticle(Particle &particle, Vec2 offset = Vec2(0.0f, 0.0f));
+};
+
+class ParticleShader : public Shader {
 protected:
     /** The shader location for the position attribute */
     GLint _aPosition;
@@ -42,7 +81,7 @@ protected:
     Mat4  _mPerspective;
     /** The current shader texture */
     std::shared_ptr<Texture> _mTexture;
-    
+    ParticleGenerator _pg;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -53,8 +92,6 @@ protected:
     const char* _vertSource;
     /** The source string for the fragment shader */
     const char* _fragSource;
-    
-    bool first = true;
     GLuint VAO;
     GLuint VBO;
     GLuint EBO;
@@ -67,10 +104,16 @@ public:
      * You must reinitialize the shader to use it.
      */
     void dispose() override;
+   
+    ParticleShader(){_pg = ParticleGenerator();}
     
-    newParticleShader(){}
+    ParticleShader(std::shared_ptr<Obstacle> object, GLuint amount){
+        _pg = ParticleGenerator(object, amount);
+    }
     
     void onStartup();
+
+    void compileProgram();
     
     void beginShading();
     
@@ -94,4 +137,4 @@ public:
     }
 };
 
-#endif /* NEWPARTICLESHADER_hpp */
+#endif /* particleShader_hpp */

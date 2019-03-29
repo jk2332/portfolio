@@ -51,9 +51,32 @@ void WeatherDefenderApp::onStartup() {
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     
-    nps.onStartup();
+    
+    CULogGLError();
+    glGenVertexArrays(1, &VAO);
+    CULogGLError();
+    glBindVertexArray(VAO);
+    CULogGLError();
+    
+    glGenBuffers(1, &VBO);
+    CULogGLError();
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    CULogGLError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    
+    //set up element buffer
+    glGenBuffers(1, &EBO);
+    CULogGLError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    CULogGLError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    CULogGLError();
+    
     
     _batch  = SpriteBatch::alloc();
+    
+    CULogGLError();
+
     
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -156,8 +179,7 @@ void WeatherDefenderApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
     } else {
-//        _gameplay.render(_batch);
-        nps.beginShading();
+        _gameplay.render(_batch);
     }
 }
 
