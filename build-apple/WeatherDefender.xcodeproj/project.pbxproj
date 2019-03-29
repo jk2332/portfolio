@@ -292,9 +292,9 @@
 				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
 				EBB4B5742040ADD300238092 /* BubbleGenerator.h */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
+				F1B4E5492224517700D807D5 /* Cloud.hpp */,
 				F867DC30224013500038F905 /* CloudNode.cpp */,
 				F867DC31224013500038F905 /* CloudNode.hpp */,
-				F1B4E5492224517700D807D5 /* Cloud.hpp */,
 				EBB4B56F2040ADD200238092 /* GameController.cpp */,
 				EBB4B56D2040ADD200238092 /* GameController.h */,
 				EBB4B5702040ADD200238092 /* InputController.cpp */,
@@ -306,6 +306,8 @@
 				F8939EA32236FE2900199385 /* MenuController.hpp */,
 				F86A31512239D6D500233ED5 /* particle.frag */,
 				F86A31522239D6D600233ED5 /* particle.vert */,
+				F85C7946224DCBA200E1E679 /* particleShader.cpp */,
+				F85C7947224DCBA200E1E679 /* particleShader.hpp */,
 				F8939EA62236FEED00199385 /* Pest.cpp */,
 				F8939EA72236FEED00199385 /* Pest.hpp */,
 				F8939EB62237517400199385 /* PestController.cpp */,
@@ -322,8 +324,6 @@
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
 				F8939EB22237515400199385 /* WeatherController.cpp */,
 				F8939EB32237515400199385 /* WeatherController.hpp */,
-				F85C7946224DCBA200E1E679 /* particleShader.cpp */,
-				F85C7947224DCBA200E1E679 /* particleShader.hpp */,
 			);
 			name = Source;
 			path = ../source;

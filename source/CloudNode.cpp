@@ -92,29 +92,11 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     
     batch->end();
     //my custom code
-    
     CULogGLError();
-    glGenVertexArrays(1, &VAO);
+//    ps.beginShading();
+    ps.draw();
     CULogGLError();
-    glBindVertexArray(VAO);
-    CULogGLError();
-    
-    glGenBuffers(1, &VBO);
-    CULogGLError();
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    CULogGLError();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
-    
-    //set up element buffer
-    glGenBuffers(1, &EBO);
-    CULogGLError();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    CULogGLError();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-    CULogGLError();
-    
-    
-    ps.beginShading();
+
     batch->begin(getScene()->getCamera()->getCombined());
     
     batch->setColor(tint);

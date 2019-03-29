@@ -51,7 +51,6 @@ void WeatherDefenderApp::onStartup() {
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
     
-    
     CULogGLError();
     glGenVertexArrays(1, &VAO);
     CULogGLError();

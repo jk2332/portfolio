@@ -50,13 +50,10 @@ public:
     void Update(GLfloat dt, GLuint newParticles, Vec2 offset = Vec2(0.0f, 0.0f));
     // Render all particles
     void Draw();
-private:
     // State
     std::vector<Particle> particles;
     GLuint amount;
     std::shared_ptr<Obstacle> object;
-    // Initializes buffer and vertex attributes
-    void init();
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
@@ -80,7 +77,7 @@ protected:
     /** The current perspective matrix */
     Mat4  _mPerspective;
     /** The current shader texture */
-    std::shared_ptr<Texture> _mTexture;
+    Texture particle;
     ParticleGenerator _pg;
     /** The OpenGL program for this shader */
     GLuint _program;
@@ -115,7 +112,9 @@ public:
 
     void compileProgram();
     
-    void beginShading();
+    void drawParticle(Vec2 pos);
+    
+    void draw();
     
     void SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader = false){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);

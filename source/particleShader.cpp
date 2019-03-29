@@ -23,8 +23,8 @@ ParticleGenerator::ParticleGenerator(){}
 ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount)
 {
     CULogGLError();
-    this->init();
-}
+    for (GLuint i = 0; i < this->amount; ++i)
+        this->particles.push_back(Particle());}
 
 void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
     // Add new particles
@@ -52,12 +52,6 @@ void ParticleGenerator::Draw(){
 
         }
     }
-}
-
-void ParticleGenerator::init(){
-    CULogGLError();
-    for (GLuint i = 0; i < this->amount; ++i)
-        this->particles.push_back(Particle());
 }
 
 // Stores the index of the last particle used (for quick access to next dead particle)
@@ -92,7 +86,6 @@ void ParticleGenerator::respawnParticle(Particle &particle, Vec2 offset){
 }
 
 void ParticleShader::dispose() {
-    if (_mTexture != nullptr) { _mTexture.reset(); }
     Shader::dispose();
     //glDeleteTextures(1, texture);
     glDeleteProgram(_program);
@@ -129,6 +122,9 @@ void ParticleShader::onStartup(){
 //    CULogGLError();
 //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 //    CULogGLError();
+    
+    particle = Texture();
+    particle.initWithFile("textures/particle1.png");
     
     compileProgram();
 }
@@ -180,7 +176,7 @@ void ParticleShader::compileProgram(){
 }
 
 //do the thing
-void ParticleShader::beginShading(){ 
+void ParticleShader::draw(){
     CULogGLError();
     // Find each of the attributes
     //        _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE );
@@ -217,41 +213,47 @@ void ParticleShader::beginShading(){
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     //CULogGLError();
     
-    //rebinding presumably because of the spritebatch that left itself bound
-    glBindBuffer(GL_ARRAY_BUFFER,VBO);
-    CULogGLError();
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
-    CULogGLError();
     //reusing the particle shader program
     glUseProgram( _program );
     CULog("Program is %d",_program);
     CULogGLError();
-    GLint _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
+    
+//    glGenVertexArrays(1, &VAO);
+    CULogGLError();
+//    glBindVertexArray(VAO);
+    CULogGLError();
+    //rebinding presumably because of the spritebatch that left itself bound
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    CULogGLError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    CULogGLError();
+    
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    CULogGLError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    CULogGLError();
+    
+    _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
     CULogGLError();
     CULog("Variable address is %d",_aPosition);
-    
-    glBindVertexArray(this->VAO);
-    CULogGLError();
     
     glEnableVertexAttribArray(_aPosition);
     CULogGLError();
     glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     CULogGLError();
     
-    //SetVector2f(OFFSET_UNIFORM, Vec2(500,500));
+//    SetVector2f(OFFSET_UNIFORM, pos);
     //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
     
-    glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
-    
-    GLint texAttrib = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
+    _aTexCoords = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
     CULogGLError();
-    glEnableVertexAttribArray(texAttrib);
+    glEnableVertexAttribArray(_aTexCoords);
     CULogGLError();
-    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+    glVertexAttribPointer(_aTexCoords, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     CULogGLError();
     
-    Texture particle = Texture();
-    particle.initWithFile("textures/particle1.png");
     particle.bind();
     
     _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
@@ -261,11 +263,17 @@ void ParticleShader::beginShading(){
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     CULogGLError();
     particle.unbind();
-    glBindVertexArray(NULL);
+//    glBindVertexArray(NULL);
     CULogGLError();
+    
+    glDisableVertexAttribArray(_aPosition);
+    CULogGLError();
+    glDisableVertexAttribArray(_aTexCoords);
+    CULogGLError();
+    
     glUseProgram(NULL);
     CULogGLError();
     // Don't forget to reset to default blending mode
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     CULogGLError();
 }
