@@ -58,7 +58,7 @@ protected:
     std::shared_ptr<ResourceController> _resource;
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
-    std::vector<std::shared_ptr<Obstacle>> _rainDrops;
+
 
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -91,8 +91,6 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
-    int cloudToBeCombined1 = -1;
-    int cloudToBeCombined2 = -1;
     
 #pragma mark Internal Object Management
     /**
@@ -269,7 +267,7 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
-    void combineByPinch(int cind1, int cind2, Vec2 pinchpos);
+    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
 
     
     /**
