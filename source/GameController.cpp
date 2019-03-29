@@ -515,6 +515,7 @@ void GameScene::combineByPinch(int cind1, int cind2, Vec2 pinchPos){
     float c1y = _cloud[cind1]->getPosition().y;
     float c2x = _cloud[cind2]->getPosition().x;
     float c2y = _cloud[cind2]->getPosition().y;
+    CULog("combine by pinch");
     
     pinchPos.x = pinchPos.x/iosToDesktopScaleX;
     pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
@@ -522,7 +523,9 @@ void GameScene::combineByPinch(int cind1, int cind2, Vec2 pinchPos){
     // check that pinch center is in between collided clouds
     if (min(c1x, c2x)-1.5 <= pinchPos.x && pinchPos.x <= max(c1x, c2x) +1.5 &&
         min(c1y, c2y)-1.5 <= pinchPos.y && pinchPos.y <= max(c1y, c2y) +1.5){
-        CULog("combine the clouds!");
+        CULog("contact between %s and %s", _cloud[cind1]->getName().c_str(), _cloud[cind2]->getName().c_str());
+        _cloud[cind1]->markForRemoval();
+        _cloud[cind2]->incSize(_cloud[cind1]->getSize() - 1.0f);
     }
     
     cloudToBeCombined1 = -1;
@@ -554,7 +557,6 @@ void GameScene::update(float dt) {
             combineByPinch(cloudToBeCombined1, cloudToBeCombined2, _input.getPinchSelection());
         }
     }
-
     
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -605,7 +607,6 @@ void GameScene::update(float dt) {
         _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
         if (ticks % 200 == 0 && ticks > 200) {
 //        if (ticks % 100 == 0) {
-
             currentPlant->updateState();
             CULog(std::to_string(ticks).c_str());
         }
@@ -662,19 +663,17 @@ void GameScene::update(float dt) {
         CULog("%f, %f", v.x, v.y);
     }
     
-    //process list for deletion
-//    for (int i = 0; i < num_clouds; i++) {
-//        if ((_cloud[i] != nullptr) && (_cloud[i]->isRemoved())) {
-//            CULog("removing in update");
-//            _worldnode->removeChildByName("cloudNode" + std::to_string(i));
-//            _cloud[i]->deactivatePhysics(*_world->getWorld());
-//            _cloud[i]->dispose();
-//            _cloud[i] = nullptr;
-//       }
-//
-//    }
+//    process list for deletion
+    for (int i = 0; i < num_clouds; i++) {
+        if ((_cloud[i] != nullptr) && (_cloud[i]->isRemoved())) {
+            CULog("removing in update");
+            _worldnode->removeChildByName("cloudNode" + std::to_string(i));
+            _cloud[i]->deactivatePhysics(*_world->getWorld());
+            _cloud[i]->dispose();
+            _cloud[i] = nullptr;
+       }
 
-
+    }
     
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
@@ -765,62 +764,6 @@ void GameScene::update(float dt) {
     }
     
     cloudsToSplit.clear();
-    
-    
-    
-//    // Move an object if touched
-//    if (_input.didSelect()) {
-//        // Transform from screen to physics coords
-//        auto pos =  _input.getSelection();
-//        pos = _worldnode->screenToNodeCoords(pos);
-//
-//        // Place the cross hair
-//        _selector->setPosition(pos/_scale);
-//
-//        // Attempt to select an obstacle at the current position
-//        if (!_selector->isSelected()) {
-//            _selector->select();
-//        }
-//    } else {
-//        if (_selector->isSelected()) {
-//            if (click1 == -1){
-//                clicked_ob = _selector->getObstacle();
-//                Vec2 pos = clicked_ob->getPosition();
-//                std::cout << pos.x << endl;
-//                std::cout << pos.y << endl;
-//                click1 = ticks;
-//            }
-//            else if (click2 == -1){
-//                click2 = ticks;
-//                if (click2 - click1 <= 50 && clicked_ob == _selector->getObstacle()){
-//                    ((Cloud *) clicked_ob)->setIsRaining(true);
-//                    std::string cloud_name = _selector->getObstacle()->getName();
-//                    for (int i = 0; i < num_clouds; i++) {
-//                        if (_cloud[i] != nullptr && _cloud[i]->getName() == cloud_name) {
-//                            _cloud[i]->decSize();
-//                        }
-//                    }
-//                    _rainDrops.clear();
-//                    for (int i = -5; i < 5; i++){
-//                        Vec2 cloud_pos = ((Cloud *) clicked_ob)->getPosition();
-//                        std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
-//                        rainDrop->setName("bubble");
-//                        rainDrop->setMass(0);
-//                        rainDrop->setLinearVelocity(0, -1);
-//                        std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
-//                        _toBeRemoved.push_back(rainDrop);
-//                        addObstacle(rainDrop, rainNode, 5);
-//                    }
-//                }
-//                click1 = -1;
-//                click2 = -1;
-//                clicked_ob = nullptr;
-//            }
-//            _selector->deselect();
-//        }
-//
-//    }
-    
 
 //    if (ticks % 10 == 0){
 //        std::cout <<"here"<<endl;
@@ -833,6 +776,7 @@ void GameScene::update(float dt) {
 //        }
 //        _toBeRemoved.clear();
 //    }
+    
     // Turn the physics engine crank.
     for (int i = 0; i < num_clouds; i++) {
         _cloud[i]->update(dt);
@@ -859,6 +803,7 @@ void GameScene::beginContact(b2Contact* contact) {
     }
 
     Cloud *cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetUserData());
+
     if (cloud2 != nullptr && cloud2->getName().empty()) {
         cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
     }
@@ -867,6 +812,10 @@ void GameScene::beginContact(b2Contact* contact) {
         CULog("clouds null");
         return;
     }
+    
+//    if (cloud1->getName().find("cloud") == 0 && cloud2->getName().find("cloud") == 0) {
+//        CULog("they are both clouds");
+//    }
 
 ////    CULog("%s %s\n", cloud1->getName().c_str(), cloud2->getName().c_str());
 //    if (cloud1->getName().find("cloud") == 0 && cloud2->getName().find("cloud") == 0) {
@@ -891,9 +840,9 @@ void GameScene::beginContact(b2Contact* contact) {
 //        _cloud[toDelete]->markForRemoval();
 //        _cloud[toGrow]->incSize(_cloud[toDelete]->getSize() - 1.0f);
 //    }
-    
-    cloudToBeCombined1 = ((int) (cloud1->getName().back())) - 48;
-    cloudToBeCombined2 = ((int) (cloud2->getName().back())) - 48;
+//
+//    cloudToBeCombined1 = ((int) (cloud1->getName().back())) - 48;
+//    cloudToBeCombined2 = ((int) (cloud2->getName().back())) - 48;
 
 }
 
