@@ -58,7 +58,7 @@ void Plant::updateState(){
     }
     else {
         if (_state == needShade){
-            CULog("update needs shade");
+//            CULog("update needs shade");
             if (_shaded){
                 incHealth();
                 _shadeCounter += 1;
