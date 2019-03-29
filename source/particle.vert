@@ -29,7 +29,7 @@ void main(){
     TexCoords = texCoords;
     ParticleColor = color;
 // gl_Position = projection * vec4((position * scale) + offset, 0.0, 1.0);
-    gl_Position = vec4(scaleX*(position.x+offset.x),scaleY*(position.y+offset.y),0,1);
+    gl_Position = vec4(scaleX*(position.x) + offset.x,scaleY*(position.y) + offset.y,0,1);
 //    gl_Position = vec4(offset.x,offset.y,0,1);
 
 

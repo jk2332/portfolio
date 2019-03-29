@@ -55,10 +55,10 @@ using namespace cugl;
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
 float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
-                   0.0f,  10.0f, 16.0f,  10.0f, 16.0f,  9.0f,
-                   -1.0f,  9.0f,  -1.0f, 19.0f };
-float WALL2[] = { 33.0f, 19.0f, 33.0f,  9.0f, 16.0f,  9.0f,
-			      16.0f,  10.0f, 32.0f,  10.0f, 32.0f, 18.0f,
+                   0.0f,  0.0f, 16.0f,  0.0f, 16.0f,  -1.0f,
+                   -1.0f,  -1.0f,  -1.0f, 19.0f };
+float WALL2[] = { 33.0f, 19.0f, 33.0f,  -1.0f, 16.0f,  -1.0f,
+			      16.0f,  0.0f, 32.0f,  0.0f, 32.0f, 18.0f,
 				  16.0f, 18.0f, 16.0f, 19.0f };
 
 /** The initial position of the ragdoll head */

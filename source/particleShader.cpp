@@ -20,11 +20,11 @@ using namespace cugl;
 
 ParticleGenerator::ParticleGenerator(){}
 
-ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount)
-{
+ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount){
     CULogGLError();
     for (GLuint i = 0; i < this->amount; ++i)
-        this->particles.push_back(Particle());}
+        this->particles.push_back(Particle());
+}
 
 void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
     // Add new particles
@@ -32,26 +32,16 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
         int unusedParticle = this->firstUnusedParticle();
         this->respawnParticle(this->particles[unusedParticle], offset);
     }
-    // Update all particles
-    //    for (GLuint i = 0; i < this->amount; ++i){
-    //        Particle &p = this->particles[i];
-    //        p.life -= dt; // reduce life
-    //        if (p.life > 0.0f){    // particle is alive, thus update
-    //            p.position -= p.velocity * dt;
-    //            p.color.w -= dt * 2.5;
-    //        }
-    //    }
-}
-
-// Render all particles
-void ParticleGenerator::Draw(){
-    CULog("Begin Draw");
-    CULogGLError();
-    for (Particle particle : this->particles){
-        if (particle.life > 0.0f){
-
+//     Update all particles
+        for (GLuint i = 0; i < this->amount; ++i){
+            Particle &p = this->particles[i];
+            p.life -= dt; // reduce life
+            p.velocity = object->getPosition() - p.position;
+            if (p.life > 0.0f){    // particle is alive, thus update
+                p.position = p.position + p.velocity * dt;
+                p.color.w -= dt * 2.5;
+            }
         }
-    }
 }
 
 // Stores the index of the last particle used (for quick access to next dead particle)
@@ -103,26 +93,6 @@ void ParticleShader::dispose() {
 }
 
 void ParticleShader::onStartup(){
-//    CULogGLError();
-//    glGenVertexArrays(1, &this->VAO);
-//    CULogGLError();
-//    glBindVertexArray(this->VAO);
-//    CULogGLError();
-//
-//    glGenBuffers(1, &VBO);
-//    CULogGLError();
-//    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//    CULogGLError();
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
-//
-//    //set up element buffer
-//    glGenBuffers(1, &EBO);
-//    CULogGLError();
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//    CULogGLError();
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-//    CULogGLError();
-    
     particle = Texture();
     particle.initWithFile("textures/particle1.png");
     
@@ -176,38 +146,8 @@ void ParticleShader::compileProgram(){
 }
 
 //do the thing
-void ParticleShader::draw(){
+void ParticleShader::drawParticle(Vec2 pos){
     CULogGLError();
-    // Find each of the attributes
-    //        _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE );
-    //        if( !validateVariable(_aPosition, POSITION_ATTRIBUTE)) {
-    //            dispose();
-    //        }
-    //        CULogGLError();
-    //        _aTexCoords = glGetAttribLocation( _program, TEXCOORDS_ATTRIBUTE );
-    //        if( !validateVariable(_aTexCoords, TEXCOORDS_ATTRIBUTE)) {
-    //            dispose();
-    //        }
-    //        CULogGLError();
-    //        _uProjection = glGetUniformLocation( _program, PROJECTION_UNIFORM );
-    //        if( !validateVariable(_uProjection, PROJECTION_UNIFORM)) {
-    //            dispose();
-    //        }
-    //        CULogGLError();
-    //        _uOffset = glGetUniformLocation( _program, OFFSET_UNIFORM );
-    //        if( !validateVariable(_uOffset, OFFSET_UNIFORM)) {
-    //            dispose();
-    //        }
-    //        CULogGLError();
-    //        _uColor = glGetUniformLocation( _program, COLOR_UNIFORM );
-    //        if( !validateVariable(_uColor, COLOR_UNIFORM)) {
-    //            dispose();
-    //        }
-    //        CULogGLError();
-    //        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
-    //        if( !validateVariable(_uSprite, SPRITE_UNIFORM)) {
-    //            dispose();
-    //        }
     // Set mesh attributes
     
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -244,7 +184,7 @@ void ParticleShader::draw(){
     glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     CULogGLError();
     
-//    SetVector2f(OFFSET_UNIFORM, pos);
+    SetVector2f(OFFSET_UNIFORM, pos);
     //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
     
     _aTexCoords = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
@@ -255,7 +195,6 @@ void ParticleShader::draw(){
     CULogGLError();
     
     particle.bind();
-    
     _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
     CULogGLError();
     glUniform1i(_uSprite, TEXTURE_POSITION);
@@ -276,4 +215,19 @@ void ParticleShader::draw(){
     // Don't forget to reset to default blending mode
 //    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     CULogGLError();
+}
+
+void ParticleShader::update(float dt, GLuint np){
+    this->_pg.Update(dt, np);
+}
+
+// Render all particles
+void ParticleShader::draw(){
+    CULog("Begin Draw");
+    CULogGLError();
+    for (Particle particle : this->_pg.particles){
+        if (particle.life > 0.0f){
+            drawParticle(particle.position);
+        }
+    }
 }

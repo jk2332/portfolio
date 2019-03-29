@@ -116,6 +116,8 @@ public:
     
     void draw();
     
+    void update(float dt, GLuint np);
+    
     void SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader = false){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
     }

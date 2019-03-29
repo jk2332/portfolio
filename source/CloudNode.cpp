@@ -93,7 +93,6 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     batch->end();
     //my custom code
     CULogGLError();
-//    ps.beginShading();
     ps.draw();
     CULogGLError();
 
