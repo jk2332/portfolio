@@ -54,7 +54,7 @@
  *
  * For the construction, see the ragdoll diagram above, with the position offsets.
  */
-class Cloud : public ComplexObstacle {
+class Cloud : public PolygonObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Cloud);
@@ -70,6 +70,9 @@ protected:
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
     std::shared_ptr<cugl::Node> _node;
     
+    // Represents the box obstacle representing the cloud
+    std::shared_ptr<BoxObstacle> _ob;
+    
 //    /** Cache object for transforming the force according the object angle */
 //    cugl::Mat4 _affine;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
@@ -82,6 +85,7 @@ protected:
     int _type;
     Vec2 _velocity;
     float _size;
+    float _scale;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -117,7 +121,7 @@ public:
      * NEVER USE A CONSTRUCTOR WITH NEW. If you want to allocate a model on
      * the heap, use one of the static constructors instead.
      */
-    Cloud(void) : ComplexObstacle() { }
+    Cloud(void) : PolygonObstacle() { }
     
     /**
      * Destroys this Ragdoll, releasing all resources.
@@ -144,7 +148,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    virtual bool init() override { return init(cugl::Vec2::ZERO, 1.0f); }
+//    virtual bool init() override { return init(cugl::Poly2::Poly2()); }
     
     /**
      * Initializes a new Ragdoll with the given position
@@ -160,8 +164,8 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos) override { return init(pos,1.0f); }
-    
+    bool init(const cugl::Poly2, const cugl::Vec2);
+        
     /**
      * Initializes a new Ragdoll with the given position and scale
      *
@@ -175,8 +179,9 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(const cugl::Vec2& pos, float scale);
+//    bool init(const cugl::Vec2& pos, float scale);
     
+    std::shared_ptr<BoxObstacle> getObstacle();
     
 #pragma mark -
 #pragma mark Static Constructors
@@ -192,10 +197,10 @@ public:
      *
      * @return a newly allocated Ragdoll at the origin.
      */
-    static std::shared_ptr<Cloud> alloc() {
-        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init() ? result : nullptr);
-    }
+//    static std::shared_ptr<Cloud> alloc() {
+//        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
+//        return (result->init(cugl::Poly2::Poly2()) ? result : nullptr);
+//    }
     
     /**
      * Returns a newly allocated Ragdoll with the given position
@@ -211,9 +216,9 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Cloud> alloc(const cugl::Vec2& pos) {
+    static std::shared_ptr<Cloud> alloc(Poly2 p) {
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init(pos, 1.0f) ? result : nullptr);
+        return (result->init(p, Vec2(0.5f, 0.5f)) ? result : nullptr);
     }
     
     /**
@@ -229,49 +234,13 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Cloud> alloc(const cugl::Vec2& pos, float scale) {
+    static std::shared_ptr<Cloud> alloc(Poly2 p, const cugl::Vec2& pos) {
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-        return (result->init(pos, scale) ? result : nullptr);
+        return (result->init(p, pos) ? result : nullptr);
     }
     
     
-#pragma mark Physics Methods
-    /**
-     * Creates the joints for this object.
-     *
-     * This method is executed as part of activePhysics. This is the primary method to
-     * override for custom physics objects.
-     *
-     * @param world Box2D world to store joints
-     *
-     * @return true if object allocation succeeded
-     */
-    bool createJoints(b2World& world) override;
-    
-    /**
-     * Create new fixtures for this body, defining the shape
-     *
-     * This method is typically undefined for complex objects.  While they
-     * need a root body, they rarely need a root shape.  However, we provide
-     * this method for maximum flexibility.
-     */
-    virtual void createFixtures() override;
-    
-    /**
-     * Release the fixtures for this body, reseting the shape
-     *
-     * This method is typically undefined for complex objects.  While they
-     * need a root body, they rarely need a root shape.  However, we provide
-     * this method for maximum flexibility.
-     */
-    virtual void releaseFixtures() override;
-    
-    
-    b2Fixture* GetFixtureA();
-    
-    // Get the second fixture in this contact
-    b2Fixture* GetFixtureB();
-    
+#pragma mark Physics Methods    
     /**
      * Creates the individual body parts for this ragdoll
      *
@@ -291,6 +260,7 @@ public:
 
     void markForRemoval();
     
+    void setScale(float s);
     
 #pragma mark -
 #pragma mark Attribute Accessors
@@ -374,9 +344,7 @@ public:
      * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
-    
-    void makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture);
-    
+        
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
