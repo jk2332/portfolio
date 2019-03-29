@@ -367,6 +367,9 @@ public:
     bool getIsRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     void incSize(float f);
+    float getCloudSize() {
+        return _size;
+    }
     void decSize();
 
     

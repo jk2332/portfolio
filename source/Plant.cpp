@@ -62,7 +62,7 @@ void Plant::updateState(){
     }
     else {
         if (_state == needShade){
-            CULog("update needs shade");
+//            CULog("update needs shade");
             if (_shaded){
                 incHealth();
                 _shadeCounter += 1;
@@ -99,17 +99,17 @@ void Plant::updateState(){
                 _state = needRain;
                 _rainProb /= 2;
             } else if (statusChance < _rainProb + _shadeProb) {
-                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
+//                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
                 _state = needShade;
                 _shadeProb /= 1.5;
             } else {
-                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
+//                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
                 if (!_shaded){
                     _progress += 1;
                 }
             }
         } else if (_state == needSun) {
-            CULog("update needs sun");
+//            CULog("update needs sun");
             if (!_shaded){
                 incHealth();
                 if (_health >= 0){setState(noNeed);}

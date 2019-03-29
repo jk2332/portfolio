@@ -86,7 +86,8 @@ protected:
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
     int num_clouds = 2;
-    std::shared_ptr<Cloud> _cloud[2];
+    std::shared_ptr<Cloud> _cloud[20];
+    int new_cloud_ind = 2;
    
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
@@ -100,8 +101,6 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
-    int cloudToBeCombined1 = -1;
-    int cloudToBeCombined2 = -1;
     
 #pragma mark Internal Object Management
     /**
@@ -278,7 +277,7 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
-    void combineByPinch(int cind1, int cind2, Vec2 pinchpos);
+    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
 
     
     /**

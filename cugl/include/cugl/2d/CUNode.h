@@ -1109,8 +1109,8 @@ public:
      * @param angle the rotation angle of this node.
      */
     void setAngle(float angle) {
-        _angle = angle;
-        if (!_useTransform) updateTransform();
+//        _angle = angle;
+//        if (!_useTransform) updateTransform();
     }
     
     /**
