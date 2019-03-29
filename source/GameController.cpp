@@ -843,6 +843,7 @@ void GameScene::update(float dt) {
         _pQ.clear();
     }
     
+    Size s = _assets->get<Texture>("cloud")->getSize();
     
     if (ticks % 5 == 0){
         for (auto &ic : cloudsToSplit){
@@ -851,7 +852,6 @@ void GameScene::update(float dt) {
             auto cloudNode = _worldnode->getChildByName(ic.second->getName());
             Cloud* c = (Cloud*)ic.second;
             c->decSize();
-            Size s = cloudNode->getContentSize();
             Vec2 cloudPos = ic.second->getPosition();
             Poly2 cloudpoly(CLOUD, 8);
             SimpleTriangulator triangulator;
@@ -864,6 +864,7 @@ void GameScene::update(float dt) {
             cloud->setDebugColor(DYNAMIC_COLOR);
             cloud->setName("cloud" + std::to_string(new_cloud_ind));
             cloud->setScale(_scale);
+            cloud->setSize(c->getCloudSize());
             _cloud[new_cloud_ind] = cloud;
             
             // Set the physics attributes
@@ -874,7 +875,6 @@ void GameScene::update(float dt) {
             cloudpoly *= _scale;
             std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
             sprite->setName("cloud" + std::to_string(new_cloud_ind));
-            sprite->setContentSize(c->getCloudSize()*s);
             cloud->setSceneNode(sprite);
             addObstacle(cloud,sprite,1);  // All walls share the same texture
             new_cloud_ind ++;
@@ -888,7 +888,6 @@ void GameScene::update(float dt) {
     for (int i = 0; i < 20; i++) {
         if (_cloud[i] != nullptr) {
             auto cloudNode = _worldnode->getChildByName(_cloud[i]->getName());
-            Size s = cloudNode->getContentSize();
             cloudNode->setContentSize(s*_cloud[i]->getCloudSize());
             _cloud[i]->update(dt);
         }

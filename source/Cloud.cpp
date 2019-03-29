@@ -55,7 +55,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _size = .8f;
+    _size = 1.0f;
     _ob = nullptr;
     return true;
 }
