@@ -153,18 +153,18 @@ public:
         return a;
     }
     
-    cugl::Vec2 posToGridCoord(cugl::Vec2 p){
+    std::pair<int, int> posToGridCoord(cugl::Vec2 p){
         return posToGridCoord(p.x, p.y);
     }
     
-    cugl::Vec2 posToGridCoord(float x, float y){
+    std::pair<int, int> posToGridCoord(float x, float y){
         if (!isInBounds(x, y)){
             throw "out of bound";
         }
         else {
             int new_x = int((x - DOWN_LEFT_CORNER_X)/GRID_WIDTH);
             int new_y = int((y - DOWN_LEFT_CORNER_Y)/GRID_HEIGHT);
-            return cugl::Vec2(new_x, new_y);
+            return std::make_pair(new_x, new_y);
         }
     }
     
