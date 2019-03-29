@@ -66,8 +66,9 @@ using namespace cugl;
 //                  16.0f,  10.0f, 32.0f,  10.0f, 32.0f, 18.0f,
 //                  16.0f, 18.0f, 16.0f, 19.0f };
 float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-    0.f,  0.0f,  0.0f, 18.0f };
+				   1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
+					0.f,  0.0f,  0.0f, 18.0f };
+float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
     16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
     16.0f, 17.0f, 16.0f, 18.0f };
@@ -83,8 +84,6 @@ long shadeCoolDown = 50l;
 bool pinched = false;
 long pinchTicks = -1;
 bool pinchedWhenContact = false;
-Cloud* cloudToBeCombined1;
-Cloud* cloudToBeCombined2;
 std::map<long, Vec2> touchIDs_started_outside;
 std::map<long, int> cloudsToSplit;
 // std::vector<Obstacle *> toBeRemoved;
@@ -237,9 +236,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _world->onBeginContact = [this](b2Contact* contact) {
         beginContact(contact);
     };
-//    _world->onEndContact = [this](b2Contact* contact){
-//        endContact(contact);
-//    };
+    _world->onEndContact = [this](b2Contact* contact){
+        endContact(contact);
+    };
     _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
         beforeSolve(contact,oldManifold);
     };
@@ -252,7 +251,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
     // Create the scene graph
-    std::shared_ptr<Texture> image = _assets->get<Texture>("backg");
+    std::shared_ptr<Texture> image = _assets->get<Texture>("background");
     _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -361,20 +360,20 @@ void GameScene::populate() {
    wall1.setIndices(triangulator.getTriangulation());
    wall1.setType(Poly2::Type::SOLID);
 
-   std::shared_ptr<PolygonObstacle> wallobj = PolygonObstacle::alloc(wall1);
-   wallobj->setDebugColor(STATIC_COLOR);
-   wallobj->setName(wname);
+   std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
+   wallobj1->setDebugColor(STATIC_COLOR);
+   wallobj1->setName(wname);
 
    // Set the physics attributes
-   wallobj->setBodyType(b2_staticBody);
-   wallobj->setDensity(BASIC_DENSITY);
-   wallobj->setFriction(BASIC_FRICTION);
-   wallobj->setRestitution(BASIC_RESTITUTION);
+   wallobj1->setBodyType(b2_staticBody);
+   wallobj1->setDensity(BASIC_DENSITY);
+   wallobj1->setFriction(BASIC_FRICTION);
+   wallobj1->setRestitution(BASIC_RESTITUTION);
 
    // Add the scene graph nodes to this object
    wall1 *= _scale;
    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
-   addObstacle(wallobj,sprite,1);  // All walls share the same texture
+   addObstacle(wallobj1,sprite,1);  // All walls share the same texture
 
 #pragma mark : Wall polygon 2
    Poly2 wall2(WALL2,16);
@@ -383,20 +382,20 @@ void GameScene::populate() {
    wall2.setIndices(triangulator.getTriangulation());
    wall2.setType(Poly2::Type::SOLID);
 
-   wallobj = PolygonObstacle::alloc(wall2);
-   wallobj->setDebugColor(STATIC_COLOR);
-   wallobj->setName(wname);
+   std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
+   wallobj2->setDebugColor(STATIC_COLOR);
+   wallobj2->setName(wname);
 
    // Set the physics attributes
-   wallobj->setBodyType(b2_staticBody);
-   wallobj->setDensity(BASIC_DENSITY);
-   wallobj->setFriction(BASIC_FRICTION);
-   wallobj->setRestitution(BASIC_RESTITUTION);
+   wallobj2->setBodyType(b2_staticBody);
+   wallobj2->setDensity(BASIC_DENSITY);
+   wallobj2->setFriction(BASIC_FRICTION);
+   wallobj2->setRestitution(BASIC_RESTITUTION);
 
    // Add the scene graph nodes to this object
    wall2 *= _scale;
    sprite = PolygonNode::allocWithTexture(image,wall2);
-   addObstacle(wallobj,sprite,1);  // All walls share the same texture
+   addObstacle(wallobj2,sprite,1);  // All walls share the same texture
     
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
@@ -413,18 +412,33 @@ void GameScene::populate() {
    _worldnode->addChildWithName(plantNode, "plantNode");
     
     for (int i = 0; i < num_clouds; i++) {
-        _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
-        _cloud[i]->initialBuild(_assets);
-        auto cloudNode = Node::alloc();
-        _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
-        _cloud[i]->setName("cloud" + std::to_string(i));
-        _cloud[i]->setSceneNode(cloudNode);
-        _cloud[i]->setDebugColor(Color4::BLUE);
-        _cloud[i]->setDebugScene(_debugnode);
-        _cloud[i]->setSize(1.0f);
-        _cloud[i]->setId(i);
-        _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
-        _world->addObstacle(_cloud[i]);
+        // Create the polygon outline
+        Poly2 cloudpoly(CLOUD, 8);
+        SimpleTriangulator triangulator;
+        triangulator.set(cloudpoly);
+        triangulator.calculate();
+        cloudpoly.setIndices(triangulator.getTriangulation());
+        cloudpoly.setType(Poly2::Type::SOLID);
+        
+        std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(28-i*6, 10));
+        cloud->setDebugColor(DYNAMIC_COLOR);
+        cloud->setName("cloud" + std::to_string(i));
+        cloud->setId(i);
+        cloud->setScale(_scale);
+        _cloud[i] = cloud;
+        
+        // Set the physics attributes
+        std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
+        cloudobj->setBodyType(b2_dynamicBody);
+//        wallobj->setDensity(BASIC_DENSITY);
+//        wallobj->setFriction(BASIC_FRICTION);
+//        wallobj->setRestitution(BASIC_RESTITUTION);
+        
+        // Add the scene graph nodes to this object
+        cloudpoly *= _scale;
+        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
+        cloud->setSceneNode(sprite);
+        addObstacle(cloud,sprite,1);  // All walls share the same texture
 
     }
 }
@@ -454,15 +468,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
     // Position the scene graph node (enough for static objects)
     node->setPosition(obj->getPosition()*_scale);
     _worldnode->addChild(node,zOrder);
-    
-    // Dynamic objects need constant updating
-    if (obj->getBodyType() == b2_dynamicBody) {
-        Node* weak = node.get(); // No need for smart pointer in callback
-        obj->setListener([=](Obstacle* obs){
-            weak->setPosition(obs->getPosition()*_scale);
-            weak->setAngle(obs->getAngle());
-        });
-    }
 }
 
 
@@ -485,11 +490,11 @@ Vec2 transformPoint(Vec2 point) {
     return Vec2(x,y);
 }
 
-void combineByPinch(Vec2 pinchPos){
-    float c1x = cloudToBeCombined1->getPosition().x;
-    float c1y = cloudToBeCombined1->getPosition().y;
-    float c2x = cloudToBeCombined2->getPosition().x;
-    float c2y = cloudToBeCombined2->getPosition().y;
+void GameScene::combineByPinch(int cind1, int cind2, Vec2 pinchPos){
+    float c1x = _cloud[cind1]->getPosition().x;
+    float c1y = _cloud[cind1]->getPosition().y;
+    float c2x = _cloud[cind2]->getPosition().x;
+    float c2y = _cloud[cind2]->getPosition().y;
     
     pinchPos.x = pinchPos.x/iosToDesktopScaleX;
     pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
@@ -500,8 +505,8 @@ void combineByPinch(Vec2 pinchPos){
         CULog("combine the clouds!");
     }
     
-    cloudToBeCombined1 = nullptr;
-    cloudToBeCombined2 = nullptr;
+    cloudToBeCombined1 = -1;
+    cloudToBeCombined2 = -1;
 //    pinchPos = nullptr;
     pinched = false;
 }
@@ -519,14 +524,14 @@ void combineByPinch(Vec2 pinchPos){
  */
 void GameScene::update(float dt) {
     _input.update(dt);
-    ticks ++;
+    ticks++;
     
 //    pinched = _input.didPinchSelect();
     if (_input.didPinchSelect()){
         pinched = true;
         CULog("pinched");
-        if (cloudToBeCombined1 != nullptr && cloudToBeCombined2 != nullptr){
-            combineByPinch(_input.getPinchSelection());
+        if (cloudToBeCombined1 >= 0 && cloudToBeCombined1 < num_clouds && cloudToBeCombined2 >= 0 && cloudToBeCombined2 < num_clouds){
+            combineByPinch(cloudToBeCombined1, cloudToBeCombined2, _input.getPinchSelection());
         }
     }
 
@@ -549,10 +554,11 @@ void GameScene::update(float dt) {
             continue;
         }
         else {
-            Vec2 v = _cloud[x]->getBodies()[0]->getPosition();
+             Vec2 v = _cloud[x]->getPosition();
             if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
                 v.y = v.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
             }
+        
             if (_board->isInBounds(v.x, v.y)){
                 Vec2 gridPos = _board->posToGridCoord(v.x,v.y);
                 _board->getNodeAt(gridPos.x, gridPos.y)->setColor(getColor() - Color4(230, 230, 230, 0));
@@ -595,18 +601,21 @@ void GameScene::update(float dt) {
 //            getChildByName(childName)->setColor(Color4(0, 0, 0));
 //        }
 //    }
-   
-//    process list for deletion
-    for (int i = 0; i < num_clouds; i++) {
-        if ((_cloud[i] != nullptr) && (_cloud[i]->isRemoved())) {
-            CULog("removing in update");
-            _worldnode->removeChildByName("cloudNode" + std::to_string(i));
-            _cloud[i]->deactivatePhysics(*_world->getWorld());
-            _cloud[i]->dispose();
-            _cloud[i] = nullptr;
-       }
 
-    }
+    
+    //process list for deletion
+//    for (int i = 0; i < num_clouds; i++) {
+//        if ((_cloud[i] != nullptr) && (_cloud[i]->isRemoved())) {
+//            CULog("removing in update");
+//            _worldnode->removeChildByName("cloudNode" + std::to_string(i));
+//            _cloud[i]->deactivatePhysics(*_world->getWorld());
+//            _cloud[i]->dispose();
+//            _cloud[i] = nullptr;
+//       }
+//
+//    }
+
+
     
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
@@ -632,6 +641,9 @@ void GameScene::update(float dt) {
                         touchIDs_started_outside.insert({touchID, selector->getPosition()});
                     }
                 }
+                if (selector->isSelected() && selector->getObstacle()->getName() == "wall"){
+                    selector->deselect();
+                }
                 _selectors.insert({touchID, selector});
             }
             else{
@@ -646,10 +658,13 @@ void GameScene::update(float dt) {
                     auto ob = selector->getObstacle();
                     if (!cloudsToSplit.count(touchID)){
                         if (ob->getPosition().distance(touchIDs_started_outside.at(touchID)) >= 4 && abs(ob->getPosition().x - touchIDs_started_outside.at(touchID).x) <= 3 && pinched){
-                            std::string name = ob->getName();
+                            auto name = ob->getName();
                             cloudsToSplit.insert({touchID, (int) name.at(name.size() - 1)});
                         }
                     }
+                    selector->deselect();
+                }
+                if (selector->isSelected() && selector->getObstacle()->getName() == "wall"){
                     selector->deselect();
                 }
             }
@@ -662,8 +677,6 @@ void GameScene::update(float dt) {
         if (!selected.count(touchID)){
             //            CULog("touch ID  after selection %i", touchID);
             if (_selectors.count(touchID)){
-                _selectors.at(touchID)->select();
-                
                 if (_selectors.at(touchID)->isSelected()){
                     if (cloudsToSplit.count(touchID)){
     //                        CULog("started swipping outside the cloud but ended inside");
@@ -673,8 +686,8 @@ void GameScene::update(float dt) {
                 }
                 else {
                     if (cloudsToSplit.count(touchID)){
-                        Vec2 cloudPos = _cloud[cloudsToSplit.at(touchID)]->getBodies()[0]->getPosition();
-                        if (!(cloudPos.distance(_selectors.at(touchID)->getPosition()) >= 5)){
+                        Vec2 cloudPos = _cloud[cloudsToSplit.at(touchID)]->getPosition();
+                        if (!(cloudPos.distance(_selectors.at(touchID)->getPosition()) >= 4)){
                             cloudsToSplit.erase(touchID);
                         }
                     }
@@ -761,6 +774,10 @@ void GameScene::update(float dt) {
 //        }
 //        _toBeRemoved.clear();
 //    }
+    // Turn the physics engine crank.
+    for (int i =0; i < num_clouds; i++) {
+        _cloud[i]->update(dt);
+    }
     _world->update(dt);
     
 }
@@ -776,14 +793,14 @@ void GameScene::update(float dt) {
  * @param  contact  The two bodies that collided
  */
 void GameScene::beginContact(b2Contact* contact) {
-//    CULog("begincontact");
+    CULog("begin contact");
     Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
-    if (cloud1->getName().empty()) {
+    if (cloud1 != nullptr && cloud1->getName().empty()) {
         cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
     }
 
     Cloud *cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetUserData());
-    if (cloud2->getName().empty()) {
+    if (cloud2 != nullptr && cloud2->getName().empty()) {
         cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
     }
 
@@ -815,9 +832,9 @@ void GameScene::beginContact(b2Contact* contact) {
 //        _cloud[toDelete]->markForRemoval();
 //        _cloud[toGrow]->incSize(_cloud[toDelete]->getSize() - 1.0f);
 //    }
-
-    cloudToBeCombined1 = cloud1;
-    cloudToBeCombined2 = cloud2;
+    
+    cloudToBeCombined1 = ((int) (cloud1->getName().back())) - 48;
+    cloudToBeCombined2 = ((int) (cloud2->getName().back())) - 48;
 
 }
 
@@ -835,7 +852,22 @@ void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
 }
 
 void GameScene::endContact(b2Contact *contact){
- 
+    Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
+    if (cloud1 != nullptr && cloud1->getName().empty()) {
+        cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
+    }
+    
+    Cloud *cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetUserData());
+    if (cloud2 != nullptr && cloud2->getName().empty()) {
+        cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
+    }
+    
+    if (cloud1 == nullptr || cloud2 == nullptr || cloud1 == cloud2 || cloud1->getName() == cloud2->getName()) {
+        CULog("clouds null");
+        return;
+    }
+    cloudToBeCombined1 = ((int) (cloud1->getName().back())) - 48;
+    cloudToBeCombined2 = ((int) (cloud2->getName().back())) - 48;
 }
 
 /**

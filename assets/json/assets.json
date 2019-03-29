@@ -5,12 +5,6 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
-        "background": {
-            "file":     "textures/background-gameplayprototype.png"
-        },
-        "foreground": {
-            "file":     "textures/foreground.png"
-        },
         "bubble": {
             "file":      "textures/bubble.png",
             "minfilter": "linear",
@@ -46,8 +40,8 @@
         "tile5": {
             "file":     "textures/tile5.png"
         },
-        "backg": {
-            "file":     "textures/technical-background.png"
+        "background": {
+            "file":     "textures/alpha-background.png"
         },
         "cloudFace": {
             "file":     "textures/cf2.png"

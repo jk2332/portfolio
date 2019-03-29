@@ -94,6 +94,8 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
+    int cloudToBeCombined1 = -1;
+    int cloudToBeCombined2 = -1;
     
 #pragma mark Internal Object Management
     /**
@@ -270,6 +272,7 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
+    void combineByPinch(int cind1, int cind2, Vec2 pinchpos);
 
     
     /**
