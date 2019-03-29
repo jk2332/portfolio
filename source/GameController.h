@@ -35,7 +35,9 @@
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
+#include "Particle.hpp"
 #include <set>
+#include <cugl/2d/CUPathNode.h>
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -59,7 +61,14 @@ protected:
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
+    std::shared_ptr<ParticleNode> _rainNode;
+    std::shared_ptr<cugl::FreeList<Particle>> _memory;
+    std::set<Particle*> _particles;
+    
+    std::vector<Particle*> _pQ;
+    std::vector<Particle*> _pD;
 
+    
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;

@@ -23,7 +23,7 @@ using namespace cugl;
 
 class Plant : public cugl::BoxObstacle {
 public:
-    int healthLimit = 2000;
+    int healthLimit = 3;
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Plant);
@@ -32,6 +32,7 @@ protected:
     int _health;
     float _drawscale;
     bool _shaded;
+    bool _rained;
     int _x;
     int _y;
     std::vector<std::shared_ptr<Texture>> _textures;
@@ -129,6 +130,7 @@ public:
     }
     
     void setShade(bool f);
+    void setRained(bool f);
     
     void updateState();
     void setState(int s);

@@ -68,7 +68,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Cloud::dispose() {
-    _node = nullptr;
+//    _node = nullptr;
 //    _bodies.clear();
     //_bubbler = nullptr;
 }
@@ -142,7 +142,6 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 void Cloud::markForRemoval() {
     CULog("cloud to be removed");
     markRemoved(true);
-    CULog("remove is? %i", isRemoved());
 }
 
 

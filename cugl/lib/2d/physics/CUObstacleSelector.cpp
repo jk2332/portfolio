@@ -193,7 +193,10 @@ void ObstacleSelector::deselect() {
  * @return a (weak) reference to the Obstacle selected (if any)
  */
 Obstacle* ObstacleSelector::getObstacle() {
-    if (_selection != nullptr) {
+//    if (_selection != nullptr) {
+    // Zaibo change
+    if (_selection != nullptr && _selection->GetBody() != nullptr) {
+
         void* data = _selection->GetBody()->GetUserData();
         if (data != nullptr) {
             // Cannot dynamic cast void pointer. Is there alternative?

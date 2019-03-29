@@ -127,7 +127,9 @@ public:
     /**
      * Destroys this Ragdoll, releasing all resources.
      */
-    virtual ~Cloud(void) { dispose(); }
+    virtual ~Cloud(void) {
+        CULog("CLOUD DESTRUCTOR CALLED");
+        dispose(); }
     
     /**
      * Disposes all resources and assets of this Ragdoll
