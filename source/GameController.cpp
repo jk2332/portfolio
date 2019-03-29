@@ -75,10 +75,10 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 
 /** The initial position of the ragdoll head */
 long ticks = 0l;
-long click1 = -1l;
-long click2 = -1l;
+long click1[2] = {-1, -1};
+long click2[2] = {-1, -1};
 long temp = 01;
-Obstacle * clicked_ob = nullptr;
+std::unordered_set<int> raining_clouds;
 long rainingTicks = 0l;
 long shadeCoolDown = 50l;
 bool pinched = false;
@@ -462,12 +462,27 @@ void GameScene::populate() {
 void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
                            const std::shared_ptr<cugl::Node>& node,
                            int zOrder) {
+//    _world->addObstacle(obj);
+//    obj->setDebugScene(_debugnode);
+//
+//    // Position the scene graph node (enough for static objects)
+//    node->setPosition(obj->getPosition()*_scale);
+//    _worldnode->addChild(node,zOrder);
     _world->addObstacle(obj);
     obj->setDebugScene(_debugnode);
     
     // Position the scene graph node (enough for static objects)
     node->setPosition(obj->getPosition()*_scale);
     _worldnode->addChild(node,zOrder);
+    
+    // Dynamic objects need constant updating
+    if (obj->getBodyType() == b2_dynamicBody) {
+        Node* weak = node.get(); // No need for smart pointer in callback
+        obj->setListener([=](Obstacle* obs){
+            weak->setPosition(obs->getPosition()*_scale);
+            weak->setAngle(obs->getAngle());
+        });
+    }
 }
 
 
@@ -636,7 +651,6 @@ void GameScene::update(float dt) {
                 }
                 if (!(selector->isSelected() && selector->getObstacle()->getName() != "wall")){
     //                    CULog("creating new selector for swiping %i", touchID);
-                    // check distance threshold for swipe
                     if (!touchIDs_started_outside.count(touchID)){
                         touchIDs_started_outside.insert({touchID, selector->getPosition()});
                     }
@@ -671,7 +685,6 @@ void GameScene::update(float dt) {
         }
     }
     
-    
     selected = _input.didSelect();
     for (auto const& touchID : IDs) {
         if (!selected.count(touchID)){
@@ -682,7 +695,34 @@ void GameScene::update(float dt) {
     //                        CULog("started swipping outside the cloud but ended inside");
                         cloudsToSplit.erase(touchID);
                     }
-                    _selectors.at(touchID)->deselect();
+                    int id = ((int) (_selectors.at(touchID)->getObstacle()->getName().back())) - 48;
+                    if (click1[id] == -1){
+                        click1[id] = ticks;
+                    }
+                    else if (click2[id] == -1){
+                        click2[id] = ticks;
+                        if (click2[id] - click1[id] <= 70){
+                            _rainDrops.clear();
+                            Vec2 cloud_pos = _cloud[id]->getPosition();
+                            _cloud[id]->setIsRaining(true);
+                            for (int i = -3; i < 3; i++){
+                                std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(cloud_pos.x + 0.1*i, cloud_pos.y - 1.5), _assets->get<Texture>("bubble")->getSize()/_scale);
+                                rainDrop->setName(std::to_string(id) + std::to_string(i));
+                                rainDrop->setMass(0);
+                                rainDrop->setBullet(true);
+//                                rainDrop->activatePhysics(_world);
+                                rainDrop->setLinearVelocity(0, -1);
+                                rainDrop->setBodyType(b2BodyType::b2_dynamicBody);
+                                std::shared_ptr<PolygonNode> rainNode = PolygonNode::allocWithTexture(_assets->get<Texture>("bubble"));
+                                rainNode->setName("rainNode" + std::to_string(id) + std::to_string(i));
+                                _rainDrops.push_back(rainDrop);
+                                addObstacle(rainDrop, rainNode, 1);
+                            }
+                        }
+                        click1[id] = -1;
+                        click2[id] = -1;
+                       
+                    }
                 }
                 else {
                     if (cloudsToSplit.count(touchID)){
@@ -692,6 +732,7 @@ void GameScene::update(float dt) {
                         }
                     }
                 }
+                _selectors.at(touchID)->deselect();
                 _selectors.erase(touchID);
             }
             if (touchIDs_started_outside.count(touchID)){
@@ -707,6 +748,15 @@ void GameScene::update(float dt) {
     
     cloudsToSplit.clear();
     
+    for (auto &rd : _rainDrops){
+        
+        if (rd->isRemoved()){
+            CULog("in remove for loop");
+            _worldnode->removeChildByName("rainNode" + rd->getName());
+            rd->deactivatePhysics(*_world->getWorld());
+        }
+    }
+    _rainDrops.clear();
     
     
 //    // Move an object if touched
@@ -763,17 +813,7 @@ void GameScene::update(float dt) {
 //    }
     
 
-//    if (ticks % 10 == 0){
-//        std::cout <<"here"<<endl;
-//        for (int i = 0; i < _toBeRemoved.size(); i++){
-//            std::shared_ptr<Obstacle> ob = _toBeRemoved.at(i);
-//            std::cout << _world->getObstacles().size() <<endl;
-//            std::cout << ob->getName() << endl;
-//            _world->removeObstacle(ob.get());
-//            _toBeRemoved.at(i)->markRemoved(true);
-//        }
-//        _toBeRemoved.clear();
-//    }
+
     // Turn the physics engine crank.
     for (int i =0; i < num_clouds; i++) {
         _cloud[i]->update(dt);
@@ -793,7 +833,35 @@ void GameScene::update(float dt) {
  * @param  contact  The two bodies that collided
  */
 void GameScene::beginContact(b2Contact* contact) {
-    CULog("begin contact");
+//    CULog("begin contact");
+    b2Body* body1 = contact->GetFixtureA()->GetBody();
+    b2Body* body2 = contact->GetFixtureB()->GetBody();
+    
+    
+    // If we hit the "win" door, we are done
+    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
+    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
+    
+    if (b1->isBullet()){
+//        _worldnode->removeChildByName("cloudNode" + std::to_string(i));
+        //            _cloud[i]->deactivatePhysics(*_world->getWorld());
+        //            _cloud[i]->dispose();
+        //            _cloud[i] = nullptr;
+        CULog("delete rain");
+        b1->markRemoved(true);
+        return;
+    }
+
+    if (b2->isBullet()){
+        //        _worldnode->removeChildByName("cloudNode" + std::to_string(i));
+        //            _cloud[i]->deactivatePhysics(*_world->getWorld());
+        //            _cloud[i]->dispose();
+        //            _cloud[i] = nullptr;
+        CULog("delete rain");
+        b2->markRemoved(true);
+        return;
+    }
+
     Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
     if (cloud1 != nullptr && cloud1->getName().empty()) {
         cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
