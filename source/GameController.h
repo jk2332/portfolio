@@ -52,7 +52,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
-    std::shared_ptr<Plant> _plants[72];
+    std::shared_ptr<Plant> _plants[36];
     std::shared_ptr<Board> _board;
     std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
@@ -79,9 +79,6 @@ protected:
     int num_clouds = 2;
     std::shared_ptr<Cloud> _cloud[2];
    
-
-
-    
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
 

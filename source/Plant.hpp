@@ -23,7 +23,6 @@ using namespace cugl;
 
 class Plant : public cugl::BoxObstacle {
 public:
-    bool isShaded;
     int healthLimit = 2000;
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
@@ -32,11 +31,22 @@ private:
 protected:
     int _health;
     float _drawscale;
+    bool _shaded;
     int _x;
     int _y;
-    std::shared_ptr<cugl::Texture> _texture;
+    std::vector<std::shared_ptr<Texture>> _textures;
+//    std::shared_ptr<cugl::Texture> _currTexture;
+    int _stage;
+    int _maxStage;
+
     int _state;
     int _type;
+    int _rainProb;
+    int _shadeProb;
+    int _progress;
+    
+    int _shadeCounter;
+    std::shared_ptr<PolygonNode> _node;
     
     
 public:
@@ -76,7 +86,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale);
+    bool init(int x, int y, int rain, int shade, std::vector<std::shared_ptr<Texture>> textures, float drawscale);
     
     
 #pragma mark -
@@ -95,12 +105,12 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Plant> alloc(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale) {
+    static std::shared_ptr<Plant> alloc(int x, int y, int rainProb, int shadeProb, std::vector<std::shared_ptr<Texture>> textures, float drawscale) {
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
-        return (result->init(x, y, texture, drawscale) ? result : nullptr);
+        return (result->init(x, y, rainProb, shadeProb, textures, drawscale) ? result : nullptr);
     }
     
-    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name);
 
     int getType() {return _type;}
     void setType(int t) {_type = t;}
@@ -117,9 +127,14 @@ public:
     void incHealth() {
         if (_health < healthLimit){_health += 2;}
     }
+    
+    void setShade(bool f);
+    
     void updateState();
     void setState(int s);
     int getState() {return _state;}
+    
+    void upgradeSprite();
 };
 
 

@@ -59,19 +59,26 @@ using namespace cugl;
 // In an actual game, this information would go in a data file.
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
-//float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
-//                   0.0f,  10.0f, 16.0f,  10.0f, 16.0f,  9.0f,
-//                   -1.0f,  9.0f,  -1.0f, 19.0f };
-//float WALL2[] = { 33.0f, 19.0f, 33.0f,  9.0f, 16.0f,  9.0f,
-//                  16.0f,  10.0f, 32.0f,  10.0f, 32.0f, 18.0f,
-//                  16.0f, 18.0f, 16.0f, 19.0f };
-float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-				   1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-					0.f,  0.0f,  0.0f, 18.0f };
+float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
+                   0.0f,  10.0f, 16.0f,  10.0f, 16.0f,  9.0f,
+                   -1.0f,  9.0f,  -1.0f, 19.0f };
+float WALL2[] = { 33.0f, 19.0f, 33.0f,  9.0f, 16.0f,  9.0f,
+                  16.0f,  10.0f, 32.0f,  10.0f, 32.0f, 18.0f,
+                  16.0f, 18.0f, 16.0f, 19.0f };
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
-float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
-    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
-    16.0f, 17.0f, 16.0f, 18.0f };
+//float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
+//    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
+//    0.f,  0.0f,  0.0f, 18.0f };
+//float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
+//    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
+//    16.0f, 17.0f, 16.0f, 18.0f };
+
+//int plants[] = { 1, 5, 17, 21, 35};
+int plants[] = { 21};
+
+
+map<int, int> rainMap = {{1, 20}, {5, 50}, {17, 0}, {21, 0}, {35, 25}};
+map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}};
 
 /** The initial position of the ragdoll head */
 long ticks = 0l;
@@ -288,7 +295,6 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _world = nullptr;
-//        _selector = nullptr;
         _selectors.clear();
         _worldnode = nullptr;
         _debugnode = nullptr;
@@ -401,15 +407,32 @@ void GameScene::populate() {
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "gridNode");
 
-   auto plantNode = Node::alloc();
-   for (int i = 0; i < GRID_NUM_X; i++){
-       for (int j = 0; j < GRID_NUM_Y; j++){
-           auto plant = Plant::alloc(i, j, _assets->get<Texture>("plant"), 32.0f);
-           plant->setSceneNode(plantNode);
-           plant->setName("plant" + std::to_string(i) + std::to_string(j));
-       }
-   }
-   _worldnode->addChildWithName(plantNode, "plantNode");
+    std::vector<std::shared_ptr<Texture>> pTextures;
+    pTextures.push_back(_assets->get<Texture>("tomato1"));
+    pTextures.push_back(_assets->get<Texture>("tomato2"));
+    pTextures.push_back(_assets->get<Texture>("tomato3"));
+    pTextures.push_back(_assets->get<Texture>("tomato4"));
+
+    auto plantNode = Node::alloc();
+    for (int i = 0; i < GRID_NUM_X; i++){
+        for (int j = 0; j < GRID_NUM_Y; j++){
+           int plantNum = i*GRID_NUM_Y + j;
+           // Create an array of string objects
+
+           auto plant = Plant::alloc(i, j, rainMap[plantNum], shadeMap[plantNum], pTextures, 32.0f);
+
+           auto *idx = std::find(std::begin(plants), std::end(plants), plantNum);
+           if (idx == std::end(plants)) {
+               continue;
+           }
+
+           auto plantName = "plant" + std::to_string(plantNum);
+           plant->setSceneNode(plantNode, plantName);
+           plant->setName(plantName);
+           _plants[i*GRID_NUM_Y + j] = plant;
+        }
+    }
+    _worldnode->addChildWithName(plantNode, "plantNode");
     
     for (int i = 0; i < num_clouds; i++) {
         // Create the polygon outline
@@ -430,9 +453,6 @@ void GameScene::populate() {
         // Set the physics attributes
         std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
         cloudobj->setBodyType(b2_dynamicBody);
-//        wallobj->setDensity(BASIC_DENSITY);
-//        wallobj->setFriction(BASIC_FRICTION);
-//        wallobj->setRestitution(BASIC_RESTITUTION);
         
         // Add the scene graph nodes to this object
         cloudpoly *= _scale;
@@ -492,7 +512,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
 /*Raycasting callback function*/
 float callback(b2Fixture* fixture, const Vec2& point, const Vec2& normal, float fraction){
     if (fixture->GetBody()->GetType() == 2){
-        currentPlant->isShaded = true;
+        currentPlant->setShade(true);
     }
     //hoefully we will not collide with other plants
     return 0.0;
@@ -585,38 +605,77 @@ void GameScene::update(float dt) {
     
     //Check win/loss conditions
     
-//    for (unsigned int i = 0; i < sizeof(PLANT_POS_Y)/sizeof(PLANT_POS_Y[0]); i++){
-//        currentPlant = _plants[i];
-//        currentPlant->isShaded = false;
-//        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
-//        Vec2 sunPos = Vec2(plantPos.x, 0);
-//        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
-//        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
-//        currentPlant->updateState();
-//        int st = currentPlant->getState();
-//        if (ticks % 250 == 0 && st == noNeed){
-//            int n = rand() % 4;
-//            if (n == needRain){n = noNeed;}
-//            currentPlant->setState(n);
-//        }
-//        std::string childName = "plant" + std::to_string(i);
-//        if (st == noNeed) {
-//            getChildByName(childName)->setColor(Color4(0, 255, 0));
-//        }
-//        if (st == needRain){
-//            getChildByName(childName)->setColor(Color4(0, 0, 255));
-//        }
-//        else if (st == needSun){
-//            getChildByName(childName)->setColor(Color4(255, 165, 0));
-//        }
-//        else if (st == needShade) {
-//            getChildByName(childName)->setColor(Color4(255, 0, 0));
-//        }
-//        else if (st == dead){
-//            getChildByName(childName)->setColor(Color4(0, 0, 0));
-//        }
-//    }
+    auto plantNode = _worldnode->getChildByName("plantNode");
+    for (int i = 0; i < sizeof(_plants)/sizeof(_plants[0]); ++i){
+        auto *idx = std::find(std::begin(plants), std::end(plants), i);
+        if (idx == std::end(plants)) {
+            continue;
+        }
 
+        currentPlant = _plants[i];
+        currentPlant->setShade(false);
+        Vec2 plantPos = currentPlant->BoxObstacle::getPosition();
+        Vec2 sunPos = Vec2(plantPos.x, -1);
+        std::function<float (b2Fixture *, const Vec2 &, const Vec2 &, float)> f = callback;
+        _world->rayCast(f, transformPoint(plantPos), transformPoint(sunPos));
+        if (ticks % 200 == 0 && ticks > 200) {
+//        if (ticks % 100 == 0) {
+
+            currentPlant->updateState();
+            CULog(std::to_string(ticks).c_str());
+        }
+        int st = currentPlant->getState();
+        
+        bool debugPlantColor = false;
+        
+        std::string childName = "plant" + std::to_string(i);
+        if (st == noNeed) {
+            if (debugPlantColor) {
+                CULog("no need");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4::WHITE);
+        }
+        if (st == needRain){
+            if (debugPlantColor) {
+                CULog("need rain");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
+        else if (st == needSun){
+            if (debugPlantColor) {
+                CULog("need sun");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
+        }
+        else if (st == needShade) {
+            if (debugPlantColor) {
+                CULog("need shade");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
+        }
+        else if (st == dead){
+            if (debugPlantColor) {
+                CULog("dead");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(0, 0, 0));
+        }
+    }
+    
+    //process list for deletion
+    for (int i = 0; i < num_clouds; i++) {
+        if ((_cloud[i] != nullptr) && (_cloud[i]->isRemoved())) {
+            CULog("removing in update");
+            _worldnode->removeChildByName("cloudNode" + std::to_string(i));
+            _cloud[i]->deactivatePhysics(*_world->getWorld());
+            _cloud[i]->dispose();
+            _cloud[i] = nullptr;
+       }
+    }
+
+    if (_input.didSplit()) {
+        auto v = _cloud[0]->getObstacle()->getPosition();
+        CULog("%f, %f", v.x, v.y);
+    }
     
     //process list for deletion
 //    for (int i = 0; i < num_clouds; i++) {
@@ -815,7 +874,7 @@ void GameScene::update(float dt) {
 
 
     // Turn the physics engine crank.
-    for (int i =0; i < num_clouds; i++) {
+    for (int i = 0; i < num_clouds; i++) {
         _cloud[i]->update(dt);
     }
     _world->update(dt);
