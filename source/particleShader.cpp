@@ -302,3 +302,17 @@ void ParticleShader::SetVector4f(const GLchar *name, const Vec4 &value, GLboolea
 //    this->bind();
 //    glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE, glm::value_ptr(matrix));
 //}
+
+
+//dispose(){
+//    glDeleteTextures(2, textures);
+//
+//    glDeleteProgram(shaderProgram);
+//    glDeleteShader(fragmentShader);
+//    glDeleteShader(vertexShader);
+//
+//    glDeleteBuffers(1, &ebo);
+//    glDeleteBuffers(1, &vbo);
+//
+//    glDeleteVertexArrays(1, &vao);
+//}

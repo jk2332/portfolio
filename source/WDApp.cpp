@@ -12,8 +12,18 @@
 //  Version: 1/26/17
 //
 #include "WDApp.h"
-static GLfloat particle_quad[] = {0.0f, 0.0f, 0.0f,500.0f, 500.0f,0.0f};
+//                                  Position        Texcoords
+static GLfloat particle_quad[] = {  0.0f,0.0f,      0.0f,0.0f,
+                                    0.0f,50.0f,     0.0f,1.0f,
+                                    50.0f,0.0f,     1.0f,0.0f,
+                                    50.0f,50.0f,    1.0f,1.0f
+};
+
+static GLuint elements[] = {0, 1, 2, 3, 1, 2};
+
 static GLuint VBO;
+
+static GLuint EBO;
 
 using namespace cugl;
 // The shaders
@@ -67,19 +77,23 @@ void WeatherDefenderApp::onStartup() {
     CULogGLError();
     glGenVertexArrays(1, &this->VAO);
     CULogGLError();
-    glGenBuffers(1, &VBO);
-    CULogGLError();
     glBindVertexArray(this->VAO);
     CULogGLError();
-    // Fill mesh buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     
+    glGenBuffers(1, &VBO);
+    CULogGLError();
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     CULogGLError();
     glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
-
-    GLint pos = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
-    glEnableVertexAttribArray(pos);
-    glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+    
+    //set up element buffer
+    glGenBuffers(1, &EBO);
+    CULogGLError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    CULogGLError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    CULogGLError();
+    
     _batch  = SpriteBatch::alloc();
     
     Application::onStartup(); // YOU MUST END with call to parent
@@ -314,28 +328,29 @@ void WeatherDefenderApp::draw() {
         CULogGLError();
         // Set mesh attributes
 
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         //CULogGLError();
 
+        //rebinding presumably because of the spirtebatch that left itself bound
         glBindBuffer(GL_ARRAY_BUFFER,VBO);
         CULogGLError();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
         CULogGLError();
+        //reusing the particle shader program
         glUseProgram( _program );
         CULog("Program is %d",_program);
         CULogGLError();
-        GLint pos = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
-        CULog("Variable address is %d",pos);
+        GLint _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
         CULogGLError();
+        CULog("Variable address is %d",_aPosition);
 
         glBindVertexArray(this->VAO);
         CULogGLError();
 
-        glEnableVertexAttribArray(pos);
+        glEnableVertexAttribArray(_aPosition);
         CULogGLError();
-        glVertexAttribPointer(pos, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
         CULogGLError();
-
         
 //        glEnableVertexAttribArray(_aPosition);
 //        CULogGLError();
@@ -350,9 +365,25 @@ void WeatherDefenderApp::draw() {
         
         //SetVector2f(OFFSET_UNIFORM, Vec2(500,500));
         //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
-//            setTexture(texture);
+//
+        glActiveTexture(GL_TEXTURE0 + TEXTURE_POSITION);
+
+        GLint texAttrib = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
+        CULogGLError();
+        glEnableVertexAttribArray(texAttrib);
+        CULogGLError();
+        glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+        CULogGLError();
+       
+        Texture particle = Texture();
+        particle.initWithFile("textures/particle1.png");
+        particle.bind();
         
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
+        CULogGLError();
+        glUniform1i(_uSprite, TEXTURE_POSITION);
+        CULogGLError();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         CULogGLError();
         glBindVertexArray(NULL);
         CULogGLError();
