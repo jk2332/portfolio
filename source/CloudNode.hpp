@@ -15,7 +15,7 @@
 #include <cugl/math/polygon/CUSimpleTriangulator.h>
 #include "particleShader.hpp"
 
-#define PARTICLE_NUM 200
+#define PARTICLE_NUM 400
 namespace cugl {
     
     /**

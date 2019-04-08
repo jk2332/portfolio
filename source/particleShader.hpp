@@ -40,12 +40,12 @@ static GLuint VAO;
 static GLuint VBO;
 static GLuint EBO;
 //                                  Radius  CenterX CenterY
-static Vec3 cloudSections[] = { Vec3(3.9,   0.0,    0.0), //Central Half Circle
-                                Vec3(2.3,   -1.3,   2.5),
-                                Vec3(1.2,   -3.9,   1.3),
-                                Vec3(1.2,   3.8,    1.3),
-                                Vec3(1.5,   2.3,    2.6),
-                                Vec3(1.6,   0.0,    3.4)};
+static Vec3 cloudSections[] = { Vec3(3.9,   -0.5,    -1.0), //Central Half Circle
+                                Vec3(2.3,   -1.8,   1.5),
+                                Vec3(1.2,   -4.4,   0.3),
+                                Vec3(1.2,   3.3,    0.3),
+                                Vec3(1.5,   1.8,    1.6),
+                                Vec3(1.6,   -0.5,    2.4)};
 
 // Represents a single particle and its state
 struct Particle {
@@ -66,7 +66,7 @@ struct Particle {
         float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
         float t = 2*M_PI*rand();
         
-        offset = 15*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
+        offset = 20*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
         
         //If it's the half circle, keep the point in the upper section
         if (rand0 == 1 && offset.y < 0){

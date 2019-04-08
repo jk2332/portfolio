@@ -150,8 +150,6 @@ void ParticleShader::compileProgram(){
 //do the thing
 void ParticleShader::drawParticles(){
     CULogGLError();
-    // Set mesh attributes
-    
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     //CULogGLError();
     
@@ -159,11 +157,10 @@ void ParticleShader::drawParticles(){
     glUseProgram( _program );
 //    CULog("Program is %d",_program);
     CULogGLError();
-    
 //    glGenVertexArrays(1, &VAO);
-    CULogGLError();
+//    CULogGLError();
 //    glBindVertexArray(VAO);
-    CULogGLError();
+//    CULogGLError();
     //rebinding presumably because of the spritebatch that left itself bound
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
@@ -180,7 +177,6 @@ void ParticleShader::drawParticles(){
     _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
     CULogGLError();
 //    CULog("Variable address is %d",_aPosition);
-    
     glEnableVertexAttribArray(_aPosition);
     CULogGLError();
     glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
@@ -203,7 +199,6 @@ void ParticleShader::drawParticles(){
         if (p.life > 0.0f){
             SetVector2f(OFFSET_UNIFORM, p.position);
             //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
-            
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             CULogGLError();
         }
@@ -228,14 +223,6 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, GLuint np){
 
 // Render all particles
 void ParticleShader::draw(){
-//    CULog("Begin Draw");
     CULogGLError();
-//    for (Particle particle : this->_pg.particles){
-//        if (particle.life > 0.0f){
-//            drawParticle(particle.position);
-//        }
-//    }
-
     drawParticles();
-
 }
