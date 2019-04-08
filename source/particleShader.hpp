@@ -16,11 +16,18 @@
 #include <vector>
 #include "cugl/2d/physics/CUObstacle.h"
 using namespace cugl;
+////                                  Position      Texcoords
+//static GLfloat particle_quad[] = {  0.0f,0.0f,    0.0f,0.0f,
+//                                    0.0f,5.0f,    0.0f,1.0f,
+//                                    5.0f,0.0f,    1.0f,0.0f,
+//                                    5.0f,5.0f,    1.0f,1.0f};
+
 //                                  Position      Texcoords
-static GLfloat particle_quad[] = {  0.0f,0.0f,    0.0f,0.0f,
-                                    0.0f,5.0f,    0.0f,1.0f,
-                                    5.0f,0.0f,    1.0f,0.0f,
-                                    5.0f,5.0f,    1.0f,1.0f};
+static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
+                                    -2.5f,2.5f,    0.0f,1.0f,
+                                    2.5f,-2.5f,    1.0f,0.0f,
+                                    2.5f,2.5f,    1.0f,1.0f};
+
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 
@@ -34,8 +41,11 @@ struct Particle {
     float opacity;
     float life;
     Vec4 color;
-
-    Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), opacity(1.0f), life(1.0f) { }
+    Vec2 offset;
+    Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(Vec2(0.0f,0.0f)), opacity(1.0f), life(1.0f){
+        
+        float random = (rand() % 100);
+    }
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -47,7 +57,7 @@ public:
     ParticleGenerator();
     ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount);
     // Update all particles
-    void Update(GLfloat dt, GLuint newParticles, Vec2 offset = Vec2(0.0f, 0.0f));
+    void Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos);
     // Render all particles
     void Draw();
     // State
@@ -116,7 +126,7 @@ public:
     
     void draw();
     
-    void update(float dt, GLuint np);
+    void update(Vec2 cloud_pos, float dt, GLuint np);
     
     void SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader = false){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);

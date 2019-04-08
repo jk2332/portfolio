@@ -26,21 +26,23 @@ ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint am
         this->particles.push_back(Particle());
 }
 
-void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 offset){
+void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
     // Add new particles
-    for (GLuint i = 0; i < newParticles; ++i){
-        int unusedParticle = this->firstUnusedParticle();
-        this->respawnParticle(this->particles[unusedParticle], offset);
-    }
+//    for (GLuint i = 0; i < newParticles; ++i){
+//        int unusedParticle = this->firstUnusedParticle();
+//        this->respawnParticle(this->particles[unusedParticle], cloud_pos);
+//    }
 //     Update all particles
         for (GLuint i = 0; i < this->amount; ++i){
             Particle &p = this->particles[i];
-            p.life -= dt; // reduce life
-            p.velocity = object->getPosition() - p.position;
-            if (p.life > 0.0f){    // particle is alive, thus update
-                p.position = p.position + p.velocity * dt;
-                p.color.w -= dt * 2.5;
-            }
+//            p.life -= dt; // reduce life
+            
+//            p.velocity = object->getPosition() - p.position;
+//            if (p.life > 0.0f){    // particle is alive, thus update
+//                p.position = p.position + p.velocity * dt;
+                p.position = cloud_pos;
+//                p.color.w -= dt * 2.5;
+//            }
         }
 }
 
@@ -155,7 +157,7 @@ void ParticleShader::drawParticle(Vec2 pos){
     
     //reusing the particle shader program
     glUseProgram( _program );
-    CULog("Program is %d",_program);
+//    CULog("Program is %d",_program);
     CULogGLError();
     
 //    glGenVertexArrays(1, &VAO);
@@ -177,7 +179,7 @@ void ParticleShader::drawParticle(Vec2 pos){
     
     _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
     CULogGLError();
-    CULog("Variable address is %d",_aPosition);
+//    CULog("Variable address is %d",_aPosition);
     
     glEnableVertexAttribArray(_aPosition);
     CULogGLError();
@@ -217,13 +219,13 @@ void ParticleShader::drawParticle(Vec2 pos){
     CULogGLError();
 }
 
-void ParticleShader::update(float dt, GLuint np){
-    this->_pg.Update(dt, np);
+void ParticleShader::update(Vec2 cloud_pos, float dt, GLuint np){
+    this->_pg.Update(dt, np, cloud_pos - Vec2(500,300));
 }
 
 // Render all particles
 void ParticleShader::draw(){
-    CULog("Begin Draw");
+//    CULog("Begin Draw");
     CULogGLError();
     for (Particle particle : this->_pg.particles){
         if (particle.life > 0.0f){

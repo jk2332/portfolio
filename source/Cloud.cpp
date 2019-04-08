@@ -200,7 +200,6 @@ bool Cloud::dropUnit(b2World& world){
  */
 void Cloud::update(float delta) {
     Obstacle::update(delta);
-    _node->ps.update(delta, 1);
     if (_node != nullptr) {
         std::vector<std::shared_ptr<Node>> children = _node->getChildren();
         int i = 0;
@@ -208,6 +207,8 @@ void Cloud::update(float delta) {
         for (auto it = children.begin(); it != children.end(); ++it) {
             (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
             (*it)->setContentSize(_texture->getSize() * _size);
+            
+            _node->ps.update(_bodies[i]->getPosition()*_drawscale, delta, 1);
             
             // Propagate the update to the bodies attached to the Ragdoll
             _bodies[i]->update(delta);
