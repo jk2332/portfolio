@@ -40,7 +40,7 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
 //            p.velocity = object->getPosition() - p.position;
 //            if (p.life > 0.0f){    // particle is alive, thus update
 //                p.position = p.position + p.velocity * dt;
-                p.position = cloud_pos;
+                p.position = cloud_pos + p.offset;
 //                p.color.w -= dt * 2.5;
 //            }
         }

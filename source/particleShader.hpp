@@ -28,12 +28,24 @@ static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
                                     2.5f,-2.5f,    1.0f,0.0f,
                                     2.5f,2.5f,    1.0f,1.0f};
 
+////                                  Position      Texcoords
+//static GLfloat particle_quad[] = {  -5.0f,-5.0f,    0.0f,0.0f,
+//                                    -5.0f,5.0f,    0.0f,1.0f,
+//                                    5.0f,-5.0f,    1.0f,0.0f,
+//                                    5.0f,5.0f,    1.0f,1.0f};
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 
 static GLuint VAO;
 static GLuint VBO;
 static GLuint EBO;
+//                                  Radius  CenterX CenterY
+static Vec3 cloudSections[] = { Vec3(3.9,   0.0,    0.0), //Central Half Circle
+                                Vec3(2.3,   -1.3,   2.5),
+                                Vec3(1.2,   -3.9,   1.3),
+                                Vec3(1.2,   3.8,    1.3),
+                                Vec3(1.5,   2.3,    2.6),
+                                Vec3(1.6,   0.0,    3.4)};
 
 // Represents a single particle and its state
 struct Particle {
@@ -44,7 +56,23 @@ struct Particle {
     Vec2 offset;
     Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(Vec2(0.0f,0.0f)), opacity(1.0f), life(1.0f){
         
-        float random = (rand() % 100);
+        //Determine circle
+        int rand0 = (rand() % 6+1); // in range 1 to 6, inclusive
+//        int rand0 = 1;
+        Vec3 currentCircle = cloudSections[rand0-1];
+//        CULog("rand0 is %d", rand0);
+        
+        //Determine radius in range 0 to radius of currentCircle
+        float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
+        float t = 2*M_PI*rand();
+        
+        offset = 15*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
+        
+        //If it's the half circle, keep the point in the upper section
+        if (rand0 == 1 && offset.y < 0){
+            offset.y = -1*offset.y;
+        }
+        
     }
 };
 
