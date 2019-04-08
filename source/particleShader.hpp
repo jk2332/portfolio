@@ -115,7 +115,7 @@ protected:
     /** The current perspective matrix */
     Mat4  _mPerspective;
     /** The current shader texture */
-    Texture particle;
+    Texture particleTexture;
     ParticleGenerator _pg;
     /** The OpenGL program for this shader */
     GLuint _program;
@@ -150,7 +150,7 @@ public:
 
     void compileProgram();
     
-    void drawParticle(Vec2 pos);
+    void drawParticles();
     
     void draw();
     

@@ -95,8 +95,8 @@ void ParticleShader::dispose() {
 }
 
 void ParticleShader::onStartup(){
-    particle = Texture();
-    particle.initWithFile("textures/particle1.png");
+    particleTexture = Texture();
+    particleTexture.initWithFile("textures/particle1.png");
     
     compileProgram();
 }
@@ -148,7 +148,7 @@ void ParticleShader::compileProgram(){
 }
 
 //do the thing
-void ParticleShader::drawParticle(Vec2 pos){
+void ParticleShader::drawParticles(){
     CULogGLError();
     // Set mesh attributes
     
@@ -186,9 +186,6 @@ void ParticleShader::drawParticle(Vec2 pos){
     glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
     CULogGLError();
     
-    SetVector2f(OFFSET_UNIFORM, pos);
-    //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
-    
     _aTexCoords = glGetAttribLocation(_program, TEXCOORDS_ATTRIBUTE);
     CULogGLError();
     glEnableVertexAttribArray(_aTexCoords);
@@ -196,22 +193,28 @@ void ParticleShader::drawParticle(Vec2 pos){
     glVertexAttribPointer(_aTexCoords, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     CULogGLError();
     
-    particle.bind();
+    particleTexture.bind();
     _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
     CULogGLError();
     glUniform1i(_uSprite, TEXTURE_POSITION);
     CULogGLError();
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    CULogGLError();
-    particle.unbind();
+
+    for (Particle p : _pg.particles){
+        if (p.life > 0.0f){
+            SetVector2f(OFFSET_UNIFORM, p.position);
+            //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
+            
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            CULogGLError();
+        }
+    }
+    particleTexture.unbind();
 //    glBindVertexArray(NULL);
     CULogGLError();
-    
     glDisableVertexAttribArray(_aPosition);
     CULogGLError();
     glDisableVertexAttribArray(_aTexCoords);
     CULogGLError();
-    
     glUseProgram(NULL);
     CULogGLError();
     // Don't forget to reset to default blending mode
@@ -227,9 +230,12 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, GLuint np){
 void ParticleShader::draw(){
 //    CULog("Begin Draw");
     CULogGLError();
-    for (Particle particle : this->_pg.particles){
-        if (particle.life > 0.0f){
-            drawParticle(particle.position);
-        }
-    }
+//    for (Particle particle : this->_pg.particles){
+//        if (particle.life > 0.0f){
+//            drawParticle(particle.position);
+//        }
+//    }
+
+    drawParticles();
+
 }
