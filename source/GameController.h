@@ -34,7 +34,9 @@
 #include "Plant.hpp"
 #include "Cloud.hpp"
 #include "Board.hpp"
+#include "Particle.hpp"
 #include <set>
+#include <cugl/2d/CUPathNode.h>
 
 /**
  * This class is the primary gameplay constroller for the demo.
@@ -47,23 +49,32 @@ class GameScene : public cugl::Scene {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
+
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
-    std::shared_ptr<Plant> _plants[72];
+    std::shared_ptr<Plant> _plants[36];
     std::shared_ptr<Board> _board;
     std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
+    std::shared_ptr<ParticleNode> _rainNode;
+    std::shared_ptr<cugl::FreeList<Particle>> _memory;
+    std::set<Particle*> _particles;
+
+    std::vector<Particle*> _pQ;
+    std::vector<Particle*> _pD;
+
+
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
-    
+
+
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
@@ -72,11 +83,13 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    int num_clouds = 1;
-    std::shared_ptr<Cloud> _cloud[1];
-   
+    int num_clouds = 2;
+    std::shared_ptr<Cloud> _cloud[20];
+    int new_cloud_ind = 2;
+
 	/** Selector to allow mouse control of the ragdoll */
-	std::shared_ptr<cugl::ObstacleSelector> _selector;
+    std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
+
     /** The node referencing the crosshair */
     std::shared_ptr<cugl::PolygonNode> _crosshair;
 
@@ -86,7 +99,7 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
-    
+
 #pragma mark Internal Object Management
     /**
      * Lays out the game geography.
@@ -100,7 +113,7 @@ protected:
      * with your serialization loader, which would process a level file.
      */
     void populate();
-    
+
     /**
      * Adds the physics object to the physics world and loosely couples it to the scene graph
      *
@@ -111,7 +124,7 @@ protected:
      *
      * In addition, scene graph nodes have a z-order.  This is the order they are
      * drawn in the scene graph node.  Objects with the different textures should
-     * have different z-orders whenever possible.  This will cut down on the 
+     * have different z-orders whenever possible.  This will cut down on the
      * amount of drawing done
      *
      * param obj    The physics object to add
@@ -138,7 +151,7 @@ public:
      * This allows us to use a controller without a heap pointer.
      */
     GameScene();
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -146,12 +159,12 @@ public:
      * static resources, like the input controller.
      */
     ~GameScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose();
-    
+
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -185,7 +198,7 @@ public:
      * @return  true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect);
-    
+
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -204,8 +217,8 @@ public:
      * @return  true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity);
-    
-    
+
+
 #pragma mark -
 #pragma mark State Access
     /**
@@ -223,7 +236,7 @@ public:
      * @return true if debug mode is active.
      */
     bool isDebug( ) const { return _debug; }
-    
+
     /**
      * Sets whether debug mode is active.
      *
@@ -232,7 +245,7 @@ public:
      * @param value whether debug mode is active.
      */
     void setDebug(bool value) { _debug = value; _debugnode->setVisible(value); }
-    
+
     /**
      * Returns true if the level is completed.
      *
@@ -241,7 +254,7 @@ public:
      * @return true if the level is completed.
      */
     bool isComplete( ) const { return _complete; }
-    
+
     /**
      * Sets whether the level is completed.
      *
@@ -250,7 +263,7 @@ public:
      * @param value whether the level is completed.
      */
     void setComplete(bool value) { _complete = value; }
-    
+
     /**
      * Processes the start of a collision
      *
@@ -261,7 +274,10 @@ public:
      * @param  contact  The two bodies that collided
      */
     void beginContact(b2Contact* contact);
-    
+    void endContact(b2Contact* contact);
+    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
+
+
     /**
      * Handles any modifications necessary before collision resolution
      *
@@ -274,7 +290,8 @@ public:
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
 
-    
+
+
 #pragma mark -
 #pragma mark Gameplay Handling
     /**
@@ -285,12 +302,12 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep);
-    
+
     /**
      * Resets the status of the game so that we can play again.
      */
     void reset();
-    
+
 };
 
 #endif /* __GAME_CONTROLLER_H__ */

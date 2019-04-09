@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BD3690A224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
+		1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
 		EB122D991E281EE70019E2D1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB122D981E281EE70019E2D1 /* CoreGraphics.framework */; };
 		EB122D9B1E281EFC0019E2D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
@@ -118,6 +120,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1BD36908224E289B00C253C4 /* Particle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
+		1BD36909224E289B00C253C4 /* Particle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Particle.hpp; sourceTree = "<group>"; };
 		EB122D981E281EE70019E2D1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WeatherDefender (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -289,6 +293,8 @@
 			children = (
 				F1F2EDA0223331F600ECCD4B /* Board.cpp */,
 				F1F2EDA1223331F600ECCD4B /* Board.hpp */,
+				1BD36908224E289B00C253C4 /* Particle.cpp */,
+				1BD36909224E289B00C253C4 /* Particle.hpp */,
 				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
 				EBB4B5742040ADD300238092 /* BubbleGenerator.h */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
@@ -457,7 +463,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = G6P7H83FK6;
+						DevelopmentTeam = TX52T47YPD;
 						ProvisioningStyle = Automatic;
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
@@ -559,6 +565,8 @@
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B57F2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
+				F8939EB1223750FC00199385 /* SoundController.cpp in Sources */,
+				1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */,
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
@@ -586,6 +594,7 @@
 				EBB4B5822040ADD300238092 /* LoadingController.cpp in Sources */,
 				F8939EB82237517400199385 /* PestController.cpp in Sources */,
 				EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */,
+				1BD3690A224E289B00C253C4 /* Particle.cpp in Sources */,
 				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
@@ -614,12 +623,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weatherdef;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -638,12 +647,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = G6P7H83FK6;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weatherdef;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

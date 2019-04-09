@@ -40,23 +40,26 @@ using namespace cugl;
  *
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
-bool Cloud::init(const Vec2& pos, float scale) {
-    Obstacle::init(pos);
-    
+bool Cloud::init(Poly2 p, Vec2 pos) {
+    PolygonObstacle::init(p);
+    setPosition(pos);
+
     setName("cloud");
     setGravityScale(0);
 
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
-    _drawscale = scale;
+//    _drawscale = scale;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _size = .8f;
+    _size = 1.0f;
+    _ob = nullptr;
     return true;
 }
+
 
 /**
  * Disposes all resources and assets of this Ragdoll
@@ -65,8 +68,8 @@ bool Cloud::init(const Vec2& pos, float scale) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Cloud::dispose() {
-    _node = nullptr;
-    _bodies.clear();
+//    _node = nullptr;
+//    _bodies.clear();
     //_bubbler = nullptr;
 }
 
@@ -85,8 +88,8 @@ void Cloud::dispose() {
  * @return true if the body parts were successfully created
  */
 bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
-    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
-    
+//    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
+
     // Get the images from the asset manager
     bool success = true;
     for(int ii = 0; ii < _unitNum; ii++) {
@@ -101,15 +104,26 @@ bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
     if (!success) {
         return false;
     }
-    
+
     // Now make everything
-    std::shared_ptr<BoxObstacle> part;
-    
+//    std::shared_ptr<BoxObstacle> part;
+
     // TORSO
     Vec2 pos = getPosition();
-    part = makeUnit(BODY, PART_NONE, pos);
-    part->setFixedRotation(true);
-    
+//    part = makeUnit(BODY, PART_NONE, pos);
+//    part->setFixedRotation(true);
+
+    Size size = _texture->getSize();
+    size.width /= (_drawscale*1.5);
+    size.height /= (_drawscale*1.5);
+
+    std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos, size);
+    body->setDensity(DEFAULT_DENSITY);
+    CULog("created");
+
+    //    _bodies.push_back(body);
+    _ob = body;
+
     return true;
 }
 
@@ -128,7 +142,6 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 void Cloud::markForRemoval() {
     CULog("cloud to be removed");
     markRemoved(true);
-    CULog("remove is? %i", isRemoved());
 }
 
 
@@ -150,37 +163,15 @@ std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& 
     Size size = image->getSize();
     size.width /= (_drawscale*1.5);
     size.height /= (_drawscale*1.5);
-    
+
     Vec2 pos2 = pos;
-    if (connect != PART_NONE) {
-        pos2 += _bodies[connect]->getPosition();
-    }
-    
+
     std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos2, size);
     body->setDensity(DEFAULT_DENSITY);
-    
-    _bodies.push_back(body);
+
+//    _bodies.push_back(body);
+    _ob = body;
     return body;
-}
-
-//void Cloud::makeRainDrops(cugl::Vec2& pos, std::shared_ptr<cugl::Texture> rainTexture){
-//    std::shared_ptr<BoxObstacle> rainDrop = BoxObstacle::alloc(Vec2(pos.x, pos.y - 1), rainTexture->getSize());
-//    rainDrop->setLinearVelocity(0, -100);
-//    rainDrop->cugl::Obstacle::setGravityScale(10);
-//    rainDrop->setFriction(0);
-//    rainDrop->setMass(0.1);
-//    _bodies.push_back(rainDrop);
-//}
-
-
-bool Cloud::dropUnit(b2World& world){
-    if (_unitNum > 1){
-        _unitNum -= 1;
-        world.DestroyJoint(_joints[0]);
-        _joints.clear();
-        return true;
-    }
-    return false;
 }
 
 #pragma mark -
@@ -201,71 +192,17 @@ bool Cloud::dropUnit(b2World& world){
 void Cloud::update(float delta) {
     Obstacle::update(delta);
     if (_node != nullptr) {
-        std::vector<std::shared_ptr<Node>> children = _node->getChildren();
-        int i = 0;
-        // Update the nodes of the attached bodies
-        for (auto it = children.begin(); it != children.end(); ++it) {
-            (*it)->setPosition(_bodies[i]->getPosition()*_drawscale);
-            (*it)->setContentSize(_texture->getSize() * _size);
-            
-            _node->ps.update(_bodies[i]->getPosition()*_drawscale, delta, 1);
-            
-            // Propagate the update to the bodies attached to the Ragdoll
-            _bodies[i]->update(delta);
-        }
+        _node->setPosition(getPosition()*_scale);
+        _node->setAngle(getAngle());
     }
 }
 
-/**
- * Creates the joints for this object.
- *
- * This method is executed as part of activePhysics. This is the primary method to
- * override for custom physics objects.
- *
- * @param world Box2D world to store joints
- *
- * @return true if object allocation succeeded
- */
-bool Cloud::createJoints(b2World& world) {
-    return true;
+void Cloud::setScale(float s) {
+    _scale = s;
 }
 
-/**
- * Create new fixtures for this body, defining the shape
- *
- * This method is typically undefined for complex objects.  However, it
- * is necessary if we want to weld the body to track the center of mass.
- * Joints without fixtures are undefined.
- */
-void Cloud::createFixtures() {
-    if (_body == nullptr) {
-        return;
-    }
-    
-    releaseFixtures();
-    
-    // Create the fixture for the center of mass
-    b2CircleShape shape;
-    shape.m_radius = CENTROID_RADIUS;
-    _fixture.shape = &shape;
-    _fixture.density = CENTROID_DENSITY;
-    _centroid = _body->CreateFixture(&_fixture);
-    
-    markDirty(false);
-}
-
-/**
- * Release the fixtures for this body, reseting the shape
- *
- * This method is typically undefined for complex objects.  However, it
- * is necessary if we want to weld the body to track the center of mass.
- * Joints without fixtures are undefined.
- */
-void Cloud::releaseFixtures() {
-    if (_centroid != nullptr) {
-        _body->DestroyFixture(_centroid);
-        _centroid = nullptr;
-    }
+std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
+    return _ob;
 }
 
 #pragma mark -
@@ -291,6 +228,7 @@ void Cloud::releaseFixtures() {
  */
 void Cloud::setSceneNode(const std::shared_ptr<cugl::CloudNode>& node){
     _node = node;
+    ///THIS SECTION WAS COMMENTED OUT IN MASTER!!!!!
     std::shared_ptr<Texture> image = _texture;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
     sprite->setContentSize(_texture->getSize()*_size);
@@ -324,5 +262,3 @@ void Cloud::decSize() {
 void Cloud::setDrawScale(float scale) {
     _drawscale = scale;
 }
-
-
