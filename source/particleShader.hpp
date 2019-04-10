@@ -48,13 +48,13 @@ static Vec3 cloudSections[] = { Vec3(3.9,   -0.5,    -1.0), //Central Half Circl
                                 Vec3(1.6,   -0.5,    2.4)};
 
 // Represents a single particle and its state
-struct Particle {
+struct CloudParticle {
     Vec2 position, velocity;
     float opacity;
     float life;
     Vec4 color;
     Vec2 offset;
-    Particle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(Vec2(0.0f,0.0f)), opacity(1.0f), life(1.0f){
+    CloudParticle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(Vec2(0.0f,0.0f)), opacity(1.0f), life(1.0f){
         
         //Determine circle
         int rand0 = (rand() % 6+1); // in range 1 to 6, inclusive
@@ -89,13 +89,13 @@ public:
     // Render all particles
     void Draw();
     // State
-    std::vector<Particle> particles;
+    std::vector<CloudParticle> particles;
     GLuint amount;
     std::shared_ptr<Obstacle> object;
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
-    void respawnParticle(Particle &particle, Vec2 offset = Vec2(0.0f, 0.0f));
+    void respawnParticle(CloudParticle &particle, Vec2 offset = Vec2(0.0f, 0.0f));
 };
 
 class ParticleShader : public Shader {

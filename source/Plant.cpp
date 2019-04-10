@@ -146,7 +146,7 @@ void Plant::setState(int s){
     _health = 0;
 }
 
-//TODO: Might need to integrate our version
+//MYTODO: Might need to integrate our version
 // void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 //     std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_texture);
 // //    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);

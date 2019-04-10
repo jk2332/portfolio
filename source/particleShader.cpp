@@ -23,7 +23,7 @@ ParticleGenerator::ParticleGenerator(){}
 ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount){
     CULogGLError();
     for (GLuint i = 0; i < this->amount; ++i)
-        this->particles.push_back(Particle());
+        this->particles.push_back(CloudParticle());
 }
 
 void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
@@ -34,7 +34,7 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
 //    }
 //     Update all particles
         for (GLuint i = 0; i < this->amount; ++i){
-            Particle &p = this->particles[i];
+            CloudParticle &p = this->particles[i];
 //            p.life -= dt; // reduce life
             
 //            p.velocity = object->getPosition() - p.position;
@@ -68,7 +68,7 @@ int ParticleGenerator::firstUnusedParticle(){
     return 0;
 }
 
-void ParticleGenerator::respawnParticle(Particle &particle, Vec2 offset){
+void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
     GLfloat random = ((rand() % 100) - 50) / 10.0f;
     GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
     particle.position = Vec2(500,500);// object->getPosition() + Vec2(random,random) + offset;
@@ -195,7 +195,7 @@ void ParticleShader::drawParticles(){
     glUniform1i(_uSprite, TEXTURE_POSITION);
     CULogGLError();
 
-    for (Particle p : _pg.particles){
+    for (CloudParticle p : _pg.particles){
         if (p.life > 0.0f){
             SetVector2f(OFFSET_UNIFORM, p.position);
             //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
