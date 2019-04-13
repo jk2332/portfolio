@@ -88,8 +88,8 @@ map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
 
 /** The initial position of the ragdoll head */
 long ticks = 0l;
-long click1[2] = {-1, -1};
-long click2[2] = {-1, -1};
+long click1[20] = {-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1 };
+long click2[20] = {-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1,-1, -1 };
 long temp = 01;
 std::unordered_set<int> raining_clouds;
 long rainingTicks = 0l;
