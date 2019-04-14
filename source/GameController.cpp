@@ -62,6 +62,7 @@ using namespace cugl;
 
 //long swipeCoolDown = -1;
 //long pinchCoolDown = -1;
+
 long splitCoolDown = -1;
 //long doubleTapCoolDown = -1;
 long gesCoolDown = -1;
@@ -103,6 +104,7 @@ long ticks = 0l;
 long click1 = -1;
 long click2 = -1;
 Obstacle * clicked_cloud = nullptr;
+
 long temp = 01;
 std::unordered_set<int> raining_clouds;
 long rainingTicks = 0l;
@@ -557,12 +559,13 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     if (cind1 == nullptr || cind2 == nullptr) {
         return;
     }
+
     auto c1p = cind1->getPosition();
     auto c2p = cind2->getPosition();
     CULog("combine by pinch");
     
     if (c1p.distance(c2p) <= PINCH_CLOUD_DIST_OFFSET) return;
-    
+
     pinchPos.x = pinchPos.x/iosToDesktopScaleX;
     pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
     
@@ -588,6 +591,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
             if (touchIDs_started_outside.count(toDelete)) touchIDs_started_outside.erase(toDelete);
             if (cloudsToSplit.count(toDelete)) cloudsToSplit.erase(toDelete);
         }
+        std::cout << "cloud to be removed: " + cind1->getName() << endl;
         cind1->markForRemoval();
     }
 }
@@ -653,6 +657,59 @@ void GameScene::update(float dt) {
                     }
 
                 }
+            }
+
+        }
+    }
+    
+    
+    //Check win/loss conditions
+    
+    auto plantNode = _worldnode->getChildByName("plantNode");
+    for (int i = 0; i < sizeof(_plants)/sizeof(_plants[0]); ++i){
+        auto *idx = std::find(std::begin(plants), std::end(plants), i);
+        if (idx == std::end(plants)) {
+            continue;
+        }
+
+        currentPlant = _plants[i];
+        if (ticks % 200 == 0 && ticks > 200) {
+//        if (ticks % 100 == 0) {
+            currentPlant->updateState();
+//            CULog(std::to_string(ticks).c_str());
+        }
+        int st = currentPlant->getState();
+        
+        bool debugPlantColor = false;
+        
+        std::string childName = "plant" + std::to_string(i);
+        if (st == noNeed) {
+            if (debugPlantColor) {
+                CULog("no need");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4::WHITE);
+        }
+        if (st == needRain){
+            if (debugPlantColor) {
+                CULog("need rain");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
+        }
+        else if (st == needSun){
+            if (debugPlantColor) {
+                CULog("need sun");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
+        }
+        else if (st == needShade) {
+            if (debugPlantColor) {
+                CULog("need shade");
+            }
+            plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
+        }
+        else if (st == dead){
+            if (debugPlantColor) {
+                CULog("dead");
             }
         }
     }
@@ -729,14 +786,11 @@ void GameScene::update(float dt) {
                         selector->deselect();
                     }
                     if (pinched && ob && isCloud(ob)){
-                        std::cout << touchID << endl;
                         if (pinchedCloud1 == nullptr) {
                             CULog("storing cloud1 to combine 2");
-                            std::cout << "cloud1: " + ob->getName() << endl;
                             pinchedCloud1 = (Cloud *) ob;
                         }
                         else if (pinchedCloud2 == nullptr) {
-                            std::cout << "cloud2: " + ob->getName() << endl;
                             if (ob->getName() != pinchedCloud1->getName()){
                                 CULog("storing cloud2 to combine 2");
                                 pinchedCloud2 = (Cloud *) ob;
@@ -764,7 +818,7 @@ void GameScene::update(float dt) {
                         CULog("started swipping outside the cloud but ended inside");
                         cloudsToSplit.erase(touchID);
                     }
-                    if (ticks - gesCoolDown >= GES_COOLDOWN){
+                    if (ticks - gesCoolDown >= GES_COOLDOWN + 10){
                         auto o = _selectors.at(touchID)->getObstacle();
                         if (o && o->getName().find("cloud") == 0) {
                             if (click1 == -1){
@@ -782,6 +836,7 @@ void GameScene::update(float dt) {
                                 click1 = -1;
                                 click2 = -1;
                                 clicked_cloud = nullptr;
+                                
                             }
                         }
                     }
@@ -801,7 +856,7 @@ void GameScene::update(float dt) {
             _input.removeFromTouchID(touchID);
         }
     }
-    
+   
     if (ticks % 80 == 0) {
         for(auto it = _pD.begin(); it != _pD.end(); ++it) {
             Particle* p = *it;
@@ -815,21 +870,18 @@ void GameScene::update(float dt) {
         }
         _pQ.clear();
     }
-    
     _rainNode->update(_particles);
     
     // process clouds to split
     splitClouds();
     cloudsToSplit.clear();
-
+    
     // process removal
     processRemoval();
     
-    // Turn the physics engine crank.
     Size s = _assets->get<Texture>("cloud")->getSize();
     for (auto &c : _clouds) {
         if (c != nullptr) {
-            std::cout << c->getName() << endl;
             auto cloudNode = _worldnode->getChildByName(c->getName());
             cloudNode->setContentSize(s*c->getCloudSize());
             c->update(dt);
@@ -944,7 +996,6 @@ void GameScene::splitClouds(){
         cloud->setSceneNode(sprite);
         addObstacle(cloud,sprite,1);  // All walls share the same texture
     }
-
 }
 
     
@@ -998,8 +1049,6 @@ void GameScene::beginContact(b2Contact* contact) {
         CULog("clouds null");
         return;
     }
-//    cloudToBeCombined1 = cloud1;
-//    cloudToBeCombined2 = cloud2;
 
 }
 
