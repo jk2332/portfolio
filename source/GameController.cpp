@@ -25,10 +25,7 @@
 #include "CloudNode.hpp"
 #include <Box2D/Dynamics/b2World.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
-#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <cugl/2d/CUPathNode.h>
-
 #include <Box2D/Collision/b2Collision.h>
 
 #include <ctime>
@@ -51,6 +48,8 @@ using namespace cugl;
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
+
+#define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
 float iosToDesktopScaleX;
@@ -461,29 +460,23 @@ void GameScene::populate() {
 
         // Add the scene graph nodes to this object
         cloudpoly *= _scale;
-        sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
-        sprite->setName("cloud" + std::to_string(i));
-        cloud->setSceneNode(sprite);
-        addObstacle(cloud,sprite,1);  // All walls share the same texture
-
+        
+        if (PARTICLE_MODE){
+            CULogGLError();
+            //Use cloudNode instead of sprite, but they are essentially the same
+            auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), cloud);
+            cloudNode->setName("cloudNode" + std::to_string(i));
+            cloud->setSceneNodeParticles(cloudNode, _assets->get<Texture>("cloudFace"));
+            addObstacle(cloud,cloudNode,1);
+            //PROBLEM: world node doesn't have a name associated to the cloud node
+        }
+        else{
+            sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
+            sprite->setName("cloud" + std::to_string(i));
+            cloud->setSceneNode(sprite);
+            addObstacle(cloud,sprite,1);
+        }
     }
-
-//MYTODO: NEED TO REINTEGRATE CODE BELOW INTO CODE ABOVE
-//     for (int i = 0; i < num_clouds; i++) {
-//         _cloud[i] = Cloud::alloc(Vec2(28-i*6, 10), _scale);
-//         _cloud[i]->initialBuild(_assets);
-//         CULogGLError();
-//         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _cloud[i]);
-//         _worldnode->addChildWithName(cloudNode, "cloudNode" + std::to_string(i));
-//         _cloud[i]->setName("cloud" + std::to_string(i));
-//         _cloud[i]->setSceneNode(cloudNode);
-//         _cloud[i]->setDebugColor(Color4::BLUE);
-//         _cloud[i]->setDebugScene(_debugnode);
-//         _cloud[i]->setSize(1.0f);
-//         _cloud[i]->getBodies()[0]->setName("cloud" + std::to_string(i));
-//         _world->addObstacle(_cloud[i]);
-// }
-
 
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("bubble"));
     _rainNode->setBlendFunc(GL_ONE, GL_ONE);
@@ -514,12 +507,6 @@ void GameScene::populate() {
 void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
                            const std::shared_ptr<cugl::Node>& node,
                            int zOrder) {
-//    _world->addObstacle(obj);
-//    obj->setDebugScene(_debugnode);
-//
-//    // Position the scene graph node (enough for static objects)
-//    node->setPosition(obj->getPosition()*_scale);
-//    _worldnode->addChild(node,zOrder);
     _world->addObstacle(obj);
     obj->setDebugScene(_debugnode);
 
@@ -531,10 +518,8 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
     if (obj->getBodyType() == b2_dynamicBody) {
         Node* weak = node.get(); // No need for smart pointer in callback
         obj->setListener([=](Obstacle* obs){
-//            weak->setPosition(obs->getPosition()*_scale);
             weak->setPosition(obs->getPosition()*_scale);
-
-//            weak->setAngle(obs->getAngle());
+            weak->setAngle(obs->getAngle());
         });
     }
 }
@@ -901,13 +886,15 @@ void GameScene::update(float dt) {
     cloudsToSplit.clear();
 
     // Turn the physics engine crank.
-    for (int i = 0; i < 20; i++) {
-        if (_cloud[i] != nullptr) {
-            auto cloudNode = _worldnode->getChildByName(_cloud[i]->getName());
-            cloudNode->setContentSize(s*_cloud[i]->getCloudSize());
-            _cloud[i]->update(dt);
+//    if (!PARTICLE_MODE){
+        for (int i = 0; i < 20; i++) {
+            if (_cloud[i] != nullptr) {
+                auto cloudNode = _worldnode->getChildByName(_cloud[i]->getName());
+                cloudNode->setContentSize(s*_cloud[i]->getCloudSize());
+                _cloud[i]->update(dt);
+            }
         }
-    }
+//    }
     _world->update(dt);
 
 }

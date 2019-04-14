@@ -43,7 +43,9 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, std::vector<std::sha
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Plant::dispose() {
-    //_texture = nullptr;
+    for (std::shared_ptr<Texture> a : _textures){
+        a = nullptr;
+    }
 }
 
 void Plant::setShade(bool f) {
@@ -146,14 +148,11 @@ void Plant::setState(int s){
     _health = 0;
 }
 
-//MYTODO: Might need to integrate our version
-// void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node){
-//     std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_texture);
-// //    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
-//     cugl::Vec2 a = cugl::Vec2(GRID_WIDTH*_drawscale/2,GRID_HEIGHT*_drawscale);
 void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name){
     std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_textures[_stage]);
     cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    //MYTODO: Might need to change to our version
+    //cugl::Vec2 a = cugl::Vec2(GRID_WIDTH*_drawscale/2,GRID_HEIGHT*_drawscale);
     plant_node->setPosition(a);
     plant_node->setScale(0.15f);
     _node = plant_node;

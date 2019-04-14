@@ -56,7 +56,9 @@ protected:
     std::shared_ptr<cugl::Texture> _texture;
 
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
-    std::shared_ptr<CloudNode> _node;
+    std::shared_ptr<CloudNode> _cloudnode;
+    
+    std::shared_ptr<Node> _node;
 
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
@@ -302,7 +304,9 @@ public:
      *
      * @return the scene graph node representing this Ragdoll.
      */
-    const std::shared_ptr<CloudNode>& getNode() const { return _node; }
+    const std::shared_ptr<CloudNode>& getCloudNode() const { return _cloudnode; }
+
+    const std::shared_ptr<Node>& getNode() const { return _node; }
 
 
     /**
@@ -323,8 +327,9 @@ public:
      *
      * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
      */
-    void setSceneNode(const std::shared_ptr<cugl::CloudNode>& node);
-        
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+    
+    void setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

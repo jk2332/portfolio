@@ -46,7 +46,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
 
     setName("cloud");
     setGravityScale(0);
-
+    
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
@@ -88,12 +88,9 @@ void Cloud::dispose() {
  * @return true if the body parts were successfully created
  */
 bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
-//    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
-
     // Get the images from the asset manager
     bool success = true;
     for(int ii = 0; ii < _unitNum; ii++) {
-        //std::string name = getPartName(ii);
         std::shared_ptr<Texture> image = assets->get<Texture>("cloudFace");
         if (image == nullptr) {
             success = false;
@@ -226,13 +223,16 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
-void Cloud::setSceneNode(const std::shared_ptr<cugl::CloudNode>& node){
-    _node = node;
-    ///THIS SECTION WAS COMMENTED OUT IN MASTER!!!!!
-    std::shared_ptr<Texture> image = _texture;
+void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image){
+    _cloudnode = node;
+    _texture = image;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
     sprite->setContentSize(_texture->getSize()*_size);
-    _node->addChildWithName(sprite, "cloudFace");
+    _cloudnode->addChildWithName(sprite, "cloudFace");
+}
+
+void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
+    _node = node;
 }
 
 void Cloud::incSize(float f) {
