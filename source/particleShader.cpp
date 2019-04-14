@@ -147,7 +147,7 @@ void ParticleShader::compileProgram(){
     }
 }
 
-//do the thing
+// Render all particles
 void ParticleShader::drawParticles(){
     CULogGLError();
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -219,10 +219,4 @@ void ParticleShader::drawParticles(){
 
 void ParticleShader::update(Vec2 cloud_pos, float dt, GLuint np){
     this->_pg.Update(dt, np, cloud_pos - Vec2(500,300));
-}
-
-// Render all particles
-void ParticleShader::draw(){
-    CULogGLError();
-    drawParticles();
 }

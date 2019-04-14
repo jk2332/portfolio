@@ -56,7 +56,7 @@ protected:
     std::shared_ptr<cugl::Texture> _texture;
 
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
-    std::shared_ptr<CloudNode> _cloudnode;
+    std::shared_ptr<CloudNode> _cloudNode;
     
     std::shared_ptr<Node> _node;
 
@@ -304,7 +304,7 @@ public:
      *
      * @return the scene graph node representing this Ragdoll.
      */
-    const std::shared_ptr<CloudNode>& getCloudNode() const { return _cloudnode; }
+    const std::shared_ptr<CloudNode>& getCloudNode() const { return _cloudNode; }
 
     const std::shared_ptr<Node>& getNode() const { return _node; }
 

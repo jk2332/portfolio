@@ -49,7 +49,7 @@ using namespace cugl;
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 
-#define PARTICLE_MODE  true
+#define PARTICLE_MODE  false
 
 long splitCoolDown = -1;
 float iosToDesktopScaleX;
@@ -463,9 +463,9 @@ void GameScene::populate() {
         
         if (PARTICLE_MODE){
             CULogGLError();
-            //Use cloudNode instead of sprite, but they are essentially the same
+            //Use cloudNode instead of sprite, but they work similarly
             auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), cloud);
-            cloudNode->setName("cloudNode" + std::to_string(i));
+            cloudNode->setName("cloud" + std::to_string(i));
             cloud->setSceneNodeParticles(cloudNode, _assets->get<Texture>("cloudFace"));
             addObstacle(cloud,cloudNode,1);
             //PROBLEM: world node doesn't have a name associated to the cloud node
@@ -886,15 +886,13 @@ void GameScene::update(float dt) {
     cloudsToSplit.clear();
 
     // Turn the physics engine crank.
-//    if (!PARTICLE_MODE){
-        for (int i = 0; i < 20; i++) {
-            if (_cloud[i] != nullptr) {
-                auto cloudNode = _worldnode->getChildByName(_cloud[i]->getName());
-                cloudNode->setContentSize(s*_cloud[i]->getCloudSize());
-                _cloud[i]->update(dt);
-            }
+    for (int i = 0; i < 20; i++) {
+        if (_cloud[i] != nullptr) {
+            auto cloudNode = _worldnode->getChildByName(_cloud[i]->getName());
+            cloudNode->setContentSize(s*_cloud[i]->getCloudSize());
+            _cloud[i]->update(dt);
         }
-//    }
+    }
     _world->update(dt);
 
 }

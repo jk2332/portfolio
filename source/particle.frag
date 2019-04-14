@@ -23,7 +23,7 @@ out vec4 color;
 uniform sampler2D sprite;
 
 void main(){
-//    color = vec4(1.0,1.0,1.0,1.0);//(texture(sprite, TexCoords) * ParticleColor);
+//  color = (texture(sprite, TexCoords) * ParticleColor);
     color = texture(sprite, TexCoords);
 }
 

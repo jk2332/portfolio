@@ -132,7 +132,6 @@ protected:
     GLuint EBO;
     
 public:
-    
     /**
      * Deletes the OpenGL shader and resets all attributes.
      *
@@ -151,8 +150,6 @@ public:
     void compileProgram();
     
     void drawParticles();
-    
-    void draw();
     
     void update(Vec2 cloud_pos, float dt, GLuint np);
     

@@ -192,6 +192,11 @@ void Cloud::update(float delta) {
         _node->setPosition(getPosition()*_scale);
         _node->setAngle(getAngle());
     }
+    else if (_cloudNode != nullptr) {
+        _cloudNode->setPosition(getPosition()*_scale + Vec2(getWidth()/2.0, getHeight()/2.0)*_scale);
+        _cloudNode->setAngle(getAngle());
+        _cloudNode->ps.update(getPosition()*_scale, delta, 1);
+    }
 }
 
 void Cloud::setScale(float s) {
@@ -224,11 +229,11 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
 void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image){
-    _cloudnode = node;
+    _cloudNode = node;
     _texture = image;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
     sprite->setContentSize(_texture->getSize()*_size);
-    _cloudnode->addChildWithName(sprite, "cloudFace");
+    _cloudNode->addChildWithName(sprite, "cloudFace");
 }
 
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){

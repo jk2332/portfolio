@@ -93,9 +93,8 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     batch->end();
     //my custom code
     CULogGLError();
-    ps.draw();
+    ps.drawParticles();
     CULogGLError();
-
     batch->begin(getScene()->getCamera()->getCombined());
     
     batch->setColor(tint);
