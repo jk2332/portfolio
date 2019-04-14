@@ -50,9 +50,6 @@ private:
 protected:
     /** Shape to treat the root body as a center of mass */
     b2Fixture* _centroid;
-//    /** Bubble generator to glue to snorkler. */
-//    std::shared_ptr<BubbleGenerator> _bubbler;
-    /** The textures for the individual body parts */
     std::shared_ptr<cugl::Texture> _texture;
 
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
@@ -63,8 +60,6 @@ protected:
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
 
-//    /** Cache object for transforming the force according the object angle */
-//    cugl::Mat4 _affine;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawscale;
     int _unitNum;
@@ -77,22 +72,15 @@ protected:
     Vec2 _velocity;
     float _size;
     float _scale;
-
-    /**
-     * Returns a single body part
-     *
-     * While it looks like this method "connects" the pieces, it does not really.
-     * It puts them in position to be connected by joints, but they will fall apart
-     * unless you make the joints.
-     *
-     * @param  part     Part to create
-     * @param  connect  Part to connect it to
-     * @param  pos      Position RELATIVE to connecting part
-     * @param  scale    The draw scale to convert from world to screen coordinates
-     *
-     * @return the created body part
-     */
-    std::shared_ptr<cugl::BoxObstacle> makeUnit(int part, int connect, const cugl::Vec2& pos);
+    
+//    /**
+//     * Returns the texture key for the given body part.
+//     *
+//     * As some body parts are symmetrical, we reuse textures.
+//     *
+//     * @return the texture key for the given body part
+//     */
+//    std::string getPartName(int part);
 
 public:
 #pragma mark -
@@ -225,18 +213,6 @@ public:
 
 
 #pragma mark Physics Methods
-    /**
-     * Creates the individual body parts for this ragdoll
-     *
-     * The size of the body parts is determined by the scale together with
-     * the assets (as part of the asset manager).  This will fail if any
-     * body part assets are missing.
-     *
-     * @param assets The program asset manager
-     *
-     * @return true if the body parts were successfully created
-     */
-    bool initialBuild(const std::shared_ptr<AssetManager>& assets);
 
     bool dropUnit(b2World& world);
 
@@ -346,7 +322,7 @@ public:
     void setIsRaining(float b){_isRaining = b;}
     void setId(int id){_id = id;}
     int getId(){return _id;}
-    bool getIsRaining(){return _isRaining;}
+    bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     void incSize(float f);
     float getCloudSize() {

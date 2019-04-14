@@ -83,10 +83,8 @@ protected:
     // Physics objects for the game
 	/** Reference to the ragdoll model */
 	//std::shared_ptr<RagdollModel> _ragdoll;
-    int num_clouds = 2;
-    std::shared_ptr<Cloud> _cloud[20];
-    int new_cloud_ind = 2;
-
+    std::vector<std::shared_ptr<Cloud>> _clouds;
+   
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
 
@@ -132,7 +130,9 @@ protected:
      * param zOrder The drawing order
      */
     void addObstacle(const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
-
+    void splitClouds();
+    void makeRain(Obstacle * cloud);
+    void processRemoval();
     /**
      * Returns the active screen size of this scene.
      *
@@ -288,9 +288,7 @@ public:
      * @param  contact  The two bodies that collided
      * @param  contact  The collision manifold before contact
      */
-    void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);
-
-
+    void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);    
 
 #pragma mark -
 #pragma mark Gameplay Handling
