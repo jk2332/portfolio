@@ -159,7 +159,7 @@ public:
     
     std::pair<int, int> posToGridCoord(float x, float y){
         if (!isInBounds(x, y)){
-            throw "out of bound";
+            return std::make_pair(-1, -1);
         }
         else {
             int new_x = int((x - DOWN_LEFT_CORNER_X)/GRID_WIDTH);

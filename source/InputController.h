@@ -63,7 +63,6 @@ private:
     std::map<long, cugl::Timestamp> _timestamps;
     cugl::Vec2 _dpan;
     cugl::Timestamp _pinchTimestamp;
-    cugl::Timestamp _panTimestamp;
     
     
     /**
@@ -196,6 +195,7 @@ public:
     std::map<long, int> longSelectCounter;
     
     std::unordered_set<long> getTouchIDs() {return _touchIDs;}
+    void removeFromTouchID(long touchID) {if (_touchIDs.count(touchID)) _touchIDs.erase(touchID);}
     
     /**
      * Returns the location (in world space) of the selection.

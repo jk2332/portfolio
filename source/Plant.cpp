@@ -50,6 +50,10 @@ void Plant::setShade(bool f) {
     _shaded = f;
 }
 
+void Plant::setRained(bool f) {
+    _rained = f && (_state == needRain);
+}
+
 void Plant::updateState(){
     //CULog("Update %s state", getName().c_str());
     if (_state == dead || _stage == _maxStage){
@@ -67,8 +71,7 @@ void Plant::updateState(){
                     _shadeCounter = 0;
                     _progress += 2;
                 }
-            }
-            else{
+            } else{
                 decHealth();
                 if (_progress >= 1) {
                     _progress -= 1;
@@ -76,20 +79,25 @@ void Plant::updateState(){
             }
         }
         else if (_state == needRain){
-//            if (_rained) {
-//                incHealth();
-//                if
-//            }
-            //nothing yet
+            if (_rained){
+                incHealth();
+                if (_health >= 0){
+                    setState(noNeed);
+                    _progress += 2;
+                }
+            } else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
         }
         else if (_state == noNeed){
             int statusChance = rand() %  100 + 1;
             if (statusChance < _rainProb) {
-//                CULog("%s now needs rain, rng is %d, but we don't have rain rn, noneed", getName().c_str(), statusChance);
-//                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
-//                _state = needRain;
-//                _rainProb /= 2;
-                _progress += 1;
+                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
+                _state = needRain;
+                _rainProb /= 2;
             } else if (statusChance < _rainProb + _shadeProb) {
 //                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
                 _state = needShade;
@@ -113,6 +121,9 @@ void Plant::updateState(){
                 }
             }
         }
+        
+        _shaded = false;
+        _rained = false;
         
         if(_health <= -healthLimit){
             setState(dead);
