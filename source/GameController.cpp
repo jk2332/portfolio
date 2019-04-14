@@ -842,9 +842,10 @@ void GameScene::update(float dt) {
 
 void GameScene::processRemoval(){
     //    process list for deletion
-    for (auto &c : _clouds) {
+    std::vector<int> indices_to_delete;
+    for (int i = 0; i < _clouds.size(); i++) {
+        auto c = _clouds.at(i);
         if (c && c->isRemoved()) {
-            
             CULog("removing in update");
             std::string cname = "cloud" + std::to_string(c->getId());
             _worldnode->removeChildByName(cname);
@@ -866,9 +867,11 @@ void GameScene::processRemoval(){
             _world->removeObstacle(((Obstacle *) c.get()));
             c->deactivatePhysics(*_world->getWorld());
             c->dispose();
-            std::vector<std::shared_ptr<Cloud>>::iterator ind = std::find(_clouds.begin(), _clouds.end(), c);
-            _clouds.erase(ind);
+            indices_to_delete.push_back(i);
         }
+    }
+    for (auto ind : indices_to_delete){
+        _clouds.erase(_clouds.begin() + ind);
     }
 }
 
