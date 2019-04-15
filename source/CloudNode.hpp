@@ -15,7 +15,7 @@
 #include <cugl/math/polygon/CUSimpleTriangulator.h>
 #include "particleShader.hpp"
 
-#define PARTICLE_NUM 400
+#define PARTICLE_NUM 10
 namespace cugl {
     
     /**
@@ -81,10 +81,10 @@ namespace cugl {
         
 #pragma mark -
 #pragma mark Static Constructors
-        static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture, std::shared_ptr<Obstacle> object){
+        static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
             CULogGLError();
-            node->ps = ParticleShader(object, PARTICLE_NUM);
+            node->ps = ParticleShader(PARTICLE_NUM);
             node->ps.onStartup();
             return (node->init() ? node : nullptr);
         }

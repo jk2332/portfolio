@@ -58,7 +58,7 @@ using namespace cugl;
 //long swipeCoolDown = -1;
 //long pinchCoolDown = -1;
 
-#define PARTICLE_MODE  false
+#define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
 //long doubleTapCoolDown = -1;
@@ -478,7 +478,7 @@ void GameScene::populate() {
         if (PARTICLE_MODE){
             CULogGLError();
             //Use cloudNode instead of sprite, but they work similarly
-            auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), cloud);
+            auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
             cloudNode->setName("cloud" + std::to_string(i));
             cloud->setSceneNodeParticles(cloudNode, _assets->get<Texture>("cloudFace"));
             addObstacle(cloud,cloudNode,1);

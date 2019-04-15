@@ -23,10 +23,10 @@ using namespace cugl;
 //                                    5.0f,5.0f,    1.0f,1.0f};
 
 //                                  Position      Texcoords
-static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
-                                    -2.5f,2.5f,    0.0f,1.0f,
-                                    2.5f,-2.5f,    1.0f,0.0f,
-                                    2.5f,2.5f,    1.0f,1.0f};
+//static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
+//                                    -2.5f,2.5f,    0.0f,1.0f,
+//                                    2.5f,-2.5f,    1.0f,0.0f,
+//                                    2.5f,2.5f,    1.0f,1.0f};
 
 ////                                  Position      Texcoords
 //static GLfloat particle_quad[] = {  -5.0f,-5.0f,    0.0f,0.0f,
@@ -34,56 +34,47 @@ static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
 //                                    5.0f,-5.0f,    1.0f,0.0f,
 //                                    5.0f,5.0f,    1.0f,1.0f};
 
+////                                  Position      Texcoords
+static GLfloat particle_quad[] = {  -10.0f,-10.0f,    0.0f,0.0f,
+                                    -10.0f,10.0f,    0.0f,1.0f,
+                                    10.0f,-10.0f,    1.0f,0.0f,
+                                    10.0f,10.0f,    1.0f,1.0f};
+
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 
 static GLuint VAO;
 static GLuint VBO;
 static GLuint EBO;
-//                                  Radius  CenterX CenterY
-static Vec3 cloudSections[] = { Vec3(3.9,   -0.5,    -1.0), //Central Half Circle
-                                Vec3(2.3,   -1.8,   1.5),
-                                Vec3(1.2,   -4.4,   0.3),
-                                Vec3(1.2,   3.3,    0.3),
-                                Vec3(1.5,   1.8,    1.6),
-                                Vec3(1.6,   -0.5,    2.4)};
+//                                         Radius CenterX CenterY
+static vector<Vec3> cloudSections = {   Vec3(2.5,   0.0,   1.5), //Central Circle
+                                        Vec3(1.3,  -3.8,   1.3),
+                                        Vec3(1.3,   3.7,   1.3),
+                                        Vec3(0.8,   3.0,   2.7),
+                                        Vec3(0.7,   2.5,   0.0),
+                                        Vec3(0.8,  -2.9,   2.7),
+                                        Vec3(0.6,  -2.6,   0.1),
+                                        Vec3(0.8,   1.9,   3.4),
+                                        Vec3(0.8,  -2.1,   3.9),
+                                        Vec3(0.8,   0.6,   4.0),
+                                        Vec3(0.8,  -0.8,   4.7)};
 
 // Represents a single particle and its state
 struct CloudParticle {
-    Vec2 position, velocity;
+    Vec2 position, jostleAmount;
     float opacity;
     float life;
     Vec4 color;
     Vec2 offset;
-    CloudParticle() : position(Vec2(0.0f,0.0f)), velocity(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(Vec2(0.0f,0.0f)), opacity(1.0f), life(1.0f){
-        
-        //Determine circle
-        int rand0 = (rand() % 6+1); // in range 1 to 6, inclusive
-//        int rand0 = 1;
-        Vec3 currentCircle = cloudSections[rand0-1];
-//        CULog("rand0 is %d", rand0);
-        
-        //Determine radius in range 0 to radius of currentCircle
-        float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
-        float t = 2*M_PI*rand();
-        
-        offset = 20*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
-        
-        //If it's the half circle, keep the point in the upper section
-        if (rand0 == 1 && offset.y < 0){
-            offset.y = -1*offset.y;
-        }
-        
-    }
+    CloudParticle(Vec2 selectedPosition) : position(Vec2(0.0f,0.0f)), jostleAmount(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
-// particles by repeatedly spawning and updating particles and killing
-// them after a given amount of time.
+// particles by updating their position based on that of the correpsonding cloud.
 class ParticleGenerator {
 public:
     // Constructors
     ParticleGenerator();
-    ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount);
+    ParticleGenerator(GLuint amount);
     // Update all particles
     void Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos);
     // Render all particles
@@ -91,7 +82,8 @@ public:
     // State
     std::vector<CloudParticle> particles;
     GLuint amount;
-    std::shared_ptr<Obstacle> object;
+    float maxJostle = 1.0;
+    float timeSinceLastJostle;
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
@@ -141,8 +133,8 @@ public:
    
     ParticleShader(){_pg = ParticleGenerator();}
     
-    ParticleShader(std::shared_ptr<Obstacle> object, GLuint amount){
-        _pg = ParticleGenerator(object, amount);
+    ParticleShader(GLuint amount){
+        _pg = ParticleGenerator(amount);
     }
     
     void onStartup();

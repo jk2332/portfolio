@@ -20,30 +20,56 @@ using namespace cugl;
 
 ParticleGenerator::ParticleGenerator(){}
 
-ParticleGenerator::ParticleGenerator(std::shared_ptr<Obstacle> object, GLuint amount): object(object), amount(amount){
+ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount), timeSinceLastJostle(0){
     CULogGLError();
-    for (GLuint i = 0; i < this->amount; ++i)
-        this->particles.push_back(CloudParticle());
+    for (int i = 0; i < cloudSections.size(); i++){
+        Vec3 currentCircle = cloudSections[i];
+        int trueAmount = this->amount;
+        if (i == 0){trueAmount = 2*this->amount;}
+        
+        for (GLuint j = 0; j < trueAmount; ++j){
+            //Determine radius in range 0 to radius of currentCircle
+            float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
+            float t = 0.25*M_PI*j;
+            int spacing = 15;
+            Vec2 centering = Vec2(-10,-10);
+            Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
+            offset = offset + centering;
+            this->particles.push_back(CloudParticle(offset));
+        }
+    }
+    
 }
 
 void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
-    // Add new particles
-//    for (GLuint i = 0; i < newParticles; ++i){
-//        int unusedParticle = this->firstUnusedParticle();
-//        this->respawnParticle(this->particles[unusedParticle], cloud_pos);
-//    }
-//     Update all particles
-        for (GLuint i = 0; i < this->amount; ++i){
-            CloudParticle &p = this->particles[i];
-//            p.life -= dt; // reduce life
+    timeSinceLastJostle += dt;
+    bool jostled = false;
+//  Update all particles
+    for (int i = 0; i < cloudSections.size(); i++){
+        int trueAmount = this->amount;
+        if (i == 0){trueAmount = 2*this->amount;}
+        
+        for (GLuint j = 0; j < trueAmount; ++j){
+            int index = trueAmount*i + j;
+            if (i != 0){index = index + this->amount;}
             
-//            p.velocity = object->getPosition() - p.position;
-//            if (p.life > 0.0f){    // particle is alive, thus update
-//                p.position = p.position + p.velocity * dt;
-                p.position = cloud_pos + p.offset;
-//                p.color.w -= dt * 2.5;
-//            }
+            //Determine j1 and j2 in range 0 to maxJostle
+            float j1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxJostle));
+            float j2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxJostle));
+            
+            CloudParticle &p = this->particles[index];
+            if (timeSinceLastJostle > 0.2){
+                jostled = true;
+                p.jostleAmount = Vec2(j1 - maxJostle/2, j2 - maxJostle/2);
+                if ((p.jostleAmount.x > maxJostle && p.jostleAmount.y > maxJostle) ||
+                    (p.jostleAmount.x < -maxJostle && p.jostleAmount.y < -maxJostle)){
+                    p.jostleAmount = Vec2::ZERO;
+                }
+            }
+            p.position = cloud_pos + p.offset + p.jostleAmount;
         }
+    }
+    if(jostled){timeSinceLastJostle = 0.0;}
 }
 
 // Stores the index of the last particle used (for quick access to next dead particle)
@@ -74,7 +100,7 @@ void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
     particle.position = Vec2(500,500);// object->getPosition() + Vec2(random,random) + offset;
     particle.color = Vec4(rColor, rColor, rColor, 1.0f);
     particle.life = 1.0f;
-    particle.velocity = Vec2(5.0f,5.0f);
+    particle.jostleAmount = Vec2(5.0f,5.0f);
 }
 
 void ParticleShader::dispose() {
@@ -150,19 +176,14 @@ void ParticleShader::compileProgram(){
 // Render all particles
 void ParticleShader::drawParticles(){
     CULogGLError();
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    //CULogGLError();
-    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    CULogGLError();
     //reusing the particle shader program
     glUseProgram( _program );
 //    CULog("Program is %d",_program);
     CULogGLError();
-//    glGenVertexArrays(1, &VAO);
-//    CULogGLError();
-//    glBindVertexArray(VAO);
-//    CULogGLError();
-    //rebinding presumably because of the spritebatch that left itself bound
     glGenBuffers(1, &VBO);
+    CULogGLError();
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     CULogGLError();
     glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
@@ -204,7 +225,6 @@ void ParticleShader::drawParticles(){
         }
     }
     particleTexture.unbind();
-//    glBindVertexArray(NULL);
     CULogGLError();
     glDisableVertexAttribArray(_aPosition);
     CULogGLError();
@@ -213,7 +233,7 @@ void ParticleShader::drawParticles(){
     glUseProgram(NULL);
     CULogGLError();
     // Don't forget to reset to default blending mode
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     CULogGLError();
 }
 
