@@ -25,6 +25,9 @@
         "tile": {
             "file":     "textures/tile.png"
         },
+        "tile": {
+            "file":     "textures/tile.png"
+        },
         "tile1": {
             "file":     "textures/tile1.png"
         },

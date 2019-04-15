@@ -101,7 +101,7 @@ _listener(nullptr) {
  */
 bool Slider::init(const Vec2& range, const Rect& bounds) {
     _range  = range;
-    _bounds = _bounds;
+    _bounds = bounds;
     placePath(nullptr);
     placeKnob(nullptr);
     
@@ -133,7 +133,7 @@ bool Slider::init(const Vec2& range, const Rect& bounds) {
 bool Slider::initWithUI(const Vec2& range, const Rect& bounds,
                         const std::shared_ptr<Node>& path, const std::shared_ptr<Button>& knob) {
     _range  = range;
-    _bounds = _bounds;
+    _bounds = bounds;
     placePath(path);
     placeKnob(knob);
     

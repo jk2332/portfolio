@@ -13,6 +13,7 @@
 #include <cugl/cugl.h>
 #include <vector>
 #include "BubbleGenerator.h"
+#include "CloudNode.hpp"
 
 #define MAX_CLOUD_UNIT  3
 #define PART_NONE           -1
@@ -23,25 +24,12 @@
 //#define DOWN        4
 /** Distance between torso center and face center */
 #define TORSO_OFFSET    3.8f
-/** Y-distance between torso center and arm center */
-#define ARM_YOFFSET     0.0f
-/** X-distance between torso center and arm center */
-#define ARM_XOFFSET     4.0f
-/** Distance between center of arm and center of forearm */
-#define FOREARM_OFFSET  2.75f
-/** X-distance from center of torso to center of leg */
-#define THIGH_XOFFSET   0.75f
-/** Y-distance from center of torso to center of thigh */
-#define THIGH_YOFFSET   3.5f
-/** Distance between center of thigh and center of shin */
-#define SHIN_OFFSET     2.25f
 /** The density for each body part */
 #define DEFAULT_DENSITY  1.0f
 /** The density for the center of mass */
 #define CENTROID_DENSITY 1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
-
 
 #pragma mark -
 #pragma mark Ragdoll
@@ -58,18 +46,19 @@ class Cloud : public PolygonObstacle {
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Cloud);
-    
+
 protected:
     /** Shape to treat the root body as a center of mass */
     b2Fixture* _centroid;
     std::shared_ptr<cugl::Texture> _texture;
-    
+
     /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
-    std::shared_ptr<cugl::Node> _node;
+    std::shared_ptr<CloudNode> _cloudNode;
     
+    std::shared_ptr<Node> _node;
+
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
-    
 
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawscale;
@@ -92,7 +81,6 @@ protected:
 //     * @return the texture key for the given body part
 //     */
 //    std::string getPartName(int part);
-    
 
 public:
 #pragma mark -
@@ -104,14 +92,14 @@ public:
      * the heap, use one of the static constructors instead.
      */
     Cloud(void) : PolygonObstacle() { }
-    
+
     /**
      * Destroys this Ragdoll, releasing all resources.
      */
     virtual ~Cloud(void) {
         CULog("CLOUD DESTRUCTOR CALLED");
         dispose(); }
-    
+
     /**
      * Disposes all resources and assets of this Ragdoll
      *
@@ -119,7 +107,7 @@ public:
      * disposed, a Ragdoll may not be used until it is initialized again.
      */
     void dispose();
-    
+
     /**
      * Initializes a new Ragdoll at the origin.
      *
@@ -133,7 +121,7 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
 //    virtual bool init() override { return init(cugl::Poly2::Poly2()); }
-    
+
     /**
      * Initializes a new Ragdoll with the given position
      *
@@ -149,7 +137,7 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
     bool init(const cugl::Poly2, const cugl::Vec2);
-        
+
     /**
      * Initializes a new Ragdoll with the given position and scale
      *
@@ -164,9 +152,9 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
 //    bool init(const cugl::Vec2& pos, float scale);
-    
+
     std::shared_ptr<BoxObstacle> getObstacle();
-    
+
 #pragma mark -
 #pragma mark Static Constructors
     /**
@@ -185,7 +173,7 @@ public:
 //        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
 //        return (result->init(cugl::Poly2::Poly2()) ? result : nullptr);
 //    }
-    
+
     /**
      * Returns a newly allocated Ragdoll with the given position
      *
@@ -204,7 +192,7 @@ public:
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
         return (result->init(p, Vec2(0.5f, 0.5f)) ? result : nullptr);
     }
-    
+
     /**
      * Returns a newly allocated Ragdoll with the given position and scale
      *
@@ -222,29 +210,16 @@ public:
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
         return (result->init(p, pos) ? result : nullptr);
     }
-    
-    
-#pragma mark Physics Methods    
-    /**
-     * Creates the individual body parts for this ragdoll
-     *
-     * The size of the body parts is determined by the scale together with
-     * the assets (as part of the asset manager).  This will fail if any
-     * body part assets are missing.
-     *
-     * @param assets The program asset manager
-     *
-     * @return true if the body parts were successfully created
-     */
-    
+
+
+#pragma mark Physics Methods
+
     bool dropUnit(b2World& world);
-    
-    bool joinUnit(b2World& world);
 
     void markForRemoval();
-    
+
     void setScale(float s);
-    
+
 #pragma mark -
 #pragma mark Attribute Accessors
     /**
@@ -257,7 +232,7 @@ public:
     const std::shared_ptr<Texture> getTexture() const {
         return _texture;
     }
-    
+
     /**
      * Sets the texture for the given body part.
      *
@@ -267,7 +242,7 @@ public:
      * @param texture   The texture for the given body part
      */
     void setTexture(const std::shared_ptr<Texture>& texture);
-    
+
 //    /**
 //     * Returns the bubble generator for this ragdoll
 //     *
@@ -287,13 +262,13 @@ public:
 //     * @param texture   The texture for an individual bubble
 //     */
 //    void makeBubbleGenerator(const std::shared_ptr<Texture>& bubble);
-    
+
     float getSize() {return _size;}
     void setSize(float s) {_size = s;}
-    
+
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
-    
+
 #pragma mark -
 #pragma mark Animation
     /**
@@ -305,9 +280,11 @@ public:
      *
      * @return the scene graph node representing this Ragdoll.
      */
-    const std::shared_ptr<cugl::Node>& getNode() const { return _node; }
+    const std::shared_ptr<CloudNode>& getCloudNode() const { return _cloudNode; }
 
-    
+    const std::shared_ptr<Node>& getNode() const { return _node; }
+
+
     /**
      * Sets the scene graph node representing this Ragdoll.
      *
@@ -327,7 +304,8 @@ public:
      * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
-        
+    
+    void setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
@@ -352,10 +330,10 @@ public:
     }
     void decSize();
 
-    
+
 #pragma mark -
 #pragma mark Physics
-    
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
@@ -372,4 +350,4 @@ public:
     virtual void update(float delta) override;
 };
 
-#endif 
+#endif

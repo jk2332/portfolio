@@ -2631,7 +2631,7 @@
 			};
 			buildConfigurationList = EBFFD7071CFCA12A00E047D2 /* Build configuration list for PBXProject "CUGL" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

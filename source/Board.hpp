@@ -49,7 +49,6 @@ protected:
     int _gridNumX;
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
-    std::shared_ptr<cugl::Node> nullSpace;
 public:
 #pragma mark -
 #pragma mark Constructors

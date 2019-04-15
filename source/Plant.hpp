@@ -27,7 +27,7 @@ public:
 private:
     /** This macro disables the copy constructor (not allowed on scene graphs) */
     CU_DISALLOW_COPY_AND_ASSIGN(Plant);
-    
+
 protected:
     int _health;
     float _drawscale;
@@ -45,11 +45,11 @@ protected:
     int _rainProb;
     int _shadeProb;
     int _progress;
-    
+
     int _shadeCounter;
     std::shared_ptr<PolygonNode> _node;
-    
-    
+
+
 public:
 #pragma mark -
 #pragma mark Constructors
@@ -60,12 +60,12 @@ public:
      * the heap, use one of the static constructors instead.
      */
     Plant(void) : BoxObstacle() { }
-    
+
     /**
      * Destroys this Ragdoll, releasing all resources.
      */
     virtual ~Plant(void) { dispose(); }
-    
+
     /**
      * Disposes all resources and assets of this Ragdoll
      *
@@ -73,7 +73,7 @@ public:
      * disposed, a Ragdoll may not be used until it is initialized again.
      */
     void dispose();
-    
+
     /**
      * Initializes a new Ragdoll with the given position and scale
      *
@@ -88,8 +88,8 @@ public:
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
     bool init(int x, int y, int rain, int shade, std::vector<std::shared_ptr<Texture>> textures, float drawscale);
-    
-    
+
+
 #pragma mark -
 #pragma mark Static Constructors
     /**
@@ -110,15 +110,15 @@ public:
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
         return (result->init(x, y, rainProb, shadeProb, textures, drawscale) ? result : nullptr);
     }
-    
+
     void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name);
 
     int getType() {return _type;}
     void setType(int t) {_type = t;}
-    
+
     Vec2 getPosition() {return Vec2(_x,_y);}
     void setPosition(Vec2 z) {_x = z.x; _y = z.y;}
-    
+
     int getHealth() {return _health;}
     void setHealth(int h) {_health = h;}
     //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
@@ -128,14 +128,14 @@ public:
     void incHealth() {
         if (_health < healthLimit){_health += 2;}
     }
-    
+
     void setShade(bool f);
     void setRained(bool f);
-    
+
     void updateState();
     void setState(int s);
     int getState() {return _state;}
-    
+
     void upgradeSprite();
 };
 

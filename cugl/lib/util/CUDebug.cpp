@@ -40,7 +40,6 @@
  */
 void _check_gl_error(const char *file, int line) {
     GLenum err (glGetError());
-    
     while(err!=GL_NO_ERROR) {
         std::string error;
         

@@ -43,10 +43,10 @@ using namespace cugl;
 bool Cloud::init(Poly2 p, Vec2 pos) {
     PolygonObstacle::init(p);
     setPosition(pos);
-    
+
     setName("cloud");
     setGravityScale(0);
-
+    
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
@@ -79,7 +79,6 @@ void Cloud::dispose() {
 #pragma mark -
 #pragma mark Part Initialization
 
-
 /**
  * Sets the texture for the given body part.
  *
@@ -96,8 +95,6 @@ void Cloud::markForRemoval() {
     CULog("cloud to be removed");
     markRemoved(true);
 }
-
-
 
 #pragma mark -
 #pragma mark Physics
@@ -119,6 +116,11 @@ void Cloud::update(float delta) {
     if (_node != nullptr) {
         _node->setPosition(getPosition()*_scale);
         _node->setAngle(getAngle());
+    }
+    else if (_cloudNode != nullptr) {
+        _cloudNode->setPosition(getPosition()*_scale + Vec2(getWidth()/2.0, getHeight()/2.0)*_scale);
+        _cloudNode->setAngle(getAngle());
+        _cloudNode->ps.update(getPosition()*_scale, delta, 1);
     }
 }
 
@@ -151,6 +153,14 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
+void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image){
+    _cloudNode = node;
+    _texture = image;
+    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
+    sprite->setContentSize(_texture->getSize()*_size);
+    _cloudNode->addChildWithName(sprite, "cloudFace");
+}
+
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
 }
@@ -184,5 +194,3 @@ void Cloud::decSize() {
 void Cloud::setDrawScale(float scale) {
     _drawscale = scale;
 }
-
-

@@ -12,9 +12,7 @@
 //  Version: 1/26/17
 //
 #include "WDApp.h"
-
 using namespace cugl;
-
 
 #pragma mark -
 #pragma mark Application State
@@ -30,9 +28,9 @@ using namespace cugl;
  * causing the application to run.
  */
 void WeatherDefenderApp::onStartup() {
+    CULogGLError();
     _assets = AssetManager::alloc();
-    _batch  = SpriteBatch::alloc();
-    
+    CULogGLError();
     // Start-up basic input
 #ifdef CU_TOUCH_SCREEN
     Input::activate<Touchscreen>();
@@ -52,6 +50,32 @@ void WeatherDefenderApp::onStartup() {
     // Que up the other assets
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    
+    CULogGLError();
+    glGenVertexArrays(1, &VAO);
+    CULogGLError();
+    glBindVertexArray(VAO);
+    CULogGLError();
+    
+    glGenBuffers(1, &VBO);
+    CULogGLError();
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    CULogGLError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    
+    //set up element buffer
+    glGenBuffers(1, &EBO);
+    CULogGLError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    CULogGLError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    CULogGLError();
+    
+    
+    _batch  = SpriteBatch::alloc();
+    
+    CULogGLError();
+
     
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -133,6 +157,7 @@ void WeatherDefenderApp::update(float timestep) {
         _loading.update(0.01f);
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
+        CULogGLError();
         _gameplay.init(_assets);
         _loaded = true;
     } else {

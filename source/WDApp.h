@@ -35,7 +35,7 @@ protected:
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
-    
+
 public:
 #pragma mark Constructors
     /**
@@ -57,7 +57,6 @@ public:
      * special to do here.
      */
     ~WeatherDefenderApp() { }
-    
     
 #pragma mark Application State
 
