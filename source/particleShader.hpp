@@ -60,12 +60,12 @@ static vector<Vec3> cloudSections = {   Vec3(2.5,   0.0,   1.5), //Central Circl
 
 // Represents a single particle and its state
 struct CloudParticle {
-    Vec2 position, jostleAmount;
+    Vec2 position, velocity, jostle;
     float opacity;
     float life;
     Vec4 color;
     Vec2 offset;
-    CloudParticle(Vec2 selectedPosition) : position(Vec2(0.0f,0.0f)), jostleAmount(Vec2(0.0f,0.0f)), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
+    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -82,8 +82,8 @@ public:
     // State
     std::vector<CloudParticle> particles;
     GLuint amount;
-    float maxJostle = 1.0;
-    float timeSinceLastJostle;
+    float maxJostle = 4.0;
+    float maxVelocity = 5.0;
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
@@ -144,12 +144,16 @@ public:
     void drawParticles();
     
     void update(Vec2 cloud_pos, float dt, GLuint np);
+
+    void SetFloat1f(const GLchar *name, float value){
+        glUniform1f(glGetUniformLocation(_program, name), value);
+    }
     
-    void SetVector2f(const GLchar *name, const Vec2 &value, GLboolean useShader = false){
+    void SetVector2f(const GLchar *name, const Vec2 &value){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
     }
     
-    void SetVector4f(const GLchar *name, const Vec4 &value, GLboolean useShader = false){
+    void SetVector4f(const GLchar *name, const Vec4 &value){
         glUniform4f(glGetUniformLocation(_program, name), value.x, value.y, value.z, value.w);
     }
     

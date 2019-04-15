@@ -14,13 +14,14 @@
 #define OFFSET_UNIFORM  "offset"
 #define COLOR_UNIFORM     "color"
 #define SPRITE_UNIFORM     "sprite"
+#define OPACITY_UNIFORM     "opacity"
 #define TEXTURE_POSITION    0
 
 using namespace cugl;
 
 ParticleGenerator::ParticleGenerator(){}
 
-ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount), timeSinceLastJostle(0){
+ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
     CULogGLError();
     for (int i = 0; i < cloudSections.size(); i++){
         Vec3 currentCircle = cloudSections[i];
@@ -35,15 +36,19 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount), timeSinceLa
             Vec2 centering = Vec2(-10,-10);
             Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
             offset = offset + centering;
-            this->particles.push_back(CloudParticle(offset));
+            
+            //Determine v1 and v2 in range 0 to maxVelocity
+            float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+            float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+            Vec2 velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+            
+            this->particles.push_back(CloudParticle(offset, velocity));
         }
     }
     
 }
 
 void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
-    timeSinceLastJostle += dt;
-    bool jostled = false;
 //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
@@ -53,23 +58,29 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
             int index = trueAmount*i + j;
             if (i != 0){index = index + this->amount;}
             
-            //Determine j1 and j2 in range 0 to maxJostle
-            float j1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxJostle));
-            float j2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxJostle));
-            
             CloudParticle &p = this->particles[index];
-            if (timeSinceLastJostle > 0.2){
-                jostled = true;
-                p.jostleAmount = Vec2(j1 - maxJostle/2, j2 - maxJostle/2);
-                if ((p.jostleAmount.x > maxJostle && p.jostleAmount.y > maxJostle) ||
-                    (p.jostleAmount.x < -maxJostle && p.jostleAmount.y < -maxJostle)){
-                    p.jostleAmount = Vec2::ZERO;
-                }
+            Vec2 basePosition = cloud_pos + p.offset;
+            
+            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
+                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
+                p.jostle = Vec2::ZERO;
+                //Determine v1 and v2 in range 0 to maxVelocity
+                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
             }
-            p.position = cloud_pos + p.offset + p.jostleAmount;
+            else{
+                p.jostle += dt*p.velocity;
+            }
+            p.position = basePosition + p.jostle;
+            
+            float greater = p.jostle.x;
+            if (p.jostle.y > p.jostle.x){
+                greater = p.jostle.y;
+            }
+            p.opacity = greater/maxJostle;
         }
     }
-    if(jostled){timeSinceLastJostle = 0.0;}
 }
 
 // Stores the index of the last particle used (for quick access to next dead particle)
@@ -100,7 +111,7 @@ void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
     particle.position = Vec2(500,500);// object->getPosition() + Vec2(random,random) + offset;
     particle.color = Vec4(rColor, rColor, rColor, 1.0f);
     particle.life = 1.0f;
-    particle.jostleAmount = Vec2(5.0f,5.0f);
+    particle.velocity = Vec2(5.0f,5.0f);
 }
 
 void ParticleShader::dispose() {
@@ -219,7 +230,7 @@ void ParticleShader::drawParticles(){
     for (CloudParticle p : _pg.particles){
         if (p.life > 0.0f){
             SetVector2f(OFFSET_UNIFORM, p.position);
-            //SetVector4f(COLOR_UNIFORM, Vec4(0.0,0.0,0.0,1.0));
+            SetVector4f(COLOR_UNIFORM, Vec4(p.opacity, 0.0, 0.0, 0.0));
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             CULogGLError();
         }

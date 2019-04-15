@@ -23,8 +23,8 @@ out vec4 color;
 uniform sampler2D sprite;
 
 void main(){
-//  color = (texture(sprite, TexCoords) * ParticleColor);
     color = texture(sprite, TexCoords);
+    color.w = ParticleColor.x;
 }
 
 /////////// SHADER END //////////
@@ -49,8 +49,8 @@ out vec4 color;
 uniform sampler2D sprite;
 
 void main(){
-//    color = (texture(sprite, TexCoords) * ParticleColor);
     color = texture(sprite, TexCoords);
+    color.w = ParticleColor.x;
 }
 /////////// SHADER END //////////
 );

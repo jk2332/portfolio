@@ -50,8 +50,8 @@ void Shader::bind() {
     if  (err != GL_NO_ERROR) {
         CULog("Error was %d",err);
         CULog("Invalid value? %d",err==GL_INVALID_VALUE);
-        CULog("Invalid value? %d",err==GL_INVALID_OPERATION);
-        CULog("Invalid value? %d",err==GL_INVALID_ENUM);
+        CULog("Invalid operation? %d",err==GL_INVALID_OPERATION);
+        CULog("Invalid enum? %d",err==GL_INVALID_ENUM);
 
         CUAssert(false);
     }
