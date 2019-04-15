@@ -70,7 +70,8 @@ float iosToDesktopScaleX;
 float iosToDesktopScaleY;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
-int num_clouds = 2;
+int num_clouds = 5;
+Vec2 pinchPos = Vec2::ZERO;
 int max_cloud_id = num_clouds;
 
 
@@ -165,7 +166,7 @@ std::vector<Obstacle *> rainDrops;
 #define SOUND_THRESHOLD     3
 #define GRID_NUM_X          9
 #define GRID_NUM_Y          4
-#define PINCH_OFFSET        1.5
+#define PINCH_OFFSET        4
 #define PINCH_CLOUD_DIST_OFFSET     5
 
 std::shared_ptr<Plant> currentPlant;
@@ -300,7 +301,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(true);
+    setDebug(false);
     
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -570,8 +571,11 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
     
     // check that pinch center is in between collided clouds
-    if (min(c1p.x, c2p.x) - PINCH_OFFSET <= pinchPos.x && pinchPos.x <= max(c1p.x, c2p.x) + PINCH_OFFSET &&
-        min(c1p.y, c2p.y) - PINCH_OFFSET <= pinchPos.y && pinchPos.y <= max(c1p.y, c2p.y) + PINCH_OFFSET){
+    float x_left_gap = pinchPos.x - min(c1p.x, c2p.x);
+    float x_right_gap = max(c1p.x, c2p.x) - pinchPos.x;
+    float y_bottom_gap = pinchPos.y - min(c1p.y, c2p.y);
+    float y_top_gap = max(c1p.y, c2p.y) - pinchPos.y;
+    if (x_left_gap >= 0 && x_right_gap >= 0 && y_bottom_gap >= 0 && y_top_gap >= 0){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
         cind2->incSize(cind1->getSize() - 1.0f);
         long toDelete = -1;
@@ -629,6 +633,7 @@ void GameScene::update(float dt) {
             CULog("pinched");
             gesCoolDown = ticks;
             pinched = true;
+            pinchPos = _input.getPinchSelection();
         }
     }
     
@@ -745,7 +750,7 @@ void GameScene::update(float dt) {
                         pinchedCloud2 = (Cloud *) ob;
                     }
                     if (pinchedCloud2 != nullptr && pinchedCloud1 != nullptr) {
-                        combineByPinch(pinchedCloud1, pinchedCloud2, _input.getPinchSelection());
+                        combineByPinch(pinchedCloud1, pinchedCloud2, pinchPos);
                         pinched = false;
                         pinchedCloud1 = nullptr;
                         pinchedCloud2 = nullptr;
@@ -797,7 +802,7 @@ void GameScene::update(float dt) {
                             }
                         }
                         if (pinchedCloud2 != nullptr && pinchedCloud1 != nullptr) {
-                            combineByPinch(pinchedCloud1, pinchedCloud2, _input.getPinchSelection());
+                            combineByPinch(pinchedCloud1, pinchedCloud2, pinchPos);
                             pinched = false;
                             pinchedCloud1 = nullptr;
                             pinchedCloud2 = nullptr;
@@ -894,8 +899,7 @@ void GameScene::update(float dt) {
 
 void GameScene::processRemoval(){
     //    process list for deletion
-    std::vector<int> indices_to_delete;
-    for (int i = 0; i < _clouds.size(); i++) {
+    for (int i = _clouds.size() - 1; i >= 0; i--) {
         auto c = _clouds.at(i);
         if (c && c->isRemoved()) {
             CULog("removing in update");
@@ -919,11 +923,8 @@ void GameScene::processRemoval(){
             _world->removeObstacle(((Obstacle *) c.get()));
             c->deactivatePhysics(*_world->getWorld());
             c->dispose();
-            indices_to_delete.push_back(i);
+            _clouds.erase(_clouds.begin() + i);
         }
-    }
-    for (auto ind : indices_to_delete){
-        _clouds.erase(_clouds.begin() + ind);
     }
 }
 

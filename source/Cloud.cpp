@@ -163,7 +163,7 @@ void Cloud::incSize(float f) {
 void Cloud::decSize() {
 //    CULog("decreased size");
     if (_size > 0.35){
-      _size -= 0.35;
+        _size -= 0.35;
     }
 }
 
