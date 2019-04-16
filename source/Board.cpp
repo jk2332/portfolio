@@ -7,9 +7,6 @@
 //
 
 #include "Board.hpp"
-
-#include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
-#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
 
 using namespace cugl;

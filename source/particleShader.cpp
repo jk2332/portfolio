@@ -78,7 +78,7 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
             if (p.jostle.y > p.jostle.x){
                 greater = p.jostle.y;
             }
-            p.opacity = greater/maxJostle;
+            p.opacity = 1.0 - abs(greater/maxJostle);
         }
     }
 }
@@ -106,10 +106,7 @@ int ParticleGenerator::firstUnusedParticle(){
 }
 
 void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
-    GLfloat random = ((rand() % 100) - 50) / 10.0f;
-    GLfloat rColor = 0.5 + ((rand() % 100) / 100.0f);
-    particle.position = Vec2(500,500);// object->getPosition() + Vec2(random,random) + offset;
-    particle.color = Vec4(rColor, rColor, rColor, 1.0f);
+    particle.position = Vec2(500,500);
     particle.life = 1.0f;
     particle.velocity = Vec2(5.0f,5.0f);
 }
@@ -197,6 +194,10 @@ void ParticleShader::drawParticles(){
     CULogGLError();
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     CULogGLError();
+    
+    //Placeholder to adjust size of particles based on scale of cloud
+    
+    
     glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
     CULogGLError();
     

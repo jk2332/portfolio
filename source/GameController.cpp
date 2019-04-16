@@ -90,7 +90,7 @@ float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 //    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
 //    16.0f, 17.0f, 16.0f, 18.0f };
 
-int plants[] = { 1, 4, 18, 21, 35};
+int plants[] = { 1, 4, 18, 21, 24};
 //int plants[] = { 9 };
 
 
@@ -114,7 +114,7 @@ std::map<long, Vec2> touchIDs_started_outside;
 std::map<long, Obstacle*> cloudsToSplit;
 std::vector<Obstacle *> rainDrops;
 //bool processedGes = false;
-
+std::shared_ptr<Plant> currentPlant;
 
 #pragma mark -
 #pragma mark Physics Constants
@@ -163,11 +163,9 @@ std::vector<Obstacle *> rainDrops;
 #define SOUND_THRESHOLD     3
 
 #define GRID_NUM_X          9
-#define GRID_NUM_Y          4
+#define GRID_NUM_Y          3
 #define PINCH_OFFSET        4
 #define PINCH_CLOUD_DIST_OFFSET     5
-
-std::shared_ptr<Plant> currentPlant;
 
 #pragma mark -
 #pragma mark Constructors
@@ -481,9 +479,8 @@ void GameScene::populate() {
             //Use cloudNode instead of sprite, but they work similarly
             auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
             cloudNode->setName("cloud" + std::to_string(i));
-            cloud->setSceneNodeParticles(cloudNode, _assets->get<Texture>("cloudFace"));
+            cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
             addObstacle(cloud,cloudNode,1);
-            //PROBLEM: world node doesn't have a name associated to the cloud node
         }
         else{
             sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
@@ -542,22 +539,6 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
 
 #pragma mark -
 #pragma mark Physics Handling
-
-/*Raycasting callback function*/
-float callback(b2Fixture* fixture, const Vec2& point, const Vec2& normal, float fraction){
-    if (fixture->GetBody()->GetType() == 2){
-        currentPlant->setShade(true);
-    }
-    //hoefully we will not collide with other plants
-    return 0.0;
-}
-
-Vec2 transformPoint(Vec2 point) {
-    float x = (32.0/961.0)*point.x - (1024.0/961.0);
-    float y = (9.0/256.0)*point.y - (9.0/8.0);
-
-    return Vec2(x,y);
-}
 
 void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     if (cind1 == nullptr || cind2 == nullptr) {
@@ -651,27 +632,24 @@ void GameScene::update(float dt) {
             continue;
         }
         else {
-             Vec2 v = c->getPosition();
+            Vec2 v = c->getPosition();
             if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-                v.y = v.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
+                v.y = v.y - DOWN_LEFT_CORNER_Y;
             }
 
             if (_board->isInBounds(v.x, v.y)){
                 std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
                 if (coord.first >= 0 && coord.second >= 0) {
-                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230, 230, 230, 0));
+                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
                     int plantIdx = coord.first * GRID_NUM_Y + coord.second;
                     auto plant = _plants[plantIdx];
                     if (plant != nullptr) {
                         plant->setShade(true);
                     }
-
                 }
             }
-
         }
     }
-
 
     //Check win/loss conditions
 

@@ -11,22 +11,11 @@
 
 #include <cugl/cugl.h>
 #include <stdio.h>
-#include "particle.vert"
-#include "particle.frag"
+#include "cloudParticle.vert"
+#include "cloudParticle.frag"
 #include <vector>
 #include "cugl/2d/physics/CUObstacle.h"
 using namespace cugl;
-////                                  Position      Texcoords
-//static GLfloat particle_quad[] = {  0.0f,0.0f,    0.0f,0.0f,
-//                                    0.0f,5.0f,    0.0f,1.0f,
-//                                    5.0f,0.0f,    1.0f,0.0f,
-//                                    5.0f,5.0f,    1.0f,1.0f};
-
-//                                  Position      Texcoords
-//static GLfloat particle_quad[] = {  -2.5f,-2.5f,    0.0f,0.0f,
-//                                    -2.5f,2.5f,    0.0f,1.0f,
-//                                    2.5f,-2.5f,    1.0f,0.0f,
-//                                    2.5f,2.5f,    1.0f,1.0f};
 
 ////                                  Position      Texcoords
 //static GLfloat particle_quad[] = {  -5.0f,-5.0f,    0.0f,0.0f,
@@ -34,11 +23,11 @@ using namespace cugl;
 //                                    5.0f,-5.0f,    1.0f,0.0f,
 //                                    5.0f,5.0f,    1.0f,1.0f};
 
-////                                  Position      Texcoords
-static GLfloat particle_quad[] = {  -10.0f,-10.0f,    0.0f,0.0f,
-                                    -10.0f,10.0f,    0.0f,1.0f,
-                                    10.0f,-10.0f,    1.0f,0.0f,
-                                    10.0f,10.0f,    1.0f,1.0f};
+////                                Position         Texcoords
+static GLfloat particle_quad[] = {  -10.0f,-10.0f,   0.0f, 0.0f,
+                                    -10.0f, 10.0f,   0.0f, 1.0f,
+                                     10.0f,-10.0f,   1.0f, 0.0f,
+                                     10.0f, 10.0f,   1.0f, 1.0f};
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 

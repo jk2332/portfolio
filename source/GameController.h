@@ -28,7 +28,7 @@
 #include <vector>
 #include "InputController.h"
 #include "PestController.hpp"
-#include "WeatherController.hpp"
+#include "CloudController.hpp"
 #include "ResourceController.hpp"
 #include "particleShader.hpp"
 #include "Plant.hpp"

@@ -52,11 +52,16 @@ protected:
     b2Fixture* _centroid;
     std::shared_ptr<cugl::Texture> _texture;
 
-    /** The scene graph node for the Ragdoll. This is empty, but attaches parts to it. */
+    /** The scene graph node for the Cloud. Contains the cloud's face. */
     std::shared_ptr<CloudNode> _cloudNode;
+    
+    /** The scene graph node for the Cloud. Contains the cloud's shadow. */
+    std::shared_ptr<PolygonNode> _shadowNode;
     
     std::shared_ptr<Node> _node;
 
+    float _disp;
+    
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
 
@@ -243,26 +248,6 @@ public:
      */
     void setTexture(const std::shared_ptr<Texture>& texture);
 
-//    /**
-//     * Returns the bubble generator for this ragdoll
-//     *
-//     * The bubble generator will be offset at the snorkel on the head.
-//     *
-//     * @return the bubble generator for this ragdoll
-//     */
-//    const std::shared_ptr<BubbleGenerator> getBubbleGenerator() const {
-//        return _bubbler;
-//    }
-//
-//    /**
-//     * Creates the bubble generator for this ragdoll
-//     *
-//     * The bubble generator will be offset at the snorkel on the head.
-//     *
-//     * @param texture   The texture for an individual bubble
-//     */
-//    void makeBubbleGenerator(const std::shared_ptr<Texture>& bubble);
-
     float getSize() {return _size;}
     void setSize(float s) {_size = s;}
 
@@ -305,7 +290,8 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    void setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, std::shared_ptr<Texture> image);
+    void setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement,
+                               std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

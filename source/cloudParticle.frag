@@ -1,5 +1,5 @@
 //
-//  particle.frag
+//  cloudParticle.frag
 //  WeatherDefender
 //
 //  Created by Stefan Joseph on 3/13/19.
