@@ -16,6 +16,7 @@
 #include <cugl/cugl.h>
 #include "GameController.h"
 #include "LoadingController.h"
+#include "LevelSelect.hpp"
 
 /**
  * This class represents the application root for the ragdoll demo.
@@ -32,9 +33,13 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    LevelSelect _levelSelect;
+
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
+    bool _levelselected;
+
 
 public:
 #pragma mark Constructors

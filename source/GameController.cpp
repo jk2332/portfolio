@@ -195,7 +195,12 @@ _counter(0)
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
     CULogGLError();
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0));
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), "level1");
+}
+
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string level) {
+    CULogGLError();
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), level);
 }
 
 /**
@@ -215,7 +220,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect) {
-    return init(assets,rect,Vec2(0,WATER_GRAVITY));
+    return init(assets,rect,Vec2(0,WATER_GRAVITY), "level1");
 }
 
 /**
@@ -235,7 +240,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
 
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     Size dimen = computeActiveSize();
@@ -252,7 +257,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 //        textures.push_back(_assets->get<Texture>("tile"));
 //    }
 
-    _level = assets->get<LevelModel>("level1");
+    _level = assets->get<LevelModel>(levelId);
     if (_level == nullptr) {
         CULog("Fail!");
         return false;
@@ -448,8 +453,8 @@ void GameScene::populate() {
      _board->setSceneNode(boardNode);
      _worldnode->addChildWithName(boardNode, "boardNode");
 
-    _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("bubble"));
-    _rainNode->setBlendFunc(GL_ONE, GL_ONE);
+    _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("smallRain"));
+    // _rainNode->setBlendFunc(GL_ONE, GL_ONE);
     _rainNode->setPosition(Vec2::ZERO);
     //CAPACITY
     _memory = FreeList<Particle>::alloc(100);
@@ -595,19 +600,12 @@ void GameScene::update(float dt) {
                 }
             }
 
-            // Tinting for debugging purposes, shows shaded tiles
-             if(!shaded){
-//                 thisNode->setColor(getColor() + Color4(255, 0, 0, 0));
-             }
-             else{
-//                 int plantIdx = i * GRID_NUM_Y + j;
-                 
+             if (shaded) {
                  for (std::shared_ptr<Plant> p : _level->getPlants()){
                      if (p != nullptr && p->getX() == i && p->getY() == j){
                         p->setShade(true);
                      }
                  }
-//                 thisNode->setColor(getColor() - Color4(230,230,230,0));
              }
         }
     }
@@ -640,7 +638,7 @@ void GameScene::update(float dt) {
     auto f = _level->getWorldNode();
     auto plantNode = _level->getWorldNode()->getChildByName("plantNode");
     for (auto &plant : _level->getPlants()){
-       if (ticks % 150 == 0 && ticks > 50) {
+       if (ticks % 250 == 0 && ticks > 150) {
            plant->updateState();
        }
        int st = plant->getState();
@@ -965,30 +963,48 @@ void GameScene::makeRain(Obstacle * cloud){
     Vec2 cloud_pos = c->getPosition();
 
     // Draw rain droplets
-    c->decSize();
+    // c->decSize();
     for (int i = -3; i < 3; i++){
         Particle* sprite = _memory->malloc();
         if (sprite != nullptr) {
             sprite->setTrajectory(-0.5f*M_PI);
-            sprite->setPosition(Vec2(cloud_pos.x + 0.5 * i + 0.3, cloud_pos.y - 1.5)*_scale);
+            sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
             _rainNode->addParticle(sprite);
             _pQ.push_back(sprite);
         }
     }
 
-    // Set plants to rained
-    if (cloud_pos.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-        cloud_pos.y = cloud_pos.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
-    }
-    std::pair<int, int> coord = _board->posToGridCoord(cloud_pos);
-    if (coord.first >= 0 && coord.second >= 0) {
-        int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-        auto plant = _plants[plantIdx];
-        if (plant != nullptr) {
-            plant->setRained(true);
+    bool rained;
+    shared_ptr<Node> thisNode;
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            rained = false;
+            thisNode = _board->getNodeAt(i, j);
+            rained = c->shadowCheck(_worldnode, thisNode);
+
+            if (rained) {
+                for (std::shared_ptr<Plant> p : _level->getPlants()){
+                    if (p != nullptr && p->getX() == i && p->getY() == j){
+                        p->setRained(true);
+                    }
+                }
+            }
         }
     }
-    c->setIsRaining(false);
+
+    // // Set plants to rained
+    // if (cloud_pos.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+    //     cloud_pos.y = cloud_pos.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
+    // }
+    // std::pair<int, int> coord = _board->posToGridCoord(cloud_pos);
+    // if (coord.first >= 0 && coord.second >= 0) {
+    //     int plantIdx = coord.first * GRID_NUM_Y + coord.second;
+    //     auto plant = _plants[plantIdx];
+    //     if (plant != nullptr) {
+    //         plant->setRained(true);
+    //     }
+    // }
+    // c->setIsRaining(false);
 }
 
 

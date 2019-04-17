@@ -152,7 +152,7 @@ void Plant::changeSign() {
     } else if (_state == dead) {
         _signIcon->setTexture(_assets->get<Texture>("iconSad"));
     } else {
-        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+        _signIcon->setTexture(_assets->get<Texture>("iconHappy"));
     }
     
 }

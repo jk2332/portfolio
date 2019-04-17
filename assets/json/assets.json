@@ -91,6 +91,9 @@
         "iconRain": {
             "file":     "textures/iconRain.png"
         },
+        "smallRain": {
+            "file":     "textures/small_rain.png"
+        },
         "iconSun": {
             "file":     "textures/iconSun.png"
         },

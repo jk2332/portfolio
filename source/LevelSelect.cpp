@@ -46,8 +46,8 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _assets = assets;
     _assets->load<Texture>("level select background", "/textures/levelselect-background.png");
     _assets->load<Texture>("level0button", "/textures/cloud-1.png");
-    _assets->load<Texture>("level1button", "/textures/cloud-2.png");
-    _assets->load<Texture>("level2button", "/textures/cloud-3.png");
+    _assets->load<Texture>("level1button", "/textures/cloud-3.png");
+    _assets->load<Texture>("level2button", "/textures/cloud-2.png");
     _assets->load<Texture>("level3button", "/textures/cloud-4.png");
     std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
     auto bknode = PolygonNode::allocWithTexture(image);
@@ -81,15 +81,15 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void LevelSelect::dispose() {
     // Deactivate the button (platform dependent)
     std::cout << "Here" << endl;
-    for (int i = 0; i < _num_level; i++){
+    for (int i = 0; i < _levelButtons.size(); i++){
         if (isPending(i)){
+            auto a = _levelButtons.at(i);
             _levelButtons.at(i)->deactivate();
             //            _levelButtons.at(i)->removeListener();
         }
     }
     _levelButtons.clear();
     _selected = false;
-    _selectedLevel = -1;
     //    _bar = nullptr;
     _assets = nullptr;
     //    _progress = 0.0f;
@@ -120,7 +120,7 @@ void LevelSelect::update(float progress) {
     for (int i =0; i < _num_level; i++){
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i);
-        if (_levelButtons.at(i)->isToggle()) {
+        if (_levelButtons.at(i)->isDown()) {
             _selectedLevel = i;
         }
     }
@@ -153,4 +153,3 @@ Size LevelSelect::computeActiveSize() const {
     }
     return dimen;
 }
-

@@ -1,4 +1,3 @@
-//
 //  LevelSelect.hpp
 //  WeatherDefender
 //
@@ -117,4 +116,3 @@ public:
 };
 
 #endif /* LevelSelect_hpp */
-
