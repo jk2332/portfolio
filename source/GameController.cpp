@@ -67,7 +67,7 @@ float iosToDesktopScaleX;
 float iosToDesktopScaleY;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
-int num_clouds = 5;
+int num_clouds = 1;
 Vec2 pinchPos = Vec2::ZERO;
 int max_cloud_id = num_clouds;
 
@@ -76,19 +76,24 @@ int max_cloud_id = num_clouds;
 // In an actual game, this information would go in a data file.
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
-float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
-                   0.0f,  0.0f, 16.0f,  0.0f, 16.0f,  -1.0f,
-                   -1.0f,  -1.0f,  -1.0f, 19.0f };
-float WALL2[] = { 33.0f, 19.0f, 33.0f, -1.0f, 16.0f,  -1.0f,
-                  16.0f, 0.0f, 32.0f, 0.0f, 32.0f, 18.0f,
-                  16.0f, 18.0f, 16.0f, 19.0f };
+//float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
+//                   0.0f,  0.0f, 16.0f,  0.0f, 16.0f,  -1.0f,
+//                   -1.0f,  -1.0f,  -1.0f, 19.0f };
+//float WALL2[] = { 33.0f, 19.0f, 33.0f, -1.0f, 16.0f,  -1.0f,
+//                  16.0f, 0.0f, 32.0f, 0.0f, 32.0f, 18.0f,
+//                  16.0f, 18.0f, 16.0f, 19.0f };
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
-//float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-//    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-//    0.f,  0.0f,  0.0f, 18.0f };
-//float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
-//    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
-//    16.0f, 17.0f, 16.0f, 18.0f };
+
+
+
+float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
+                   0.0f,  7.0f, 16.0f,  7.0f, 16.0f,  6.0f,
+                  -1.0f,  6.0f, -1.0f, 19.0f };
+
+float WALL2[] = { 33.0f, 19.0f, 33.0f,  6.0f, 16.0f,  6.0f,
+                  16.0f,  7.0f, 32.0f,  7.0f, 32.0f, 18.0f,
+                  16.0f, 18.0f, 16.0f, 19.0f };
+
 
 int plants[] = { 1, 4, 18, 21, 24};
 //int plants[] = { 9 };
@@ -445,19 +450,20 @@ void GameScene::populate() {
    sprite = PolygonNode::allocWithTexture(image,wall2);
    addObstacle(wallobj2,sprite,1);  // All walls share the same texture
 
-     auto boardNode = Node::alloc();
-     _board->setSceneNode(boardNode);
 
+     auto boardNode = Node::alloc();
+    boardNode->setZOrder(6);
+     _board->setSceneNode(boardNode);
      _worldnode->addChildWithName(boardNode, "boardNode");
-    
+
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("bubble"));
     _rainNode->setBlendFunc(GL_ONE, GL_ONE);
     _rainNode->setPosition(Vec2::ZERO);
-//CAPACITY
+    //CAPACITY
     _memory = FreeList<Particle>::alloc(100);
     Size size = Application::get()->getDisplaySize();
     _rainNode->setContentSize(size);
-    _worldnode->addChild(_rainNode);
+    _worldnode->addChild(_rainNode, 2);
 }
 
 /**
@@ -581,36 +587,55 @@ void GameScene::update(float dt) {
             pinchPos = _input.getPinchSelection();
         }
     }
-    
+    bool shaded;
+    shared_ptr<Node> thisNode;
     for (int i=0; i < GRID_NUM_X; i++){
         for (int j=0; j < GRID_NUM_Y; j++){
-            _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
+            shaded = false;
+            thisNode = _board->getNodeAt(i, j);
+            
+            for (auto &c : _level->getClouds()) {
+                if (c == nullptr) {
+                    continue;
+                }
+                else { //do this better later
+                    shaded = shaded || c->shadowCheck(_worldnode, thisNode);
+                }
+            }
+            
+            // Debugging purposes, shows shaded tiles
+            // if(!shaded){
+            //     thisNode->setColor(getColor() + Color4(255, 0, 0, 0));
+            // }
+            // else{
+            //     thisNode->setColor(getColor() - Color4(230,230,230,0));
+            // }
         }
     }
     
-    for (auto &c : _clouds) {
-        if (c == nullptr) {
-            continue;
-        }
-        else {
-            Vec2 v = c->getPosition();
-            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-                v.y = v.y - DOWN_LEFT_CORNER_Y;
-            }
-
-            if (_board->isInBounds(v.x, v.y)){
-                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-                if (coord.first >= 0 && coord.second >= 0) {
-                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-                    auto plant = _plants[plantIdx];
-                    if (plant != nullptr) {
-                        plant->setShade(true);
-                    }
-                }
-            }
-        }
-    }
+//    for (auto &c : _clouds) {
+//        if (c == nullptr) {
+//            continue;
+//        }
+//        else {
+//            Vec2 v = c->getPosition();
+//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+//                v.y = v.y - DOWN_LEFT_CORNER_Y;
+//            }
+//
+//            if (_board->isInBounds(v.x, v.y)){
+//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
+//                if (coord.first >= 0 && coord.second >= 0) {
+//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
+//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
+//                    auto plant = _plants[plantIdx];
+//                    if (plant != nullptr) {
+//                        plant->setShade(true);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     //Check win/loss conditions
     auto f = _level->getWorldNode();

@@ -69,67 +69,66 @@ void Plant::updateState(){
         return;
     }
     else {
-        _progress += 1;
-//         if (_state == needShade){
-// //            CULog("update needs shade");
-//             if (_shaded){
-//                 incHealth();
-//                 _shadeCounter += 1;
-//                 if (_health >= 0 && _shadeCounter == 2){
-//                     setState(noNeed);
-//                     _shadeCounter = 0;
-//                     _progress += 2;
-//                 }
-//             } else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
-//         else if (_state == needRain){
-//             if (_rained){
-//                 incHealth();
-//                 if (_health >= 0){
-//                     setState(noNeed);
-//                     _progress += 2;
-//                 }
-//             } else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
-//         else if (_state == noNeed){
-//             int statusChance = rand() %  100 + 1;
-//             if (statusChance < _rainProb) {
-//                 CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
-//                 _state = needRain;
-//                 _rainProb /= 2;
-//             } else if (statusChance < _rainProb + _shadeProb) {
-// //                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
-//                 _state = needShade;
-//                 _shadeProb /= 1.5;
-//             } else {
-// //                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
-//                 if (!_shaded){
-//                     _progress += 1;
-//                 }
-//             }
-//         } else if (_state == needSun) {
-// //            CULog("update needs sun");
-//             if (!_shaded){
-//                 incHealth();
-//                 if (_health >= 0){setState(noNeed);}
-//             }
-//             else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
+        if (_state == needShade){
+//            CULog("update needs shade");
+            if (_shaded){
+                incHealth();
+                _shadeCounter += 1;
+                if (_health >= 0 && _shadeCounter == 2){
+                    setState(noNeed);
+                    _shadeCounter = 0;
+                    _progress += 2;
+                }
+            } else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
+        else if (_state == needRain){
+            if (_rained){
+                incHealth();
+                if (_health >= 0){
+                    setState(noNeed);
+                    _progress += 2;
+                }
+            } else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
+        else if (_state == noNeed){
+            int statusChance = rand() %  100 + 1;
+            if (statusChance < _rainProb) {
+                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
+                _state = needRain;
+                _rainProb /= 2;
+            } else if (statusChance < _rainProb + _shadeProb) {
+//                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
+                _state = needShade;
+                _shadeProb /= 1.5;
+            } else {
+//                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
+                if (!_shaded){
+                    _progress += 1;
+                }
+            }
+        } else if (_state == needSun) {
+//            CULog("update needs sun");
+            if (!_shaded){
+                incHealth();
+                if (_health >= 0){setState(noNeed);}
+            }
+            else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
 
         _shaded = false;
         _rained = false;
