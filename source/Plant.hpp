@@ -45,9 +45,17 @@ protected:
     int _rainProb;
     int _shadeProb;
     int _progress;
+    bool _active;
+    std::string _ptype;
 
     int _shadeCounter;
-    std::shared_ptr<PolygonNode> _node;
+    std::shared_ptr<AnimationNode> _node;
+    std::shared_ptr<cugl::AssetManager> _assets;
+
+    std::shared_ptr<ActionManager> _actions;
+    std::shared_ptr<Animate> _grow;
+    std::shared_ptr<Animate> _grow2;
+
 
 
 public:
@@ -87,7 +95,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(int x, int y, int rain, int shade, std::vector<std::shared_ptr<Texture>> textures, float drawscale);
+    bool init(int x, int y, int rain, int shade, float drawscale);
 
 
 #pragma mark -
@@ -106,9 +114,9 @@ public:
      *
      * @return a newly allocated Ragdoll with the given position
      */
-    static std::shared_ptr<Plant> alloc(int x, int y, int rainProb, int shadeProb, std::vector<std::shared_ptr<Texture>> textures, float drawscale) {
+    static std::shared_ptr<Plant> alloc(int x, int y, int rainProb, int shadeProb, float drawscale) {
         std::shared_ptr<Plant> result = std::make_shared<Plant>();
-        return (result->init(x, y, rainProb, shadeProb, textures, drawscale) ? result : nullptr);
+        return (result->init(x, y, rainProb, shadeProb, drawscale) ? result : nullptr);
     }
 
     void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name);
@@ -129,14 +137,21 @@ public:
         if (_health < healthLimit){_health += 2;}
     }
 
+    void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
+
     void setShade(bool f);
     void setRained(bool f);
+
+    void setPlantType(std::string s) { _ptype = s; };
+    std::string getPlantType() {return _ptype;};
 
     void updateState();
     void setState(int s);
     int getState() {return _state;}
 
     void upgradeSprite();
+    void update(float dt);
+
 };
 
 

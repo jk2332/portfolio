@@ -13,6 +13,9 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
+#include "Cloud.hpp"
+#include "Plant.hpp"
+#include "Board.hpp"
 
 using namespace cugl;
 
@@ -44,6 +47,8 @@ protected:
     /** The level drawing scale (difference between physics and drawing coordinates) */
     Vec2 _scale;
     
+    float _cscale;
+    
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<Node> _worldnode;
     /** Reference to the debug root of the scene graph */
@@ -56,7 +61,16 @@ protected:
 //    std::shared_ptr<RocketModel> _rocket;
     /** Reference to the goalDoor (for collision detection) */
 //    std::shared_ptr<ExitModel> _goalDoor;
-    
+    std::shared_ptr<cugl::JsonValue> _cloudLayer;   
+    std::shared_ptr<cugl::JsonValue> _plantLayer;   
+    std::vector<std::shared_ptr<Cloud>> _cloud;
+    std::vector<std::shared_ptr<Plant>> _plants;
+    std::shared_ptr<Board> _board;
+    Poly2 _poly;
+
+    // float _scale;
+
+
     /** Reference to all the active crates */
 //    std::vector<std::shared_ptr<CrateModel>> _crates;
     /** Reference to all the walls */
@@ -77,8 +91,10 @@ protected:
      * @retain the rocket
      * @return true if the rocket was successfully loaded
      */
-    bool loadRocket(const std::shared_ptr<JsonValue>& json);
-    
+    // bool loadRocket(const std::shared_ptr<JsonValue>& json);
+
+    // Load all clouds
+    bool loadCloud(const std::shared_ptr<JsonValue>& json, int i);
     /**
      * Loads the singular exit door
      *
@@ -90,7 +106,7 @@ protected:
      * @retain the exit door
      * @return true if the exit door was successfully loaded
      */
-    bool loadGoalDoor(const std::shared_ptr<JsonValue>& json);
+    bool loadPlant(const std::shared_ptr<JsonValue>& json);
     
     /**
      * Loads a single wall object
@@ -181,6 +197,14 @@ public:
         std::shared_ptr<LevelModel> result = std::make_shared<LevelModel>();
         return (result->init(file) ? result : nullptr);
     }
+    
+    std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
+    
+    std::shared_ptr<Node> getWorldNode() { return _worldnode; };
+    
+    std::vector<std::shared_ptr<Plant>> getPlants() { return _plants; };
+
+    
     
 #pragma mark Model Access
     /**

@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B8D3A65226266A1002AFC9A /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B8D3A61226266A1002AFC9A /* LevelModel.cpp */; };
 		1BD3690A224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
 		1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
+		1BD618762266BF4F001F8D5B /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B8D3A61226266A1002AFC9A /* LevelModel.cpp */; };
+		1BD618782266BF70001F8D5B /* LevelModel.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD618772266BF70001F8D5B /* LevelModel.hpp */; };
 		EB122D991E281EE70019E2D1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB122D981E281EE70019E2D1 /* CoreGraphics.framework */; };
 		EB122D9B1E281EFC0019E2D1 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */; };
 		EB122DB71E281F7E0019E2D1 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = EB3B95851E25B1FA00314284 /* sounds */; };
@@ -118,8 +121,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B8D3A61226266A1002AFC9A /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
 		1BD36908224E289B00C253C4 /* Particle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
 		1BD36909224E289B00C253C4 /* Particle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Particle.hpp; sourceTree = "<group>"; };
+		1BD618772266BF70001F8D5B /* LevelModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LevelModel.hpp; sourceTree = "<group>"; };
 		EB122D981E281EE70019E2D1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WeatherDefender (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -299,6 +304,8 @@
 				F86A31522239D6D600233ED5 /* cloudParticle.vert */,
 				EBB4B56F2040ADD200238092 /* GameController.cpp */,
 				EBB4B56D2040ADD200238092 /* GameController.h */,
+				1B8D3A61226266A1002AFC9A /* LevelModel.cpp */,
+				1BD618772266BF70001F8D5B /* LevelModel.hpp */,
 				EBB4B5702040ADD200238092 /* InputController.cpp */,
 				EBB4B5712040ADD200238092 /* InputController.h */,
 				EBB4B5762040ADD300238092 /* LoadingController.cpp */,
@@ -562,6 +569,7 @@
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
+				1BD618762266BF4F001F8D5B /* LevelModel.cpp in Sources */,
 				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				F8939EB52237515400199385 /* CloudController.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
@@ -578,6 +586,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BD618782266BF70001F8D5B /* LevelModel.hpp in Sources */,
+				1B8D3A65226266A1002AFC9A /* LevelModel.cpp in Sources */,
+				EBB4B57E2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */,
 				F8939EA42236FE2900199385 /* MenuController.cpp in Sources */,
 				F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */,

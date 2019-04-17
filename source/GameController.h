@@ -35,6 +35,7 @@
 #include "Cloud.hpp"
 #include "Board.hpp"
 #include "Particle.hpp"
+#include "LevelModel.hpp"
 #include <set>
 #include <cugl/2d/CUPathNode.h>
 
@@ -53,7 +54,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
-    std::shared_ptr<Plant> _plants[36];
+    std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
     std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
@@ -63,7 +64,8 @@ protected:
     std::shared_ptr<ParticleNode> _rainNode;
     std::shared_ptr<cugl::FreeList<Particle>> _memory;
     std::set<Particle*> _particles;
-
+    std::shared_ptr<LevelModel> _level;
+    
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
 
@@ -73,8 +75,9 @@ protected:
     std::shared_ptr<cugl::Node> _worldnode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
-
-
+    std::shared_ptr<cugl::Node> _rootnode;
+    
+    
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */

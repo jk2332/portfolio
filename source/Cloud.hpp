@@ -65,6 +65,11 @@ protected:
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
 
+    std::string _cloudTexture;
+    
+//    /** Cache object for transforming the force according the object angle */
+//    cugl::Mat4 _affine;
+
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawscale;
     int _unitNum;
@@ -143,21 +148,6 @@ public:
      */
     bool init(const cugl::Poly2, const cugl::Vec2);
 
-    /**
-     * Initializes a new Ragdoll with the given position and scale
-     *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @param pos   Initial position in world coordinates
-     * @param scale The drawing scale to convert world to screen coordinates
-     *
-     * @return  true if the obstacle is initialized properly, false otherwise.
-     */
-//    bool init(const cugl::Vec2& pos, float scale);
-
     std::shared_ptr<BoxObstacle> getObstacle();
 
 #pragma mark -
@@ -215,8 +205,43 @@ public:
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
         return (result->init(p, pos) ? result : nullptr);
     }
+    
+#pragma mark -
+#pragma mark Animation
+	/**
+	* Returns the texture (key) for this crate
+	*
+	* The value returned is not a Texture2D value.  Instead, it is a key for
+	* accessing the texture from the asset manager.
+	*
+	* @return the texture (key) for this crate
+	*/
+	const std::string& getTextureKey() const { return _cloudTexture; }
 
-
+	/**
+	* Sets the texture (key) for this crate
+	*
+	* The value returned is not a Texture2D value.  Instead, it is a key for
+	* accessing the texture from the asset manager.
+	*
+	* @param  strip    the texture (key) for this crate
+	*/
+	void setTextureKey(std::string strip) { _cloudTexture = strip; }
+    
+#pragma mark Physics Methods    
+    /**
+     * Creates the individual body parts for this ragdoll
+     *
+     * The size of the body parts is determined by the scale together with
+     * the assets (as part of the asset manager).  This will fail if any
+     * body part assets are missing.
+     *
+     * @param assets The program asset manager
+     *
+     * @return true if the body parts were successfully created
+     */
+    bool initialBuild(const std::shared_ptr<AssetManager>& assets);
+    
 #pragma mark Physics Methods
 
     bool dropUnit(b2World& world);

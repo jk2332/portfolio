@@ -12,6 +12,8 @@
 //  Version: 1/26/17
 //
 #include "WDApp.h"
+#include "LevelModel.hpp"
+
 using namespace cugl;
 
 #pragma mark -
@@ -42,6 +44,7 @@ void WeatherDefenderApp::onStartup() {
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<Node>(SceneLoader::alloc()->getHook());
+    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
 
     // Create a "loading" screen
     _loaded = false;
@@ -50,6 +53,33 @@ void WeatherDefenderApp::onStartup() {
     // Que up the other assets
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadAsync<LevelModel>("level1","json/level.json",nullptr);
+    
+    CULogGLError();
+    glGenVertexArrays(1, &VAO);
+    CULogGLError();
+    glBindVertexArray(VAO);
+    CULogGLError();
+    
+    glGenBuffers(1, &VBO);
+    CULogGLError();
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    CULogGLError();
+    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    
+    //set up element buffer
+    glGenBuffers(1, &EBO);
+    CULogGLError();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    CULogGLError();
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+    CULogGLError();
+    
+    
+    _batch  = SpriteBatch::alloc();
+    
+    CULogGLError();
+
     
     CULogGLError();
     glGenVertexArrays(1, &VAO);

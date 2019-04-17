@@ -15,23 +15,29 @@
 
 using namespace cugl;
 
-bool Plant::init(int x, int y, int rainProb, int shadeProb, std::vector<std::shared_ptr<Texture>> textures, float drawscale) {
+bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     _health = 0;
     _x = x;
     _y = y;
     _rainProb = rainProb;
     _shadeProb = shadeProb;
     _drawscale = drawscale;
-    _textures = textures;
+    _maxStage = 4;
 
-    _stage = 0;
-    _maxStage = textures.size() - 1;
+    _stage = 1;
     _shaded = false;
     _state = noNeed;
     _node = nullptr;
     _progress = 0;
+    _active = false;
 
     _shadeCounter = 0;
+
+    // Plant animations
+    _actions = ActionManager::alloc();
+    _grow = Animate::alloc(0, 8, 1.0f, 1);
+    _grow2 = Animate::alloc(0, 7, 1.0f, 1);
+
 
     return true;
 }
@@ -63,84 +69,101 @@ void Plant::updateState(){
         return;
     }
     else {
-        if (_state == needShade){
-//            CULog("update needs shade");
-            if (_shaded){
-                incHealth();
-                _shadeCounter += 1;
-                if (_health >= 0 && _shadeCounter == 2){
-                    setState(noNeed);
-                    _shadeCounter = 0;
-                    _progress += 2;
-                }
-            } else{
-                decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
-            }
-        }
-        else if (_state == needRain){
-            if (_rained){
-                incHealth();
-                if (_health >= 0){
-                    setState(noNeed);
-                    _progress += 2;
-                }
-            } else{
-                decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
-            }
-        }
-        else if (_state == noNeed){
-            int statusChance = rand() %  100 + 1;
-            if (statusChance < _rainProb) {
-                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
-                _state = needRain;
-                _rainProb /= 2;
-            } else if (statusChance < _rainProb + _shadeProb) {
-//                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
-                _state = needShade;
-                _shadeProb /= 1.5;
-            } else {
-//                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
-                if (!_shaded){
-                    _progress += 1;
-                }
-            }
-        } else if (_state == needSun) {
-//            CULog("update needs sun");
-            if (!_shaded){
-                incHealth();
-                if (_health >= 0){setState(noNeed);}
-            }
-            else{
-                decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
-            }
-        }
+        _progress += 1;
+//         if (_state == needShade){
+// //            CULog("update needs shade");
+//             if (_shaded){
+//                 incHealth();
+//                 _shadeCounter += 1;
+//                 if (_health >= 0 && _shadeCounter == 2){
+//                     setState(noNeed);
+//                     _shadeCounter = 0;
+//                     _progress += 2;
+//                 }
+//             } else{
+//                 decHealth();
+//                 if (_progress >= 1) {
+//                     _progress -= 1;
+//                 }
+//             }
+//         }
+//         else if (_state == needRain){
+//             if (_rained){
+//                 incHealth();
+//                 if (_health >= 0){
+//                     setState(noNeed);
+//                     _progress += 2;
+//                 }
+//             } else{
+//                 decHealth();
+//                 if (_progress >= 1) {
+//                     _progress -= 1;
+//                 }
+//             }
+//         }
+//         else if (_state == noNeed){
+//             int statusChance = rand() %  100 + 1;
+//             if (statusChance < _rainProb) {
+//                 CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
+//                 _state = needRain;
+//                 _rainProb /= 2;
+//             } else if (statusChance < _rainProb + _shadeProb) {
+// //                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
+//                 _state = needShade;
+//                 _shadeProb /= 1.5;
+//             } else {
+// //                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
+//                 if (!_shaded){
+//                     _progress += 1;
+//                 }
+//             }
+//         } else if (_state == needSun) {
+// //            CULog("update needs sun");
+//             if (!_shaded){
+//                 incHealth();
+//                 if (_health >= 0){setState(noNeed);}
+//             }
+//             else{
+//                 decHealth();
+//                 if (_progress >= 1) {
+//                     _progress -= 1;
+//                 }
+//             }
+//         }
 
         _shaded = false;
         _rained = false;
 
         if(_health <= -healthLimit){
             setState(dead);
-        } else if (_progress >= 4) {
+        } else if (_progress >= 3) {
             upgradeSprite();
         }
     }
 }
 
 void Plant::upgradeSprite() {
-    _progress = 0;
-    if (_stage < _maxStage) {
+     if (_active) {
+         CULog("change texture");
+        _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
+        _node->setFrame(0);
+        _active = false;
+        _progress = 0;
+    } else if (_stage < _maxStage) {
+        _active = true;
         _stage += 1;
-        _node->setTexture(_textures[_stage]);
+        CULog("Apparently grew %d", (_stage));
+        if (true) {
+        // if (_node->getTexture()->getWidth() > 2300) {
+            _actions->activate("current", _grow, _node);
+        } else {
+            _actions->activate("current", _grow2, _node);
+        }
     }
+}
+
+void Plant::update(float dt) {
+    _actions->update(dt);
 }
 
 void Plant::setState(int s){
@@ -149,12 +172,10 @@ void Plant::setState(int s){
 }
 
 void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name){
-    std::shared_ptr<PolygonNode> plant_node = PolygonNode::allocWithTexture(_textures[_stage]);
-    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
-    //MYTODO: Might need to change to our version
-    //cugl::Vec2 a = cugl::Vec2(GRID_WIDTH*_drawscale/2,GRID_HEIGHT*_drawscale);
-    plant_node->setPosition(a);
-    plant_node->setScale(0.15f);
-    _node = plant_node;
-    node->addChildWithName(plant_node, name);
+    _node = AnimationNode::alloc(_assets->get<Texture>(getPlantType() + std::to_string(_stage)), 1, 9);
+    _node->setAnchor(Vec2::ANCHOR_CENTER);
+     _node->setScale(0.15f);
+    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _node->setPosition(a);
+    node->addChildWithName(_node, name);
 }

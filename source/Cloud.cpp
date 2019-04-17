@@ -50,7 +50,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
-//    _drawscale = scale;
+    // _drawscale = scale;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
@@ -59,9 +59,6 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _ob = nullptr;
     return true;
 }
-
-
-
 
 /**
  * Disposes all resources and assets of this Ragdoll
