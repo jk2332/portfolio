@@ -67,7 +67,7 @@ float iosToDesktopScaleX;
 float iosToDesktopScaleY;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
-int num_clouds = 5;
+int num_clouds = 1;
 Vec2 pinchPos = Vec2::ZERO;
 int max_cloud_id = num_clouds;
 
@@ -420,7 +420,7 @@ void GameScene::populate() {
 
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
-
+    boardNode->setZOrder(6);
     _worldnode->addChildWithName(boardNode, "boardNode");
 
     std::vector<std::shared_ptr<Texture>> pTextures;
@@ -430,6 +430,7 @@ void GameScene::populate() {
     pTextures.push_back(_assets->get<Texture>("tomato4"));
 
     auto plantNode = Node::alloc();
+    plantNode->setZOrder(3);
     for (int i = 0; i < GRID_NUM_X; i++){
         for (int j = 0; j < GRID_NUM_Y; j++){
            int plantNum = i*GRID_NUM_Y + j;
@@ -621,86 +622,107 @@ void GameScene::update(float dt) {
             pinchPos = _input.getPinchSelection();
         }
     }
-    
+    bool shaded;
+    shared_ptr<Node> thisNode;
     for (int i=0; i < GRID_NUM_X; i++){
         for (int j=0; j < GRID_NUM_Y; j++){
-            _board->getNodeAt(i, j)->setColor(getColor() + Color4(255, 0, 0, 0));
-        }
-    }
-    for (auto &c : _clouds) {
-        if (c == nullptr) {
-            continue;
-        }
-        else {
-            Vec2 v = c->getPosition();
-            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-                v.y = v.y - DOWN_LEFT_CORNER_Y;
-            }
-
-            if (_board->isInBounds(v.x, v.y)){
-                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-                if (coord.first >= 0 && coord.second >= 0) {
-                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-                    auto plant = _plants[plantIdx];
-                    if (plant != nullptr) {
-                        plant->setShade(true);
-                    }
+            shaded = false;
+            thisNode = _board->getNodeAt(i, j);
+            
+            for (auto &c : _clouds) {
+                if (c == nullptr) {
+                    continue;
+                }
+                else { //do this better later
+                    shaded = shaded || c->shadowCheck(_worldnode, thisNode);
                 }
             }
+            
+            if(!shaded){
+                thisNode->setColor(getColor() + Color4(255, 0, 0, 0));
+            }
+            else{
+                thisNode->setColor(getColor() - Color4(230,230,230,0));
+            }
         }
     }
+    
+    
+    
+//    for (auto &c : _clouds) {
+//        if (c == nullptr) {
+//            continue;
+//        }
+//        else {
+//            Vec2 v = c->getPosition();
+//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+//                v.y = v.y - DOWN_LEFT_CORNER_Y;
+//            }
+//
+//            if (_board->isInBounds(v.x, v.y)){
+//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
+//                if (coord.first >= 0 && coord.second >= 0) {
+//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
+//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
+//                    auto plant = _plants[plantIdx];
+//                    if (plant != nullptr) {
+//                        plant->setShade(true);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     //Check win/loss conditions
 
-    auto plantNode = _worldnode->getChildByName("plantNode");
-    for (int i = 0; i < sizeof(_plants)/sizeof(_plants[0]); ++i){
-        auto *idx = std::find(std::begin(plants), std::end(plants), i);
-        if (idx == std::end(plants)) {
-            continue;
-        }
-
-        currentPlant = _plants[i];
-        if (ticks % 200 == 0 && ticks > 200) {
-//        if (ticks % 100 == 0) {
-            currentPlant->updateState();
-//            CULog(std::to_string(ticks).c_str());
-        }
-        int st = currentPlant->getState();
-
-        bool debugPlantColor = false;
-
-        std::string childName = "plant" + std::to_string(i);
-        if (st == noNeed) {
-            if (debugPlantColor) {
-                CULog("no need");
-            }
-            plantNode->getChildByName(childName)->setColor(Color4::WHITE);
-        }
-        if (st == needRain){
-            if (debugPlantColor) {
-                CULog("need rain");
-            }
-            plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
-        }
-        else if (st == needSun){
-            if (debugPlantColor) {
-                CULog("need sun");
-            }
-            plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
-        }
-        else if (st == needShade) {
-            if (debugPlantColor) {
-                CULog("need shade");
-            }
-            plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
-        }
-        else if (st == dead){
-            if (debugPlantColor) {
-                CULog("dead");
-            }
-        }
-    }
+//    auto plantNode = _worldnode->getChildByName("plantNode");
+//    for (int i = 0; i < sizeof(_plants)/sizeof(_plants[0]); ++i){
+//        auto *idx = std::find(std::begin(plants), std::end(plants), i);
+//        if (idx == std::end(plants)) {
+//            continue;
+//        }
+//
+//        currentPlant = _plants[i];
+//        if (ticks % 200 == 0 && ticks > 200) {
+////        if (ticks % 100 == 0) {
+//            currentPlant->updateState();
+////            CULog(std::to_string(ticks).c_str());
+//        }
+//        int st = currentPlant->getState();
+//
+//        bool debugPlantColor = false;
+//
+//        std::string childName = "plant" + std::to_string(i);
+//        if (st == noNeed) {
+//            if (debugPlantColor) {
+//                CULog("no need");
+//            }
+//            plantNode->getChildByName(childName)->setColor(Color4::WHITE);
+//        }
+//        if (st == needRain){
+//            if (debugPlantColor) {
+//                CULog("need rain");
+//            }
+//            plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
+//        }
+//        else if (st == needSun){
+//            if (debugPlantColor) {
+//                CULog("need sun");
+//            }
+//            plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
+//        }
+//        else if (st == needShade) {
+//            if (debugPlantColor) {
+//                CULog("need shade");
+//            }
+//            plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
+//        }
+//        else if (st == dead){
+//            if (debugPlantColor) {
+//                CULog("dead");
+//            }
+//        }
+//    }
 
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();

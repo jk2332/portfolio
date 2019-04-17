@@ -7,7 +7,7 @@
 //
 
 #include "Cloud.hpp"
-
+#include <math.h>
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
@@ -129,6 +129,19 @@ void Cloud::setScale(float s) {
     _scale = s;
 }
 
+bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
+    Vec2 sc = _cloudNode->nodeToWorldCoords(_shadowNode->getPosition());
+    Vec2 gridPos = worldNode->nodeToWorldCoords(gridNode->getPosition());
+    float a = _shadowNode->getWidth()/2;
+    float b = _shadowNode->getHeight()/2;
+    
+    int p = (pow((gridPos.x - sc.x), 2) / pow(a, 2)) + (pow((gridPos.y - sc.y), 2) / pow(b, 2));
+    //inside
+    if (p < 1){return true;}
+    //outside
+    else{return false;}
+}
+
 std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
     return _ob;
 }
@@ -162,12 +175,14 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setContentSize(cloudFace->getSize()*_size);
     sprite->setPosition(_cloudNode->getSize()/2.0f);
+    _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);
     _shadowNode->setAnchor(Vec2::ANCHOR_CENTER);
     _shadowNode->setContentSize(shadow->getSize()*_size);
     _shadowNode->setPosition(_cloudNode->getSize()/2.0f - Vec2(0, displacement));
+    _shadowNode->setZOrder(5);
     _cloudNode->addChildWithName(_shadowNode, "shadow");
 }
 
