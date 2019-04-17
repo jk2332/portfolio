@@ -16,6 +16,15 @@
 #pragma mark -
 #pragma mark Static Constructors
 
+#define DYNAMIC_COLOR   Color4::GREEN
+#define X_COORD   "x"
+#define Y_COORD   "y"
+#define CLOUDS_FIELD   "cloud"
+#define CLOUD_PRIORITY   4
+#define TEXTURE_FIELD   "texture"
+#define HEIGHT_FIELD   "height"
+#define WIDTH_FIELD   "width"
+
 /**
  * Creates a new, empty level.
  */
@@ -23,12 +32,14 @@ LevelModel::LevelModel(void) : Asset(),
 _root(nullptr),
 _world(nullptr),
 _worldnode(nullptr),
-_debugnode(nullptr)
-//_rocket(nullptr),
-//_goalDoor(nullptr)
+_debugnode(nullptr),
+_cloudLayer(nullptr),
+_plantLayer(nullptr)
 {
     _bounds.size.set(1.0f, 1.0f);
 }
+
+float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
 /**
  * Destroys this level, releasing all resources.
@@ -57,6 +68,7 @@ void LevelModel::setDrawScale(float value) {
 //    if (_rocket != nullptr) {
 //        _rocket->setDrawScale(value);
 //    }
+    _cscale = value;
 }
 
 /**
@@ -114,6 +126,14 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     // Add the individual elements
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
+
+   for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
+      std::shared_ptr<Cloud> cloud = *it;
+       cloud->setScale(_cscale); 
+      std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(cloud->getTextureKey()));
+       cloud->setSceneNode(sprite);
+      addObstacle(cloud,sprite,0);
+   }
     
 //    if (_goalDoor != nullptr) {
 //        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(_goalDoor->getTextureKey()));
@@ -131,16 +151,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
 //        std::shared_ptr<WallModel> wall = *it;
 //        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(wall->getTextureKey()),wall->getPolygon() * _scale);
 //        addObstacle(wall,sprite,WALL_PRIORITY);  // All walls share the same texture
-//    }
-//
-//    if (_rocket != nullptr) {
-//        auto rocketNode = PolygonNode::allocWithTexture(_assets->get<Texture>(_rocket->getTextureKey()));
-//        _rocket->setShipNode(rocketNode, _assets);
-//        _rocket->setDrawScale(_scale.x);
-//
-//        // Create the polygon node (empty, as the model will initialize)
-//        _worldnode->addChild(rocketNode, ROCKET_PRIORITY);
-//        _rocket->setDebugScene(_debugnode);
 //    }
 }
 
@@ -193,51 +203,31 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     for(int i = 0; i < layers->size(); i++) {
         auto layer = layers->get(i);
         auto name = layer->get("name")->asString();
-        CULog(name.c_str());
+        if (name == "Clouds") {
+            _cloudLayer = layer->get("objects");
+        } else if (name == "Plants") {
+            _plantLayer = layer->get("objects");
+        }
+       CULog(name.c_str());
     }
     
-//    float w = json->get(WIDTH_FIELD)->asFloat();
-//    float h = json->get(HEIGHT_FIELD)->asFloat();
-//    float g = json->get(GRAVITY_FIELD)->asFloat();
-//    _bounds.size.set(w, h);
-//    _gravity.set(0,g);
+   float w = json->get(WIDTH_FIELD)->asFloat();
+   float h = json->get(HEIGHT_FIELD)->asFloat();
+   _bounds.size.set(w, h);
     
     /** Create the physics world */
     _world = ObstacleWorld::alloc(getBounds(),getGravity());
-    
-    // Parse the rocket
-    if (!loadRocket(json)) {
-        CUAssertLog(false, "Failed to load rocket");
+
+    if (_cloudLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_cloudLayer->size();
+        for(int ii = 0; ii < csize; ii++) {
+            loadCloud(_cloudLayer->get(ii), ii);
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
         return false;
     }
-    
-    if (!loadGoalDoor(json)) {
-        CUAssertLog(false, "Failed to load goal door");
-        return false;
-    }
-    
-//    auto walls = json->get(WALLS_FIELD);
-//    if (walls != nullptr) {
-//        // Convert the object to an array so we can see keys and values
-//        int wsize = (int)walls->size();
-//        for(int ii = 0; ii < wsize; ii++) {
-//            loadWall(walls->get(ii));
-//        }
-//    } else {
-//        CUAssertLog(false, "Failed to load walls");
-//        return false;
-//    }
-//    auto crates = json->get(CRATES_FIELD);
-//    if (crates != nullptr) {
-//        // Convert the object to an array so we can see keys and values
-//        int csize = (int)crates->size();
-//        for(int ii = 0; ii < csize; ii++) {
-//            loadCrate(crates->get(ii));
-//        }
-//    } else {
-//        CUAssertLog(false, "Failed to load crates");
-//        return false;
-//    }
     
     return true;
 }
@@ -286,69 +276,37 @@ void LevelModel::unload() {
 #pragma mark -
 #pragma mark Individual Loaders
 
-bool LevelModel::loadRocket(const std::shared_ptr<JsonValue>& json) {
-//    bool success = false;
-//    auto rocket = json->get(ROCKET_FIELD);
-//    if (rocket != nullptr) {
-//        success = true;
-//
-//        auto rockPosArray = rocket->get(POSITION_FIELD);
-//        success = success && rockPosArray->isArray();
-//        Vec2 rockPos = Vec2(rockPosArray->get(0)->asFloat(), rockPosArray->get(1)->asFloat());
-//
-//        auto sizeArray = rocket->get(SIZE_FIELD);
-//        success = success && sizeArray->isArray();
-//        Vec2 rockSize = Vec2(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-//
-//
-//        // Get the object, which is automatically retained
-//        _rocket = RocketModel::alloc(rockPos,(Size)rockSize);
-//        _rocket->setDrawScale(_scale.x);
-//        _rocket->setName(rocket->key());
-//
-//        _rocket->setThrust(rocket->getDouble(THRUST_FIELD));
-//        _rocket->setDensity(rocket->getDouble(DENSITY_FIELD));
-//        _rocket->setFriction(rocket->getDouble(FRICTION_FIELD));
-//        _rocket->setRestitution(rocket->getDouble(RESTITUTION_FIELD));
-//        _rocket->setFixedRotation(!rocket->getBool(ROTATION_FIELD));
-//
-//        std::string btype = rocket->getString(BODYTYPE_FIELD);
-//        if (btype == STATIC_VALUE) {
-//            _rocket->setBodyType(b2_staticBody);
-//        }
-//
-//        // Set the animation nodes
-//        success = success && rocket->get(TEXTURE_FIELD)->isString();
-//        _rocket->setTextureKey(rocket->getString(TEXTURE_FIELD));
-//
-//        success = success && rocket->get(MAIN_FLAMES_FIELD)->isString();
-//        _rocket->setBurnerStrip(RocketModel::Burner::MAIN, rocket->getString(MAIN_FLAMES_FIELD));
-//
-//        success = success && rocket->get(LEFT_FLAMES_FIELD)->isString();
-//        _rocket->setBurnerStrip(RocketModel::Burner::LEFT, rocket->getString(LEFT_FLAMES_FIELD));
-//
-//        success = success && rocket->get(RIGHT_FLAMES_FIELD)->isString();
-//        _rocket->setBurnerStrip(RocketModel::Burner::RIGHT, rocket->getString(RIGHT_FLAMES_FIELD));
-//
-//        success = success && rocket->get(MAIN_SOUND_FIELD)->isString();
-//        _rocket->setBurnerSound(RocketModel::Burner::MAIN, rocket->getString(MAIN_SOUND_FIELD));
-//
-//        success = success && rocket->get(LEFT_SOUND_FIELD)->isString();
-//        _rocket->setBurnerSound(RocketModel::Burner::LEFT, rocket->getString(LEFT_SOUND_FIELD));
-//
-//        success = success && rocket->get(RIGHT_SOUND_FIELD)->isString();
-//        _rocket->setBurnerSound(RocketModel::Burner::RIGHT, rocket->getString(RIGHT_SOUND_FIELD));
-//
-//        _rocket->setDebugColor(parseColor(rocket->getString(DEBUG_COLOR_FIELD)));
-//
-//        if (success) {
-//            _world->addObstacle(_rocket);
-//        } else {
-//            _rocket = nullptr;
-//        }
-//    }
-//    return success;
-    return true;
+bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
+  bool success = true;
+  std::shared_ptr<JsonValue> cloudLayer;
+
+  // Create the polygon outline
+  Poly2 cloudpoly(CLOUD2, 8);
+  SimpleTriangulator triangulator;
+  triangulator.set(cloudpoly);
+  triangulator.calculate();
+  cloudpoly.setIndices(triangulator.getTriangulation());
+  cloudpoly.setType(Poly2::Type::SOLID);
+
+  success = success && cloudJson->get(X_COORD)->isNumber();
+  auto x = cloudJson->getInt(X_COORD);
+  success = success && cloudJson->get(Y_COORD)->isNumber();
+  auto y = cloudJson->getInt(Y_COORD);
+
+  std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
+  cloud->setDebugColor(DYNAMIC_COLOR);
+  cloud->setName("cloud" + std::to_string(i));
+  cloud->setId(i);
+  // Why is scale a vec2, not a float lol
+  cloud->setScale(_cscale);
+  cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
+
+  if (success) {
+      _cloud.push_back(cloud);
+  } else {
+      cloud = nullptr;
+  }
+  return success;
 }
 
 /**
@@ -560,27 +518,25 @@ Color4 LevelModel::parseColor(std::string name) {
  * param node   The scene graph node to attach it to
  * param zOrder The drawing order
  */
-void LevelModel::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
-                             const std::shared_ptr<cugl::Node>& node,
-                             int zOrder) {
-    _world->addObstacle(obj);
-    obj->setDebugScene(_debugnode);
+ void LevelModel::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
+                              const std::shared_ptr<cugl::Node>& node,
+                              int zOrder) {
+     _world->addObstacle(obj);
+     obj->setDebugScene(_debugnode);
     
-    // Position the scene graph node (enough for static objects)
-    node->setPosition(obj->getPosition()*_scale);
-    _worldnode->addChild(node,zOrder);
+     // Position the scene graph node (enough for static objects)
+     node->setPosition(obj->getPosition()*_scale);
+     _worldnode->addChild(node,zOrder);
     
-    // Dynamic objects need constant updating
-    if (obj->getBodyType() == b2_dynamicBody) {
-        Node* weak = node.get(); // No need for smart pointer in callback
-        obj->setListener([=](Obstacle* obs){
-            weak->setPosition(obs->getPosition()*_scale);
-            weak->setAngle(obs->getAngle());
-        });
-    }
-}
-
-
+     // Dynamic objects need constant updating
+     if (obj->getBodyType() == b2_dynamicBody) {
+         Node* weak = node.get(); // No need for smart pointer in callback
+         obj->setListener([=](Obstacle* obs){
+             weak->setPosition(obs->getPosition()*_scale);
+             weak->setAngle(obs->getAngle());
+         });
+     }
+ }
 
 
 

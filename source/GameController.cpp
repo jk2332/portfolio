@@ -247,13 +247,26 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
+    
+    // Start up the input handler
+//    _assets = assets;
+//    std::vector<std::shared_ptr<Texture>> textures;
+//    for (int i = 1; i < 6; i++){
+//        textures.push_back(_assets->get<Texture>("tile"));
+//    }
+    
+    _level = assets->get<LevelModel>("level1");
+    if (_level == nullptr) {
+        CULog("Fail!");
+        return false;
+    }
 
     // Start up the input handler
     _input.init();
 
     // Create the world and attach the listeners.
-    _world = ObstacleWorld::alloc(rect,gravity);
-//    _world->activateCollisionCallbacks(true);
+    _world = _level->getWorld();
+    _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) {
         beginContact(contact);
     };
@@ -270,6 +283,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
+    _rootnode = Node::alloc();
+    _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _rootnode->setPosition(offset);
+    
     _assets = assets;
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -286,6 +303,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
+    addChildWithName(_rootnode,"rootnode");
+    
+    // Create selector
+//    _selector = ObstacleSelector::alloc(_world);
+//    _selector->setDebugColor(DYNAMIC_COLOR);
+//    _selector->setDebugScene(_debugnode);
+    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _level->setDrawScale(_scale);
+    _level->setAssets(_assets);
+    _level->setRootNode(_rootnode); // Obtains ownership of root.
 
     std::vector<std::shared_ptr<Texture>> textures;
     textures.push_back(_assets->get<Texture>("tile"));
@@ -450,45 +477,45 @@ void GameScene::populate() {
     }
     _worldnode->addChildWithName(plantNode, "plantNode");
 
-    for (int i = 0; i < num_clouds; i++) {
-        // Create the polygon outline
-        Poly2 cloudpoly(CLOUD, 8);
-        SimpleTriangulator triangulator;
-        triangulator.set(cloudpoly);
-        triangulator.calculate();
-        cloudpoly.setIndices(triangulator.getTriangulation());
-        cloudpoly.setType(Poly2::Type::SOLID);
+    // for (int i = 0; i < num_clouds; i++) {
+    //     // Create the polygon outline
+    //     Poly2 cloudpoly(CLOUD, 8);
+    //     SimpleTriangulator triangulator;
+    //     triangulator.set(cloudpoly);
+    //     triangulator.calculate();
+    //     cloudpoly.setIndices(triangulator.getTriangulation());
+    //     cloudpoly.setType(Poly2::Type::SOLID);
 
-        std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(28-i*6, 10));
-        cloud->setDebugColor(DYNAMIC_COLOR);
-        cloud->setName("cloud" + std::to_string(i));
-        cloud->setId(i);
-        cloud->setScale(_scale);
+    //     std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(28-i*6, 10));
+    //     cloud->setDebugColor(DYNAMIC_COLOR);
+    //     cloud->setName("cloud" + std::to_string(i));
+    //     cloud->setId(i);
+    //     cloud->setScale(_scale);
         
-        _clouds.push_back(cloud);
+    //     _clouds.push_back(cloud);
         
-        // Set the physics attributes
-        std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
-        cloudobj->setBodyType(b2_dynamicBody);
+    //     // Set the physics attributes
+    //     std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
+    //     cloudobj->setBodyType(b2_dynamicBody);
 
-        // Add the scene graph nodes to this object
-        cloudpoly *= _scale;
+    //     // Add the scene graph nodes to this object
+    //     cloudpoly *= _scale;
         
-        if (PARTICLE_MODE){
-            CULogGLError();
-            //Use cloudNode instead of sprite, but they work similarly
-            auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
-            cloudNode->setName("cloud" + std::to_string(i));
-            cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
-            addObstacle(cloud,cloudNode,1);
-        }
-        else{
-            sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
-            sprite->setName("cloud" + std::to_string(i));
-            cloud->setSceneNode(sprite);
-            addObstacle(cloud,sprite,1);
-        }
-    }
+    //     if (PARTICLE_MODE){
+    //         CULogGLError();
+    //         //Use cloudNode instead of sprite, but they work similarly
+    //         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+    //         cloudNode->setName("cloud" + std::to_string(i));
+    //         cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+    //         addObstacle(cloud,cloudNode,1);
+    //     }
+    //     else{
+    //         sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
+    //         sprite->setName("cloud" + std::to_string(i));
+    //         cloud->setSceneNode(sprite);
+    //         addObstacle(cloud,sprite,1);
+    //     }
+    // }
 
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("bubble"));
     _rainNode->setBlendFunc(GL_ONE, GL_ONE);
@@ -863,6 +890,57 @@ void GameScene::update(float dt) {
     splitClouds();
     cloudsToSplit.clear();
     
+    // Todo bring make cloud creation and destruction
+//    if (ticks % 5 == 0){
+//        for (auto &ic : cloudsToSplit){
+//            // split clouds here
+//            std::cout << "cloud to split: " + ic.second->getName() << endl;
+//            auto cloudNode = _worldnode->getChildByName(ic.second->getName());
+//            Cloud* c = (Cloud*)ic.second;
+//            c->decSize();
+//            Vec2 cloudPos = ic.second->getPosition();
+//            Poly2 cloudpoly(CLOUD, 8);
+//            SimpleTriangulator triangulator;
+//            triangulator.set(cloudpoly);
+//            triangulator.calculate();
+//            cloudpoly.setIndices(triangulator.getTriangulation());
+//            cloudpoly.setType(Poly2::Type::SOLID);
+//            
+//            std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(cloudPos.x-1.5, cloudPos.y));
+//            cloud->setDebugColor(DYNAMIC_COLOR);
+//            cloud->setName("cloud" + std::to_string(new_cloud_ind));
+//            cloud->setScale(_scale);
+//            cloud->setSize(c->getCloudSize());
+//            _cloud[new_cloud_ind] = cloud;
+//            
+//            // Set the physics attributes
+//            std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
+//            cloudobj->setBodyType(b2_dynamicBody);
+//            
+//            // Add the scene graph nodes to this object
+//            cloudpoly *= _scale;
+//            std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
+//            sprite->setName("cloud" + std::to_string(new_cloud_ind));
+//            cloud->setSceneNode(sprite);
+//            addObstacle(cloud,sprite,1);  // All walls share the same texture
+//            new_cloud_ind ++;
+//        }
+//        cloudsToSplit.clear();
+//    }
+//    
+//    cloudsToSplit.clear();
+
+//    // Turn the physics engine crank.
+    
+    auto clouds = _level->getClouds();
+    for(auto it = clouds.begin(); it != clouds.end(); ++it) {
+        std::shared_ptr<Cloud> cloud = *it;
+        cloud->update(dt);
+   }
+    
+
+    _world->update(dt);
+    _level->getWorld()->update(dt);
     // process removal
     processRemoval();
     
