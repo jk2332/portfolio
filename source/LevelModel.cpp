@@ -287,36 +287,39 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
-  bool success = true;
-  std::shared_ptr<JsonValue> cloudLayer;
+    bool success = true;
+    std::shared_ptr<JsonValue> cloudLayer;
 
-  // Create the polygon outline
-  Poly2 cloudpoly(CLOUD2, 8);
-  SimpleTriangulator triangulator;
-  triangulator.set(cloudpoly);
-  triangulator.calculate();
-  cloudpoly.setIndices(triangulator.getTriangulation());
-  cloudpoly.setType(Poly2::Type::SOLID);
+    // Create the polygon outline
+    Poly2 cloudpoly(CLOUD2, 8);
+    SimpleTriangulator triangulator;
+    triangulator.set(cloudpoly);
+    triangulator.calculate();
+    cloudpoly.setIndices(triangulator.getTriangulation());
+    cloudpoly.setType(Poly2::Type::SOLID);
 
-  success = success && cloudJson->get(X_COORD)->isNumber();
-  auto x = cloudJson->getInt(X_COORD);
-  success = success && cloudJson->get(Y_COORD)->isNumber();
-  auto y = cloudJson->getInt(Y_COORD);
+    success = success && cloudJson->get(X_COORD)->isNumber();
+    auto x = cloudJson->getInt(X_COORD);
+    success = success && cloudJson->get(Y_COORD)->isNumber();
+    auto y = cloudJson->getInt(Y_COORD);
 
-  std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
-  cloud->setDebugColor(DYNAMIC_COLOR);
-  cloud->setName("cloud" + std::to_string(i));
-  cloud->setId(i);
-  // Why is scale a vec2, not a float lol
-  cloud->setScale(_cscale);
-  cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
+    std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
+    cloud->setDebugColor(DYNAMIC_COLOR);
+    cloud->setName("cloud" + std::to_string(i));
+    cloud->setId(i);
+    // Why is scale a vec2, not a float lol
+    cloud->setScale(_cscale);
+    cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
 
-  if (success) {
+    cloud->setLinearDamping(0.7f);
+    cloud->setDensity(3.0f);
+    
+    if (success) {
       _cloud.push_back(cloud);
-  } else {
+    } else {
       cloud = nullptr;
-  }
-  return success;
+    }
+    return success;
 }
 
 /**

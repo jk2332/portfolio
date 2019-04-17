@@ -298,16 +298,18 @@
 				EBB4B5742040ADD300238092 /* BubbleGenerator.h */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
 				F1B4E5492224517700D807D5 /* Cloud.hpp */,
+				F8939EB22237515400199385 /* CloudController.cpp */,
+				F8939EB32237515400199385 /* CloudController.hpp */,
 				F867DC30224013500038F905 /* CloudNode.cpp */,
 				F867DC31224013500038F905 /* CloudNode.hpp */,
 				F86A31512239D6D500233ED5 /* cloudParticle.frag */,
 				F86A31522239D6D600233ED5 /* cloudParticle.vert */,
 				EBB4B56F2040ADD200238092 /* GameController.cpp */,
 				EBB4B56D2040ADD200238092 /* GameController.h */,
-				1B8D3A61226266A1002AFC9A /* LevelModel.cpp */,
-				1BD618772266BF70001F8D5B /* LevelModel.hpp */,
 				EBB4B5702040ADD200238092 /* InputController.cpp */,
 				EBB4B5712040ADD200238092 /* InputController.h */,
+				1B8D3A61226266A1002AFC9A /* LevelModel.cpp */,
+				1BD618772266BF70001F8D5B /* LevelModel.hpp */,
 				EBB4B5762040ADD300238092 /* LoadingController.cpp */,
 				EBB4B5722040ADD200238092 /* LoadingController.h */,
 				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
@@ -329,8 +331,6 @@
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
-				F8939EB22237515400199385 /* CloudController.cpp */,
-				F8939EB32237515400199385 /* CloudController.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -588,7 +588,6 @@
 			files = (
 				1BD618782266BF70001F8D5B /* LevelModel.hpp in Sources */,
 				1B8D3A65226266A1002AFC9A /* LevelModel.cpp in Sources */,
-				EBB4B57E2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */,
 				F8939EA42236FE2900199385 /* MenuController.cpp in Sources */,
 				F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */,

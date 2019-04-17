@@ -604,29 +604,29 @@ void GameScene::update(float dt) {
         }
     }
     
-//    for (auto &c : _clouds) {
-//        if (c == nullptr) {
-//            continue;
-//        }
-//        else {
-//            Vec2 v = c->getPosition();
-//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-//                v.y = v.y - DOWN_LEFT_CORNER_Y;
-//            }
-//
-//            if (_board->isInBounds(v.x, v.y)){
-//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-//                if (coord.first >= 0 && coord.second >= 0) {
-//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-//                    auto plant = _plants[plantIdx];
-//                    if (plant != nullptr) {
-//                        plant->setShade(true);
-//                    }
-//                }
-//            }
-//        }
-//    }
+    for (auto &c : _clouds) {
+        if (c == nullptr) {
+            continue;
+        }
+        else {
+            Vec2 v = c->getPosition();
+            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+                v.y = v.y - DOWN_LEFT_CORNER_Y;
+            }
+
+            if (_board->isInBounds(v.x, v.y)){
+                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
+                if (coord.first >= 0 && coord.second >= 0) {
+                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
+                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
+                    auto plant = _plants[plantIdx];
+                    if (plant != nullptr) {
+                        plant->setShade(true);
+                    }
+                }
+            }
+        }
+    }
 
     //Check win/loss conditions
     auto f = _level->getWorldNode();
