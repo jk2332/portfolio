@@ -48,4 +48,6 @@
 #define OFFSET_X         0
 #define OFFSET_Y         0
 
+#define SIGN  "sign"
+
 #endif /* Constants_hpp */

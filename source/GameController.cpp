@@ -605,29 +605,28 @@ void GameScene::update(float dt) {
         }
     }
     
-//    for (auto &c : _clouds) {
-//        if (c == nullptr) {
-//            continue;
-//        }
-//        else {
-//            Vec2 v = c->getPosition();
-//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-//                v.y = v.y - DOWN_LEFT_CORNER_Y;
-//            }
+//   for (auto &c : _level->getClouds()) {
+//       if (c == nullptr) {
+//           continue;
+//       }
+//       else {
+//           Vec2 v = c->getPosition();
+//           if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
+//               v.y = v.y - DOWN_LEFT_CORNER_Y;
+//           }
 //
-//            if (_board->isInBounds(v.x, v.y)){
-//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-//                if (coord.first >= 0 && coord.second >= 0) {
-//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-//                    auto plant = _plants[plantIdx];
-//                    if (plant != nullptr) {
+//           if (_board->isInBounds(v.x, v.y)){
+//               std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
+//               if (coord.first >= 0 && coord.second >= 0) {
+//                   for (auto &plant : _level->getPlants()) {
+//                       if (plant->getX() == coord.first && plant->getY() == coord.second) {
 //                        plant->setShade(true);
-//                    }
-//                }
-//            }
-//        }
-//    }
+//                       }
+//                   }
+//               }
+//           }
+//       }
+//   }
 
     //Check win/loss conditions
     auto f = _level->getWorldNode();
@@ -638,38 +637,38 @@ void GameScene::update(float dt) {
        }
        int st = plant->getState();
 
-       bool debugPlantColor = false;
-
-        std::string childName = plant->getName();
-       if (st == noNeed) {
-           if (debugPlantColor) {
-               CULog("no need");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4::WHITE);
-       }
-       if (st == needRain){
-           if (debugPlantColor) {
-               CULog("need rain");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
-       }
-       else if (st == needSun){
-           if (debugPlantColor) {
-               CULog("need sun");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
-       }
-       else if (st == needShade) {
-           if (debugPlantColor) {
-               CULog("need shade");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
-       }
-       else if (st == dead){
-           if (debugPlantColor) {
-               CULog("dead");
-           }
-       }
+    //    bool debugPlantColor = false;
+// 
+        // std::string childName = plant->getName();
+    //    if (st == noNeed) {
+    //        if (debugPlantColor) {
+    //            CULog("no need");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4::WHITE);
+    //    }
+    //    if (st == needRain){
+    //        if (debugPlantColor) {
+    //            CULog("need rain");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
+    //    }
+    //    else if (st == needSun){
+    //        if (debugPlantColor) {
+    //            CULog("need sun");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
+    //    }
+    //    else if (st == needShade) {
+    //        if (debugPlantColor) {
+    //            CULog("need shade");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
+    //    }
+    //    else if (st == dead){
+    //        if (debugPlantColor) {
+    //            CULog("dead");
+    //        }
+    //    }
    }
 
     if (ticks % 50 == 0 && ticks > 50) {

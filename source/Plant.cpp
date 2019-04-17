@@ -65,6 +65,7 @@ void Plant::setRained(bool f) {
 void Plant::updateState(){
     //CULog("Update %s state", getName().c_str());
     if (_state == dead || _stage == _maxStage){
+        changeSign();
         //do nothing
         return;
     }
@@ -130,6 +131,8 @@ void Plant::updateState(){
             }
         }
 
+        changeSign();
+
         _shaded = false;
         _rained = false;
 
@@ -139,6 +142,19 @@ void Plant::updateState(){
             upgradeSprite();
         }
     }
+}
+
+void Plant::changeSign() {
+    if (_state == needShade) {
+        _signIcon->setTexture(_assets->get<Texture>("iconShade"));
+    } else if (_state == needRain) {
+        _signIcon->setTexture(_assets->get<Texture>("iconRain"));
+    } else if (_state == dead) {
+        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+    } else {
+        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+    }
+    
 }
 
 void Plant::upgradeSprite() {
@@ -176,6 +192,18 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     _node->setScale(0.15f);
     cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
-    node->addChildWithName(_node, name);
     
+    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>(SIGN));
+    _signNode->setScale(0.2f);
+    cugl::Vec2 b = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (-0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signNode->setPosition(b);
+
+    _signIcon = PolygonNode::allocWithTexture(_assets->get<Texture>("iconHappy"));
+    _signIcon->setScale(0.15f);
+    cugl::Vec2 c = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signIcon->setPosition(c);
+    
+    node->addChildWithName(_signNode, name + "sign", 1);
+    node->addChildWithName(_node, name, 0);
+    node->addChildWithName(_signIcon, name + "signicon", 2);
 }

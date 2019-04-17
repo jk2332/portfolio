@@ -47,6 +47,7 @@ protected:
     int _shadeCounter;
     std::shared_ptr<AnimationNode> _node;
     std::shared_ptr<TexturedNode> _signNode;
+    std::shared_ptr<TexturedNode> _signIcon;
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<ActionManager> _actions;
@@ -140,6 +141,7 @@ public:
     void setRained(bool f);
 
     int getX() {return _x;};
+    int getX() {return _y;};
     int getStage() {return _stage;};
 
     void setPlantType(std::string s) { _ptype = s; };
@@ -152,6 +154,8 @@ public:
     void upgradeSprite();
     void update(float dt);
 
+    void changeSign() ;
+    
 };
 
 
