@@ -654,10 +654,11 @@
 			};
 			buildConfigurationList = EBBBBE2C1DCD0014001930F2 /* Build configuration list for PBXProject "Box2D" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = EBBBBE281DCD0014001930F2;
 			productRefGroup = EBBBBE321DCD0014001930F2 /* Products */;

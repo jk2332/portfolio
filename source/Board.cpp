@@ -7,9 +7,6 @@
 //
 
 #include "Board.hpp"
-
-#include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
-#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
 
 using namespace cugl;
@@ -85,11 +82,16 @@ void Board::dispose() {
 void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     for (int i = 0; i < _gridNumX; i++){
         for (int j = 0; j < _gridNumY; j++){
-            int rand = std::rand() % 5;
-            std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_textures.at(rand));
+            std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_textures.at(0));
             single_grid->setPosition(gridCoordToPosition(Vec2(i, j)));
             single_grid->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
             _nodes.push_back(single_grid);
+            
+            //Attempting to make plants children of grid spaces
+//            auto plant = Plant::alloc(i, j, _textures.at(1), 32.0f);
+//            plant->setSceneNode(single_grid);
+//            plant->setName("plant" + std::to_string(i) + std::to_string(j));
+            
             node->addChildWithName(single_grid, "grid"+std::to_string(i) + std::to_string(j));
         }
     }

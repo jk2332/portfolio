@@ -31,6 +31,7 @@ using namespace cugl;
 
 /** How fast a double click must be in milliseconds */
 #define EVENT_DOUBLE_CLICK  400
+#define EVENT_LONG_HOLD     600
 /** How far we must swipe left or right for a gesture */
 #define EVENT_SWIPE_LENGTH  100
 /** How fast we must swipe left or right for a gesture */
@@ -93,10 +94,6 @@ void RagdollInput::dispose() {
         pi->removeEndListener(LISTENER_KEY);
         pi->removeBeginListener(LISTENER_KEY);
         pi->removeChangeListener(LISTENER_KEY);
-//        PanInput* pani = Input::get<PanInput>();
-//        pani->removeEndListener(LISTENER_KEY);
-//        pani->removeMotionListener(LISTENER_KEY);
-//        pani->removeBeginListener(LISTENER_KEY);
 #endif
         _active = false;
     }
@@ -158,18 +155,6 @@ bool RagdollInput::init() {
     pinput->addChangeListener(LISTENER_KEY, [=](const PinchEvent& event, bool focus){
         this->pinchChangeCB(event, focus);
     });
-//    success = success && Input::activate<PanInput>();
-//    PanInput* paninput = Input::get<PanInput>();
-//    paninput->setThreshold(300);
-//    paninput->addEndListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
-//        this->panEndCB(event, focus);
-//    });
-//    paninput->addBeginListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
-//        this->panBeganCB(event, focus);
-//    });
-//    paninput->addMotionListener(LISTENER_KEY, [=](const PanEvent& event, bool focus){
-//        this->panChangedCB(event, focus);
-//    });
 #endif
     _active = success;
     return success;
@@ -197,9 +182,6 @@ void RagdollInput::update(float dt) {
     _keyJoin = keys->keyPressed(JOIN_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
     _keyExit   = keys->keyPressed(EXIT_KEY);
-    
-    //    PinchInput* pi = Input::get<PinchInput>();
-    //    _isBeingPinched = pi->isActive();
     
 #endif
     
@@ -230,10 +212,6 @@ void RagdollInput::clear() {
     _debugPressed = false;
     _exitPressed  = false;
     _pinched = false;
-    //    for(std::vector<int>::size_type i = 0; i != _timestamps.size(); i++) {
-    //        _timestamps.at(i).mark();
-    //        _selects.at(i) = false;
-    //    }
     for (auto & timestamp : _timestamps) {
         timestamp.second.mark();
     }
@@ -253,27 +231,6 @@ void RagdollInput::clear() {
  * @param event The associated event
  */
 void RagdollInput::touchBeganCB(const cugl::TouchEvent& event, bool focus) {
-    // Time how long it has been since last start touch, and check for enabling debug mode on mobile.
-    //    _keyDebug = event.timestamp.ellapsedMillis(_timestamp) <= EVENT_DOUBLE_CLICK;
-    //    _timestamps.push_back(event.timestamp);
-    // if there is currently no touch for a selection
-    //    if (_touchID == -1) {
-    //        _touchID = event.touch;
-    //        touchBegan(event.timestamp, event.position);
-    //    }
-    //    _touchIDs.push_back(event.touch);
-    
-    
-    //    _keyDebug = event.timestamp.ellapsedMillis(_timestamps[event.touch]) <= EVENT_DOUBLE_CLICK;
-    //    _timestamps[event.touch] = event.timestamp;
-    //    if (!_touchIDs[event.touch]){
-    //        _touchIDs[event.touch] = true;
-    //        touchBegan(event.touch, event.timestamp, event.position);
-    //    }
-    
-    //    _keyDebug = event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) <= EVENT_DOUBLE_CLICK;
-    //    CULog("%f touch x", event.position.x);
-    //    CULog("%f touch y", event.position.y);
     if (!_timestamps.count(event.touch)){
         _timestamps.insert({event.touch, event.timestamp});
     } else {
@@ -299,11 +256,13 @@ void RagdollInput::mousePressBeganCB(const cugl::MouseEvent& event, Uint8 clicks
 }
 void RagdollInput::pinchBeganCB(const cugl::PinchEvent& event, bool focus){
     _pinchTimestamp.mark();
-    _pinched = true;
-    if (!_pinchSelect){
-        _dpinch = event.position;
+    if (event.fingers == 2){
+        _pinched = true;
+        if (!_pinchSelect){
+            _dpinch = event.position;
+        }
+        _pinchSelect = true;
     }
-    _pinchSelect = true;
 }
 
 void RagdollInput::pinchEndCB(const cugl::PinchEvent& event, bool focus){
@@ -325,36 +284,6 @@ void RagdollInput::pinchChangeCB(const cugl::PinchEvent& event, bool focus){
     }
 }
 
-//void RagdollInput::panBeganCB(const cugl::PanEvent& event, bool focus){
-//    CULog("%f pan disttance", event.pan.distance(Vec2::ZERO));
-//    _panTimestamp.mark();
-//    _panned = true;
-//    if (!_panSelect){
-//        _dpan = event.position;
-//    }
-//    _panSelect = true;
-//}
-//
-//void RagdollInput::panEndCB(const cugl::PanEvent& event, bool focus){
-//    //    CULog("pinch ended");
-//    //    _dpinch = event.position;
-//    //    CULog("dpinch x: %f", _dpinch.x/41.6875);
-//    //    CULog("dpinch y: %f", 18 - _dpinch.y/41.666667);
-//    _panSelect = false;
-//    _panned = false;
-//    
-//}
-//
-//void RagdollInput::panChangedCB(const cugl::PanEvent& event, bool focus){
-//    //    CULog("pinch changed");
-////    if (event.timestamp.ellapsedMillis(_panTimestamp) > 100){
-////        _panned = false;
-////        _panSelect = false;
-////    }
-//}
-
-
-
 /**
  * Handles touchBegan and mousePress events using shared logic.
  *
@@ -364,10 +293,7 @@ void RagdollInput::pinchChangeCB(const cugl::PinchEvent& event, bool focus){
  * @param pos         the position of the touch
  */
 void RagdollInput::touchBegan(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos) {
-    // All touches correspond to key up
     _keyUp = true;
-    //    _timestamps.at(touchID) = timestamp;
-//        CULog("touch began %i", touchID);
     if (!_timestamps.count(touchID)){
         _timestamps.insert({touchID, timestamp});
     } else {
@@ -394,13 +320,6 @@ void RagdollInput::touchBegan(long touchID, const cugl::Timestamp timestamp, con
  * @param event The associated event
  */
 void RagdollInput::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
-    //    if (event.touch == _touchID) {
-    //        touchEnded(event.timestamp, event.position);
-    //        _touchID = -1;
-    //    }
-    //    if (_touchIDs.count(event.touch)){
-    //        _touchIDs.erase(event.touch);
-    //    }
     touchEnded(event.touch, event.timestamp, event.position);
 }
 
@@ -428,10 +347,6 @@ void RagdollInput::mouseReleasedCB(const cugl::MouseEvent& event, Uint8 clicks, 
 void RagdollInput::touchEnded(long touchID, const cugl::Timestamp timestamp, const cugl::Vec2& pos) {
 //    CULog("touch ended %i", touchID);
     _selects.erase(touchID);
-//    if (_longerSelects.count(touchID)){
-//        _longerSelects.erase(touchID);
-//        longSelectCounter.erase(touchID);
-//    }
     if (_touchIDs.empty()){
         _keyUp = false;
     }
@@ -444,11 +359,15 @@ void RagdollInput::touchEnded(long touchID, const cugl::Timestamp timestamp, con
  * @param event The associated event
  */
 void RagdollInput::touchesMovedCB(const cugl::TouchEvent& event, const Vec2& previous, bool focus) {
-    //    if (event.touch == _touchID) {
-    //        touchMoved(event.position);
-    //    }
-    if (_touchIDs.count(event.touch)){
-        touchMoved(event.touch, event.position);
+    if (event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) >= EVENT_LONG_HOLD && event.position.distance(_dtouches.at(event.touch)) <= 10){
+//        CULog("Long press");
+        touchEnded(event.touch, event.timestamp, event.position);
+    }
+    else {
+//        CULog("touch moved");
+        if (_touchIDs.count(event.touch)){
+            touchMoved(event.touch, event.position);
+        }
     }
 }
 
@@ -474,16 +393,9 @@ void RagdollInput::mouseDraggedCB(const cugl::MouseEvent& event, const Vec2& pre
  */
 void RagdollInput::touchMoved(long touchID, const cugl::Vec2& pos) {
 //        CULog("touch moved %i", touchID);
-    
     if (!_dtouches.count(touchID)){
         _dtouches.insert({touchID, pos});
     } else {
-//        if (_dtouches.at(touchID).x - 3 <= pos.x && pos.x <= _dtouches.at(touchID).x && _dtouches.at(touchID).y - 3 <= pos.y && pos.y <= _dtouches.at(touchID).y){
-//            longSelectCounter.at(touchID) ++;
-//            if (longSelectCounter.at(touchID) == LONG_PRESS_COUNT && !_longerSelects.count(touchID)){
-//                _longerSelects.insert(touchID);
-//            }
-//        }
         _dtouches.at(touchID) = pos;
     }
 }

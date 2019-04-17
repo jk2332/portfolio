@@ -16,11 +16,17 @@
         "rain": {
             "file":     "textures/rain.png"
         },
-        "plant": {
-            "file":     "textures/_Crops-512.png"
-        },
         "cloud": {
             "file":     "textures/shadowcloud.png"
+        },
+        "shadow": {
+            "file":     "textures/2-tile-shadow.png"
+        },
+        "raccoon": {
+            "file":     "textures/raccoonsize1.png"
+        },
+        "tile": {
+            "file":     "textures/tile.png"
         },
         "tile": {
             "file":     "textures/tile.png"

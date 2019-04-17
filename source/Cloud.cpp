@@ -43,10 +43,10 @@ using namespace cugl;
 bool Cloud::init(Poly2 p, Vec2 pos) {
     PolygonObstacle::init(p);
     setPosition(pos);
-    
+
     setName("cloud");
     setGravityScale(0);
-
+    
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
@@ -59,6 +59,8 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _ob = nullptr;
     return true;
 }
+
+
 
 
 /**
@@ -76,56 +78,6 @@ void Cloud::dispose() {
 
 #pragma mark -
 #pragma mark Part Initialization
-/**
- * Creates the individual body parts for this ragdoll
- *
- * The size of the body parts is determined by the scale together with
- * the assets (as part of the asset manager).  This will fail if any
- * body part assets are missing.
- *
- * @param assets The program asset manager
- *
- * @return true if the body parts were successfully created
- */
-bool Cloud::initialBuild(const std::shared_ptr<AssetManager>& assets) {
-//    CUAssertLog(_bodies.empty(), "Bodies are already initialized");
-    
-    // Get the images from the asset manager
-    bool success = true;
-    for(int ii = 0; ii < _unitNum; ii++) {
-        //std::string name = getPartName(ii);
-        std::shared_ptr<Texture> image = assets->get<Texture>("cloud");
-        if (image == nullptr) {
-            success = false;
-        } else {
-            _texture = image;
-        }
-    }
-    if (!success) {
-        return false;
-    }
-    
-    // Now make everything
-//    std::shared_ptr<BoxObstacle> part;
-    
-    // TORSO
-    Vec2 pos = getPosition();
-//    part = makeUnit(BODY, PART_NONE, pos);
-//    part->setFixedRotation(true);
-    
-    Size size = _texture->getSize();
-    size.width /= (_drawscale*1.5);
-    size.height /= (_drawscale*1.5);
-    
-    std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos, size);
-    body->setDensity(DEFAULT_DENSITY);
-    CULog("created");
-    
-    //    _bodies.push_back(body);
-    _ob = body;
-    
-    return true;
-}
 
 /**
  * Sets the texture for the given body part.
@@ -142,36 +94,6 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 void Cloud::markForRemoval() {
     CULog("cloud to be removed");
     markRemoved(true);
-}
-
-
-/**
- * Returns a single body part
- *
- * While it looks like this method "connects" the pieces, it does not really.
- * It puts them in position to be connected by joints, but they will fall apart
- * unless you make the joints.
- *
- * @param  part     Part to create
- * @param  connect  Part to connect it to
- * @param  pos      Position RELATIVE to connecting part
- *
- * @return the created body part
- */
-std::shared_ptr<BoxObstacle> Cloud::makeUnit(int part, int connect, const Vec2& pos) {
-    std::shared_ptr<Texture> image = _texture;
-    Size size = image->getSize();
-    size.width /= (_drawscale*1.5);
-    size.height /= (_drawscale*1.5);
-    
-    Vec2 pos2 = pos;
-    
-    std::shared_ptr<BoxObstacle> body = BoxObstacle::alloc(pos2, size);
-    body->setDensity(DEFAULT_DENSITY);
-    
-//    _bodies.push_back(body);
-    _ob = body;
-    return body;
 }
 
 #pragma mark -
@@ -194,6 +116,12 @@ void Cloud::update(float delta) {
     if (_node != nullptr) {
         _node->setPosition(getPosition()*_scale);
         _node->setAngle(getAngle());
+    }
+    else if (_cloudNode != nullptr) {
+        _cloudNode->setPosition(_scale*(getPosition() + Vec2(getWidth()/2.0, getHeight()/2.0)));
+        _cloudNode->setAngle(getAngle());
+        _cloudNode->ps.update(getPosition()*_scale, delta, 1);
+        _shadowNode->setPosition(_shadowNode->getPositionX(), -_scale*_disp);
     }
 }
 
@@ -226,25 +154,40 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
+void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement,
+                                  std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow){
+    _cloudNode = node;
+    _texture = cloudFace;
+    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
+    sprite->setAnchor(Vec2::ANCHOR_CENTER);
+    sprite->setContentSize(cloudFace->getSize()*_size);
+    sprite->setPosition(_cloudNode->getSize()/2.0f);
+    _cloudNode->addChildWithName(sprite, "cloudFace");
+    _disp = displacement;
+    _shadowNode = PolygonNode::allocWithTexture(shadow);
+    _shadowNode->setAnchor(Vec2::ANCHOR_CENTER);
+    _shadowNode->setContentSize(shadow->getSize()*_size);
+    _shadowNode->setPosition(_cloudNode->getSize()/2.0f - Vec2(0, displacement));
+    _cloudNode->addChildWithName(_shadowNode, "shadow");
+}
+
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
-//    std::shared_ptr<Texture> image = _texture;
-//    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image);
-//    sprite->setContentSize(_texture->getSize()*_size);
-//    _node->addChildWithName(sprite, "cloud");
 }
 
 void Cloud::incSize(float f) {
-    CULog("increased size");
-    _size += 0.35 + f;
+//    CULog("increased size");
+    _size += 0.35;
 }
 
 void Cloud::decSize() {
-    CULog("decreased size");
+//    CULog("decreased size");
     if (_size > 0.35){
-      _size -= 0.35;
+        _size -= 0.35;
     }
 }
+
+
 
 /**
  * Sets the ratio of the Ragdoll sprite to the physics body
@@ -261,5 +204,3 @@ void Cloud::decSize() {
 void Cloud::setDrawScale(float scale) {
     _drawscale = scale;
 }
-
-

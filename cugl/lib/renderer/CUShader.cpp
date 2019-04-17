@@ -45,6 +45,16 @@ using namespace cugl;
 void Shader::bind() {
     CUAssertLog(_program, "Shader is not ready for use");
     glUseProgram( _program );
+    GLint err;
+    err = glGetError();
+    if  (err != GL_NO_ERROR) {
+        CULog("Error was %d",err);
+        CULog("Invalid value? %d",err==GL_INVALID_VALUE);
+        CULog("Invalid operation? %d",err==GL_INVALID_OPERATION);
+        CULog("Invalid enum? %d",err==GL_INVALID_ENUM);
+
+        CUAssert(false);
+    }
     _active = true;
 }
 
@@ -72,24 +82,27 @@ bool Shader::compile() {
     CUAssertLog(_vertSource,    "Vertex shader source is not defined");
     CUAssertLog(_fragSource,    "Fragment shader source is not defined");
     CUAssertLog(!_program,      "This shader is already compiled");
-    
+    CULogGLError();
     _program = glCreateProgram();
     if (!_program) {
         CULogError("Unable to allocate shader program");
         return false;
     }
-    
+    CULogGLError();
+
     //Create vertex shader and compile it
     _vertShader = glCreateShader( GL_VERTEX_SHADER );
     glShaderSource( _vertShader, 1, &_vertSource, nullptr );
     glCompileShader( _vertShader );
     
+    CULogGLError();
     // Validate and quit if failed
     if (!validateShader(_vertShader, "vertex")) {
         dispose();
         return false;
     }
     
+    CULogGLError();
     //Create fragment shader and compile it
     _fragShader = glCreateShader( GL_FRAGMENT_SHADER );
     glShaderSource( _fragShader, 1, &_fragSource, nullptr );
@@ -101,6 +114,7 @@ bool Shader::compile() {
         return false;
     }
     
+    CULogGLError();
     // Now kiss
     glAttachShader( _program, _vertShader );
     glAttachShader( _program, _fragShader );
@@ -115,7 +129,7 @@ bool Shader::compile() {
         dispose();
         return false;
     }
-    
+    CULogGLError();
     return true;
 }
 
