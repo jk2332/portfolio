@@ -95,19 +95,6 @@
                  "y":10
                 }, 
                 {
-                 "gid":6,
-                 "height":126,
-                 "id":2,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":248,
-                 "texture": "cloud",
-                 "x":22,
-                 "y":10
-                }, 
-                {
                  "gid":9,
                  "height":105,
                  "id":3,
