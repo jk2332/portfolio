@@ -78,18 +78,15 @@ int max_cloud_id = num_clouds;
 /** The wall vertices */
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
-float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
-                   0.0f,  7.0f, 16.0f,  7.0f, 16.0f,  6.0f,
-                  -1.0f,  6.0f, -1.0f, 19.0f };
-
-float WALL2[] = { 33.0f, 19.0f, 33.0f,  6.0f, 16.0f,  6.0f,
-                  16.0f,  7.0f, 32.0f,  7.0f, 32.0f, 18.0f,
-                  16.0f, 18.0f, 16.0f, 19.0f };
-
+float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
+                   1.0f,  7.1f, 16.0f,  7.1f, 16.0f,  7.0f,
+                   0.0f,  7.0f,  0.0f, 18.0f };
+float WALL2[] = { 32.0f, 18.0f, 32.0f,  7.0f, 16.0f,  7.0f,
+                  16.0f,  7.1f, 31.0f,  7.1f, 31.0f, 17.0f,
+                  16.0f, 17.0f, 16.0f, 18.0f };
 
 int plants[] = { 1, 4, 18, 21, 24};
 //int plants[] = { 9 };
-
 
 // map<int, int> rainMap = {{1, 20}, {5, 50}, {17, 0}, {21, 0}, {35, 25}, {9, 99}};
 // map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
@@ -444,7 +441,7 @@ void GameScene::populate() {
 
 
      auto boardNode = Node::alloc();
-    boardNode->setZOrder(6);
+    boardNode->setZOrder(1);
      _board->setSceneNode(boardNode);
      _worldnode->addChildWithName(boardNode, "boardNode");
 
@@ -455,7 +452,7 @@ void GameScene::populate() {
     _memory = FreeList<Particle>::alloc(100);
     Size size = Application::get()->getDisplaySize();
     _rainNode->setContentSize(size);
-    _worldnode->addChild(_rainNode, 2);
+    _worldnode->addChild(_rainNode, 6);
 }
 
 /**
@@ -926,7 +923,7 @@ void GameScene::update(float dt) {
             c->update(dt);
         }
     }
-
+    _level->getWorldNode()->sortZOrder();
 }
 
 void GameScene::processRemoval(){

@@ -92,5 +92,5 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     _node->setVisible(true);
 
 //     _node->setVisible(false);
-    node->addChildWithName(_node, id, 0);
+    node->addChildWithName(_node, id, 3);
 }

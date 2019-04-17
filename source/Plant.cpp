@@ -194,16 +194,18 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     _node->setPosition(a);
     
     _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>(SIGN));
-    _signNode->setScale(0.2f);
-    cugl::Vec2 b = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (-0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signNode->setScale(0.25f);
+    cugl::Vec2 b = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f,
+                              (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _signNode->setPosition(b);
 
     _signIcon = PolygonNode::allocWithTexture(_assets->get<Texture>("iconHappy"));
-    _signIcon->setScale(0.15f);
-    cugl::Vec2 c = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signIcon->setScale(0.2f);
+    cugl::Vec2 c = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f,
+                              (0.3f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _signIcon->setPosition(c);
     
-    node->addChildWithName(_signNode, name + "sign", 1);
-    node->addChildWithName(_node, name, 0);
-    node->addChildWithName(_signIcon, name + "signicon", 2);
+    node->addChildWithName(_signNode, name + "sign", 4);
+    node->addChildWithName(_node, name, 4);
+    node->addChildWithName(_signIcon, name + "signicon", 5);
 }
