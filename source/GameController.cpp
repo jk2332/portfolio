@@ -76,15 +76,7 @@ int max_cloud_id = num_clouds;
 // In an actual game, this information would go in a data file.
 // IMPORTANT: Note that Box2D units do not equal drawing units
 /** The wall vertices */
-//float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
-//                   0.0f,  0.0f, 16.0f,  0.0f, 16.0f,  -1.0f,
-//                   -1.0f,  -1.0f,  -1.0f, 19.0f };
-//float WALL2[] = { 33.0f, 19.0f, 33.0f, -1.0f, 16.0f,  -1.0f,
-//                  16.0f, 0.0f, 32.0f, 0.0f, 32.0f, 18.0f,
-//                  16.0f, 18.0f, 16.0f, 19.0f };
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
-
-
 
 float WALL1[] = { 16.0f, 19.0f, 16.0f, 18.0f,  0.0f, 18.0f,
                    0.0f,  7.0f, 16.0f,  7.0f, 16.0f,  6.0f,
