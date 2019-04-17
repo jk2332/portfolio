@@ -22,12 +22,6 @@
         "shadow": {
             "file":     "textures/2-tile-shadow.png"
         },
-        "raccoon": {
-            "file":     "textures/raccoonsize1.png"
-        },
-        "tile": {
-            "file":     "textures/tile.png"
-        },
         "tile": {
             "file":     "textures/tile.png"
         },
@@ -69,6 +63,36 @@
         },
         "corn3": {
             "file":     "textures/corn3.png"
+        },
+        "snail": {
+            "file":     "textures/snailwalk.png"
+        },
+        "snailrev": {
+            "file":     "textures/snailwalkrev.png"
+        },
+        "raccoon": {
+            "file":     "textures/raccoonwalk.png"
+        },
+        "raccoonrev": {
+            "file":     "textures/raccoonwalkrev.png"
+        },
+        "sign": {
+            "file":     "textures/woodboard.png"
+        },
+        "iconShade": {
+            "file":     "textures/iconShade.png"
+        },
+        "iconSad": {
+            "file":     "textures/iconSad.png"
+        },
+        "iconHappy": {
+            "file":     "textures/iconHappy.png"
+        },
+        "iconRain": {
+            "file":     "textures/iconRain.png"
+        },
+        "iconSun": {
+            "file":     "textures/iconSun.png"
         },
         "particle": {
             "file":     "textures/particle1.png"

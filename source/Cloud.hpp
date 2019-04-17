@@ -336,6 +336,7 @@ public:
     bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     void incSize(float f);
+    bool shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
     float getCloudSize() {
         return _size;
     }

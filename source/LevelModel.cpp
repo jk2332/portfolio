@@ -9,26 +9,10 @@
 #include <cugl/assets/CUJsonLoader.h>
 #include "LevelModel.hpp"
 #include <map>
-//#include "LevelConstants.h"
-//#include "ExitModel.h"
-//#include "CrateModel.h"
-//#include "WallModel.h"
+#include "Constants.hpp"
 
 #pragma mark -
 #pragma mark Static Constructors
-
-#define DYNAMIC_COLOR   Color4::GREEN
-#define X_COORD   "x"
-#define Y_COORD   "y"
-#define ID   "id"
-#define CLOUDS_FIELD   "cloud"
-#define CLOUD_PRIORITY   4
-#define TEXTURE_FIELD   "texture"
-#define HEIGHT_FIELD   "height"
-#define WIDTH_FIELD   "width"
-#define TYPE   "type"
-#define GRID_NUM_X          9
-#define GRID_NUM_Y          3
 
 using namespace std;
 
@@ -149,7 +133,16 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             plant->setSceneNode(plantNode, plant->getName());
         }
    }
-   _worldnode->addChildWithName(plantNode, "plantNode", 0);
+   _worldnode->addChildWithName(plantNode, "plantNode", 3);
+
+   auto pestNode = Node::alloc();
+    for(auto &pest : _pests) {
+        if (pest != nullptr) {
+            pest->setAssets(_assets);
+            pest->setSceneNode(pestNode, pest->getName());
+        }
+   }
+   _worldnode->addChildWithName(pestNode, "pestNode", 0);
 }
 
 /**
@@ -205,6 +198,8 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
             _cloudLayer = layer->get("objects");
         } else if (name == "Plants") {
             _plantLayer = layer->get("objects");
+        } else if (name == "Pests") {
+            _pestLayer = layer->get("objects");
         }
        CULog(name.c_str());
     }
@@ -238,6 +233,16 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         return false;
     }
     
+    if (_pestLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_pestLayer->size();
+        for(int ii = 0; ii < csize; ii++) {
+            loadPest(_pestLayer->get(ii));
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
+        return false;
+    }
     
     return true;
 }
@@ -287,36 +292,39 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
-  bool success = true;
-  std::shared_ptr<JsonValue> cloudLayer;
+    bool success = true;
+    std::shared_ptr<JsonValue> cloudLayer;
 
-  // Create the polygon outline
-  Poly2 cloudpoly(CLOUD2, 8);
-  SimpleTriangulator triangulator;
-  triangulator.set(cloudpoly);
-  triangulator.calculate();
-  cloudpoly.setIndices(triangulator.getTriangulation());
-  cloudpoly.setType(Poly2::Type::SOLID);
+    // Create the polygon outline
+    Poly2 cloudpoly(CLOUD2, 8);
+    SimpleTriangulator triangulator;
+    triangulator.set(cloudpoly);
+    triangulator.calculate();
+    cloudpoly.setIndices(triangulator.getTriangulation());
+    cloudpoly.setType(Poly2::Type::SOLID);
 
-  success = success && cloudJson->get(X_COORD)->isNumber();
-  auto x = cloudJson->getInt(X_COORD);
-  success = success && cloudJson->get(Y_COORD)->isNumber();
-  auto y = cloudJson->getInt(Y_COORD);
+    success = success && cloudJson->get(X_COORD)->isNumber();
+    auto x = cloudJson->getInt(X_COORD);
+    success = success && cloudJson->get(Y_COORD)->isNumber();
+    auto y = cloudJson->getInt(Y_COORD);
 
-  std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
-  cloud->setDebugColor(DYNAMIC_COLOR);
-  cloud->setName("cloud" + std::to_string(i));
-  cloud->setId(i);
-  // Why is scale a vec2, not a float lol
-  cloud->setScale(_cscale);
-  cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
+    std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
+    cloud->setDebugColor(DYNAMIC_COLOR);
+    cloud->setName("cloud" + std::to_string(i));
+    cloud->setId(i);
+    // Why is scale a vec2, not a float lol
+    cloud->setScale(_cscale);
+    cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
 
-  if (success) {
+    cloud->setLinearDamping(0.7f);
+    cloud->setDensity(3.0f);
+    
+    if (success) {
       _cloud.push_back(cloud);
-  } else {
+    } else {
       cloud = nullptr;
-  }
-  return success;
+    }
+    return success;
 }
 
 /**
@@ -371,7 +379,33 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
  * @retain the wall
  * @return true if the wall was successfully loaded
  */
-bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
+bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
+    bool success = true;
+
+    success = success && json->get(ID)->isNumber();
+    auto plantId = json->getInt(ID);
+
+    success = success && json->get(X_COORD)->isNumber();
+    auto x = json->getInt(X_COORD);
+    success = success && json->get(Y_COORD)->isNumber();
+    auto y = json->getInt(Y_COORD);
+
+    success = success && json->get(TYPE)->isString();
+    auto pestType = json->getString(TYPE);
+
+    success = success && json->get("side")->isString();
+    auto side = json->getString("side");
+
+    auto pest = Pest::alloc(x, y, pestType, side, 32.0f);
+    auto pestName = pestType + std::to_string(plantId);
+    pest->setName(pestName);
+
+    if (success) {
+        _pests.push_back(pest);
+    } else {
+        pest = nullptr;
+    }
+
     return true;
 }
 
