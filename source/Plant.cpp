@@ -36,7 +36,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     // Plant animations
     _actions = ActionManager::alloc();
     _grow = Animate::alloc(0, 8, 1.0f, 1);
-    _grow2 = Animate::alloc(0, 7, 1.0f, 1);
+    _grow2 = Animate::alloc(0, 8, 1.0f, 1);
 
 
     return true;
