@@ -164,7 +164,7 @@ std::shared_ptr<Plant> currentPlant;
 
 #define GRID_NUM_X          9
 #define GRID_NUM_Y          3
-#define PINCH_OFFSET        4
+#define PINCH_OFFSET        1.5
 #define PINCH_CLOUD_DIST_OFFSET     5.5
 
 #pragma mark -
@@ -266,16 +266,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // Create the world and attach the listeners.
     _world = _level->getWorld();
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) {
-        beginContact(contact);
-    };
-    _world->onEndContact = [this](b2Contact* contact){
-        endContact(contact);
-    };
-    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
-        beforeSolve(contact,oldManifold);
-    };
+//    _world->activateCollisionCallbacks(true);
+//    _world->onBeginContact = [this](b2Contact* contact) {
+//        beginContact(contact);
+//    };
+//    _world->onEndContact = [this](b2Contact* contact){
+//        endContact(contact);
+//    };
+//    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
+//        beforeSolve(contact,oldManifold);
+//    };
 
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
@@ -603,7 +603,10 @@ void GameScene::update(float dt) {
                 if (coord.first >= 0 && coord.second >= 0) {
                     _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
                     int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-                    auto plant = _plants[plantIdx];
+                    std::shared_ptr<Plant> plant = nullptr;
+                    if (plantIdx >= 0 && plantIdx < _plants.size()){
+                        plant = _plants[plantIdx];
+                    }
                     if (plant != nullptr) {
                         plant->setShade(true);
                     }
@@ -719,7 +722,7 @@ void GameScene::update(float dt) {
                     if (touchIDs_started_outside.count(touchID)){
                         //                        CULog("deselecting existing selector for swiping");
                         if (!cloudsToSplit.count(touchID)){
-                            float y_dist = ob->getPosition().y - touchIDs_started_outside.at(touchID).y;
+                            float y_dist = abs(ob->getPosition().y - touchIDs_started_outside.at(touchID).y);
                             if (y_dist > SWIPE_VERT_OFFSET){
                                 if (ticks - gesCoolDown >= GES_COOLDOWN){
                                     CULog("swiped");
@@ -771,24 +774,24 @@ void GameScene::update(float dt) {
                     }
                     if (ticks - gesCoolDown >= GES_COOLDOWN + 10){
                         auto o = _selectors.at(touchID)->getObstacle();
-//                        if (o && o->getName().find("cloud") == 0) {
-//                            if (click1 == -1){
-//                                click1 = ticks;
-//                                clicked_cloud = o;
-//                            }
-//                            else if (click2 == -1){
-//                                click2 = ticks;
-//                                long gap = click2 - click1;
-//                                if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
-//                                    CULog("double tapped");
-//                                    gesCoolDown = ticks;
-//                                    makeRain(o);
-//                                }
-//                                click1 = -1;
-//                                click2 = -1;
-//                                clicked_cloud = nullptr;
-//                            }
-//                        }
+                        if (o && o->getName().find("cloud") == 0) {
+                            if (click1 == -1){
+                                click1 = ticks;
+                                clicked_cloud = o;
+                            }
+                            else if (click2 == -1){
+                                click2 = ticks;
+                                long gap = click2 - click1;
+                                if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
+                                    CULog("double tapped");
+                                    gesCoolDown = ticks;
+                                    makeRain(o);
+                                }
+                                click1 = -1;
+                                click2 = -1;
+                                clicked_cloud = nullptr;
+                            }
+                        }
                     }
                 }
                 else if (cloudsToSplit.count(touchID)){
@@ -869,17 +872,14 @@ void GameScene::update(float dt) {
 
 //    // Turn the physics engine crank.
     
-//     auto clouds = _level->getClouds();
-//     for(auto it = clouds.begin(); it != clouds.end(); ++it) {
-//         std::shared_ptr<Cloud> cloud = *it;
-//         cloud->update(dt);
-//    }
-    
-
-    _world->update(dt);
-    _level->getWorld()->update(dt);
     // process removal
     processRemoval();
+    
+     auto clouds = _level->getClouds();
+     for(auto it = clouds.begin(); it != clouds.end(); ++it) {
+         std::shared_ptr<Cloud> cloud = *it;
+         cloud->update(dt);
+    }
     
     Size s = _assets->get<Texture>("cloud")->getSize();
     for (auto &c : _level->getClouds()) {
@@ -889,6 +889,8 @@ void GameScene::update(float dt) {
             c->update(dt);
         }
     }
+    _world->update(dt);
+    _level->getWorld()->update(dt);
     
 }
 
@@ -946,7 +948,10 @@ void GameScene::makeRain(Obstacle * cloud){
     std::pair<int, int> coord = _board->posToGridCoord(cloud_pos);
     if (coord.first >= 0 && coord.second >= 0) {
         int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-        auto plant = _plants[plantIdx];
+        std::shared_ptr<Plant> plant = nullptr;
+        if (plantIdx >= 0 && plantIdx < _plants.size()){
+            plant = _plants[plantIdx];
+        }
         if (plant != nullptr) {
             plant->setRained(true);
         }
