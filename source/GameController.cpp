@@ -244,14 +244,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
-    
+
     // Start up the input handler
 //    _assets = assets;
 //    std::vector<std::shared_ptr<Texture>> textures;
 //    for (int i = 1; i < 6; i++){
 //        textures.push_back(_assets->get<Texture>("tile"));
 //    }
-    
+
     _level = assets->get<LevelModel>("level1");
     if (_level == nullptr) {
         CULog("Fail!");
@@ -283,7 +283,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode = Node::alloc();
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
-    
+
     _assets = assets;
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -301,7 +301,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
-    
+
     // Create selector
 //    _selector = ObstacleSelector::alloc(_world);
 //    _selector->setDebugColor(DYNAMIC_COLOR);
@@ -506,7 +506,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     auto c1p = cind1->getPosition();
     auto c2p = cind2->getPosition();
     CULog("combine by pinch");
-    
+
     if (c1p.distance(c2p) <= PINCH_CLOUD_DIST_OFFSET) return;
 
     pinchPos.x = pinchPos.x/iosToDesktopScaleX;
@@ -562,7 +562,7 @@ void GameScene::update(float dt) {
     ticks++;
 
 //    processedGes = false;
-    
+
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didReset()) { reset(); }
@@ -585,7 +585,7 @@ void GameScene::update(float dt) {
         for (int j=0; j < GRID_NUM_Y; j++){
             shaded = false;
             thisNode = _board->getNodeAt(i, j);
-            
+
             for (auto &c : _level->getClouds()) {
                 if (c == nullptr) {
                     continue;
@@ -594,16 +594,24 @@ void GameScene::update(float dt) {
                     shaded = shaded || c->shadowCheck(_worldnode, thisNode);
                 }
             }
-            
-            if(!shaded){
-                thisNode->setColor(getColor() + Color4(255, 0, 0, 0));
-            }
-            else{
-                thisNode->setColor(getColor() - Color4(230,230,230,0));
-            }
+
+            // Tinting for debugging purposes, shows shaded tiles
+             if(!shaded){
+//                 thisNode->setColor(getColor() + Color4(255, 0, 0, 0));
+             }
+             else{
+//                 int plantIdx = i * GRID_NUM_Y + j;
+                 
+                 for (std::shared_ptr<Plant> p : _level->getPlants()){
+                     if (p != nullptr && p->getX() == i && p->getY() == j){
+                        p->setShade(true);
+                     }
+                 }
+//                 thisNode->setColor(getColor() - Color4(230,230,230,0));
+             }
         }
     }
-    
+
     for (auto &c : _clouds) {
         if (c == nullptr) {
             continue;
@@ -632,51 +640,64 @@ void GameScene::update(float dt) {
     auto f = _level->getWorldNode();
     auto plantNode = _level->getWorldNode()->getChildByName("plantNode");
     for (auto &plant : _level->getPlants()){
-//       auto *idx = std::find(std::begin(plants), std::end(plants), i);
-//       if (idx == std::end(plants)) {
-//           continue;
-//       }
-
        if (ticks % 150 == 0 && ticks > 50) {
-//        if (ticks % 100 == 0) {
            plant->updateState();
-//            CULog(std::to_string(ticks).c_str());
        }
        int st = plant->getState();
 
-       bool debugPlantColor = false;
-
-        std::string childName = plant->getName();
-       if (st == noNeed) {
-           if (debugPlantColor) {
-               CULog("no need");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4::WHITE);
-       }
-       if (st == needRain){
-           if (debugPlantColor) {
-               CULog("need rain");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
-       }
-       else if (st == needSun){
-           if (debugPlantColor) {
-               CULog("need sun");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
-       }
-       else if (st == needShade) {
-           if (debugPlantColor) {
-               CULog("need shade");
-           }
-           plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
-       }
-       else if (st == dead){
-           if (debugPlantColor) {
-               CULog("dead");
-           }
-       }
+    //    bool debugPlantColor = false;
+//
+        // std::string childName = plant->getName();
+    //    if (st == noNeed) {
+    //        if (debugPlantColor) {
+    //            CULog("no need");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4::WHITE);
+    //    }
+    //    if (st == needRain){
+    //        if (debugPlantColor) {
+    //            CULog("need rain");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
+    //    }
+    //    else if (st == needSun){
+    //        if (debugPlantColor) {
+    //            CULog("need sun");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
+    //    }
+    //    else if (st == needShade) {
+    //        if (debugPlantColor) {
+    //            CULog("need shade");
+    //        }
+    //        plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
+    //    }
+    //    else if (st == dead){
+    //        if (debugPlantColor) {
+    //            CULog("dead");
+    //        }
+    //    }
    }
+
+    if (ticks % 50 == 0 && ticks > 50) {
+        for (auto &pest : _level->getPests()){
+            int targetY = pest->getTarget().y;
+            int targetX;
+            bool target = false;
+            for(auto &plant : _level->getPlants()) {
+                if (plant->getStage() > 2 && plant->getX()) {
+                    targetX = plant->getX();
+                    pest->walk();
+                    break;
+                }
+            }
+
+        }
+    }
+
+    for (auto &pest : _level->getPests()){
+        pest->update(dt);
+    }
 
    for(auto &plant : _level->getPlants()) {
        plant->update(dt);
@@ -838,11 +859,11 @@ void GameScene::update(float dt) {
     }
 
     _rainNode->update(_particles);
-    
+
     // process clouds to split
     splitClouds();
     cloudsToSplit.clear();
-    
+
     // Todo bring make cloud creation and destruction
 //    if (ticks % 5 == 0){
 //        for (auto &ic : cloudsToSplit){
@@ -858,18 +879,18 @@ void GameScene::update(float dt) {
 //            triangulator.calculate();
 //            cloudpoly.setIndices(triangulator.getTriangulation());
 //            cloudpoly.setType(Poly2::Type::SOLID);
-//            
+//
 //            std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(cloudPos.x-1.5, cloudPos.y));
 //            cloud->setDebugColor(DYNAMIC_COLOR);
 //            cloud->setName("cloud" + std::to_string(new_cloud_ind));
 //            cloud->setScale(_scale);
 //            cloud->setSize(c->getCloudSize());
 //            _cloud[new_cloud_ind] = cloud;
-//            
+//
 //            // Set the physics attributes
 //            std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
 //            cloudobj->setBodyType(b2_dynamicBody);
-//            
+//
 //            // Add the scene graph nodes to this object
 //            cloudpoly *= _scale;
 //            std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);
@@ -880,23 +901,23 @@ void GameScene::update(float dt) {
 //        }
 //        cloudsToSplit.clear();
 //    }
-//    
+//
 //    cloudsToSplit.clear();
 
 //    // Turn the physics engine crank.
-    
+
 //     auto clouds = _level->getClouds();
 //     for(auto it = clouds.begin(); it != clouds.end(); ++it) {
 //         std::shared_ptr<Cloud> cloud = *it;
 //         cloud->update(dt);
 //    }
-    
+
 
     _world->update(dt);
     _level->getWorld()->update(dt);
     // process removal
     processRemoval();
-    
+
     Size s = _assets->get<Texture>("cloud")->getSize();
     for (auto &c : _level->getClouds()) {
         if (c != nullptr) {
@@ -905,7 +926,7 @@ void GameScene::update(float dt) {
             c->update(dt);
         }
     }
-    
+
 }
 
 void GameScene::processRemoval(){
@@ -942,7 +963,7 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * cloud){
     auto c = (Cloud *) cloud;
     Vec2 cloud_pos = c->getPosition();
-    
+
     // Draw rain droplets
     c->decSize();
     for (int i = -3; i < 3; i++){
@@ -954,7 +975,7 @@ void GameScene::makeRain(Obstacle * cloud){
             _pQ.push_back(sprite);
         }
     }
-    
+
     // Set plants to rained
     if (cloud_pos.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
         cloud_pos.y = cloud_pos.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
@@ -974,7 +995,7 @@ void GameScene::makeRain(Obstacle * cloud){
 void GameScene::splitClouds(){
     if (splitCoolDown == -1) splitCoolDown = ticks;
     for (auto &ic : cloudsToSplit){
-        
+
         // split clouds here
         auto cloudNode = _worldnode->getChildByName(ic.second->getName());
         Cloud* c = (Cloud*)ic.second;
@@ -986,21 +1007,21 @@ void GameScene::splitClouds(){
         triangulator.calculate();
         cloudpoly.setIndices(triangulator.getTriangulation());
         cloudpoly.setType(Poly2::Type::SOLID);
-        
+
         std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(cloudPos.x-1.5, cloudPos.y));
         cloud->setDebugColor(DYNAMIC_COLOR);
-        
+
         max_cloud_id ++;
         cloud->setName("cloud" + std::to_string(max_cloud_id));
         cloud->setScale(_scale);
         cloud->setSize(c->getCloudSize());
         cloud->setId(max_cloud_id);
         _clouds.push_back(cloud);
-        
+
         // Set the physics attributes
         std::shared_ptr<PolygonObstacle> cloudobj = PolygonObstacle::alloc(cloudpoly);
         cloudobj->setBodyType(b2_dynamicBody);
-        
+
         // Add the scene graph nodes to this object
         cloudpoly *= _scale;
         std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>("cloud"),cloudpoly);

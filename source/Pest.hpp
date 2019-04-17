@@ -27,9 +27,22 @@ protected:
     Vec2 _pos;
     Vec2 _target;
     int _status;
-    int _type;
-    int _speed;
+    std::string _type;
+    float _speed;
     int _damage;
+    float _scale;
+    std::shared_ptr<cugl::Texture> texture;
+    std::shared_ptr<ActionManager> _actions;
+    std::shared_ptr<Animate> _move;
+    std::shared_ptr<cugl::AssetManager> _assets;
+    std::shared_ptr<Node> _node;
+    std::string _side;
+    std::string _name;
+    int _xside;
+    
+    float _scaledTargetX;
+
+    bool _active;
     
 public:
 #pragma mark -
@@ -68,7 +81,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale);
+    bool init(int x, int y, std::string type, std::string side, float drawscale);
     
     
 #pragma mark -
@@ -87,14 +100,14 @@ public:
      *
      * @return a newly allocated Pest with the given position
      */
-    static std::shared_ptr<Pest> alloc(int x, int y, std::shared_ptr<cugl::Texture> texture, float drawscale) {
+    static std::shared_ptr<Pest> alloc(int x, int y, std::string texture, std::string side, float drawscale) {
         std::shared_ptr<Pest> result = std::make_shared<Pest>();
-        return (result->init(x, y, texture, drawscale) ? result : nullptr);
+        return (result->init(x, y, texture, side, drawscale) ? result : nullptr);
     }
     
-    void setSceneNode(const std::shared_ptr<cugl::Node>& node);
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id);
     
-    int getType() {return _type;}
+    std::string getType() {return _type;}
     void setType(int t) {_type = t;}
     
     int getHealth() {return _health;}
@@ -109,12 +122,19 @@ public:
     Vec2 getTarget() {return _target;}
     void setTarget(Vec2 t) {_target = t;}
     
-    int getSpeed() {return _speed;}
-    void setSpeed(int s) {_speed = s;}
+    float getSpeed() {return _speed;}
+    void setSpeed(float s) {_speed = s;}
     
     int getDamage() {return _damage;}
     void setDamage(int h) {_damage = h;}
+
+    std::string getName() {return _name;}
+    void setName(std::string name) {_name = name;}
+
+    void update(float dt);
+    void walk();
     
-    void update();
+
+    void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
 };
 #endif /* Pest_hpp */

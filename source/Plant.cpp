@@ -65,71 +65,73 @@ void Plant::setRained(bool f) {
 void Plant::updateState(){
     //CULog("Update %s state", getName().c_str());
     if (_state == dead || _stage == _maxStage){
+        changeSign();
         //do nothing
         return;
     }
     else {
-        _progress += 1;
-//         if (_state == needShade){
-// //            CULog("update needs shade");
-//             if (_shaded){
-//                 incHealth();
-//                 _shadeCounter += 1;
-//                 if (_health >= 0 && _shadeCounter == 2){
-//                     setState(noNeed);
-//                     _shadeCounter = 0;
-//                     _progress += 2;
-//                 }
-//             } else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
-//         else if (_state == needRain){
-//             if (_rained){
-//                 incHealth();
-//                 if (_health >= 0){
-//                     setState(noNeed);
-//                     _progress += 2;
-//                 }
-//             } else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
-//         else if (_state == noNeed){
-//             int statusChance = rand() %  100 + 1;
-//             if (statusChance < _rainProb) {
-//                 CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
-//                 _state = needRain;
-//                 _rainProb /= 2;
-//             } else if (statusChance < _rainProb + _shadeProb) {
-// //                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
-//                 _state = needShade;
-//                 _shadeProb /= 1.5;
-//             } else {
-// //                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
-//                 if (!_shaded){
-//                     _progress += 1;
-//                 }
-//             }
-//         } else if (_state == needSun) {
-// //            CULog("update needs sun");
-//             if (!_shaded){
-//                 incHealth();
-//                 if (_health >= 0){setState(noNeed);}
-//             }
-//             else{
-//                 decHealth();
-//                 if (_progress >= 1) {
-//                     _progress -= 1;
-//                 }
-//             }
-//         }
+        if (_state == needShade){
+//            CULog("update needs shade");
+            if (_shaded){
+                incHealth();
+                _shadeCounter += 1;
+                if (_health >= 0 && _shadeCounter == 2){
+                    setState(noNeed);
+                    _shadeCounter = 0;
+                    _progress += 2;
+                }
+            } else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
+        else if (_state == needRain){
+            if (_rained){
+                incHealth();
+                if (_health >= 0){
+                    setState(noNeed);
+                    _progress += 2;
+                }
+            } else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
+        else if (_state == noNeed){
+            int statusChance = rand() %  100 + 1;
+            if (statusChance < _rainProb) {
+                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
+                _state = needRain;
+                _rainProb /= 2;
+            } else if (statusChance < _rainProb + _shadeProb) {
+//                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
+                _state = needShade;
+                _shadeProb /= 1.5;
+            } else {
+//                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
+                if (!_shaded){
+                    _progress += 1;
+                }
+            }
+        } else if (_state == needSun) {
+//            CULog("update needs sun");
+            if (!_shaded){
+                incHealth();
+                if (_health >= 0){setState(noNeed);}
+            }
+            else{
+                decHealth();
+                if (_progress >= 1) {
+                    _progress -= 1;
+                }
+            }
+        }
+
+        changeSign();
 
         _shaded = false;
         _rained = false;
@@ -140,6 +142,19 @@ void Plant::updateState(){
             upgradeSprite();
         }
     }
+}
+
+void Plant::changeSign() {
+    if (_state == needShade) {
+        _signIcon->setTexture(_assets->get<Texture>("iconShade"));
+    } else if (_state == needRain) {
+        _signIcon->setTexture(_assets->get<Texture>("iconRain"));
+    } else if (_state == dead) {
+        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+    } else {
+        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+    }
+    
 }
 
 void Plant::upgradeSprite() {
@@ -177,6 +192,18 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     _node->setScale(0.15f);
     cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
-    node->addChildWithName(_node, name);
     
+    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>(SIGN));
+    _signNode->setScale(0.2f);
+    cugl::Vec2 b = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (-0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signNode->setPosition(b);
+
+    _signIcon = PolygonNode::allocWithTexture(_assets->get<Texture>("iconHappy"));
+    _signIcon->setScale(0.15f);
+    cugl::Vec2 c = cugl::Vec2((0.5f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    _signIcon->setPosition(c);
+    
+    node->addChildWithName(_signNode, name + "sign", 1);
+    node->addChildWithName(_node, name, 0);
+    node->addChildWithName(_signIcon, name + "signicon", 2);
 }

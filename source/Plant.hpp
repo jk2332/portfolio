@@ -13,11 +13,7 @@
 #include <cugl/cugl.h>
 #include <vector>
 #include "Board.hpp"
-#define noNeed 0
-#define needRain 1
-#define needSun 2
-#define needShade 3
-#define dead 4
+
 
 using namespace cugl;
 
@@ -51,6 +47,7 @@ protected:
     int _shadeCounter;
     std::shared_ptr<AnimationNode> _node;
     std::shared_ptr<TexturedNode> _signNode;
+    std::shared_ptr<TexturedNode> _signIcon;
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<ActionManager> _actions;
@@ -143,6 +140,10 @@ public:
     void setShade(bool f);
     void setRained(bool f);
 
+    int getX() {return _x;};
+    int getY() {return _y;};
+    int getStage() {return _stage;};
+
     void setPlantType(std::string s) { _ptype = s; };
     std::string getPlantType() {return _ptype;};
 
@@ -153,6 +154,8 @@ public:
     void upgradeSprite();
     void update(float dt);
 
+    void changeSign() ;
+    
 };
 
 
