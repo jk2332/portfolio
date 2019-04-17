@@ -54,7 +54,7 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     RagdollInput _input;
-    std::shared_ptr<Plant> _plants[36];
+    std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
     std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;

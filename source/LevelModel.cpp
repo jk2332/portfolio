@@ -8,6 +8,7 @@
 
 #include <cugl/assets/CUJsonLoader.h>
 #include "LevelModel.hpp"
+#include <map>
 //#include "LevelConstants.h"
 //#include "ExitModel.h"
 //#include "CrateModel.h"
@@ -19,11 +20,21 @@
 #define DYNAMIC_COLOR   Color4::GREEN
 #define X_COORD   "x"
 #define Y_COORD   "y"
+#define ID   "id"
 #define CLOUDS_FIELD   "cloud"
 #define CLOUD_PRIORITY   4
 #define TEXTURE_FIELD   "texture"
 #define HEIGHT_FIELD   "height"
 #define WIDTH_FIELD   "width"
+#define TYPE   "type"
+#define GRID_NUM_X          9
+#define GRID_NUM_Y          3
+
+using namespace std;
+
+map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}};
+map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}};
+float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
 /**
  * Creates a new, empty level.
@@ -38,8 +49,6 @@ _plantLayer(nullptr)
 {
     _bounds.size.set(1.0f, 1.0f);
 }
-
-float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
 /**
  * Destroys this level, releasing all resources.
@@ -65,9 +74,6 @@ LevelModel::~LevelModel(void) {
  * @param value  the drawing scale for this game level
  */
 void LevelModel::setDrawScale(float value) {
-//    if (_rocket != nullptr) {
-//        _rocket->setDrawScale(value);
-//    }
     _cscale = value;
 }
 
@@ -128,30 +134,22 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     std::shared_ptr<WireNode> draw;
 
    for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
-      std::shared_ptr<Cloud> cloud = *it;
-       cloud->setScale(_cscale); 
-      std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(cloud->getTextureKey()));
-       cloud->setSceneNode(sprite);
-      addObstacle(cloud,sprite,0);
+        std::shared_ptr<Cloud> cloud = *it;
+        cloud->setScale(_cscale); 
+        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+        cloudNode->setName(cloud->getName());
+        cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        addObstacle(cloud,cloudNode,1);
    }
-    
-//    if (_goalDoor != nullptr) {
-//        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(_goalDoor->getTextureKey()));
-//        addObstacle(_goalDoor,sprite,GOAL_PRIORITY); // Put this at the very back
-//    }
-//
-//    for(auto it = _crates.begin(); it != _crates.end(); ++it) {
-//        std::shared_ptr<CrateModel> crate = *it;
-//        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(crate->getTextureKey()));
-//        int indx = (std::rand() % 2 == 0 ? 2 : 1);
-//        addObstacle(crate,sprite,CRATE_PRIORITY+indx);   // PUT SAME TEXTURES IN SAME LAYER!!!
-//    }
-//
-//    for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-//        std::shared_ptr<WallModel> wall = *it;
-//        std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(_assets->get<Texture>(wall->getTextureKey()),wall->getPolygon() * _scale);
-//        addObstacle(wall,sprite,WALL_PRIORITY);  // All walls share the same texture
-//    }
+
+    auto plantNode = Node::alloc();
+    for(auto &plant : _plants) {
+        if (plant != nullptr) {
+            plant->setAssets(_assets);
+            plant->setSceneNode(plantNode, plant->getName());
+        }
+   }
+   _worldnode->addChildWithName(plantNode, "plantNode", 0);
 }
 
 /**
@@ -228,6 +226,18 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         CUAssertLog(false, "Failed to load crates");
         return false;
     }
+
+    if (_plantLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_plantLayer->size();
+        for(int ii = 0; ii < csize; ii++) {
+            loadPlant(_plantLayer->get(ii));
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
+        return false;
+    }
+    
     
     return true;
 }
@@ -320,48 +330,34 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
  * @retain the exit door
  * @return true if the exit door was successfully loaded
  */
-bool LevelModel::loadGoalDoor(const std::shared_ptr<JsonValue>& json) {
-//    bool success = false;
-//    auto goal = json->get(GOALDOOR_FIELD);
-//    if (goal != nullptr) {
-//        success = true;
-//
-//        auto posArray = goal->get(POSITION_FIELD);
-//        success = success && posArray->isArray();
-//        Vec2 goalPos = Vec2(posArray->get(0)->asFloat(), posArray->get(1)->asFloat());
-//
-//        auto sizeArray = goal->get(SIZE_FIELD);
-//        success = success && sizeArray->isArray();
-//        Vec2 goalSize = Vec2(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-//
-//        // Get the object, which is automatically retained
-//        _goalDoor = ExitModel::alloc(goalPos,(Size)goalSize);
-//        _goalDoor->setName(goal->key());
-//
-//        _goalDoor->setDensity(goal->getDouble(DENSITY_FIELD));
-//        _goalDoor->setFriction(goal->getDouble(FRICTION_FIELD));
-//        _goalDoor->setRestitution(goal->getDouble(RESTITUTION_FIELD));
-//        _goalDoor->setSensor(true);
-//
-//        std::string btype = goal->getString(BODYTYPE_FIELD);
-//        if (btype == STATIC_VALUE) {
-//            _goalDoor->setBodyType(b2_staticBody);
-//        }
-//
-//        // Set the texture value
-//        success = success && goal->get(TEXTURE_FIELD)->isString();
-//        _goalDoor->setTextureKey(goal->getString(TEXTURE_FIELD));
-//        _goalDoor->setDebugColor(parseColor(goal->getString(DEBUG_COLOR_FIELD)));
-//
-//        if (success) {
-//            //   _world->addObstacle(_goalDoor);
-//        }
-//        else {
-//            _goalDoor = nullptr;
-//        }
-//    }
-//    return success;
-    return true;
+
+
+bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
+    bool success = true;
+
+    success = success && json->get(ID)->isNumber();
+    auto plantId = json->getInt(ID);
+
+    success = success && json->get(X_COORD)->isNumber();
+    auto x = json->getInt(X_COORD);
+    success = success && json->get(Y_COORD)->isNumber();
+    auto y = json->getInt(Y_COORD);
+
+    success = success && json->get(TYPE)->isString();
+    auto plantType = json->getString(TYPE);
+
+    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], 32.0f);
+    auto plantName = "plant" + std::to_string(plantId);
+    plant->setName(plantName);
+    plant->setPlantType(plantType);
+
+    if (success) {
+        _plants.push_back(plant);
+    } else {
+        plant = nullptr;
+    }
+
+    return success;
 }
 
 /**
@@ -376,47 +372,6 @@ bool LevelModel::loadGoalDoor(const std::shared_ptr<JsonValue>& json) {
  * @return true if the wall was successfully loaded
  */
 bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
-//    bool success = true;
-//
-//    int polysize = json->getInt(VERTICES_FIELD);
-//    success = success && polysize > 0;
-//
-//    std::vector<float> vertices = json->get(BOUNDARY_FIELD)->asFloatArray();
-//    success = success && 2*polysize == vertices.size();
-//
-//    Poly2 wall(&vertices[0],(int)vertices.size());
-//    SimpleTriangulator triangulator;
-//    triangulator.set(wall);
-//    triangulator.calculate();
-//    wall.setIndices(triangulator.getTriangulation());
-//    wall.setType(Poly2::Type::SOLID);
-//
-//    // Get the object, which is automatically retained
-//    std::shared_ptr<WallModel> wallobj = WallModel::alloc(wall);
-//    wallobj->setName(json->key());
-//
-//    std::string btype = json->getString(BODYTYPE_FIELD);
-//    if (btype == STATIC_VALUE) {
-//        wallobj->setBodyType(b2_staticBody);
-//    }
-//
-//    wallobj->setDensity(json->getDouble(DENSITY_FIELD));
-//    wallobj->setFriction(json->getDouble(FRICTION_FIELD));
-//    wallobj->setRestitution(json->getDouble(RESTITUTION_FIELD));
-//
-//    // Set the texture value
-//    success = success && json->get(TEXTURE_FIELD)->isString();
-//    wallobj->setTextureKey(json->getString(TEXTURE_FIELD));
-//    wallobj->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-//
-//    if (success) {
-//        _walls.push_back(wallobj);
-//    } else {
-//        wallobj = nullptr;
-//    }
-//
-//    vertices.clear();
-//    return success;
     return true;
 }
 
@@ -432,46 +387,6 @@ bool LevelModel::loadWall(const std::shared_ptr<JsonValue>& json) {
  * @return true if the crate was successfully loaded
  */
 bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
-//    bool success = true;
-//
-//    auto posArray = json->get(POSITION_FIELD);
-//    success = success && posArray->isArray();
-//    Vec2 cratePos = Vec2(posArray->get(0)->asFloat(), posArray->get(1)->asFloat());
-//
-//    auto sizeArray = json->get(SIZE_FIELD);
-//    success = success && sizeArray->isArray();
-//    Vec2 crateSize = Vec2(sizeArray->get(0)->asFloat(), sizeArray->get(1)->asFloat());
-//
-//    // Get the object, which is automatically retained
-//    std::shared_ptr<CrateModel> crate = CrateModel::alloc(cratePos,(Size)crateSize);
-//
-//    // Using the key makes too many sounds
-//    // crate->setName(reader.getKey());
-//    std::string textureName = json->getString(TEXTURE_FIELD);
-//    crate->setName(textureName);
-//    std::string btype = json->getString(BODYTYPE_FIELD);
-//    if (btype == STATIC_VALUE) {
-//        crate->setBodyType(b2_staticBody);
-//    }
-//
-//    crate->setDensity(json->getDouble(DENSITY_FIELD));
-//    crate->setFriction(json->getDouble(FRICTION_FIELD));
-//    crate->setRestitution(json->getDouble(RESTITUTION_FIELD));
-//    crate->setAngularDamping(json->getDouble(DAMPING_FIELD));
-//    crate->setAngleSnap(0);     // Snap to the nearest degree
-//
-//    // Set the texture value
-//    success = success && json->get(TEXTURE_FIELD)->isString();
-//    crate->setTextureKey(json->getString(TEXTURE_FIELD));
-//    crate->setDebugColor(parseColor(json->getString(DEBUG_COLOR_FIELD)));
-//
-//    if (success) {
-//        _crates.push_back(crate);
-//    } else {
-//        crate = nullptr;
-//    }
-//
-//    return success;
     return true;
 }
 

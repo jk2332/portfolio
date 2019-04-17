@@ -15,6 +15,7 @@
 #include <cugl/io/CUJsonReader.h>
 #include "Cloud.hpp"
 #include "Plant.hpp"
+#include "Board.hpp"
 
 using namespace cugl;
 
@@ -63,6 +64,8 @@ protected:
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::vector<std::shared_ptr<Cloud>> _cloud;
+    std::vector<std::shared_ptr<Plant>> _plants;
+    std::shared_ptr<Board> _board;
     Poly2 _poly;
 
     // float _scale;
@@ -103,7 +106,7 @@ protected:
      * @retain the exit door
      * @return true if the exit door was successfully loaded
      */
-    bool loadGoalDoor(const std::shared_ptr<JsonValue>& json);
+    bool loadPlant(const std::shared_ptr<JsonValue>& json);
     
     /**
      * Loads a single wall object
@@ -196,6 +199,10 @@ public:
     }
     
     std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
+    
+    std::shared_ptr<Node> getWorldNode() { return _worldnode; };
+    
+    std::vector<std::shared_ptr<Plant>> getPlants() { return _plants; };
 
     
     

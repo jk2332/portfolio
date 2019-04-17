@@ -52,11 +52,11 @@
                  "id":4,
                  "name":"",
                  "rotation":0,
-                 "type":"Apple tree",
+                 "type":"corn",
                  "visible":true,
                  "width":94,
-                 "x":99,
-                 "y":284
+                 "x":1,
+                 "y":1
                 }, 
                 {
                  "gid":5,
@@ -64,11 +64,11 @@
                  "id":5,
                  "name":"",
                  "rotation":0,
-                 "type":"Apple tree",
+                 "type":"tomato",
                  "visible":true,
                  "width":94,
-                 "x":289,
-                 "y":414
+                 "x":2,
+                 "y":2
                 }, 
                 {
                  "gid":5,
@@ -76,11 +76,11 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"Apple tree",
+                 "type":"tomato",
                  "visible":true,
                  "width":94,
-                 "x":672,
-                 "y":546
+                 "x":3,
+                 "y":0
                 }, 
                 {
                  "gid":5,
@@ -88,11 +88,11 @@
                  "id":7,
                  "name":"",
                  "rotation":0,
-                 "type":"Apple tree",
+                 "type":"corn",
                  "visible":true,
                  "width":94,
-                 "x":768,
-                 "y":418
+                 "x":6,
+                 "y":2
                 }],
          "opacity":1,
          "type":"objectgroup",

@@ -20,7 +20,9 @@
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_WIDTH      3
-#define GRID_HEIGHT     2
+#define GRID_HEIGHT     2.5f
+#define DRAW_WIDTH     3
+#define DRAW_HEIGHT     2
 #define DOWN_LEFT_CORNER_X    3
 #define DOWN_LEFT_CORNER_Y    4
 #define OFFSET_X         0
