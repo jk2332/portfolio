@@ -184,6 +184,7 @@ public:
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
 
+    bool init(const std::shared_ptr<AssetManager>& assets, std::string level);
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -219,7 +220,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity, std::string level);
 
 
 #pragma mark -

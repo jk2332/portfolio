@@ -50,16 +50,16 @@
             "file":     "textures/tom-filmstrip1.png"
         },
         "tomato2": {
-            "file":     "textures/tom-filmstrip2.png"
+            "file":     "textures/tom2.png"
         },
         "tomato3": {
-            "file":     "textures/tom-filmstrip3.png"
+            "file":     "textures/tom3.png"
         },
         "corn1": {
             "file":     "textures/corn1.png"
         },
         "corn2": {
-            "file":     "textures/corn2.png"
+            "file":     "textures/cornp1.png"
         },
         "corn3": {
             "file":     "textures/corn3.png"
@@ -90,6 +90,9 @@
         },
         "iconRain": {
             "file":     "textures/iconRain.png"
+        },
+        "smallRain": {
+            "file":     "textures/small_rain.png"
         },
         "iconSun": {
             "file":     "textures/iconSun.png"

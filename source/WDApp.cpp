@@ -53,7 +53,11 @@ void WeatherDefenderApp::onStartup() {
     // Que up the other assets
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    _assets->loadAsync<LevelModel>("level1","json/level.json",nullptr);
+    _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
+    _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
+    _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
+    _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
+
     
     CULogGLError();
     glGenVertexArrays(1, &VAO);
@@ -123,6 +127,7 @@ void WeatherDefenderApp::onStartup() {
  */
 void WeatherDefenderApp::onShutdown() {
     _loading.dispose();
+    _levelSelect.dispose();
     _gameplay.dispose();
     _assets = nullptr;
     _batch = nullptr;
@@ -188,12 +193,25 @@ void WeatherDefenderApp::update(float timestep) {
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
-        _gameplay.init(_assets);
+        _levelSelect.init(_assets);
         _loaded = true;
-    } else {
+    } else if (!_levelselected && _levelSelect.isActive()){
+        _levelSelect.update(0.01f);
+    } else if (!_levelselected){
+        _levelSelect.dispose();
+        CULogGLError();
+//        _assets->loadDirectoryAsync("json/assets.json",nullptr);
+//        auto x = "json/level" + std::to_string(_levelSelect.getLevelSelected()+1) + ".json";
+//        _assets->loadAsync<LevelModel>("foo","json/level" + std::to_string(_levelSelect.getLevelSelected()+1) + ".json",nullptr);
+        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected()+1);
+        _gameplay.init(_assets, levelId);
+        
+        _levelselected = true;
+    }else {
         _gameplay.update(timestep);
     }
 }
+
 
 /**
  * The method called to draw the application to the screen.
@@ -207,8 +225,11 @@ void WeatherDefenderApp::update(float timestep) {
 void WeatherDefenderApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
-    } else {
+    } else if (!_levelselected){
+        //        _gameplay.render(_batch);
+        _levelSelect.render(_batch);
+    }
+    else {
         _gameplay.render(_batch);
     }
 }
-
