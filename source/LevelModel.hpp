@@ -16,6 +16,7 @@
 #include "Cloud.hpp"
 #include "Plant.hpp"
 #include "Board.hpp"
+#include "Pest.hpp"
 
 using namespace cugl;
 
@@ -63,8 +64,10 @@ protected:
 //    std::shared_ptr<ExitModel> _goalDoor;
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
+    std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _cloud;
     std::vector<std::shared_ptr<Plant>> _plants;
+    std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;
     Poly2 _poly;
 
@@ -119,7 +122,7 @@ protected:
      * @retain the wall
      * @return true if the wall was successfully loaded
      */
-    bool loadWall(const std::shared_ptr<JsonValue>& json);
+    bool loadPest(const std::shared_ptr<JsonValue>& json);
     
     /**
      * Loads a single crate object
@@ -203,6 +206,7 @@ public:
     std::shared_ptr<Node> getWorldNode() { return _worldnode; };
     
     std::vector<std::shared_ptr<Plant>> getPlants() { return _plants; };
+    std::vector<std::shared_ptr<Pest>> getPests() { return _pests; };
 
     
     

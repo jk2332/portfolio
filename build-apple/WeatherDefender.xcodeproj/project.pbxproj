@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B18648522673567003E0C2B /* Constants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B18648322673567003E0C2B /* Constants.cpp */; };
+		1B18648622673567003E0C2B /* Constants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B18648322673567003E0C2B /* Constants.cpp */; };
 		1B8D3A65226266A1002AFC9A /* LevelModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1B8D3A61226266A1002AFC9A /* LevelModel.cpp */; };
 		1BD3690A224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
 		1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BD36908224E289B00C253C4 /* Particle.cpp */; };
@@ -121,6 +123,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1B18648322673567003E0C2B /* Constants.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Constants.cpp; sourceTree = "<group>"; };
+		1B18648422673567003E0C2B /* Constants.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Constants.hpp; sourceTree = "<group>"; };
 		1B8D3A61226266A1002AFC9A /* LevelModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LevelModel.cpp; sourceTree = "<group>"; };
 		1BD36908224E289B00C253C4 /* Particle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Particle.cpp; sourceTree = "<group>"; };
 		1BD36909224E289B00C253C4 /* Particle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Particle.hpp; sourceTree = "<group>"; };
@@ -306,6 +310,8 @@
 				EBB4B56D2040ADD200238092 /* GameController.h */,
 				1B8D3A61226266A1002AFC9A /* LevelModel.cpp */,
 				1BD618772266BF70001F8D5B /* LevelModel.hpp */,
+				1B18648322673567003E0C2B /* Constants.cpp */,
+				1B18648422673567003E0C2B /* Constants.hpp */,
 				EBB4B5702040ADD200238092 /* InputController.cpp */,
 				EBB4B5712040ADD200238092 /* InputController.h */,
 				EBB4B5762040ADD300238092 /* LoadingController.cpp */,
@@ -567,6 +573,7 @@
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
 				1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */,
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
+				1B18648622673567003E0C2B /* Constants.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
 				1BD618762266BF4F001F8D5B /* LevelModel.cpp in Sources */,
@@ -587,8 +594,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BD618782266BF70001F8D5B /* LevelModel.hpp in Sources */,
+				1B18648522673567003E0C2B /* Constants.cpp in Sources */,
 				1B8D3A65226266A1002AFC9A /* LevelModel.cpp in Sources */,
-				EBB4B57E2040ADD300238092 /* RagdollModel.cpp in Sources */,
 				F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */,
 				F8939EA42236FE2900199385 /* MenuController.cpp in Sources */,
 				F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */,

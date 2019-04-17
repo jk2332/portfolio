@@ -12,21 +12,10 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
+#include "Constants.hpp"
 
 #include "Plant.hpp"
 
-/** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
-/** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
-#define GRID_WIDTH      3
-#define GRID_HEIGHT     2.5f
-#define DRAW_WIDTH     3
-#define DRAW_HEIGHT     2
-#define DOWN_LEFT_CORNER_X    3
-#define DOWN_LEFT_CORNER_Y    4
-#define OFFSET_X         0
-#define OFFSET_Y         0
 
 
 #pragma mark -
@@ -51,6 +40,7 @@ protected:
     int _gridNumX;
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
+
 public:
 #pragma mark -
 #pragma mark Constructors

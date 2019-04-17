@@ -13,11 +13,7 @@
 #include <cugl/cugl.h>
 #include <vector>
 #include "Board.hpp"
-#define noNeed 0
-#define needRain 1
-#define needSun 2
-#define needShade 3
-#define dead 4
+
 
 using namespace cugl;
 
@@ -141,6 +137,9 @@ public:
 
     void setShade(bool f);
     void setRained(bool f);
+
+    int getX() {return _x;};
+    int getStage() {return _stage;};
 
     void setPlantType(std::string s) { _ptype = s; };
     std::string getPlantType() {return _ptype;};

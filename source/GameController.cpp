@@ -616,15 +616,8 @@ void GameScene::update(float dt) {
     auto f = _level->getWorldNode();
     auto plantNode = _level->getWorldNode()->getChildByName("plantNode");
     for (auto &plant : _level->getPlants()){
-//       auto *idx = std::find(std::begin(plants), std::end(plants), i);
-//       if (idx == std::end(plants)) {
-//           continue;
-//       }
-
        if (ticks % 150 == 0 && ticks > 50) {
-//        if (ticks % 100 == 0) {
            plant->updateState();
-//            CULog(std::to_string(ticks).c_str());
        }
        int st = plant->getState();
 
@@ -661,6 +654,26 @@ void GameScene::update(float dt) {
            }
        }
    }
+
+    if (ticks % 50 == 0 && ticks > 50) {
+        for (auto &pest : _level->getPests()){
+            int targetY = pest->getTarget().y;
+            int targetX;
+            bool target = false;
+            for(auto &plant : _level->getPlants()) {
+                if (plant->getStage() > 2 && plant->getX()) {
+                    targetX = plant->getX();
+                    pest->walk();
+                    break;
+                }
+            }
+
+        }
+    }
+
+    for (auto &pest : _level->getPests()){
+        pest->update(dt);
+    }
 
    for(auto &plant : _level->getPlants()) {
        plant->update(dt);

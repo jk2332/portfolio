@@ -70,6 +70,19 @@
         "corn3": {
             "file":     "textures/corn3.png"
         },
+        "snail": {
+            "file":     "textures/snailwalk.png"
+        },
+        "snailrev": {
+            "file":     "textures/snailwalkrev.png"
+        },
+        "raccoon": {
+            "file":     "textures/raccoonwalk.png"
+        },
+        "raccoonrev": {
+            "file":     "textures/raccoonwalkrev.png"
+        },
+
         "particle": {
             "file":     "textures/particle1.png"
         }
