@@ -139,6 +139,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
         cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+       cloud->setFriction(50);
         addObstacle(cloud,cloudNode,1);
    }
 
@@ -215,6 +216,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     
     /** Create the physics world */
     _world = ObstacleWorld::alloc(getBounds(),getGravity());
+    _world->setGravity(Vec2::ZERO);
 
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
@@ -309,6 +311,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
   cloud->setId(i);
   // Why is scale a vec2, not a float lol
   cloud->setScale(_cscale);
+    cloud->setMass(cloud->getMass()*10);
   cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
 
   if (success) {

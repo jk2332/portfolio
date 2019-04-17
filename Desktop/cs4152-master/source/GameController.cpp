@@ -881,11 +881,16 @@ void GameScene::update(float dt) {
          cloud->update(dt);
     }
     
-    Size s = _assets->get<Texture>("cloud")->getSize();
+    Size s = _assets->get<Texture>("cloud")->getSize()/32;
     for (auto &c : _level->getClouds()) {
         if (c != nullptr) {
             auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
+            c->getBody()->DestroyFixture(&c->getBody()->GetFixtureList()[0]);
+            std::cout << s.width/_scale << endl;
             cloudNode->setContentSize(s*c->getCloudSize());
+            b2PolygonShape * shape = (b2PolygonShape *) c->getBody()->GetFixtureList()[0].GetShape();
+            shape->SetAsBox(s.width/2, s.height/2);
+            c->getBody()->CreateFixture(shape, 1);
             c->update(dt);
         }
     }
@@ -1046,11 +1051,12 @@ void GameScene::beginContact(b2Contact* contact) {
         cloud2 = static_cast<Cloud*>(contact->GetFixtureB()->GetBody()->GetNext()->GetUserData());
     }
 
-    if (cloud1 == nullptr || cloud2 == nullptr || cloud1 == cloud2 || cloud1->getName() == cloud2->getName() || cloud1->isRemoved() || cloud2->isRemoved()) {
-        CULog("clouds null");
-        return;
-    }
-
+//    if (cloud1 == nullptr || cloud2 == nullptr || cloud1 == cloud2 || cloud1->getName() == cloud2->getName() || cloud1->isRemoved() || cloud2->isRemoved()) {
+//        CULog("clouds null");
+//        return;
+//    }
+    cloud1->setVelocity(Vec2::ZERO);
+    cloud2->setVelocity(Vec2::ZERO);
 }
 
 /**
