@@ -199,8 +199,6 @@ void Cloud::decSize() {
     }
 }
 
-
-
 /**
  * Sets the ratio of the Ragdoll sprite to the physics body
  *
