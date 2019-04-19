@@ -9,9 +9,41 @@
 #ifndef Constants_hpp
 #define Constants_hpp
 
+#define BKGD_TEXTURE    "background"
+#define EARTH_TEXTURE   "earth"
+/** Opacity of the foreground mask */
+#define FRGD_OPACITY    64
+
+// Physics constants for initialization
+/** Density of non-crate objects */
+#define BASIC_DENSITY       0.0f
+/** Density of the crate objects */
+#define CRATE_DENSITY       1.0f
+/** Friction of non-crate objects */
+#define BASIC_FRICTION      0.1f
+/** Friction of the crate objects */
+#define CRATE_FRICTION      0.2f
+/** Angular damping of the crate objects */
+#define CRATE_DAMPING       1.0f
+/** Collision restitution for all objects */
+#define BASIC_RESTITUTION   0.1f
+/** Threshold for generating sound on collision */
+#define SOUND_THRESHOLD     3
+
+#define GRID_NUM_X          9
+#define GRID_NUM_Y          3
+#define PINCH_OFFSET        2.5
+#define PINCH_CLOUD_DIST_OFFSET     5.5
+
+/** Color to outline the physics nodes */
+#define STATIC_COLOR    Color4::YELLOW
+/** Opacity of the physics outlines */
+#define DYNAMIC_COLOR   Color4::GREEN
+#define PRIMARY_FONT        "retro"
+
 // Pests
-#define LEFT 0
-#define RIGHT 8
+#define LEFT -2
+#define RIGHT 10
 
 // Plants
 #define noNeed 0

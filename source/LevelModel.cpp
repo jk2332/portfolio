@@ -92,7 +92,7 @@ void LevelModel::clearRootNode() {
  * @retain  a reference to this scene graph node
  * @release the previous scene graph node used by this object
  */
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     if (_root != nullptr) {
         clearRootNode();
     }
@@ -118,10 +118,10 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
-    _bar = ProgressBar::alloc(Size(100.0f, 30.0f));
+    _bar = ProgressBar::alloc(Size(150.0f, 30.0f));
 
     
-    _bar->setPosition(Vec2(800.0f, 525.0f));
+    _bar->setPosition(Vec2(850.0f, 525.0f));
 
     _worldnode->addChildWithName(_bar, "bar");
 
@@ -143,18 +143,25 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
    }
    _worldnode->addChildWithName(pestNode, "pestNode", 3);
 
+    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
+    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
+    _winnode->setPosition(dimen/2.0f);
+    _winnode->setForeground(STATIC_COLOR);
+    _winnode->setVisible(false);
+    _worldnode->addChild(_winnode, 7);
+
     // auto progressBar = _assets->get<Texture>("progressbar");
     // auto w = progressBar->getWidth();
     // auto h = progressBar->getHeight();
-//    auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
-//    auto foreground = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
-//    _bar = ProgressBar::alloc(background, foreground);
+    // auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
+    // auto foreground = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
+    // _bar = ProgressBar::alloc(background, foreground);
 
-//    auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
-//    auto foreground = progressBar->getSubTexture(16/w, (float)384/(float)w, (float)45/(float)h, (float)75/(float)h);
-//    auto leftcap = progressBar->getSubTexture(0/w, (float)16/(float)w, (float)45/(float)h, (float)75/(float)h);
-//    auto rightcap = progressBar->getSubTexture(384/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
-//    _bar = ProgressBar::allocWithCaps(background, foreground, leftcap, rightcap);
+    // auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
+    // auto foreground = progressBar->getSubTexture(16/w, (float)384/(float)w, (float)45/(float)h, (float)75/(float)h);
+    // auto leftcap = progressBar->getSubTexture(0/w, (float)16/(float)w, (float)45/(float)h, (float)75/(float)h);
+    // auto rightcap = progressBar->getSubTexture(384/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
+    // _bar = ProgressBar::allocWithCaps(background, foreground, leftcap, rightcap);
 }
 
 /**
@@ -258,6 +265,14 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     }
     
     return true;
+}
+
+int LevelModel::getPlantScore() {
+    int score = 0;
+    for (auto &plant : _plants) {
+        score += plant->getStage();
+    }
+    return score;
 }
 
 /**
@@ -490,6 +505,8 @@ Color4 LevelModel::parseColor(std::string name) {
 
 void LevelModel::update(int ticks) {
     if (ticks >= _time) {
+        _winnode->setText("Score: " + std::to_string(getPlantScore()));
+        _winnode->setVisible(true);
         ticks = _time;
     }
     
