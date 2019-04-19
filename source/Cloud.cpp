@@ -172,14 +172,14 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setContentSize(cloudFace->getSize()*getCloudSize());
     sprite->setPosition(_cloudNode->getSize()/2.0f);
-    _cloudNode->setZOrder(1);
+    _cloudNode->setZOrder(7);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);
     _shadowNode->setAnchor(Vec2::ANCHOR_CENTER);
     _shadowNode->setContentSize(shadow->getSize()*getCloudSize());
     _shadowNode->setPosition(_cloudNode->getSize()/2.0f - Vec2(0, displacement));
-    _shadowNode->setZOrder(5);
+    _shadowNode->setZOrder(2);
     _cloudNode->addChildWithName(_shadowNode, "shadow");
 }
 
@@ -192,8 +192,6 @@ void Cloud::setSizeLevel(float sizeLevel) {
     if (sizeLevel >= 10 || sizeLevel < 1) return;
     _sizeLevel = sizeLevel;
 }
-
-
 
 /**
  * Sets the ratio of the Ragdoll sprite to the physics body

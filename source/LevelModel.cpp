@@ -126,7 +126,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             plant->setSceneNode(plantNode, plant->getName());
         }
    }
-   _worldnode->addChildWithName(plantNode, "plantNode", 3);
+   _worldnode->addChildWithName(plantNode, "plantNode", 4);
 
    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
@@ -135,7 +135,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             pest->setSceneNode(pestNode, pest->getName());
         }
    }
-   _worldnode->addChildWithName(pestNode, "pestNode", 0);
+   _worldnode->addChildWithName(pestNode, "pestNode", 3);
 }
 
 /**
