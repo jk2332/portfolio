@@ -56,7 +56,7 @@ protected:
     RagdollInput _input;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
-    std::shared_ptr<WeatherController> _weather;
+//    std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
     std::shared_ptr<PestController> _pest;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
@@ -65,9 +65,11 @@ protected:
     std::shared_ptr<cugl::FreeList<Particle>> _memory;
     std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
+    cugl::Size dimen;
     
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
+
 
 
     // VIEW
@@ -76,6 +78,7 @@ protected:
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
+    std::shared_ptr<cugl::Node> _levelworldnode;
     
     
     /** The Box2D world */
@@ -132,7 +135,8 @@ protected:
      * param node   The scene graph node to attach it to
      * param zOrder The drawing order
      */
-    void addObstacle(const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
+    void addObstacle(const std::shared_ptr<cugl::Node> worldNode, const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
+    
     void splitClouds();
     void makeRain(Obstacle * cloud);
     void processRemoval();

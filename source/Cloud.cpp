@@ -55,7 +55,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _size = 1.0f;
+    _sizeLevel = 5;
     _ob = nullptr;
     return true;
 }
@@ -89,7 +89,7 @@ void Cloud::setTexture(const std::shared_ptr<Texture>& texture) {
 }
 
 void Cloud::markForRemoval() {
-    CULog("cloud to be removed");
+//    CULog("cloud to be removed");
     markRemoved(true);
 }
 
@@ -170,14 +170,14 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setContentSize(cloudFace->getSize()*_size);
+    sprite->setContentSize(cloudFace->getSize()*getCloudSize());
     sprite->setPosition(_cloudNode->getSize()/2.0f);
     _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);
     _shadowNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _shadowNode->setContentSize(shadow->getSize()*_size);
+    _shadowNode->setContentSize(shadow->getSize()*getCloudSize());
     _shadowNode->setPosition(_cloudNode->getSize()/2.0f - Vec2(0, displacement));
     _shadowNode->setZOrder(5);
     _cloudNode->addChildWithName(_shadowNode, "shadow");
@@ -187,16 +187,10 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
 }
 
-void Cloud::incSize(float f) {
-//    CULog("increased size");
-    _size += 0.35;
-}
 
-void Cloud::decSize() {
-//    CULog("decreased size");
-    if (_size > 0.35){
-        _size -= 0.35;
-    }
+void Cloud::setSizeLevel(float sizeLevel) {
+    if (sizeLevel >= 10 || sizeLevel < 1) return;
+    _sizeLevel = sizeLevel;
 }
 
 

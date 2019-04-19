@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #include <cugl/cugl.h>
+#include <map>
 
 #pragma mark -
 #pragma mark GameController

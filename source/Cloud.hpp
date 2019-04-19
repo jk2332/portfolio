@@ -30,6 +30,8 @@
 #define CENTROID_DENSITY 1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
+#define SIZE_SCALE_X    33
+#define SIZE_SCALE_Y    16.8
 
 #pragma mark -
 #pragma mark Ragdoll
@@ -80,7 +82,7 @@ protected:
     int _type;
     int _id;
     Vec2 _velocity;
-    float _size;
+    float _sizeLevel;
     float _scale;
     
 //    /**
@@ -273,8 +275,7 @@ public:
      */
     void setTexture(const std::shared_ptr<Texture>& texture);
 
-    float getSize() {return _size;}
-    void setSize(float s) {_size = s;}
+    void setCloudSizeLevel(float s) {_sizeLevel = s;}
 
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
@@ -335,12 +336,14 @@ public:
     int getId(){return _id;}
     bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
-    void incSize(float f);
+    void setSizeLevel(float f);
     bool shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
-    float getCloudSize() {
-        return _size;
+    float getCloudSizeLevel() {
+        return _sizeLevel;
     }
-    void decSize();
+    Vec2 getCloudSize(){
+        return Vec2(_sizeLevel*SIZE_SCALE_X, _sizeLevel*SIZE_SCALE_Y);
+    }
 
 
 #pragma mark -
