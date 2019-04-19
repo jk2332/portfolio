@@ -26,6 +26,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
     for (int i = 0; i < cloudSections.size(); i++){
         Vec3 currentCircle = cloudSections[i];
         int trueAmount = this->amount;
+        //Create twice as many particles for the core section
         if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
@@ -33,6 +34,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
             float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
             float t = 0.25*M_PI*j;
             int spacing = 15;
+            //center particles on the cloud
             Vec2 centering = Vec2(-10,-10);
             Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
             offset = offset + centering;
