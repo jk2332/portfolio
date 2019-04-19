@@ -30,8 +30,8 @@
 #define CENTROID_DENSITY 1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
-#define SIZE_SCALE_X    33
-#define SIZE_SCALE_Y    16.8
+#define ORIGINAL_SIZE_X    165
+#define ORIGINAL_SIZE_Y    84
 
 #pragma mark -
 #pragma mark Ragdoll
@@ -82,7 +82,7 @@ protected:
     int _type;
     int _id;
     Vec2 _velocity;
-    float _sizeLevel;
+    float _cloudSizeScale;
     float _scale;
     
 //    /**
@@ -109,7 +109,7 @@ public:
      * Destroys this Ragdoll, releasing all resources.
      */
     virtual ~Cloud(void) {
-        CULog("CLOUD DESTRUCTOR CALLED");
+//        CULog("CLOUD DESTRUCTOR CALLED");
         dispose(); }
 
     /**
@@ -275,7 +275,7 @@ public:
      */
     void setTexture(const std::shared_ptr<Texture>& texture);
 
-    void setCloudSizeLevel(float s) {_sizeLevel = s;}
+    void setCloudSizeScale(float s);
 
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
@@ -336,13 +336,12 @@ public:
     int getId(){return _id;}
     bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
-    void setSizeLevel(float f);
     bool shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
-    float getCloudSizeLevel() {
-        return _sizeLevel;
+    float getCloudSizeScale() {
+        return _cloudSizeScale;
     }
     Vec2 getCloudSize(){
-        return Vec2(_sizeLevel*SIZE_SCALE_X, _sizeLevel*SIZE_SCALE_Y);
+        return Vec2(_cloudSizeScale*ORIGINAL_SIZE_X, _cloudSizeScale*ORIGINAL_SIZE_Y);
     }
 
 

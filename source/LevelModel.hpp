@@ -211,11 +211,11 @@ public:
     }
     
     void setDebugNode(std::shared_ptr<cugl::Node> node) {_debugnode = node;}
+    std::shared_ptr<Node> getDebugNode() {return _debugnode;}
     
     std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
     
     std::shared_ptr<Node> getWorldNode() { return _worldnode; };
-    std::shared_ptr<Node> getDebugNode() { return _debugnode; };
 
     
     std::vector<std::shared_ptr<Plant>> getPlants() { return _plants; };
@@ -270,7 +270,7 @@ public:
      * @return the drawing scale for this game level
      */
     const Vec2& getDrawScale() const { return _scale; }
-    std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos, float size);
+    std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos);
     const float getCloudDrawScale() const {return _cscale;}
     
     /**
