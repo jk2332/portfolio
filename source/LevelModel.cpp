@@ -118,7 +118,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
-
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
         if (plant != nullptr) {
@@ -126,7 +125,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             plant->setSceneNode(plantNode, plant->getName());
         }
    }
-   _worldnode->addChildWithName(plantNode, "plantNode", 4);
+   _worldnode->addChildWithName(plantNode, "plantNode");
 
    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
@@ -135,7 +134,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             pest->setSceneNode(pestNode, pest->getName());
         }
    }
-   _worldnode->addChildWithName(pestNode, "pestNode", 3);
+   _worldnode->addChildWithName(pestNode, "pestNode");
 }
 
 /**

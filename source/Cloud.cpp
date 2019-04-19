@@ -172,7 +172,7 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setContentSize(cloudFace->getSize()*getCloudSize());
     sprite->setPosition(_cloudNode->getSize()/2.0f);
-    _cloudNode->setZOrder(7);
+    _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);

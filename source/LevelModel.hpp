@@ -60,10 +60,6 @@ protected:
     
     // Physics objects for the game
     /** The physics word; part of the model (though listeners elsewhere) */
-    /** Reference to the rocket/player avatar */
-//    std::shared_ptr<RocketModel> _rocket;
-    /** Reference to the goalDoor (for collision detection) */
-//    std::shared_ptr<ExitModel> _goalDoor;
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
@@ -73,15 +69,7 @@ protected:
     std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;
     Poly2 _poly;
-    
-
     // float _scale;
-
-
-    /** Reference to all the active crates */
-//    std::vector<std::shared_ptr<CrateModel>> _crates;
-    /** Reference to all the walls */
-//    std::vector<std::shared_ptr<WallModel>> _walls;
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
