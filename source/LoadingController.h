@@ -103,7 +103,7 @@ public:
      *
      * @param timestep  The amount of time (in seconds) since the last frame
      */
-    void update(float timestep);
+    void update(float progress);
     
     /**
      * Returns true if loading is complete, but the player has not pressed play

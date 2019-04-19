@@ -72,7 +72,12 @@ protected:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;
+
+    int _time;
+
     Poly2 _poly;
+
+    std::shared_ptr<cugl::ProgressBar>  _bar;
     
 
     // float _scale;
@@ -375,6 +380,11 @@ public:
      * Destroys this level, releasing all resources.
      */
     virtual ~LevelModel(void);
+
+    /**
+     * Update nodes of the level model including clouds, plants and the timer
+    */
+    void update(int ticks);
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */

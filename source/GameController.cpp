@@ -94,7 +94,7 @@ int plants[] = { 1, 4, 18, 21, 24};
 // map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
 
 /** The initial position of the ragdoll head */
-long ticks = 0l;
+int ticks = 0;
 long click1 = -1;
 long click2 = -1;
 Obstacle * clicked_cloud = nullptr;
@@ -893,6 +893,7 @@ void GameScene::update(float dt) {
 //            c->setSize(c->getSize()*scale);
         }
     }
+    _level->update(ticks);
     _world->update(dt);
     _level->getWorldNode()->sortZOrder();
 }

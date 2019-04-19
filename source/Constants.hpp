@@ -30,6 +30,7 @@
 #define TEXTURE_FIELD   "texture"
 #define HEIGHT_FIELD   "height"
 #define WIDTH_FIELD   "width"
+#define TIME_FIELD   "time"
 #define TYPE   "type"
 #define GRID_NUM_X          9
 #define GRID_NUM_Y          3
