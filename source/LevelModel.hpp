@@ -16,6 +16,8 @@
 #include "Cloud.hpp"
 #include "Plant.hpp"
 #include "Board.hpp"
+#include <map>
+#include "CloudNode.hpp"
 #include "Pest.hpp"
 
 using namespace cugl;
@@ -24,6 +26,7 @@ using namespace cugl;
 class ExitModel;
 class WallModel;
 class CrateModel;
+
 
 #pragma mark -
 #pragma mark Level Model
@@ -57,7 +60,6 @@ protected:
     
     // Physics objects for the game
     /** The physics word; part of the model (though listeners elsewhere) */
-    std::shared_ptr<ObstacleWorld> _world;
     /** Reference to the rocket/player avatar */
 //    std::shared_ptr<RocketModel> _rocket;
     /** Reference to the goalDoor (for collision detection) */
@@ -66,10 +68,12 @@ protected:
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _cloud;
+//    std::map<int, std::shared_ptr<CloudNode>> _cloudNodes;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;
     Poly2 _poly;
+    
 
     // float _scale;
 
@@ -201,13 +205,17 @@ public:
         return (result->init(file) ? result : nullptr);
     }
     
+    void setDebugNode(std::shared_ptr<cugl::Node> node) {_debugnode = node;}
+    
     std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
     
     std::shared_ptr<Node> getWorldNode() { return _worldnode; };
+    std::shared_ptr<Node> getDebugNode() { return _debugnode; };
+
     
     std::vector<std::shared_ptr<Plant>> getPlants() { return _plants; };
     std::vector<std::shared_ptr<Pest>> getPests() { return _pests; };
-
+//    void removeCloudNode(int id);
     
     
 #pragma mark Model Access
@@ -225,12 +233,6 @@ public:
      */
 //    const std::shared_ptr<ExitModel>& getExit() { return _goalDoor; }
     
-    /**
-     * Returns the Obstacle world in this game level
-     *
-     * @return the obstacle world in this game level
-     */
-    const std::shared_ptr<ObstacleWorld>& getWorld() { return _world; }
     
     
 #pragma mark Physics Attributes
@@ -263,6 +265,8 @@ public:
      * @return the drawing scale for this game level
      */
     const Vec2& getDrawScale() const { return _scale; }
+    std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos, float size);
+    const float getCloudDrawScale() const {return _cscale;}
     
     /**
      * Sets the drawing scale for this game level
@@ -277,6 +281,7 @@ public:
      * @param value  the drawing scale for this game level
      */
     void setDrawScale(float value);
+//    void addObstacle(const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
     
     /**
      * Returns the scene graph node for drawing purposes.
