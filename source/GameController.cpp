@@ -545,7 +545,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
 
     if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
-        cind2->setSizeLevel(cind1->getCloudSizeLevel() + cind2->getCloudSizeLevel());
+        cind2->setCloudSizeScale(sqrt(cind1->getCloudSizeScale() + cind2->getCloudSizeScale()));
         long toDelete = -1;
         for(auto &ts : _selectors) {
             long touchID = ts.first;
@@ -873,7 +873,7 @@ void GameScene::update(float dt) {
         if (c != nullptr) {
             auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
             cloudNode->setContentSize(c->getCloudSize());
-            float scale = c->getCloudSizeLevel()*0.5;
+            float scale = c->getCloudSizeScale();
             
             for (auto child: cloudNode->getChildren()){
                 if (child->getName() == "cloudFace"){
@@ -927,7 +927,7 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * cloud){
     auto c = (Cloud *) cloud;
     Vec2 cloud_pos = c->getPosition();
-    c->setSizeLevel(c->getCloudSizeLevel()*0.9);
+    c->setCloudSizeScale(sqrt(8/10)*c->getCloudSizeScale());
 
     // Draw rain droplets
     // c->decSize();
@@ -980,13 +980,13 @@ void GameScene::splitClouds(){
     for (auto &ic : cloudsToSplit){
         // split clouds here
         Cloud * c =(Cloud *)(ic.second);
-        c->setSizeLevel(c->getCloudSizeLevel()/2);
+        c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
         max_cloud_id++;
         auto new_pos = Vec2(cloudPos.x-1.5, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(max_cloud_id, new_pos);
-        new_cloud->setSizeLevel(c->getCloudSizeLevel());
+        new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());
