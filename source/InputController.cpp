@@ -278,10 +278,7 @@ void RagdollInput::pinchEndCB(const cugl::PinchEvent& event, bool focus){
 }
 
 void RagdollInput::pinchChangeCB(const cugl::PinchEvent& event, bool focus){
-    if (event.timestamp.ellapsedMillis(_pinchTimestamp) > 600){
-        _pinched = false;
-        _pinchSelect = false;
-    }
+    _dpinch = event.position;
 }
 
 /**
@@ -359,16 +356,18 @@ void RagdollInput::touchEnded(long touchID, const cugl::Timestamp timestamp, con
  * @param event The associated event
  */
 void RagdollInput::touchesMovedCB(const cugl::TouchEvent& event, const Vec2& previous, bool focus) {
-    if (event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) >= EVENT_LONG_HOLD && event.position.distance(_dtouches.at(event.touch)) <= 10){
-//        CULog("Long press");
-        touchEnded(event.touch, event.timestamp, event.position);
-    }
-    else {
+//    if (event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) >= EVENT_LONG_HOLD){
+//        if (event.position.distance(_dtouches.at(event.touch)) <= 5){
+//            CULog("Long press");
+//            touchEnded(event.touch, event.timestamp, event.position);
+//        }
+//    }
+//    else {
 //        CULog("touch moved");
         if (_touchIDs.count(event.touch)){
             touchMoved(event.touch, event.position);
         }
-    }
+//    }
 }
 
 /**

@@ -19,13 +19,13 @@ using namespace std;
 map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}};
 map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}};
 float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
+std::string cloud_texture_key;
 
 /**
  * Creates a new, empty level.
  */
 LevelModel::LevelModel(void) : Asset(),
 _root(nullptr),
-_world(nullptr),
 _worldnode(nullptr),
 _debugnode(nullptr),
 _cloudLayer(nullptr),
@@ -79,6 +79,7 @@ void LevelModel::clearRootNode() {
     _root = nullptr;
 }
 
+
 /**
  * Sets the scene graph node for drawing purposes.
  *
@@ -117,14 +118,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
-   for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
-        std::shared_ptr<Cloud> cloud = *it;
-        cloud->setScale(_cscale); 
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
-        cloudNode->setName(cloud->getName());
-        cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
-        addObstacle(cloud,cloudNode,1);
-   }
 
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
@@ -133,7 +126,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             plant->setSceneNode(plantNode, plant->getName());
         }
    }
-   _worldnode->addChildWithName(plantNode, "plantNode", 3);
+   _worldnode->addChildWithName(plantNode, "plantNode", 4);
 
    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
@@ -142,7 +135,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
             pest->setSceneNode(pestNode, pest->getName());
         }
    }
-   _worldnode->addChildWithName(pestNode, "pestNode", 0);
+   _worldnode->addChildWithName(pestNode, "pestNode", 3);
 }
 
 /**
@@ -201,7 +194,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         } else if (name == "Pests") {
             _pestLayer = layer->get("objects");
         }
-       CULog(name.c_str());
+//       CULog(name.c_str());
     }
     
    float w = json->get(WIDTH_FIELD)->asFloat();
@@ -209,7 +202,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
    _bounds.size.set(w, h);
     
     /** Create the physics world */
-    _world = ObstacleWorld::alloc(getBounds(),getGravity());
+//    _world = ObstacleWorld::alloc(getBounds(),getGravity());
 
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
@@ -314,7 +307,8 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
-    cloud->setTextureKey(cloudJson->getString(TEXTURE_FIELD));
+    cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
+    cloud->setTextureKey(cloud_texture_key);
 
     cloud->setLinearDamping(0.7f);
     cloud->setDensity(3.0f);
@@ -338,6 +332,29 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
  * @retain the exit door
  * @return true if the exit door was successfully loaded
  */
+
+std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos, float sizeLevel){
+    Poly2 cloudpoly(CLOUD2, 8);
+    SimpleTriangulator triangulator;
+    triangulator.set(cloudpoly);
+    triangulator.calculate();
+    cloudpoly.setIndices(triangulator.getTriangulation());
+    cloudpoly.setType(Poly2::Type::SOLID);
+    
+    std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, pos);
+    cloud->setDebugColor(DYNAMIC_COLOR);
+    cloud->setName("cloud" + std::to_string(id));
+    cloud->setId(id);
+    // Why is scale a vec2, not a float lol
+    cloud->setScale(_cscale);
+    cloud->setTextureKey(cloud_texture_key);
+    
+    cloud->setLinearDamping(0.7f);
+    cloud->setDensity(3.0f);
+    
+//    addObstacle(cloud,cloudNode,1);
+    return cloud;
+}
 
 
 bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
@@ -451,41 +468,25 @@ Color4 LevelModel::parseColor(std::string name) {
     return Color4::WHITE;
 }
 
-/**
- * Adds the physics object to the physics world and loosely couples it to the scene graph
- *
- * There are two ways to link a physics object to a scene graph node on the
- * screen.  One way is to make a subclass of a physics object, like we did
- * with rocket.  The other is to use callback functions to loosely couple
- * the two.  This function is an example of the latter.
- *
- * In addition, scene graph nodes have a z-order.  This is the order they are
- * drawn in the scene graph node.  Objects with the different textures should
- * have different z-orders whenever possible.  This will cut down on the amount of drawing done
- *
- * param obj    The physics object to add
- * param node   The scene graph node to attach it to
- * param zOrder The drawing order
- */
- void LevelModel::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
-                              const std::shared_ptr<cugl::Node>& node,
-                              int zOrder) {
-     _world->addObstacle(obj);
-     obj->setDebugScene(_debugnode);
-    
-     // Position the scene graph node (enough for static objects)
-     node->setPosition(obj->getPosition()*_scale);
-     _worldnode->addChild(node,zOrder);
-    
-     // Dynamic objects need constant updating
-     if (obj->getBodyType() == b2_dynamicBody) {
-         Node* weak = node.get(); // No need for smart pointer in callback
-         obj->setListener([=](Obstacle* obs){
-             weak->setPosition(obs->getPosition()*_scale);
-             weak->setAngle(obs->getAngle());
-         });
-     }
- }
+//void LevelModel::addObstacle(const std::shared_ptr<cugl::Obstacle>& obj,
+//                             const std::shared_ptr<cugl::Node>& node,
+//                             int zOrder) {
+//    _world->addObstacle(obj);
+//    obj->setDebugScene(_debugnode);
+//    
+//    // Position the scene graph node (enough for static objects)
+//    node->setPosition(obj->getPosition()*_scale);
+//    _worldnode->addChild(node,zOrder);
+//    
+//    // Dynamic objects need constant updating
+//    if (obj->getBodyType() == b2_dynamicBody) {
+//        Node* weak = node.get(); // No need for smart pointer in callback
+//        obj->setListener([=](Obstacle* obs){
+//            weak->setPosition(obs->getPosition()*_scale);
+//            weak->setAngle(obs->getAngle());
+//        });
+//    }
+//}
 
 
 

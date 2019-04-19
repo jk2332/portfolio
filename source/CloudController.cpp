@@ -2,7 +2,7 @@
 //  CloudController.cpp
 //  WeatherDefender
 //
-//  Created by Stefan Joseph on 3/11/19.
+//  Created by 김지원 on 4/18/19.
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
 //
 
