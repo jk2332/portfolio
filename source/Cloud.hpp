@@ -30,8 +30,8 @@
 #define CENTROID_DENSITY 1f
 /** The radius for the center of mass */
 #define CENTROID_RADIUS  0.1f
-#define SIZE_SCALE_X    33
-#define SIZE_SCALE_Y    16.8
+#define ORIGINAL_SIZE_X    165
+#define ORIGINAL_SIZE_Y    84
 
 #pragma mark -
 #pragma mark Ragdoll
@@ -109,7 +109,7 @@ public:
      * Destroys this Ragdoll, releasing all resources.
      */
     virtual ~Cloud(void) {
-        CULog("CLOUD DESTRUCTOR CALLED");
+//        CULog("CLOUD DESTRUCTOR CALLED");
         dispose(); }
 
     /**
@@ -342,7 +342,7 @@ public:
         return _sizeLevel;
     }
     Vec2 getCloudSize(){
-        return Vec2(_sizeLevel*SIZE_SCALE_X, _sizeLevel*SIZE_SCALE_Y);
+        return Vec2(_sizeLevel*0.5*ORIGINAL_SIZE_X, _sizeLevel*0.5*ORIGINAL_SIZE_Y);
     }
 
 

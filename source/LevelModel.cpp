@@ -303,6 +303,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
 
     std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
     cloud->setDebugColor(DYNAMIC_COLOR);
+    cloud->setDebugScene(_debugnode);
     cloud->setName("cloud" + std::to_string(i));
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
@@ -333,7 +334,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
  * @return true if the exit door was successfully loaded
  */
 
-std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos, float sizeLevel){
+std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos){
     Poly2 cloudpoly(CLOUD2, 8);
     SimpleTriangulator triangulator;
     triangulator.set(cloudpoly);
