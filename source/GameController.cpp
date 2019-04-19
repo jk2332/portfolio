@@ -741,16 +741,16 @@ void GameScene::update(float dt) {
 
     if (ticks % 50 == 0 && ticks > 50) {
         for (auto &pest : _level->getPests()){
+            pest->walk();
             int targetY = pest->getTarget().y;
             int targetX;
-            bool target = false;
-            for(auto &plant : _level->getPlants()) {
-                if (plant->getStage() > 2 && plant->getX()) {
-                    targetX = plant->getX();
-                    pest->walk();
-                    break;
-                }
-            }
+            // for(auto &plant : _level->getPlants()) {
+            //     if (plant->getStage() > 2 && plant->getX()) {
+            //         targetX = plant->getX();
+            //         pest->walk();
+            //         break;
+            //     }
+            // }
 
         }
     }

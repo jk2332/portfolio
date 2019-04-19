@@ -10,8 +10,8 @@
 #define Constants_hpp
 
 // Pests
-#define LEFT -2
-#define RIGHT 10
+#define LEFT 0
+#define RIGHT 8
 
 // Plants
 #define noNeed 0

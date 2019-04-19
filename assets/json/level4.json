@@ -55,7 +55,7 @@
                  "type":"tomato",
                  "visible":true,
                  "width":94,
-                 "x":0,
+                 "x":4,
                  "y":0
                 }, 
                 {
@@ -166,18 +166,18 @@
               "name":"Pests",
               "objects": [
                      {
-                            "x": 0,
+                            "x": 4,
                             "y": 0,
-                            "type": "snail",
+                            "type": "raccoon",
                             "side": "left",
                             "id": 2
                      },
                      {
-                            "x": 7,
-                            "y": 1,
+                            "x": 4,
+                            "y": 0,
                             "type": "snail",
-                            "side": "right",
-                            "id": 6
+                            "side": "left",
+                            "id": 2
                      }
               ]
        }],
