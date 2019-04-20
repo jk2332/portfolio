@@ -17,35 +17,11 @@
 #include "cugl/2d/physics/CUObstacle.h"
 using namespace cugl;
 
-////                                  Position      Texcoords
-//static GLfloat particle_quad[] = {  -5.0f,-5.0f,    0.0f,0.0f,
-//                                    -5.0f,5.0f,    0.0f,1.0f,
-//                                    5.0f,-5.0f,    1.0f,0.0f,
-//                                    5.0f,5.0f,    1.0f,1.0f};
-
-////                                Position         Texcoords
-static GLfloat particle_quad[] = {  -10.0f,-10.0f,   0.0f, 0.0f,
-                                    -10.0f, 10.0f,   0.0f, 1.0f,
-                                     10.0f,-10.0f,   1.0f, 0.0f,
-                                     10.0f, 10.0f,   1.0f, 1.0f};
-
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 
 static GLuint VAO;
 static GLuint VBO;
 static GLuint EBO;
-//                                         Radius CenterX CenterY
-static vector<Vec3> cloudSections = {   Vec3(2.5,   0.0,   1.5), //Central Circle
-                                        Vec3(1.3,  -3.8,   1.3),
-                                        Vec3(1.3,   3.7,   1.3),
-                                        Vec3(0.8,   3.0,   2.7),
-                                        Vec3(0.7,   2.5,   0.0),
-                                        Vec3(0.8,  -2.9,   2.7),
-                                        Vec3(0.6,  -2.6,   0.1),
-                                        Vec3(0.8,   1.9,   3.4),
-                                        Vec3(0.8,  -2.1,   3.9),
-                                        Vec3(0.8,   0.6,   4.0),
-                                        Vec3(0.8,  -0.8,   4.7)};
 
 // Represents a single particle and its state
 struct CloudParticle {
@@ -65,7 +41,7 @@ public:
     ParticleGenerator();
     ParticleGenerator(GLuint amount);
     // Update all particles
-    void Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos);
+    void Update(GLfloat dt, Vec2 cloud_pos, float particleScale);
     // Render all particles
     void Draw();
     // State
@@ -73,6 +49,18 @@ public:
     GLuint amount;
     float maxJostle = 4.0;
     float maxVelocity = 5.0;
+    //                               Radius CenterX CenterY
+    vector<Vec3> cloudSections = {  Vec3(2.5,   0.0,   1.5), //Central Circle
+                                    Vec3(1.3,  -3.8,   1.3),
+                                    Vec3(1.3,   3.7,   1.3),
+                                    Vec3(0.8,   3.0,   2.7),
+                                    Vec3(0.7,   2.5,   0.0),
+                                    Vec3(0.8,  -2.9,   2.7),
+                                    Vec3(0.6,  -2.6,   0.1),
+                                    Vec3(0.8,   1.9,   3.4),
+                                    Vec3(0.8,  -2.1,   3.9),
+                                    Vec3(0.8,   0.6,   4.0),
+                                    Vec3(0.8,  -0.8,   4.7)};
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
@@ -98,6 +86,12 @@ protected:
     /** The current shader texture */
     Texture particleTexture;
     ParticleGenerator _pg;
+    //                               Position        Texcoords
+    GLfloat particle_quad [16] = {  -10.0f,-10.0f,   0.0f, 0.0f,
+                                    -10.0f, 10.0f,   0.0f, 1.0f,
+                                     10.0f,-10.0f,   1.0f, 0.0f,
+                                     10.0f, 10.0f,   1.0f, 1.0f};
+    float _particleScale;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -123,6 +117,7 @@ public:
     ParticleShader(){_pg = ParticleGenerator();}
     
     ParticleShader(GLuint amount){
+        _particleScale = 1.0;
         _pg = ParticleGenerator(amount);
     }
     
@@ -132,7 +127,7 @@ public:
     
     void drawParticles();
     
-    void update(Vec2 cloud_pos, float dt, GLuint np);
+    void update(Vec2 cloud_pos, float dt, float particleScale);
 
     void SetFloat1f(const GLchar *name, float value){
         glUniform1f(glGetUniformLocation(_program, name), value);

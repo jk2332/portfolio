@@ -287,36 +287,22 @@ int LevelModel::getPlantScore() {
  * references to other assets, then these should be disconnected earlier.
  */
 void LevelModel::unload() {
-//    if (_rocket != nullptr) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle(_rocket.get());
-//        }
-//        _rocket = nullptr;
-//    }
-//    if (_goalDoor != nullptr) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle(_goalDoor.get());
-//        }
-//        _goalDoor = nullptr;
-//    }
-//    for(auto it = _crates.begin(); it != _crates.end(); ++it) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle((*it).get());
-//        }
-//        (*it) = nullptr;
-//    }
-//    _crates.clear();
-//    for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle((*it).get());
-//        }
-//        (*it) = nullptr;
-//    }
-//    _walls.clear();
-//    if (_world != nullptr) {
-//        _world->clear();
-//        _world = nullptr;
-//    }
+    _cloudLayer = nullptr;
+    _plantLayer = nullptr;
+    _pestLayer = nullptr;
+    for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _plants.begin(); it != _plants.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _pests.begin(); it != _pests.end(); ++it) {
+        (*it) = nullptr;
+    }
+    _board = nullptr;
+    _winnode = nullptr;
+    _bar = nullptr;
+    _assets = nullptr;
 }
 
 

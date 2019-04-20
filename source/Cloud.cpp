@@ -119,8 +119,9 @@ void Cloud::update(float delta) {
     else if (_cloudNode != nullptr) {
         _cloudNode->setPosition(_scale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
-        _cloudNode->ps.update(getPosition()*_scale, delta, 1);
+        _cloudNode->ps.update(getPosition()*_scale, delta, _cloudSizeScale);
         shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
+        _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
                                                                + faceSprite->getSize()/2.0f)
                                  + Vec2(0, -_scale*_disp));
@@ -177,13 +178,11 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
     sprite->setContentSize(cloudFace->getSize());
     sprite->setPosition(_cloudNode->getSize()/2.0f);
-//    _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = shadow;
     _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
     _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f - Vec2(0, displacement));
-//    _shadowNode->setZOrder(2);
     //shadow node has already been added to the scene graph
 }
 
