@@ -47,7 +47,6 @@ protected:
     int _shadeCounter;
     std::shared_ptr<AnimationNode> _node;
     std::shared_ptr<TexturedNode> _signNode;
-    std::shared_ptr<TexturedNode> _signIcon;
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<ActionManager> _actions;

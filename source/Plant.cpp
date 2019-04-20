@@ -146,15 +146,14 @@ void Plant::updateState(){
 
 void Plant::changeSign() {
     if (_state == needShade) {
-        _signIcon->setTexture(_assets->get<Texture>("iconShade"));
+        _signNode->setTexture(_assets->get<Texture>("signShade"));
     } else if (_state == needRain) {
-        _signIcon->setTexture(_assets->get<Texture>("iconRain"));
+        _signNode->setTexture(_assets->get<Texture>("signRain"));
     } else if (_state == dead) {
-        _signIcon->setTexture(_assets->get<Texture>("iconSad"));
+        _signNode->setTexture(_assets->get<Texture>("signSkull"));
     } else {
-        _signIcon->setTexture(_assets->get<Texture>("iconHappy"));
+        _signNode->setTexture(_assets->get<Texture>("signHappy"));
     }
-    
 }
 
 void Plant::upgradeSprite() {
@@ -193,21 +192,13 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.4f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
     
-    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>(SIGN));
+    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>("signHappy"));
     _signNode->setScale(0.25f);
 
     cugl::Vec2 b = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f,
                               (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _signNode->setPosition(b);
 
-    _signIcon = PolygonNode::allocWithTexture(_assets->get<Texture>("iconHappy"));
-    _signIcon->setScale(0.2f);
-
-    cugl::Vec2 c = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f,
-                              (0.3f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
-    _signIcon->setPosition(c);
-    
     node->addChildWithName(_node, name);
     node->addChildWithName(_signNode, name + "sign");
-    node->addChildWithName(_signIcon, name + "signicon");
 }
