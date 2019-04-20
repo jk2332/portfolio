@@ -191,7 +191,7 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 }
 
 void Cloud::setCloudSizeScale(float s) {
-    if (s > 2) {
+    if (s >= roundf(sqrt(2) * 100)/ 100) {
         _isRainCloud = true;
     }
     else {

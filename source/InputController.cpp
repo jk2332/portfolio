@@ -31,7 +31,7 @@ using namespace cugl;
 
 /** How fast a double click must be in milliseconds */
 #define EVENT_DOUBLE_CLICK  400
-#define EVENT_LONG_HOLD     700
+#define EVENT_LONG_HOLD     600
 /** How far we must swipe left or right for a gesture */
 #define EVENT_SWIPE_LENGTH  100
 /** How fast we must swipe left or right for a gesture */
@@ -322,7 +322,7 @@ void RagdollInput::touchBegan(long touchID, const cugl::Timestamp timestamp, con
 void RagdollInput::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
     touchEnded(event.touch, event.timestamp, event.position);
     if (longPressTemp){
-        if (event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) >= EVENT_LONG_HOLD){
+        if (_timestamps.count(event.touch) && event.timestamp.ellapsedMillis(_timestamps.at(event.touch)) >= EVENT_LONG_HOLD){
             _longPress = true;
             CULog("long press");
         }
@@ -368,9 +368,7 @@ void RagdollInput::touchEnded(long touchID, const cugl::Timestamp timestamp, con
  * @param event The associated event
  */
 void RagdollInput::touchesMovedCB(const cugl::TouchEvent& event, const Vec2& previous, bool focus) {
-    if (event.position.distance(_dtouches.at(event.touch)) > 3){
-        std::cout << event.position.distance(_dtouches.at(event.touch)) << endl;
-        CULog("distance changed while holding - not long press");
+    if (_dtouches.count(event.touch) && event.position.distance(_dtouches.at(event.touch)) > 3){
         longPressTemp = false;
     }
     if (_touchIDs.count(event.touch)){

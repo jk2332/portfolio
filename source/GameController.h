@@ -59,6 +59,8 @@ protected:
 //    std::shared_ptr<WeatherController> _weather;
     std::shared_ptr<ResourceController> _resource;
     std::shared_ptr<PestController> _pest;
+    std::shared_ptr<cugl::Button> _levelSelectButton;
+    bool _backToLevelSelect;
     std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
     std::shared_ptr<ParticleNode> _rainNode;
@@ -286,7 +288,8 @@ public:
     void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
     void checkForCombining(Obstacle * ob);
     void checkForThunder(Obstacle * ob);
-
+    bool backToLevelSelect() {return _backToLevelSelect;}
+    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
 
     /**
      * Handles any modifications necessary before collision resolution

@@ -11,7 +11,6 @@
 #include <stdio.h>
 
 #include <cugl/cugl.h>
-#include <map>
 
 #pragma mark -
 #pragma mark GameController
@@ -46,7 +45,6 @@ protected:
     //    bool  _completed;
     std::vector<std::shared_ptr<cugl::Button>> _levelButtons;
     int _selectedLevel = -1;
-    bool _selected = false;
     int _num_level = 4;
     
     

@@ -154,15 +154,18 @@ void WeatherDefenderApp::update(float timestep) {
     } else if (!_levelselected){
         _levelSelect.dispose();
         CULogGLError();
-//        _assets->loadDirectoryAsync("json/assets.json",nullptr);
-//        auto x = "json/level" + std::to_string(_levelSelect.getLevelSelected()+1) + ".json";
-//        _assets->loadAsync<LevelModel>("foo","json/level" + std::to_string(_levelSelect.getLevelSelected()+1) + ".json",nullptr);
-        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected()+1);
+        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
+        std::cout << levelId << endl;
         _gameplay.init(_assets, levelId);
-        
         _levelselected = true;
-    }else {
+    } else {
         _gameplay.update(timestep);
+//        if (_gameplay.backToLevelSelect()){
+//            _gameplay.setBackToLevelSelect(false);
+//            _gameplay.dispose();
+//            _levelSelect.init(_assets);
+//            _levelselected = false;
+//        }
     }
 }
 

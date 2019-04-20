@@ -193,7 +193,6 @@ public:
     bool didPinchSelect() {return _pinchSelect;}
     bool didPanSelect() {return _panSelect;}
     std::unordered_set<long> didLongerSelect() {return _longerSelects;}
-    std::map<long, int> longSelectCounter;
     bool longPressed() {return _longPress;}
     
     std::unordered_set<long> getTouchIDs() {return _touchIDs;}

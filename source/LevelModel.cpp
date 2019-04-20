@@ -92,9 +92,10 @@ void LevelModel::clearRootNode() {
  * @retain  a reference to this scene graph node
  * @release the previous scene graph node used by this object
  */
+
 void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
                              std::vector<std::shared_ptr<PolygonNode>> shadows) {
-    if (_root != nullptr) {
+    if (!_root) {
         clearRootNode();
     }
     

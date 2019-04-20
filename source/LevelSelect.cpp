@@ -80,19 +80,15 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
  */
 void LevelSelect::dispose() {
     // Deactivate the button (platform dependent)
-    std::cout << "Here" << endl;
     for (int i = 0; i < _levelButtons.size(); i++){
         if (isPending(i)){
-            auto a = _levelButtons.at(i);
             _levelButtons.at(i)->deactivate();
             //            _levelButtons.at(i)->removeListener();
         }
     }
     _levelButtons.clear();
-    _selected = false;
-    //    _bar = nullptr;
     _assets = nullptr;
-    //    _progress = 0.0f;
+    CULog("finished disposing");
 }
 
 
@@ -117,11 +113,13 @@ void LevelSelect::update(float progress) {
     //    }
     //    _selectedLevel = -1;
     //    _selected = false;
-    for (int i =0; i < _num_level; i++){
+    CULog("level select updating");
+    for (int i =0; i < _levelButtons.size(); i++){
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i);
         if (_levelButtons.at(i)->isDown()) {
             _selectedLevel = i;
+            break;
         }
     }
 }
