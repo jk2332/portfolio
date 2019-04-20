@@ -29,9 +29,6 @@
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
-
-#define GRID_NUM_X          9
-#define GRID_NUM_Y          3
 #define PINCH_OFFSET        2.5
 #define PINCH_CLOUD_DIST_OFFSET     5.5
 
@@ -64,7 +61,7 @@
 #define WIDTH_FIELD   "width"
 #define TIME_FIELD   "time"
 #define TYPE   "type"
-#define GRID_NUM_X          9
+#define GRID_NUM_X          7
 #define GRID_NUM_Y          3
 
 // Board
@@ -72,11 +69,12 @@
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
+#define GRID_SPACING    2
 #define GRID_WIDTH      3
 #define GRID_HEIGHT     2.5f
 #define DRAW_WIDTH     3
 #define DRAW_HEIGHT     2
-#define DOWN_LEFT_CORNER_X    3
+#define DOWN_LEFT_CORNER_X    5
 #define DOWN_LEFT_CORNER_Y    4
 #define OFFSET_X         0
 #define OFFSET_Y         0

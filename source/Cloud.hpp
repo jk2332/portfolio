@@ -346,7 +346,9 @@ public:
     Vec2 getCloudSize(){
         return Vec2(_cloudSizeScale*ORIGINAL_SIZE_X, _cloudSizeScale*ORIGINAL_SIZE_Y);
     }
-
+    std::shared_ptr<PolygonNode> getShadowNode(){
+        return _shadowNode;
+    }
 
 #pragma mark -
 #pragma mark Physics

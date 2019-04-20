@@ -653,30 +653,6 @@ void GameScene::update(float dt) {
         }
     }
 
-//    for (auto &c : _clouds) {
-//        if (c == nullptr) {
-//            continue;
-//        }
-//        else {
-//            Vec2 v = c->getPosition();
-//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-//                v.y = v.y - DOWN_LEFT_CORNER_Y;
-//            }
-//
-//            if (_board->isInBounds(v.x, v.y)){
-//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-//                if (coord.first >= 0 && coord.second >= 0) {
-//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-//                    auto plant = _plants[plantIdx];
-//                    if (plant != nullptr) {
-//                        plant->setShade(true);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     //Check win/loss conditions
     auto plantNode = _levelworldnode->getChildByName("plantNode");
     for (auto &plant : _level->getPlants()){
@@ -888,6 +864,7 @@ void GameScene::processRemoval(){
         if (c && c->isRemoved()) {
 //            CULog("removing %i", c->getId());
             _levelworldnode->removeChildByName(c->getName());
+            _levelworldnode->removeChildByName(c->getShadowNode()->getName());
             std::string cname = c->getName();
             long toDelete = -1;
             for (auto &ts : _selectors){
@@ -978,7 +955,7 @@ void GameScene::splitClouds(){
         cloudNode->setPosition(new_pos);
         shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
         _shadows.push_back(new_shadow);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadow", -1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(max_cloud_id), -1);
         _level->getWorldNode()->sortZOrder();
         new_cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows.back());
         new_cloud->setDebugColor(DYNAMIC_COLOR);
