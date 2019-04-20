@@ -79,6 +79,7 @@ protected:
     b2World* _world;
     bool _isRaining;
     long _rainCoolDown;
+    bool _isRainCloud;
     int _type;
     int _id;
     Vec2 _velocity;
@@ -207,6 +208,8 @@ public:
         std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
         return (result->init(p, pos) ? result : nullptr);
     }
+    
+    bool isRainCloud(){return _isRainCloud;}
     
 #pragma mark -
 #pragma mark Animation

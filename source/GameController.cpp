@@ -100,6 +100,7 @@ int plants[] = { 1, 4, 18, 21, 24};
 long ticks = 0l;
 long click1 = -1;
 long click2 = -1;
+long click3 = -1;
 Obstacle * clicked_cloud = nullptr;
 
 long temp = 01;
@@ -592,7 +593,7 @@ void GameScene::checkForCombining(Obstacle * ob){
     }
 }
 
-void GameScene::checkForRaining(Obstacle * o){
+void GameScene::checkForThunder(Obstacle * o){
     if (o && isCloud(o)) {
         if (click1 == -1){
             click1 = ticks;
@@ -602,13 +603,16 @@ void GameScene::checkForRaining(Obstacle * o){
             click2 = ticks;
             long gap = click2 - click1;
             if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
-                CULog("double tapped");
                 gesCoolDown = ticks;
-                makeRain(o);
+//                makeRain(o);
+                CULog("make thunder");
             }
             click1 = -1;
             click2 = -1;
             clicked_cloud = nullptr;
+        }
+        else if (click3 == -1){
+            
         }
     }
 }
@@ -832,8 +836,13 @@ void GameScene::update(float dt) {
             if (_selectors.count(touchID)){
                 if (_selectors.at(touchID)->isSelected()){
                     auto o = _selectors.at(touchID)->getObstacle();
-                    if (ticks - gesCoolDown >= GES_COOLDOWN + 5){
-                        checkForRaining(o);
+                    if (ticks - gesCoolDown >= GES_COOLDOWN){
+                        checkForThunder(o);
+                    }
+                    if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
+                        CULog("long pressed - gamecontroller");
+                        gesCoolDown = ticks;
+                        makeRain(o);
                     }
                 }
                 _selectors.at(touchID)->deselect();
@@ -930,7 +939,6 @@ void GameScene::makeRain(Obstacle * cloud){
     c->setCloudSizeScale(sqrt(8/10)*c->getCloudSizeScale());
 
     // Draw rain droplets
-    // c->decSize();
     for (int i = -3; i < 3; i++){
         Particle* sprite = _memory->malloc();
         if (sprite != nullptr) {
@@ -987,6 +995,7 @@ void GameScene::splitClouds(){
         auto new_pos = Vec2(cloudPos.x-1.5, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
+        assert (c->getCloudSizeScale() == new_cloud->getCloudSizeScale());
         
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());

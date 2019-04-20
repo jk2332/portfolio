@@ -66,7 +66,7 @@ void Pest::update(float dt) {
         _active = false;
     }
     if (_active) {
-        CULog("pest updated");
+//        CULog("pest updated");
         _actions->update(dt);
         auto pos = _node->getPosition();
         _node->setPosition(Vec2(pos.x + _speed, pos.y));

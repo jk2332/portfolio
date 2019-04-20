@@ -52,6 +52,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _node = nullptr;
     _centroid  = nullptr;
     // _drawscale = scale;
+    _isRainCloud = false;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
@@ -189,6 +190,12 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 }
 
 void Cloud::setCloudSizeScale(float s) {
+    if (s > 2) {
+        _isRainCloud = true;
+    }
+    else {
+        _isRainCloud = false;
+    }
     if (s < 0.5 || s > 5) return;
     _cloudSizeScale = s;
 }

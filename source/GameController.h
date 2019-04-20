@@ -285,7 +285,7 @@ public:
     void endContact(b2Contact* contact);
     void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
     void checkForCombining(Obstacle * ob);
-    void checkForRaining(Obstacle * ob);
+    void checkForThunder(Obstacle * ob);
 
 
     /**
