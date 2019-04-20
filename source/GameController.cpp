@@ -106,9 +106,10 @@ int plants[] = { 1, 4, 18, 21, 24};
 // map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
 
 /** The initial position of the ragdoll head */
-long ticks = 0l;
+int ticks = 0;
 long click1 = -1;
 long click2 = -1;
+long click3 = -1;
 Obstacle * clicked_cloud = nullptr;
 
 long temp = 01;
@@ -135,44 +136,6 @@ std::shared_ptr<Plant> currentPlant;
 /** The new lessened gravity for this world */
 #define WATER_GRAVITY   1.0f
 
-
-#pragma mark Assset Constants
-/** The key for the rocket texture in the asset manager */
-#define BKGD_TEXTURE    "background"
-#define EARTH_TEXTURE   "earth"
-/** Opacity of the foreground mask */
-#define FRGD_OPACITY    64
-
-/** Color to outline the physics nodes */
-#define STATIC_COLOR    Color4::YELLOW
-/** Opacity of the physics outlines */
-#define DYNAMIC_COLOR   Color4::GREEN
-
-/** The key for the font reference */
-#define PRIMARY_FONT        "retro"
-
-#pragma mark Physics Constants
-
-// Physics constants for initialization
-/** Density of non-crate objects */
-#define BASIC_DENSITY       0.0f
-/** Density of the crate objects */
-#define CRATE_DENSITY       1.0f
-/** Friction of non-crate objects */
-#define BASIC_FRICTION      0.1f
-/** Friction of the crate objects */
-#define CRATE_FRICTION      0.2f
-/** Angular damping of the crate objects */
-#define CRATE_DAMPING       1.0f
-/** Collision restitution for all objects */
-#define BASIC_RESTITUTION   0.1f
-/** Threshold for generating sound on collision */
-#define SOUND_THRESHOLD     3
-
-#define GRID_NUM_X          9
-#define GRID_NUM_Y          3
-#define PINCH_OFFSET        2.5
-#define PINCH_CLOUD_DIST_OFFSET     5.5
 
 #pragma mark -
 #pragma mark Constructors
@@ -344,7 +307,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, _shadows); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen, _shadows); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
 
     populate();
@@ -554,7 +517,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
 
     if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
-        cind2->setSizeLevel(cind1->getCloudSizeLevel() + cind2->getCloudSizeLevel());
+        cind2->setCloudSizeScale(sqrt(cind1->getCloudSizeScale() + cind2->getCloudSizeScale()));
         long toDelete = -1;
         for(auto &ts : _selectors) {
             long touchID = ts.first;
@@ -601,7 +564,7 @@ void GameScene::checkForCombining(Obstacle * ob){
     }
 }
 
-void GameScene::checkForRaining(Obstacle * o){
+void GameScene::checkForThunder(Obstacle * o){
     if (o && isCloud(o)) {
         if (click1 == -1){
             click1 = ticks;
@@ -611,13 +574,16 @@ void GameScene::checkForRaining(Obstacle * o){
             click2 = ticks;
             long gap = click2 - click1;
             if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
-                CULog("double tapped");
                 gesCoolDown = ticks;
-                makeRain(o);
+//                makeRain(o);
+                CULog("make thunder");
             }
             click1 = -1;
             click2 = -1;
             clicked_cloud = nullptr;
+        }
+        else if (click3 == -1){
+            
         }
     }
 }
@@ -677,6 +643,12 @@ void GameScene::update(float dt) {
                         p->setShade(true);
                      }
                  }
+                 //uncomment to ensure the right tiles are shaded
+//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(230,230,230,0));
+             }
+             else{
+                 //uncomment to ensure the right tiles are shaded
+//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(255,0,0,0));
              }
         }
     }
@@ -750,16 +722,15 @@ void GameScene::update(float dt) {
 
     if (ticks % 50 == 0 && ticks > 50) {
         for (auto &pest : _level->getPests()){
-            pest->walk();
             int targetY = pest->getTarget().y;
             int targetX;
-            // for(auto &plant : _level->getPlants()) {
-            //     if (plant->getStage() > 2 && plant->getX()) {
-            //         targetX = plant->getX();
-            //         pest->walk();
-            //         break;
-            //     }
-            // }
+            for(auto &plant : _level->getPlants()) {
+                if (plant->getStage() > 2 && plant->getX()) {
+                    targetX = plant->getX();
+                    pest->walk();
+                    break;
+                }
+            }
 
         }
     }
@@ -841,8 +812,13 @@ void GameScene::update(float dt) {
             if (_selectors.count(touchID)){
                 if (_selectors.at(touchID)->isSelected()){
                     auto o = _selectors.at(touchID)->getObstacle();
-                    if (ticks - gesCoolDown >= GES_COOLDOWN + 5){
-                        checkForRaining(o);
+                    if (ticks - gesCoolDown >= GES_COOLDOWN){
+                        checkForThunder(o);
+                    }
+                    if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
+                        CULog("long pressed - gamecontroller");
+                        gesCoolDown = ticks;
+                        makeRain(o);
                     }
                 }
                 _selectors.at(touchID)->deselect();
@@ -882,7 +858,7 @@ void GameScene::update(float dt) {
         if (c != nullptr) {
             auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
             cloudNode->setContentSize(c->getCloudSize());
-            float scale = c->getCloudSizeLevel()*0.5;
+            float scale = c->getCloudSizeScale();
             
             for (auto child: cloudNode->getChildren()){
                 if (child->getName() == "cloudFace"){
@@ -900,6 +876,7 @@ void GameScene::update(float dt) {
             c->getBody()->CreateFixture(polyshape, 3);
         }
     }
+    _level->update(ticks);
     _world->update(dt);
 }
 
@@ -935,10 +912,9 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * cloud){
     auto c = (Cloud *) cloud;
     Vec2 cloud_pos = c->getPosition();
-    c->setSizeLevel(c->getCloudSizeLevel()*0.9);
+    c->setCloudSizeScale(sqrt(8/10)*c->getCloudSizeScale());
 
     // Draw rain droplets
-    // c->decSize();
     for (int i = -3; i < 3; i++){
         Particle* sprite = _memory->malloc();
         if (sprite != nullptr) {
@@ -988,13 +964,14 @@ void GameScene::splitClouds(){
     for (auto &ic : cloudsToSplit){
         // split clouds here
         Cloud * c =(Cloud *)(ic.second);
-        c->setSizeLevel(c->getCloudSizeLevel()/2);
+        c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
         max_cloud_id++;
         auto new_pos = Vec2(cloudPos.x-1.5, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(max_cloud_id, new_pos);
-        new_cloud->setSizeLevel(c->getCloudSizeLevel());
+        new_cloud->setCloudSizeScale(c->getCloudSizeScale());
+        assert (c->getCloudSizeScale() == new_cloud->getCloudSizeScale());
         
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());

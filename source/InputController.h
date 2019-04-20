@@ -119,6 +119,7 @@ protected:
     std::unordered_set<long> _touchIDs;
     bool _pinched;
     bool _panned;
+    bool _longPress;
     std::unordered_set<long> _longerSelects;
     
 public:
@@ -193,6 +194,7 @@ public:
     bool didPanSelect() {return _panSelect;}
     std::unordered_set<long> didLongerSelect() {return _longerSelects;}
     std::map<long, int> longSelectCounter;
+    bool longPressed() {return _longPress;}
     
     std::unordered_set<long> getTouchIDs() {return _touchIDs;}
     void removeFromTouchID(long touchID) {if (_touchIDs.count(touchID)) _touchIDs.erase(touchID);}

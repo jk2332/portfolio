@@ -79,10 +79,11 @@ protected:
     b2World* _world;
     bool _isRaining;
     long _rainCoolDown;
+    bool _isRainCloud;
     int _type;
     int _id;
     Vec2 _velocity;
-    float _sizeLevel;
+    float _cloudSizeScale;
     float _scale;
     
 //    /**
@@ -208,6 +209,8 @@ public:
         return (result->init(p, pos) ? result : nullptr);
     }
     
+    bool isRainCloud(){return _isRainCloud;}
+    
 #pragma mark -
 #pragma mark Animation
 	/**
@@ -275,7 +278,7 @@ public:
      */
     void setTexture(const std::shared_ptr<Texture>& texture);
 
-    void setCloudSizeLevel(float s) {_sizeLevel = s;}
+    void setCloudSizeScale(float s);
 
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}
@@ -336,13 +339,12 @@ public:
     int getId(){return _id;}
     bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
-    void setSizeLevel(float f);
     bool shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
-    float getCloudSizeLevel() {
-        return _sizeLevel;
+    float getCloudSizeScale() {
+        return _cloudSizeScale;
     }
     Vec2 getCloudSize(){
-        return Vec2(_sizeLevel*0.5*ORIGINAL_SIZE_X, _sizeLevel*0.5*ORIGINAL_SIZE_Y);
+        return Vec2(_cloudSizeScale*ORIGINAL_SIZE_X, _cloudSizeScale*ORIGINAL_SIZE_Y);
     }
 
 

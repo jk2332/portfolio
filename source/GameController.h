@@ -90,7 +90,7 @@ protected:
 
     // Physics objects for the game
     std::vector<std::shared_ptr<Cloud>> _clouds;
-    
+
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
 
@@ -285,7 +285,7 @@ public:
     void endContact(b2Contact* contact);
     void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
     void checkForCombining(Obstacle * ob);
-    void checkForRaining(Obstacle * ob);
+    void checkForThunder(Obstacle * ob);
 
 
     /**

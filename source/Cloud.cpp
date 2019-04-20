@@ -52,11 +52,12 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _node = nullptr;
     _centroid  = nullptr;
     // _drawscale = scale;
+    _isRainCloud = false;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _sizeLevel = 2;
+    _cloudSizeScale = 1;
     _ob = nullptr;
     return true;
 }
@@ -131,7 +132,7 @@ void Cloud::setScale(float s) {
 }
 
 bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
-    Vec2 sc = _cloudNode->nodeToWorldCoords(_shadowNode->getPosition());
+    Vec2 sc = worldNode->nodeToWorldCoords(_shadowNode->getPosition());
     Vec2 gridPos = worldNode->nodeToWorldCoords(gridNode->getPosition());
     float a = _shadowNode->getWidth()/2;
     float b = _shadowNode->getHeight()/2;
@@ -174,15 +175,14 @@ void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, 
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setContentSize(cloudFace->getSize()*(getCloudSizeLevel()*SCALE));
+    sprite->setContentSize(cloudFace->getSize());
     sprite->setPosition(_cloudNode->getSize()/2.0f);
 //    _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = shadow;
-    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*(getCloudSizeLevel()*SCALE));
+    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
     _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f - Vec2(0, displacement));
-
 //    _shadowNode->setZOrder(2);
     //shadow node has already been added to the scene graph
 }
@@ -191,10 +191,15 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     _node = node;
 }
 
-
-void Cloud::setSizeLevel(float sizeLevel) {
-    if (sizeLevel >= 6 || sizeLevel < 1) return;
-    _sizeLevel = sizeLevel;
+void Cloud::setCloudSizeScale(float s) {
+    if (s > 2) {
+        _isRainCloud = true;
+    }
+    else {
+        _isRainCloud = false;
+    }
+    if (s < 0.5 || s > 5) return;
+    _cloudSizeScale = s;
 }
 
 /**

@@ -76,6 +76,9 @@
         "raccoonrev": {
             "file":     "textures/raccoonwalkrev.png"
         },
+        "progressbar": {
+            "file":     "textures/progressbar.png"
+        },
         "sign": {
             "file":     "textures/woodboard.png"
         },

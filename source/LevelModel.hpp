@@ -68,7 +68,14 @@ protected:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;
+
+    std::shared_ptr<cugl::Label> _winnode;
+    int _time;
+
     Poly2 _poly;
+
+    std::shared_ptr<cugl::ProgressBar>  _bar;
+
     // float _scale;
     
     /** The AssetManager for the game mode */
@@ -294,7 +301,7 @@ public:
      * @retain  a reference to this scene graph node
      * @release the previous scene graph node used by this object
      */
-    void setRootNode(const std::shared_ptr<Node>& root, std::vector<std::shared_ptr<PolygonNode>> shadows);
+    void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::vector<std::shared_ptr<PolygonNode>> shadows);
     
     /**
      * Sets the loaded assets for this game level
@@ -363,6 +370,12 @@ public:
      * Destroys this level, releasing all resources.
      */
     virtual ~LevelModel(void);
+
+    /**
+     * Update nodes of the level model including clouds, plants and the timer
+    */
+    void update(int ticks);
+    int getPlantScore();
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */
