@@ -819,7 +819,6 @@ void GameScene::update(float dt) {
                         checkForThunder(o);
                     }
                     if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
-                        CULog("long pressed - gamecontroller");
                         gesCoolDown = ticks;
                         makeRain(o);
                     }
@@ -912,13 +911,14 @@ void GameScene::processRemoval(){
     }
 }
 
-void GameScene::makeRain(Obstacle * cloud){
-    auto c = (Cloud *) cloud;
-    c->setCloudSizeScale(c->getCloudSizeScale());
+void GameScene::makeRain(Obstacle * ob){
+    if (!(ob && isCloud(ob))) return;
+    
+    auto c = (Cloud *) ob;
     if (!c->isRainCloud()) return;
+    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9/10));
     
     Vec2 cloud_pos = c->getPosition();
-    c->setCloudSizeScale(sqrt(8/10)*c->getCloudSizeScale());
 
     // Draw rain droplets
     for (int i = -3; i < 3; i++){

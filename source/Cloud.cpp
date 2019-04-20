@@ -197,7 +197,12 @@ void Cloud::setCloudSizeScale(float s) {
     else {
         _isRainCloud = false;
     }
-    if (s < 0.5 || s > 5) return;
+    if (s < 0.5) {
+        s = 0.5;
+    }
+    if (s > 5){
+        s = 5;
+    }
     _cloudSizeScale = s;
 }
 
