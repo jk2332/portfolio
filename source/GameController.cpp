@@ -890,6 +890,7 @@ void GameScene::processRemoval(){
         auto c = _clouds.at(i);
         if (c && c->isRemoved()) {
             _levelworldnode->removeChildByName(c->getName());
+            _levelworldnode->removeChildByName(c->getShadowNode()->getName());
             std::string cname = c->getName();
             long toDelete = -1;
             for (auto &ts : _selectors){
@@ -915,8 +916,8 @@ void GameScene::makeRain(Obstacle * ob){
     if (!(ob && isCloud(ob))) return;
     
     auto c = (Cloud *) ob;
-    if (!c->isRainCloud()) return;
-    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9/10));
+//    if (!c->isRainCloud()) return;
+    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9.3/10));
     
     Vec2 cloud_pos = c->getPosition();
 
@@ -970,7 +971,7 @@ void GameScene::splitClouds(){
         cloudNode->setPosition(new_pos);
         shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
         _shadows.push_back(new_shadow);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadow", -1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(max_cloud_id), -1);
         _level->getWorldNode()->sortZOrder();
         new_cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows.back());
         new_cloud->setDebugColor(DYNAMIC_COLOR);

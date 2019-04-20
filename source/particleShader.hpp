@@ -14,11 +14,30 @@
 #include "cloudParticle.vert"
 #include "cloudParticle.frag"
 #include <vector>
-#include "cugl/2d/physics/CUObstacle.h"
+#define MAX_JOSTLE 4.0f
+#define MAX_VELOCITY 5.0f
 using namespace cugl;
 
-static GLuint elements[] = {0, 1, 2, 3, 1, 2};
+//                                      Position        Texcoords
+static GLfloat ogParticleQuad[16]= {-10.0f,-10.0f,   0.0f, 0.0f,
+                                    -10.0f, 10.0f,   0.0f, 1.0f,
+                                     10.0f,-10.0f,   1.0f, 0.0f,
+                                     10.0f, 10.0f,   1.0f, 1.0f};
 
+//                                      Radius CenterX CenterY
+static vector<Vec3> ogCloudSections = { Vec3(2.5,   0.0,   1.5), //Central Circle
+                                        Vec3(1.3,  -3.8,   1.3),
+                                        Vec3(1.3,   3.7,   1.3),
+                                        Vec3(0.8,   3.0,   2.7),
+                                        Vec3(0.7,   2.5,   0.0),
+                                        Vec3(0.8,  -2.9,   2.7),
+                                        Vec3(0.6,  -2.6,   0.1),
+                                        Vec3(0.8,   1.9,   3.4),
+                                        Vec3(0.8,  -2.1,   3.9),
+                                        Vec3(0.8,   0.6,   4.0),
+                                        Vec3(0.8,  -0.8,   4.7)};
+
+static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 static GLuint VAO;
 static GLuint VBO;
 static GLuint EBO;
@@ -47,8 +66,8 @@ public:
     // State
     std::vector<CloudParticle> particles;
     GLuint amount;
-    float maxJostle = 4.0;
-    float maxVelocity = 5.0;
+    float maxJostle = MAX_JOSTLE;
+    float maxVelocity = MAX_VELOCITY;
     //                               Radius CenterX CenterY
     vector<Vec3> cloudSections = {  Vec3(2.5,   0.0,   1.5), //Central Circle
                                     Vec3(1.3,  -3.8,   1.3),

@@ -221,3 +221,4 @@ void Cloud::setCloudSizeScale(float s) {
 void Cloud::setDrawScale(float scale) {
     _drawscale = scale;
 }
+

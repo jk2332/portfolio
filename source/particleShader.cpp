@@ -251,20 +251,20 @@ void ParticleShader::drawParticles(){
 void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
     //Adjust size of particles based on scale of cloud
     if (_particleScale != particleScale){
-        for (int i = 0; i < 4; i++){
-            particle_quad[i*4] = _particleScale*particle_quad[i*4];
-            particle_quad[i*4 + 1] = _particleScale*particle_quad[i*4 + 1];
-        }
-        
-        for(auto section : _pg.cloudSections){
-            section.x = section.x*_particleScale;
-            section.y = section.y*_particleScale;
-            section.z = section.z*_particleScale;
-        }
-        
-        _pg.maxJostle = _pg.maxJostle*_particleScale;
-        _pg.maxVelocity = _pg.maxVelocity*_particleScale;
         _particleScale = particleScale;
+        for (int i = 0; i < 4; i++){
+            particle_quad[i*4] = _particleScale*ogParticleQuad[i*4];
+            particle_quad[i*4 + 1] = _particleScale*ogParticleQuad[i*4 + 1];
+        }
+        
+        for(int j = 0; j < _pg.cloudSections.size(); j++){
+            _pg.cloudSections[j].x = ogCloudSections[j].x*_particleScale;
+            _pg.cloudSections[j].y = ogCloudSections[j].y*_particleScale;
+            _pg.cloudSections[j].z = ogCloudSections[j].z*_particleScale;
+        }
+        
+        _pg.maxJostle = MAX_JOSTLE*_particleScale;
+        _pg.maxVelocity = MAX_VELOCITY*_particleScale;
     }
     this->_pg.Update(dt, cloud_pos - Vec2(500,300), _particleScale);
 }

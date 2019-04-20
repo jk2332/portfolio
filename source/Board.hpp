@@ -16,7 +16,7 @@
 
 #include "Plant.hpp"
 
-
+using namespace cugl;
 
 #pragma mark -
 #pragma mark Board
@@ -135,12 +135,13 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    cugl::Vec2 gridCoordToPosition(cugl::Vec2 p){
+    Vec2 gridCoordToPosition(cugl::Vec2 p){
         return gridCoordToPosition(p.x, p.y);
     }
     
-    cugl::Vec2 gridCoordToPosition(float x, float y){
-        cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*x + GRID_WIDTH/2)*32.0f, (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*y - GRID_HEIGHT/2)*32.0f);
+    Vec2 gridCoordToPosition(float x, float y){
+        Vec2 a = 32.0f*Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*x + GRID_WIDTH/2),
+                            (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*y - GRID_HEIGHT/2));
         return a;
     }
     

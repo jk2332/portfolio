@@ -120,8 +120,10 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
+    int i = 0;
     for(auto &shadow : shadows) {
-        _worldnode->addChildWithName(shadow, "shadow");
+        _worldnode->addChildWithName(shadow, "shadow" + std::to_string(i));
+        i++;
     }
 
     _bar = ProgressBar::alloc(Size(150.0f, 30.0f));

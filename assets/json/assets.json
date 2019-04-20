@@ -94,6 +94,18 @@
         "iconRain": {
             "file":     "textures/iconRain.png"
         },
+        "signShade": {
+            "file":     "textures/signShade.png"
+        },
+        "signSkull": {
+            "file":     "textures/signSkull.png"
+        },
+        "signHappy": {
+            "file":     "textures/signHappy.png"
+        },
+        "signRain": {
+            "file":     "textures/signRain.png"
+        },
         "smallRain": {
             "file":     "textures/small_rain.png"
         },
