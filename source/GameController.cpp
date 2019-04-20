@@ -97,7 +97,7 @@ int plants[] = { 1, 4, 18, 21, 24};
 // map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
 
 /** The initial position of the ragdoll head */
-long ticks = 0l;
+int ticks = 0;
 long click1 = -1;
 long click2 = -1;
 long click3 = -1;
@@ -127,44 +127,6 @@ std::shared_ptr<Plant> currentPlant;
 /** The new lessened gravity for this world */
 #define WATER_GRAVITY   1.0f
 
-
-#pragma mark Assset Constants
-/** The key for the rocket texture in the asset manager */
-#define BKGD_TEXTURE    "background"
-#define EARTH_TEXTURE   "earth"
-/** Opacity of the foreground mask */
-#define FRGD_OPACITY    64
-
-/** Color to outline the physics nodes */
-#define STATIC_COLOR    Color4::YELLOW
-/** Opacity of the physics outlines */
-#define DYNAMIC_COLOR   Color4::GREEN
-
-/** The key for the font reference */
-#define PRIMARY_FONT        "retro"
-
-#pragma mark Physics Constants
-
-// Physics constants for initialization
-/** Density of non-crate objects */
-#define BASIC_DENSITY       0.0f
-/** Density of the crate objects */
-#define CRATE_DENSITY       1.0f
-/** Friction of non-crate objects */
-#define BASIC_FRICTION      0.1f
-/** Friction of the crate objects */
-#define CRATE_FRICTION      0.2f
-/** Angular damping of the crate objects */
-#define CRATE_DAMPING       1.0f
-/** Collision restitution for all objects */
-#define BASIC_RESTITUTION   0.1f
-/** Threshold for generating sound on collision */
-#define SOUND_THRESHOLD     3
-
-#define GRID_NUM_X          9
-#define GRID_NUM_Y          3
-#define PINCH_OFFSET        2.5
-#define PINCH_CLOUD_DIST_OFFSET     5.5
 
 #pragma mark -
 #pragma mark Constructors
@@ -320,7 +282,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
     
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
@@ -482,6 +444,8 @@ void GameScene::populate() {
     Size size = Application::get()->getDisplaySize();
     _rainNode->setContentSize(size);
     _worldnode->addChild(_rainNode, 6);
+
+
 }
 
 /**
@@ -745,16 +709,15 @@ void GameScene::update(float dt) {
 
     if (ticks % 50 == 0 && ticks > 50) {
         for (auto &pest : _level->getPests()){
-            pest->walk();
             int targetY = pest->getTarget().y;
             int targetX;
-            // for(auto &plant : _level->getPlants()) {
-            //     if (plant->getStage() > 2 && plant->getX()) {
-            //         targetX = plant->getX();
-            //         pest->walk();
-            //         break;
-            //     }
-            // }
+            for(auto &plant : _level->getPlants()) {
+                if (plant->getStage() > 2 && plant->getX()) {
+                    targetX = plant->getX();
+                    pest->walk();
+                    break;
+                }
+            }
 
         }
     }
@@ -900,6 +863,7 @@ void GameScene::update(float dt) {
             c->getBody()->CreateFixture(polyshape, 3);
         }
     }
+    _level->update(ticks);
     _world->update(dt);
     _level->getWorldNode()->sortZOrder();
 }

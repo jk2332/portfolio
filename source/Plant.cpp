@@ -190,7 +190,7 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     _node = AnimationNode::alloc(_assets->get<Texture>(getPlantType() + std::to_string(_stage)), 1, 9);
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setScale(0.15f);
-    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.25f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
+    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.4f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
     
     _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>(SIGN));
