@@ -16,7 +16,6 @@
 #include "Cloud.hpp"
 #include "Plant.hpp"
 #include "Board.hpp"
-#include <map>
 #include "CloudNode.hpp"
 #include "Pest.hpp"
 
@@ -68,7 +67,6 @@ protected:
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _cloud;
-//    std::map<int, std::shared_ptr<CloudNode>> _cloudNodes;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     std::shared_ptr<Board> _board;

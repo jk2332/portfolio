@@ -93,7 +93,7 @@ void LevelModel::clearRootNode() {
  * @release the previous scene graph node used by this object
  */
 void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
-    if (_root != nullptr) {
+    if (!_root) {
         clearRootNode();
     }
     

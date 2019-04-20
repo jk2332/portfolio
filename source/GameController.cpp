@@ -213,6 +213,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     } else if (!Scene::init(dimen)) {
         return false;
     }
+    
 
     _level = assets->get<LevelModel>(levelId);
     _level->setDebugNode(_debugnode);
@@ -255,6 +256,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setPosition(offset);
 
     _assets = assets;
+    _assets->load<Texture>("backToLevelSelectButton", "/textures/Back.png");
+
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -284,6 +287,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _level->setAssets(_assets);
     _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
+    _backToLevelSelect = false;
     
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
@@ -293,6 +297,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         addObstacle(_level->getWorldNode(), cloud, cloudNode, 1);
     }
+    
 
     std::vector<std::shared_ptr<Texture>> textures;
     textures.push_back(_assets->get<Texture>("tile"));
@@ -429,6 +434,22 @@ void GameScene::populate() {
    wall2 *= _scale;
    sprite = PolygonNode::allocWithTexture(image,wall2);
    addObstacle(_worldnode, wallobj2,sprite,1);  // All walls share the same texture
+    
+    
+    auto levelSelectButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("backToLevelSelectButton"));
+    levelSelectButtonNode->setContentSize(dimen/12);
+    levelSelectButtonNode->setName("backToLevelSelectButton");
+    levelSelectButtonNode->setPosition(0, 0);
+    
+    _levelSelectButton = Button::alloc(levelSelectButtonNode);
+    _levelSelectButton->setPosition(0, 0);
+    _levelSelectButton->setListener([=](const std::string& name, bool down) {
+        this->_active = down;
+    });
+    _levelSelectButton->setContentSize(dimen/12);
+    _levelSelectButton->setVisible(true);
+    _levelSelectButton->activate(10);
+    _worldnode->addChild(_levelSelectButton);
 
 
      auto boardNode = Node::alloc();
@@ -510,7 +531,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
 
     if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
-        cind2->setCloudSizeScale(sqrt(cind1->getCloudSizeScale() + cind2->getCloudSizeScale()));
+        cind2->setCloudSizeScale(sqrt(pow(cind1->getCloudSizeScale(), 2) + pow(cind2->getCloudSizeScale(), 2)));
         long toDelete = -1;
         for(auto &ts : _selectors) {
             long touchID = ts.first;
@@ -533,7 +554,6 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
 }
 
 bool isCloud(Obstacle * ob){
-    
     if (ob->getName().find("cloud") == 0) return true;
     return false;
 }
@@ -592,8 +612,11 @@ void GameScene::checkForThunder(Obstacle * o){
  * @param  delta    Number of seconds since last animation frame
  */
 void GameScene::update(float dt) {
+    CULog("game scene updating");
     _input.update(dt);
     ticks++;
+    
+    CULog("after updating input");
 
 //    processedGes = false;
 
@@ -604,6 +627,10 @@ void GameScene::update(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
+    if (_levelSelectButton->isDown()){
+        _backToLevelSelect = true;
+    }
+    
     // process combining
     if (_input.didPinchSelect()){
         if (ticks - gesCoolDown >= GES_COOLDOWN){
@@ -639,30 +666,6 @@ void GameScene::update(float dt) {
              }
         }
     }
-
-//    for (auto &c : _clouds) {
-//        if (c == nullptr) {
-//            continue;
-//        }
-//        else {
-//            Vec2 v = c->getPosition();
-//            if (v.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-//                v.y = v.y - DOWN_LEFT_CORNER_Y;
-//            }
-//
-//            if (_board->isInBounds(v.x, v.y)){
-//                std::pair<int, int> coord = _board->posToGridCoord(v.x,v.y);
-//                if (coord.first >= 0 && coord.second >= 0) {
-//                    _board->getNodeAt(coord.first, coord.second)->setColor(getColor() - Color4(230,230,230,0));
-//                    int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-//                    auto plant = _plants[plantIdx];
-//                    if (plant != nullptr) {
-//                        plant->setShade(true);
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     //Check win/loss conditions
     auto plantNode = _levelworldnode->getChildByName("plantNode");
@@ -729,7 +732,7 @@ void GameScene::update(float dt) {
    for(auto &plant : _level->getPlants()) {
        plant->update(dt);
    }
-
+    
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
     for (auto const& touchID : IDs) {
@@ -791,7 +794,7 @@ void GameScene::update(float dt) {
         if (!selected.count(touchID)){
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
-                if (abs(_selectors.at(touchID)->getPosition().y - cloudPos.y) >= SWIPE_VERT_OFFSET){
+                if (_selectors.count(touchID) && abs(_selectors.at(touchID)->getPosition().y - cloudPos.y) >= SWIPE_VERT_OFFSET){
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
                 cloudsToSplit_temp.erase(touchID);
@@ -863,6 +866,7 @@ void GameScene::update(float dt) {
             c->getBody()->CreateFixture(polyshape, 3);
         }
     }
+    
     _level->update(ticks);
     _world->update(dt);
     _level->getWorldNode()->sortZOrder();
@@ -931,19 +935,6 @@ void GameScene::makeRain(Obstacle * cloud){
         }
     }
 
-    // // Set plants to rained
-    // if (cloud_pos.y > GRID_HEIGHT + DOWN_LEFT_CORNER_Y){
-    //     cloud_pos.y = cloud_pos.y - GRID_HEIGHT - DOWN_LEFT_CORNER_Y;
-    // }
-    // std::pair<int, int> coord = _board->posToGridCoord(cloud_pos);
-    // if (coord.first >= 0 && coord.second >= 0) {
-    //     int plantIdx = coord.first * GRID_NUM_Y + coord.second;
-    //     auto plant = _plants[plantIdx];
-    //     if (plant != nullptr) {
-    //         plant->setRained(true);
-    //     }
-    // }
-    // c->setIsRaining(false);
 }
 
 
@@ -959,7 +950,6 @@ void GameScene::splitClouds(){
         auto new_pos = Vec2(cloudPos.x-1.5, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
-        assert (c->getCloudSizeScale() == new_cloud->getCloudSizeScale());
         
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());
@@ -1028,21 +1018,6 @@ void GameScene::beginContact(b2Contact* contact) {
 
 }
 
-/**
- * Handles any modifications necessary before collision resolution
- *
- * This method is called just before Box2D resolves a collision.  We use this method
- * to implement sound on contact, using the algorithms outlined in Ian Parberry's
- * "Introduction to Game Physics with Box2D".
- *
- * @param  contact      The two bodies that collided
- * @param  oldManfold      The collision manifold before contact
- */
-void GameScene::beforeSolve(b2Contact* contact, const b2Manifold* oldManifold) {
-}
-
-void GameScene::endContact(b2Contact *contact){
-}
 
 /**
  * Returns the active screen size of this scene.
