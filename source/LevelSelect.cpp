@@ -87,11 +87,8 @@ void LevelSelect::dispose() {
         }
     }
     _levelButtons.clear();
-//    _selected = false;
-    //    _bar = nullptr;
     _assets = nullptr;
     CULog("finished disposing");
-    //    _progress = 0.0f;
 }
 
 

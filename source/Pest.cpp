@@ -93,5 +93,5 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     cugl::Vec2 a = Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2)*32.0f, (0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
 
-    node->addChildWithName(_node, id, 3);
+    node->addChildWithName(_node, id);
 }

@@ -26,6 +26,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
     for (int i = 0; i < cloudSections.size(); i++){
         Vec3 currentCircle = cloudSections[i];
         int trueAmount = this->amount;
+        //Create twice as many particles for the core section
         if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
@@ -33,6 +34,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
             float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
             float t = 0.25*M_PI*j;
             int spacing = 15;
+            //center particles on the cloud
             Vec2 centering = Vec2(-10,-10);
             Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
             offset = offset + centering;
@@ -48,7 +50,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
     
 }
 
-void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
+void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
 //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
@@ -59,7 +61,7 @@ void ParticleGenerator::Update(GLfloat dt, GLuint newParticles, Vec2 cloud_pos){
             if (i != 0){index = index + this->amount;}
             
             CloudParticle &p = this->particles[index];
-            Vec2 basePosition = cloud_pos + p.offset;
+            Vec2 basePosition = cloud_pos + particleScale*p.offset;
             
             if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
                 (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
@@ -195,9 +197,6 @@ void ParticleShader::drawParticles(){
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     CULogGLError();
     
-    //Placeholder to adjust size of particles based on scale of cloud
-    
-    
     glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
     CULogGLError();
     
@@ -249,6 +248,23 @@ void ParticleShader::drawParticles(){
     CULogGLError();
 }
 
-void ParticleShader::update(Vec2 cloud_pos, float dt, GLuint np){
-    this->_pg.Update(dt, np, cloud_pos - Vec2(500,300));
+void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
+    //Adjust size of particles based on scale of cloud
+    if (_particleScale != particleScale){
+        for (int i = 0; i < 4; i++){
+            particle_quad[i*4] = _particleScale*particle_quad[i*4];
+            particle_quad[i*4 + 1] = _particleScale*particle_quad[i*4 + 1];
+        }
+        
+        for(auto section : _pg.cloudSections){
+            section.x = section.x*_particleScale;
+            section.y = section.y*_particleScale;
+            section.z = section.z*_particleScale;
+        }
+        
+        _pg.maxJostle = _pg.maxJostle*_particleScale;
+        _pg.maxVelocity = _pg.maxVelocity*_particleScale;
+        _particleScale = particleScale;
+    }
+    this->_pg.Update(dt, cloud_pos - Vec2(500,300), _particleScale);
 }

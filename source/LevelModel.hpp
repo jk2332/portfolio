@@ -59,10 +59,6 @@ protected:
     
     // Physics objects for the game
     /** The physics word; part of the model (though listeners elsewhere) */
-    /** Reference to the rocket/player avatar */
-//    std::shared_ptr<RocketModel> _rocket;
-    /** Reference to the goalDoor (for collision detection) */
-//    std::shared_ptr<ExitModel> _goalDoor;
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
@@ -77,15 +73,8 @@ protected:
     Poly2 _poly;
 
     std::shared_ptr<cugl::ProgressBar>  _bar;
-    
 
     // float _scale;
-
-
-    /** Reference to all the active crates */
-//    std::vector<std::shared_ptr<CrateModel>> _crates;
-    /** Reference to all the walls */
-//    std::vector<std::shared_ptr<WallModel>> _walls;
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -310,7 +299,7 @@ public:
      * @retain  a reference to this scene graph node
      * @release the previous scene graph node used by this object
      */
-    void setRootNode(const std::shared_ptr<Node>& root, Size dimen);
+    void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::vector<std::shared_ptr<PolygonNode>> shadows);
     
     /**
      * Sets the loaded assets for this game level

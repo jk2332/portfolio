@@ -92,7 +92,9 @@ void LevelModel::clearRootNode() {
  * @retain  a reference to this scene graph node
  * @release the previous scene graph node used by this object
  */
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
+
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
+                             std::vector<std::shared_ptr<PolygonNode>> shadows) {
     if (!_root) {
         clearRootNode();
     }
@@ -118,9 +120,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
+    for(auto &shadow : shadows) {
+        _worldnode->addChildWithName(shadow, "shadow");
+    }
+
     _bar = ProgressBar::alloc(Size(150.0f, 30.0f));
 
-    
     _bar->setPosition(Vec2(850.0f, 525.0f));
 
     _worldnode->addChildWithName(_bar, "bar");
@@ -132,7 +137,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
             plant->setSceneNode(plantNode, plant->getName());
         }
    }
-   _worldnode->addChildWithName(plantNode, "plantNode", 4);
+   _worldnode->addChildWithName(plantNode, "plantNode");
 
    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
@@ -141,7 +146,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
             pest->setSceneNode(pestNode, pest->getName());
         }
    }
-   _worldnode->addChildWithName(pestNode, "pestNode", 3);
+   _worldnode->addChildWithName(pestNode, "pestNode");
 
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -283,36 +288,22 @@ int LevelModel::getPlantScore() {
  * references to other assets, then these should be disconnected earlier.
  */
 void LevelModel::unload() {
-//    if (_rocket != nullptr) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle(_rocket.get());
-//        }
-//        _rocket = nullptr;
-//    }
-//    if (_goalDoor != nullptr) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle(_goalDoor.get());
-//        }
-//        _goalDoor = nullptr;
-//    }
-//    for(auto it = _crates.begin(); it != _crates.end(); ++it) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle((*it).get());
-//        }
-//        (*it) = nullptr;
-//    }
-//    _crates.clear();
-//    for(auto it = _walls.begin(); it != _walls.end(); ++it) {
-//        if (_world != nullptr) {
-//            _world->removeObstacle((*it).get());
-//        }
-//        (*it) = nullptr;
-//    }
-//    _walls.clear();
-//    if (_world != nullptr) {
-//        _world->clear();
-//        _world = nullptr;
-//    }
+    _cloudLayer = nullptr;
+    _plantLayer = nullptr;
+    _pestLayer = nullptr;
+    for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _plants.begin(); it != _plants.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _pests.begin(); it != _pests.end(); ++it) {
+        (*it) = nullptr;
+    }
+    _board = nullptr;
+    _winnode = nullptr;
+    _bar = nullptr;
+    _assets = nullptr;
 }
 
 

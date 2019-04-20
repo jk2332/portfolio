@@ -320,7 +320,7 @@ public:
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
     void setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement,
-                               std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow);
+                    std::shared_ptr<Texture> cloudFace, std::shared_ptr<PolygonNode> shadow);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

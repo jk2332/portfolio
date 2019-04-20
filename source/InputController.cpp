@@ -31,7 +31,7 @@ using namespace cugl;
 
 /** How fast a double click must be in milliseconds */
 #define EVENT_DOUBLE_CLICK  400
-#define EVENT_LONG_HOLD     700
+#define EVENT_LONG_HOLD     600
 /** How far we must swipe left or right for a gesture */
 #define EVENT_SWIPE_LENGTH  100
 /** How fast we must swipe left or right for a gesture */
