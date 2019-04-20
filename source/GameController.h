@@ -66,6 +66,8 @@ protected:
     std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
+    std::vector<std::shared_ptr<PolygonNode>> _shadows;
+
     
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
@@ -87,10 +89,8 @@ protected:
     float _scale;
 
     // Physics objects for the game
-	/** Reference to the ragdoll model */
-	//std::shared_ptr<RagdollModel> _ragdoll;
     std::vector<std::shared_ptr<Cloud>> _clouds;
-   
+    
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
 
@@ -284,6 +284,8 @@ public:
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
     void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
+    void checkForCombining(Obstacle * ob);
+    void checkForRaining(Obstacle * ob);
 
 
     /**

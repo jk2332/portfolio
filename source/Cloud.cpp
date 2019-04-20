@@ -20,6 +20,7 @@ using namespace cugl;
 
 /** This is adjusted by screen aspect ratio to get the height */
 #define GAME_WIDTH 1024
+#define SCALE   0.5
 
 #pragma mark -
 #pragma mark Constructors
@@ -55,7 +56,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _isRaining = false;
     _rainCoolDown = 50l;
     _world = nullptr;
-    _sizeLevel = 5;
+    _sizeLevel = 2;
     _ob = nullptr;
     return true;
 }
@@ -115,10 +116,13 @@ void Cloud::update(float delta) {
         _node->setAngle(getAngle());
     }
     else if (_cloudNode != nullptr) {
-        _cloudNode->setPosition(_scale*(getPosition() + Vec2(getWidth()/2.0, getHeight()/2.0)));
+        _cloudNode->setPosition(_scale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
         _cloudNode->ps.update(getPosition()*_scale, delta, 1);
-        _shadowNode->setPosition(_shadowNode->getPositionX(), -_scale*_disp);
+        shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
+        _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
+                                                               + faceSprite->getSize()/2.0f)
+                                 + Vec2(0, -_scale*_disp));
     }
 }
 
@@ -165,22 +169,22 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
  */
 void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement,
-                                  std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow){
+                        std::shared_ptr<Texture> cloudFace, std::shared_ptr<PolygonNode> shadow){
     _cloudNode = node;
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setContentSize(cloudFace->getSize()*getCloudSize());
+    sprite->setContentSize(cloudFace->getSize()*(getCloudSizeLevel()*SCALE));
     sprite->setPosition(_cloudNode->getSize()/2.0f);
-    _cloudNode->setZOrder(1);
+//    _cloudNode->setZOrder(1);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
-    _shadowNode = PolygonNode::allocWithTexture(shadow);
-    _shadowNode->setAnchor(Vec2::ANCHOR_CENTER);
-    _shadowNode->setContentSize(shadow->getSize()*getCloudSize());
-    _shadowNode->setPosition(_cloudNode->getSize()/2.0f - Vec2(0, displacement));
-    _shadowNode->setZOrder(2);
-    _cloudNode->addChildWithName(_shadowNode, "shadow");
+    _shadowNode = shadow;
+    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*(getCloudSizeLevel()*SCALE));
+    _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f - Vec2(0, displacement));
+
+//    _shadowNode->setZOrder(2);
+    //shadow node has already been added to the scene graph
 }
 
 void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
@@ -189,7 +193,7 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 
 
 void Cloud::setSizeLevel(float sizeLevel) {
-    if (sizeLevel >= 10 || sizeLevel < 1) return;
+    if (sizeLevel >= 6 || sizeLevel < 1) return;
     _sizeLevel = sizeLevel;
 }
 

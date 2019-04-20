@@ -207,7 +207,7 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
                               (0.3f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _signIcon->setPosition(c);
     
-    node->addChildWithName(_node, name, 4);
-    node->addChildWithName(_signNode, name + "sign", 4);
-    node->addChildWithName(_signIcon, name + "signicon", 5);
+    node->addChildWithName(_node, name);
+    node->addChildWithName(_signNode, name + "sign");
+    node->addChildWithName(_signIcon, name + "signicon");
 }

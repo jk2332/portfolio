@@ -92,7 +92,7 @@ void LevelModel::clearRootNode() {
  * @retain  a reference to this scene graph node
  * @release the previous scene graph node used by this object
  */
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, std::vector<std::shared_ptr<PolygonNode>> shadows) {
     if (_root != nullptr) {
         clearRootNode();
     }
@@ -118,6 +118,10 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node) {
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
+    for(auto &shadow : shadows) {
+        _worldnode->addChildWithName(shadow, "shadow");
+    }
+    
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
         if (plant != nullptr) {
@@ -302,6 +306,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
 
     std::shared_ptr<Cloud> cloud = Cloud::alloc(cloudpoly, Vec2(x, y));
     cloud->setDebugColor(DYNAMIC_COLOR);
+    cloud->setDebugScene(_debugnode);
     cloud->setName("cloud" + std::to_string(i));
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
@@ -332,7 +337,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
  * @return true if the exit door was successfully loaded
  */
 
-std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos, float sizeLevel){
+std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos){
     Poly2 cloudpoly(CLOUD2, 8);
     SimpleTriangulator triangulator;
     triangulator.set(cloudpoly);

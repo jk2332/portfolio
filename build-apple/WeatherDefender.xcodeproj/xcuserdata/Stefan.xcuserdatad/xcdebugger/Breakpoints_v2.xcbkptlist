@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/Plant.cpp"
-            timestampString = "577402307.6751111"
+            timestampString = "577474435.160797"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "85"
@@ -106,13 +106,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "577402307.675966"
+            timestampString = "577474435.161146"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "375"
-            endingLineNumber = "375"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "363"
+            endingLineNumber = "363"
+            landmarkName = "GameScene::dispose()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -314,7 +314,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/particleShader.cpp"
-            timestampString = "577402307.6771621"
+            timestampString = "577474435.1674089"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "194"
@@ -330,7 +330,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/particleShader.cpp"
-            timestampString = "577402307.677278"
+            timestampString = "577474435.1674989"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "255"
@@ -346,12 +346,124 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "577402307.677374"
+            timestampString = "577474435.167606"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "616"
-            endingLineNumber = "616"
-            landmarkName = "GameScene::update(float dt)"
+            startingLineNumber = "587"
+            endingLineNumber = "587"
+            landmarkName = "GameScene::checkForCombining(Obstacle * ob)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/Cloud.cpp"
+            timestampString = "577474435.168413"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "182"
+            endingLineNumber = "182"
+            landmarkName = "Cloud::setSceneNodeParticles(const std::shared_ptr&lt;cugl::CloudNode&gt;&amp; node, float displacement, std::shared_ptr&lt;Texture&gt; cloudFace, std::shared_ptr&lt;PolygonNode&gt; shadow)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/LevelModel.cpp"
+            timestampString = "577474435.169379"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, std::vector&lt;std::shared_ptr&lt;PolygonNode&gt;&gt; shadows)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LevelModel::setRootNode(std::__1::shared_ptr&lt;cugl::Node&gt; const&amp;, std::__1::vector&lt;std::__1::shared_ptr&lt;cugl::PolygonNode&gt;, std::__1::allocator&lt;std::__1::shared_ptr&lt;cugl::PolygonNode&gt; &gt; &gt;)"
+                  moduleName = "WeatherDefender (Mac)"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Stefan/Desktop/cs_4152/cs4152/source/LevelModel.cpp"
+                  timestampString = "577405554.92202"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "691">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LevelModel::setRootNode(std::__1::shared_ptr&lt;cugl::Node&gt; const&amp;, std::__1::vector&lt;std::__1::shared_ptr&lt;cugl::PolygonNode&gt;, std::__1::allocator&lt;std::__1::shared_ptr&lt;cugl::PolygonNode&gt; &gt; &gt;)"
+                  moduleName = "WeatherDefender (Mac)"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Stefan/Desktop/cs_4152/cs4152/source/LevelModel.cpp"
+                  timestampString = "577405554.926223"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "758">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/LevelModel.cpp"
+            timestampString = "577474435.169516"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, std::vector&lt;std::shared_ptr&lt;PolygonNode&gt;&gt; shadows)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/LevelModel.cpp"
+            timestampString = "577474435.169656"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, std::vector&lt;std::shared_ptr&lt;PolygonNode&gt;&gt; shadows)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/Cloud.cpp"
+            timestampString = "577474435.169773"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
+            landmarkName = "Cloud::setSceneNodeParticles(const std::shared_ptr&lt;cugl::CloudNode&gt;&amp; node, float displacement, std::shared_ptr&lt;Texture&gt; cloudFace, std::shared_ptr&lt;PolygonNode&gt; shadow)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
