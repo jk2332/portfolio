@@ -44,11 +44,7 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->load<Texture>("level select background", "/textures/levelselect-background.png");
-    _assets->load<Texture>("level0button", "/textures/cloud-1.png");
-    _assets->load<Texture>("level1button", "/textures/cloud-3.png");
-    _assets->load<Texture>("level2button", "/textures/cloud-2.png");
-    _assets->load<Texture>("level3button", "/textures/cloud-4.png");
+    _assets->loadDirectory("json/levelselect.json");
     std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
     auto bknode = PolygonNode::allocWithTexture(image);
     bknode->setContentSize(dimen);

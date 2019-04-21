@@ -114,6 +114,9 @@
         },
         "particle": {
             "file":     "textures/particle1.png"
+        },
+        "backToLevelSelectButton": {
+            "file":     "textures/Back.png"
         }
 	},
     "sounds": {

@@ -29,7 +29,7 @@
 #define BASIC_RESTITUTION   0.1f
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
-#define PINCH_OFFSET        2.5
+#define PINCH_OFFSET        2
 #define PINCH_CLOUD_DIST_OFFSET     5.5
 
 /** Color to outline the physics nodes */

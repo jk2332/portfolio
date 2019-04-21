@@ -263,7 +263,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setPosition(offset);
 
     _assets = assets;
-    _assets->load<Texture>("backToLevelSelectButton", "/textures/Back.png");
 
     
     // Create the scene graph
