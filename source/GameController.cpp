@@ -517,15 +517,20 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     if (cind1 == nullptr || cind2 == nullptr) {
         return;
     }
-
     auto c1p = cind1->getPosition();
     auto c2p = cind2->getPosition();
 //    CULog("combine by pinch");
-    
     auto c1p_rad = sqrt(pow(CLOUD_DEFAULT_SIZE.width/2*cind1->getCloudSizeScale(), 2) + pow(CLOUD_DEFAULT_SIZE.height/2*cind1->getCloudSizeScale(), 2));
     auto c2p_rad = sqrt(pow(CLOUD_DEFAULT_SIZE.width/2*cind2->getCloudSizeScale(), 2) + pow(CLOUD_DEFAULT_SIZE.height/2*cind2->getCloudSizeScale(), 2));
-
     if (c1p.distance(c2p) > c1p_rad + c2p_rad + PINCH_OFFSET) return;
+    if (cind1->getCloudSizeScale() >= 5 && cind2->getCloudSizeScale() >= 5) return;
+    
+    Cloud * cloudToGetLarger = cind1;
+    Cloud * cloudToBeDeleted = cind2;
+    if (cind2->getCloudSizeScale() < 5 && cind2->getCloudSizeScale() < cind1->getCloudSizeScale()){
+        cloudToGetLarger = cind2;
+        cloudToBeDeleted = cind1;
+    }
 
     pinchPos.x = pinchPos.x/iosToDesktopScaleX;
     pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
@@ -538,7 +543,8 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
 
     if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
-        cind2->setCloudSizeScale(sqrt(pow(cind1->getCloudSizeScale(), 2) + pow(cind2->getCloudSizeScale(), 2)));
+        
+        cloudToGetLarger->setCloudSizeScale(sqrt(pow(cind1->getCloudSizeScale(), 2) + pow(cind2->getCloudSizeScale(), 2)));
         long toDelete = -1;
         for(auto &ts : _selectors) {
             long touchID = ts.first;
@@ -556,7 +562,7 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
             if (touchIDs_started_outside.count(toDelete)) touchIDs_started_outside.erase(toDelete);
             if (cloudsToSplit.count(toDelete)) cloudsToSplit.erase(toDelete);
         }
-        cind1->markForRemoval();
+        cloudToBeDeleted->markForRemoval();
     }
 }
 
@@ -958,6 +964,10 @@ void GameScene::splitClouds(){
     for (auto &ic : cloudsToSplit){
         // split clouds here
         Cloud * c =(Cloud *)(ic.second);
+        
+        // to small to split
+        if (c->getCloudSizeScale()/sqrt(2) <= 0.5) continue;
+        
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
