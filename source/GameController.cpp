@@ -102,9 +102,6 @@ float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
 int plants[] = { 1, 4, 18, 21, 24};
 //int plants[] = { 9 };
 
-// map<int, int> rainMap = {{1, 20}, {5, 50}, {17, 0}, {21, 0}, {35, 25}, {9, 99}};
-// map<int, int> shadeMap = {{1, 40}, {5, 0}, {17, 40}, {21, 0}, {35, 55}, {9, 0}};
-
 /** The initial position of the ragdoll head */
 int ticks = 0;
 long click1 = -1;
@@ -692,40 +689,6 @@ void GameScene::update(float dt) {
            plant->updateState();
        }
        int st = plant->getState();
-        
-
-    //    bool debugPlantColor = false;
-//
-        // std::string childName = plant->getName();
-    //    if (st == noNeed) {
-    //        if (debugPlantColor) {
-    //            CULog("no need");
-    //        }
-    //        plantNode->getChildByName(childName)->setColor(Color4::WHITE);
-    //    }
-    //    if (st == needRain){
-    //        if (debugPlantColor) {
-    //            CULog("need rain");
-    //        }
-    //        plantNode->getChildByName(childName)->setColor(Color4(0, 0, 255));
-    //    }
-    //    else if (st == needSun){
-    //        if (debugPlantColor) {
-    //            CULog("need sun");
-    //        }
-    //        plantNode->getChildByName(childName)->setColor(Color4(255, 165, 0));
-    //    }
-    //    else if (st == needShade) {
-    //        if (debugPlantColor) {
-    //            CULog("need shade");
-    //        }
-    //        plantNode->getChildByName(childName)->setColor(Color4(255, 0, 0));
-    //    }
-    //    else if (st == dead){
-    //        if (debugPlantColor) {
-    //            CULog("dead");
-    //        }
-    //    }
    }
 
     if (ticks % 50 == 0 && ticks > 50) {

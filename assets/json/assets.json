@@ -79,6 +79,12 @@
         "progressbar": {
             "file":     "textures/progressbar.png"
         },
+        "bar": {
+            "file":     "textures/bar.png"
+        },
+        "barcolor": {
+            "file":     "textures/barcolor.png"
+        },
         "sign": {
             "file":     "textures/woodboard.png"
         },

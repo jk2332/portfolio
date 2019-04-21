@@ -126,12 +126,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
         i++;
     }
 
-    _bar = ProgressBar::alloc(Size(150.0f, 30.0f));
-
-    _bar->setPosition(Vec2(850.0f, 525.0f));
-
-    _worldnode->addChildWithName(_bar, "bar");
-
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
         if (plant != nullptr) {
@@ -157,18 +151,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     _winnode->setVisible(false);
     _worldnode->addChild(_winnode, 7);
 
-    // auto progressBar = _assets->get<Texture>("progressbar");
-    // auto w = progressBar->getWidth();
-    // auto h = progressBar->getHeight();
-    // auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
-    // auto foreground = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
-    // _bar = ProgressBar::alloc(background, foreground);
+    auto background = _assets->get<Texture>("bar");
+    auto foreground = _assets->get<Texture>("barcolor");
+    _bar = ProgressBar::alloc(background, foreground);
+    _bar->setPosition(Vec2(850.0f, 525.0f));
 
-    // auto background = progressBar->getSubTexture(0/w, (float)400/(float)w, (float)5/(float)h, (float)35/(float)h);
-    // auto foreground = progressBar->getSubTexture(16/w, (float)384/(float)w, (float)45/(float)h, (float)75/(float)h);
-    // auto leftcap = progressBar->getSubTexture(0/w, (float)16/(float)w, (float)45/(float)h, (float)75/(float)h);
-    // auto rightcap = progressBar->getSubTexture(384/w, (float)400/(float)w, (float)45/(float)h, (float)75/(float)h);
-    // _bar = ProgressBar::allocWithCaps(background, foreground, leftcap, rightcap);
+    _worldnode->addChildWithName(_bar, "bar");
 }
 
 /**
@@ -497,10 +485,27 @@ Color4 LevelModel::parseColor(std::string name) {
 }
 
 void LevelModel::update(int ticks) {
+    if (_over) {
+        return;
+    }
+
+    bool plantsDead = true;
+    for (auto &plant : _plants) {
+        plantsDead = plantsDead && plant->getState() == dead;
+    }
+    if (plantsDead) {
+        _over = true;
+        _winnode->setText("Game Over" + std::to_string(getPlantScore()));
+        _winnode->setVisible(true);
+    }
+
+
     if (ticks >= _time) {
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
+        _over = true;
         ticks = _time;
+        return;
     }
     
     float progress = (float)ticks/(float)_time;
