@@ -84,13 +84,15 @@ int max_cloud_id;
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
 //TODO::FIX WALLS!
-//float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-//    1.0f,  7.1f, 16.0f,  7.1f, 16.0f,  7.0f,
-//    0.0f,  7.0f,  0.0f, 18.0f };
-//float WALL2[] = { 32.0f, 18.0f, 32.0f,  7.0f, 16.0f,  7.0f,
-//    16.0f,  7.1f, 31.0f,  7.1f, 31.0f, 17.0f,
-//    16.0f, 17.0f, 16.0f, 18.0f };
+//float WALL1[] = { 32.0f,9.0f, 32.0f,8.0f,  0.0f,8.0f, 0.0f,9.0f };
+//
+//float WALL2[] = { 32.0f,7.0f, 32.0f,6.0f,  0.0f,6.0f, 0.0f,7.0f };
+//
+//float WALL3[] = { 31.0f,17.0f, 31.0f,0.0f,  32.0f,0.0f, 32.0f,17.0f };
+//
+//float WALL4[] = { -1.0f,18.0f, -1.0f,0.0f,  0.0f,0.0f, 0.0f,18.0f };
 
+//Default Walls
 float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
     1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
     0.f,  0.0f,  0.0f, 18.0f };
@@ -411,6 +413,7 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall1 *= _scale;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj1,sprite,1);  // All walls share the same texture
     
 #pragma mark : Wall polygon 2
@@ -419,21 +422,68 @@ void GameScene::populate() {
     triangulator.calculate();
     wall2.setIndices(triangulator.getTriangulation());
     wall2.setType(Poly2::Type::SOLID);
-    
+
     std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
     wallobj2->setDebugColor(STATIC_COLOR);
     wallobj2->setName(wname);
-    
+
     // Set the physics attributes
     wallobj2->setBodyType(b2_staticBody);
     wallobj2->setDensity(BASIC_DENSITY);
     wallobj2->setFriction(BASIC_FRICTION);
     wallobj2->setRestitution(BASIC_RESTITUTION);
-    
+
     // Add the scene graph nodes to this object
     wall2 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall2);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj2,sprite,1);  // All walls share the same texture
+
+//#pragma mark : Wall polygon 3
+//    Poly2 wall3(WALL3,8);
+//    triangulator.set(wall3);
+//    triangulator.calculate();
+//    wall3.setIndices(triangulator.getTriangulation());
+//    wall3.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall2);
+//    wallobj3->setDebugColor(STATIC_COLOR);
+//    wallobj3->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj3->setBodyType(b2_staticBody);
+//    wallobj3->setDensity(BASIC_DENSITY);
+//    wallobj3->setFriction(BASIC_FRICTION);
+//    wallobj3->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall3 *= _scale;
+//    sprite = PolygonNode::allocWithTexture(image,wall3);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj3,sprite,1);  // All walls share the same texture
+//
+//#pragma mark : Wall polygon 4
+//    Poly2 wall4(WALL4,8);
+//    triangulator.set(wall4);
+//    triangulator.calculate();
+//    wall4.setIndices(triangulator.getTriangulation());
+//    wall4.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall2);
+//    wallobj4->setDebugColor(STATIC_COLOR);
+//    wallobj4->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj4->setBodyType(b2_staticBody);
+//    wallobj4->setDensity(BASIC_DENSITY);
+//    wallobj4->setFriction(BASIC_FRICTION);
+//    wallobj4->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall4 *= _scale;
+//    sprite = PolygonNode::allocWithTexture(image,wall4);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj4,sprite,1);  // All walls share the same texture
     
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("smallRain"));
     // _rainNode->setBlendFunc(GL_ONE, GL_ONE);
