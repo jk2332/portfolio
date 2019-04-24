@@ -15,6 +15,7 @@
 #ifndef __LOADING_CONTROLLER_H__
 #define __LOADING_CONTROLLER_H__
 #include <cugl/cugl.h>
+#include "LevelModel.hpp"
 
 #pragma mark -
 #pragma mark GameController

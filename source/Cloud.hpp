@@ -213,6 +213,7 @@ public:
     
     bool isRainCloud(){return _isRainCloud;}
     void setTargetPos(Vec2 pos) {_targetPos = pos;}
+    Vec2* getTargetPos() {return &_targetPos;}
     
 #pragma mark -
 #pragma mark Animation

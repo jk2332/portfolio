@@ -120,11 +120,11 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
 
-    int i = 0;
-    for(auto &shadow : shadows) {
-        _worldnode->addChildWithName(shadow, "shadow" + std::to_string(i));
-        i++;
-    }
+//    int i = 0;
+//    for(auto &shadow : shadows) {
+//        _worldnode->addChildWithName(shadow, "shadow" + std::to_string(i));
+//        i++;
+//    }
 
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
@@ -327,8 +327,9 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 
-    cloud->setLinearDamping(0.7f);
-    cloud->setDensity(3.0f);
+    cloud->setLinearDamping(0.1f);
+    cloud->setDensity(0.1f);
+    cloud->setMass(0.1f);
     
     if (success) {
       _cloud.push_back(cloud);
@@ -366,8 +367,9 @@ std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos){
     cloud->setScale(_cscale);
     cloud->setTextureKey(cloud_texture_key);
     
-    cloud->setLinearDamping(0.7f);
-    cloud->setDensity(3.0f);
+    cloud->setLinearDamping(0.1f);
+    cloud->setDensity(0.1f);
+    cloud->setMass(0.1f);
     
     return cloud;
 }

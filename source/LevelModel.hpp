@@ -204,6 +204,7 @@ public:
     std::shared_ptr<Node> getDebugNode() {return _debugnode;}
     
     std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
+    void setClouds(std::vector<std::shared_ptr<Cloud>> clouds) { _cloud = clouds; }
     
     std::shared_ptr<Node> getWorldNode() { return _worldnode; };
 
@@ -261,7 +262,6 @@ public:
      */
     const Vec2& getDrawScale() const { return _scale; }
     std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos);
-    const float getCloudDrawScale() const {return _cscale;}
     
     /**
      * Sets the drawing scale for this game level

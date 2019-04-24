@@ -45,10 +45,15 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     } else if (!Scene::init(dimen)) {
         return false;
     }
-    
+    _active = true;
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/loading.json");
+    _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
+    _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
+    _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
+    _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
+    
     auto layer = assets->get<Node>("load");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
@@ -94,7 +99,7 @@ void LoadingScene::update(float progress) {
         if (_progress >= 1) {
             _progress = 1.0f;
             _button->setVisible(true);
-            _button->activate(1);
+            _button->activate(0);
         }
         _bar->setProgress(_progress);
     }

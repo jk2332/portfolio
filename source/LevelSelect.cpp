@@ -41,6 +41,7 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     } else if (!Scene::init(dimen)) {
         return false;
     }
+    _active=true;
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
@@ -59,11 +60,13 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         std::shared_ptr<Button> button = Button::alloc(button_node);
         button->setPosition(BUTTON_X[i], BUTTON_Y[i]);
         button->setListener([=](const std::string& name, bool down) {
-            this->_active = down;
+            if (this->_active){
+                this->_active = down;
+            }
         });
         button->setContentSize(dimen/10);
         button->setVisible(true);
-        button->activate(i);
+        button->activate(i + 1);
         _levelButtons.push_back(button);
         addChild(button);
     }
@@ -84,7 +87,7 @@ void LevelSelect::dispose() {
     }
     _levelButtons.clear();
     _assets = nullptr;
-    CULog("finished disposing");
+    _selectedLevel = -1;
 }
 
 
@@ -109,13 +112,12 @@ void LevelSelect::update(float progress) {
     //    }
     //    _selectedLevel = -1;
     //    _selected = false;
-    CULog("level select updating");
     for (int i =0; i < _levelButtons.size(); i++){
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i);
         if (_levelButtons.at(i)->isDown()) {
+            CULog("selected level: %i", i);
             _selectedLevel = i;
-            break;
         }
     }
 }

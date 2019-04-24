@@ -53,15 +53,14 @@ protected:
 
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
+    Size CLOUD_DEFAULT_SIZE = Size(5.1, 2.6);
+    Size CLOUDFACE_DEFAULT_SIZE = Size(25, 20);
+    Size CLOUD_SHADOW_DEFAULT_SIZE = Size(171, 43);
+    
     RagdollInput _input;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
-//    std::shared_ptr<WeatherController> _weather;
-    std::shared_ptr<ResourceController> _resource;
-    std::shared_ptr<PestController> _pest;
     std::shared_ptr<cugl::Button> _levelSelectButton;
-    bool _backToLevelSelect;
-    std::vector<std::shared_ptr<Obstacle>> _toBeRemoved;
     std::vector<std::shared_ptr<Obstacle>> _rainDrops;
     std::shared_ptr<ParticleNode> _rainNode;
     std::shared_ptr<cugl::FreeList<Particle>> _memory;
@@ -73,6 +72,8 @@ protected:
     
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
+    int _max_cloud_id = 0;
+
 
 
 
@@ -96,8 +97,6 @@ protected:
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, Obstacle *> _selectors;
 
-    /** The node referencing the crosshair */
-    std::shared_ptr<cugl::PolygonNode> _crosshair;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -286,11 +285,11 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
-    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2& pinchpos);
+    void combineByPinch(Cloud * cind1, Cloud * cind2);
     void checkForCombining(Obstacle * ob);
-    void checkForThunder(Obstacle * ob);
-    bool backToLevelSelect() {return _backToLevelSelect;}
-    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
+    void checkForRain(Obstacle * ob);
+//    bool backToLevelSelect() {return _backToLevelSelect;}
+//    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
 
     /**
      * Handles any modifications necessary before collision resolution

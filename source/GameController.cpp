@@ -49,10 +49,7 @@ using namespace cugl;
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 #define SWIPE_VERT_OFFSET   3.5
-#define SWIPE_HORI_OFFSET   3
 #define GES_COOLDOWN      20
-//#define PINCH_COOLDOWN      30
-//#define DOUBLETAP_COOLDOWN       30
 #define SPLIT_COOLDOWN      30
 
 //long swipeCoolDown = -1;
@@ -61,18 +58,13 @@ using namespace cugl;
 #define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
-//long doubleTapCoolDown = -1;
 long gesCoolDown = -1;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
 Vec2 pinchPos = Vec2::ZERO;
 std::map<long, Obstacle*> cloudsToSplit_temp;
 std::map<long, Obstacle*> cloudsToSplit;
-Size CLOUD_DEFAULT_SIZE;
-Size CLOUDFACE_DEFAULT_SIZE = Size(25, 20);
-Size CLOUD_SHADOW_DEFAULT_SIZE = Size(171, 43);
-
-int max_cloud_id;
+std::map<long, Vec2> touchIDs_started_outside;
 
 
 // Since these appear only once, we do not care about the magic numbers.
@@ -106,19 +98,12 @@ int plants[] = { 1, 4, 18, 21, 24};
 int ticks = 0;
 long click1 = -1;
 long click2 = -1;
-long click3 = -1;
 Obstacle * clicked_cloud = nullptr;
 
 long temp = 01;
-std::unordered_set<int> raining_clouds;
 long rainingTicks = 0l;
-long shadeCoolDown = 50l;
 bool pinched = false;
-long pinchTicks = -1;
-bool pinchedWhenContact = false;
-std::map<long, Vec2> touchIDs_started_outside;
 std::vector<Obstacle *> rainDrops;
-//bool processedGes = false;
 std::shared_ptr<Plant> currentPlant;
 
 #pragma mark -
@@ -131,8 +116,7 @@ std::shared_ptr<Plant> currentPlant;
 /** The restitution for all of (external) objects */
 #define BASIC_RESTITUTION   0.1f
 /** The new lessened gravity for this world */
-#define WATER_GRAVITY   1.0f
-
+#define WATER_GRAVITY   0.1f
 
 #pragma mark -
 #pragma mark Constructors
@@ -211,6 +195,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
+    
 
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimen = computeActiveSize();
@@ -220,7 +205,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     
-
     _level = assets->get<LevelModel>(levelId);
     if (_level == nullptr) {
         CULog("Fail!");
@@ -229,12 +213,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // Start up the input handler
     _input.init();
+
     _clouds = _level->getClouds();
     _world = ObstacleWorld::alloc(rect,gravity);
-
-    
-    max_cloud_id = _clouds.size();
-    CLOUD_DEFAULT_SIZE = _clouds[0]->getSize();
+    _max_cloud_id = _clouds.size();
 
     // Create the world and attach the listeners.
     
@@ -261,7 +243,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setPosition(offset);
 
     _assets = assets;
-
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -283,6 +264,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
     
+    
 
     std::vector<std::shared_ptr<Texture>> textures;
     textures.push_back(_assets->get<Texture>("tile"));
@@ -293,10 +275,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
-//     //Create selector
-//    _selector = ObstacleSelector::alloc(_world);
-//    _selector->setDebugColor(DYNAMIC_COLOR);
-//    _selector->setDebugScene(_debugnode);
     
     //Cloud Shadows
     shared_ptr<Texture> shadow = _assets->get<Texture>("shadow");
@@ -318,6 +296,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
+
     return true;
 }
 
@@ -327,8 +306,23 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 void GameScene::dispose() {
     if (_active) {
         _input.dispose();
+        _level = nullptr;
+        _clouds.clear();
+        _plants.clear();
+        _rainDrops.clear();
+        _memory = nullptr;
+        _particles.clear();
+        _shadows.clear();
+        _board->dispose();
+        rainDrops.clear();
+        currentPlant = nullptr;
         _world = nullptr;
         _selectors.clear();
+        cloudsToSplit.clear();
+        cloudsToSplit_temp.clear();
+        touchIDs_started_outside.clear();
+        _levelSelectButton->deactivate();
+        _levelSelectButton = nullptr;
         _worldnode = nullptr;
         _levelworldnode = nullptr;
         _rootnode = nullptr;
@@ -349,13 +343,10 @@ void GameScene::dispose() {
  * This method disposes of the world and creates a new one.
  */
 void GameScene::reset() {
-//    _selector->deselect();
     for (auto &s : _selectors){
         s.second = nullptr;
     }
     _world->clear();
-//    _cloud = nullptr;
-//    _selector->setDebugScene(nullptr);
     for (auto &s : _selectors){
         if (s.second){
             s.second->setDebugScene(nullptr);
@@ -366,11 +357,6 @@ void GameScene::reset() {
     _rootnode->removeAllChildren();
     _levelworldnode->removeAllChildren();
 
-    // Add the selector back to the debug node
-//    _selector->setDebugScene(_debugnode);
-//    for (auto &s : _selectors){
-//        s.second->setDebugScene(_debugnode);
-//    }
 
     setComplete(false);
     populate();
@@ -394,24 +380,24 @@ void GameScene::populate() {
     std::shared_ptr<Texture> image  = _assets->get<Texture>("earth");
     std::string wname = "wall";
     
-    // Create the polygon outline
+//     Create the polygon outline
     Poly2 wall1(WALL1,16);
     SimpleTriangulator triangulator;
     triangulator.set(wall1);
     triangulator.calculate();
     wall1.setIndices(triangulator.getTriangulation());
     wall1.setType(Poly2::Type::SOLID);
-    
+
     std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
     wallobj1->setDebugColor(STATIC_COLOR);
     wallobj1->setName(wname);
-    
+
     // Set the physics attributes
     wallobj1->setBodyType(b2_staticBody);
     wallobj1->setDensity(BASIC_DENSITY);
     wallobj1->setFriction(BASIC_FRICTION);
     wallobj1->setRestitution(BASIC_RESTITUTION);
-    
+
     // Add the scene graph nodes to this object
     wall1 *= _scale;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
@@ -504,7 +490,8 @@ void GameScene::populate() {
     _levelSelectButton = Button::alloc(levelSelectButtonNode);
     _levelSelectButton->setPosition(0, 0);
     _levelSelectButton->setListener([=](const std::string& name, bool down) {
-        this->_active = down;
+        this->_active = !down;
+//        this->_backToLevelSelect = down;
     });
     _levelSelectButton->setContentSize(dimen/12);
     _levelSelectButton->setVisible(true);
@@ -514,7 +501,7 @@ void GameScene::populate() {
     int i = 0;
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
-        cloud->setScale(_level->getCloudDrawScale());
+        cloud->setScale(_scale);
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
         cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows[i]);
@@ -561,16 +548,19 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const s
 #pragma mark -
 #pragma mark Physics Handling
 
-void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2& pinchPos){
+void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2){
     if (cind1 == nullptr || cind2 == nullptr) {
         return;
     }
     auto c1p = cind1->getPosition();
     auto c2p = cind2->getPosition();
-//    CULog("combine by pinch");
+    CULog("combine by pinch");
     auto c1p_rad = sqrt(pow(CLOUD_DEFAULT_SIZE.width/2*cind1->getCloudSizeScale(), 2) + pow(CLOUD_DEFAULT_SIZE.height/2*cind1->getCloudSizeScale(), 2));
     auto c2p_rad = sqrt(pow(CLOUD_DEFAULT_SIZE.width/2*cind2->getCloudSizeScale(), 2) + pow(CLOUD_DEFAULT_SIZE.height/2*cind2->getCloudSizeScale(), 2));
-    if (c1p.distance(c2p) > c1p_rad + c2p_rad + PINCH_OFFSET) return;
+    
+    float offset = PINCH_OFFSET/_scale;
+    
+    if (c1p.distance(c2p) > c1p_rad + c2p_rad + offset) return;
     if (cind1->getCloudSizeScale() >= 5 && cind2->getCloudSizeScale() >= 5) return;
     
     Cloud * cloudToGetLarger = cind1;
@@ -580,16 +570,10 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2& pinchPos){
         cloudToBeDeleted = cind1;
     }
 
-    Vec2 pos = _worldnode->screenToNodeCoords(pinchPos);
-    pos /= _scale;
-
-    // check that pinch center is in between collided clouds
-    float x_left_gap = pos.x - min(c1p.x, c2p.x);
-    float x_right_gap = max(c1p.x, c2p.x) - pos.x;
-    float y_bottom_gap = pos.y - min(c1p.y, c2p.y);
-    float y_top_gap = max(c1p.y, c2p.y) - pos.y;
-
-    if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
+    Vec2 pinchpos = _worldnode->screenToNodeCoords(pinchPos);
+    pinchpos /= _scale;
+    
+    if (pinchpos.distance(c1p) <= c1p_rad + offset && pinchpos.distance(c2p) <= c2p_rad + offset){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
         
         cloudToGetLarger->setCloudSizeScale(sqrt(pow(cind1->getCloudSizeScale(), 2) + pow(cind2->getCloudSizeScale(), 2)));
@@ -618,7 +602,6 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2& pinchPos){
 
 void GameScene::checkForCombining(Obstacle * ob){
 //    CULog("check for combining");
-//    std::cout << ob << endl;
     if (pinched && ob){
         if (pinchedCloud1 == nullptr) {
             pinchedCloud1 = (Cloud *) ob;
@@ -627,7 +610,7 @@ void GameScene::checkForCombining(Obstacle * ob){
             pinchedCloud2 = (Cloud *) ob;
         }
         if (pinchedCloud2 != nullptr && pinchedCloud1 != nullptr) {
-            combineByPinch(pinchedCloud1, pinchedCloud2, pinchPos);
+            combineByPinch(pinchedCloud1, pinchedCloud2);
             pinched = false;
             pinchedCloud1 = nullptr;
             pinchedCloud2 = nullptr;
@@ -635,7 +618,7 @@ void GameScene::checkForCombining(Obstacle * ob){
     }
 }
 
-void GameScene::checkForThunder(Obstacle * o){
+void GameScene::checkForRain(Obstacle * o){
     if (o && ((Cloud *) o)->isRainCloud()) {
         if (click1 == -1){
             click1 = ticks;
@@ -646,15 +629,11 @@ void GameScene::checkForThunder(Obstacle * o){
             long gap = click2 - click1;
             if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
                 gesCoolDown = ticks;
-//                makeRain(o);
-                CULog("make thunder");
+                makeRain(o);
             }
             click1 = -1;
             click2 = -1;
             clicked_cloud = nullptr;
-        }
-        else if (click3 == -1){
-            
         }
     }
 }
@@ -691,7 +670,6 @@ void GameScene::update(float dt) {
     
 //    CULog("after updating input");
 
-//    processedGes = false;
 
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -700,9 +678,6 @@ void GameScene::update(float dt) {
         CULog("Shutting down");
         Application::get()->quit();
     }
-    if (_levelSelectButton->isDown()){
-        _backToLevelSelect = true;
-    }
     
     // process combining
     if (_input.didPinchSelect()){
@@ -710,8 +685,19 @@ void GameScene::update(float dt) {
             CULog("pinched");
             gesCoolDown = ticks;
             pinched = true;
+//            if (!_input.isShortPinch()) pinched = true;
             pinchPos = _input.getPinchSelection();
         }
+    }
+    
+//    if (_levelSelectButton->isDown()){
+//        _backToLevelSelect = true;
+//    }
+//    else {
+//        _backToLevelSelect = false;
+//    }
+    if (_levelSelectButton->isDown()){
+        CULog("gameplay button pressed");
     }
     
     bool shaded;
@@ -778,8 +764,10 @@ void GameScene::update(float dt) {
        plant->update(dt);
    }
     
+    
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
+    
     for (auto const& touchID : IDs) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
@@ -791,6 +779,9 @@ void GameScene::update(float dt) {
                     touchIDs_started_outside.insert({touchID, pos});
                 }
                 checkForCombining(ob);
+                if (ob){
+                    ((Cloud *) ob)->setTargetPos(pos);
+                }
                 _selectors.insert({touchID, ob});
             }
             else{
@@ -815,13 +806,16 @@ void GameScene::update(float dt) {
                         }
                     }
                     if (!flag){
-                        ob->setPosition(pos);
-                        _levelworldnode->getChildByName(ob->getName())->setPosition(pos);
+                        ((Cloud *) ob)->setTargetPos(pos);
+                    }
+                    else {
+                        ((Cloud *) ob)->setTargetPos(((Cloud *) ob)->getPosition());
                     }
                 }
             }
         }
     }
+    
     
     selected = _input.didSelect();
     for (auto const& touchID : IDs) {
@@ -832,20 +826,23 @@ void GameScene::update(float dt) {
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
                 if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
+                    CULog("inserting");
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
                 cloudsToSplit_temp.erase(touchID);
             }
             if (_selectors.count(touchID)){
-                if (_selectors.at(touchID) != nullptr){
-                    auto o = _selectors.at(touchID);
+                auto o = _selectors.at(touchID);
+                if (o != nullptr){
                     if (ticks - gesCoolDown >= GES_COOLDOWN){
-                        checkForThunder(o);
+                        gesCoolDown = ticks;
+                        checkForRain(o);
                     }
                     if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
                         gesCoolDown = ticks;
-                        makeRain(o);
+                        CULog("make thunder");
                     }
+                    ((Cloud *) o)->setTargetPos(((Cloud *) o)->getPosition());
                 }
                 _selectors.at(touchID) = nullptr;
                 _selectors.erase(touchID);
@@ -856,7 +853,7 @@ void GameScene::update(float dt) {
             _input.removeFromTouchID(touchID);
         }
     }
-
+    
     
     if (ticks % 80 == 0) {
         for(auto it = _pD.begin(); it != _pD.end(); ++it) {
@@ -900,6 +897,10 @@ void GameScene::update(float dt) {
             b2PolygonShape * polyshape = (b2PolygonShape *) shape;
             polyshape->SetAsBox(c->getSize().width/2, c->getSize().height/2);
             c->getBody()->CreateFixture(polyshape, 3);
+            
+            auto targetPos = c->getTargetPos();
+            auto cloudPos = c->getPosition();
+            c->setLinearVelocity(5*(targetPos->x - cloudPos.x), 5*(targetPos->y - cloudPos.y));
         }
     }
     
@@ -984,14 +985,14 @@ void GameScene::splitClouds(){
         Cloud * c =(Cloud *)(ic.second);
         
         // to small to split
-        if (c->getCloudSizeScale()/sqrt(2) <= 0.5) continue;
+        if (c->getCloudSizeScale()/sqrt(2) <= 0.6) continue;
         
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
-        max_cloud_id++;
-        auto new_pos = Vec2(cloudPos.x-1.5, cloudPos.y);
-        std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(max_cloud_id, new_pos);
+        _max_cloud_id++;
+        auto new_pos = Vec2(cloudPos.x - c->getWidth()/2, cloudPos.y);
+        std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
@@ -999,7 +1000,7 @@ void GameScene::splitClouds(){
         cloudNode->setPosition(new_pos);
         shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
         _shadows.push_back(new_shadow);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(max_cloud_id), -1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(_max_cloud_id), -1);
         _level->getWorldNode()->sortZOrder();
         new_cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows.back());
         new_cloud->setDebugColor(DYNAMIC_COLOR);
