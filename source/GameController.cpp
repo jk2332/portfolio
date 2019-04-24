@@ -267,6 +267,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
     _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
+    _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
     
@@ -1023,29 +1024,6 @@ void GameScene::splitClouds(){
  * @param  contact  The two bodies that collided
  */
 void GameScene::beginContact(b2Contact* contact) {
-//    CULog("begin contact");
-
-//    b2Body* body1 = contact->GetFixtureA()->GetBody();
-//    b2Body* body2 = contact->GetFixtureB()->GetBody();
-//
-//    // If we hit the "win" door, we are done
-//    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
-//    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
-//
-//    if (b1->isBullet() && b2->isBullet()) return;
-////    if (b1->isBullet() && b2->isBullet()) return;
-//    if (b1->isBullet() && !b1->isRemoved()){
-//        CULog("bullet in contact");
-//        ((BoxObstacle *) b1)->markRemoved(true);
-//        return;
-//    }
-//
-//    if (b2->isBullet() && !b2->isRemoved()){
-//        CULog("bullet in contact");
-//        ((BoxObstacle *) b2)->markRemoved(true);
-//        return;
-//    }
-
     Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
     if (cloud1 != nullptr && cloud1->getName().empty()) {
         cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
