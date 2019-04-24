@@ -110,11 +110,12 @@ void RagdollInput::dispose() {
  * @return true if the controller was initialized successfully
  */
 bool RagdollInput::init() {
-    for(std::vector<int>::size_type i = 0; i != _timestamps.size(); i++) {
-        _timestamps.at(i).mark();
+    for (auto & ts: _timestamps){
+        ts.second.mark();
     }
     _pinchTimestamp.mark();
     bool success = true;
+    CULog("after setting timestamps");
     
 #ifndef CU_TOUCH_SCREEN
     success = Input::activate<Keyboard>();
@@ -259,12 +260,15 @@ void RagdollInput::mousePressBeganCB(const cugl::MouseEvent& event, Uint8 clicks
 }
 void RagdollInput::pinchBeganCB(const cugl::PinchEvent& event, bool focus){
     _pinchTimestamp.mark();
-    if (event.fingers == 2){
+//    _shortPinch = false;
+    _pinched = false;
+    if (event.fingers == 2 && event.delta < 3){
         _pinched = true;
         if (!_pinchSelect){
             _dpinch = event.position;
+//            _dpinchStart = event.position;
         }
-        _pinchSelect = true;
+//        _pinchSelect = true;
     }
 }
 
@@ -274,14 +278,23 @@ void RagdollInput::pinchEndCB(const cugl::PinchEvent& event, bool focus){
     //    CULog("dpinch x: %f", _dpinch.x/41.6875);
     //    CULog("dpinch y: %f", 18 - _dpinch.y/41.666667);
 //    CULog("distance pinch %i", event.pinch);
-
     _pinchSelect = false;
     _pinched = false;
     
 }
 
 void RagdollInput::pinchChangeCB(const cugl::PinchEvent& event, bool focus){
-    _dpinch = event.position;
+    if (event.delta >= 3){
+        _pinchSelect = false;
+        _pinched = false;
+    }
+    else if (_pinched){
+        if (abs(event.delta) > 4){
+            _pinchSelect = true;
+        }
+        _dpinch = event.position;
+    }
+    
 }
 
 /**

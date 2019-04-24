@@ -45,7 +45,7 @@ void WeatherDefenderApp::onStartup() {
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<Node>(SceneLoader::alloc()->getHook());
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
-
+    
     // Create a "loading" screen
     _loaded = false;
     _loading.init(_assets);
@@ -57,7 +57,7 @@ void WeatherDefenderApp::onStartup() {
     _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
     _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
     _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
-
+    
     CULogGLError();
     glGenVertexArrays(1, &VAO);
     CULogGLError();
@@ -144,28 +144,31 @@ void WeatherDefenderApp::onResume() {
 void WeatherDefenderApp::update(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
+        
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
         _levelSelect.init(_assets);
         _loaded = true;
+        
     } else if (!_levelselected && _levelSelect.isActive()){
         _levelSelect.update(0.01f);
+        
     } else if (!_levelselected){
+        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
         _levelSelect.dispose();
         CULogGLError();
-        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
-        std::cout << levelId << endl;
+        assert (levelId != "level0");
         _gameplay.init(_assets, levelId);
         _levelselected = true;
-    } else {
+    } else if (_levelselected && _loaded && _gameplay.isActive()){
         _gameplay.update(timestep);
-//        if (_gameplay.backToLevelSelect()){
-//            _gameplay.setBackToLevelSelect(false);
-//            _gameplay.dispose();
-//            _levelSelect.init(_assets);
-//            _levelselected = false;
-//        }
+    }
+    else if (_levelselected && _loaded){
+//        _gameplay.setBackToLevelSelect(false);
+        _gameplay.dispose();
+        _levelSelect.init(_assets);
+        _levelselected = false;
     }
 }
 

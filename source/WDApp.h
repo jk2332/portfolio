@@ -34,13 +34,13 @@ protected:
     /** The controller for the loading screen */
     LoadingScene _loading;
     LevelSelect _levelSelect;
-
+    
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     bool _levelselected;
-
-
+    
+    
 public:
 #pragma mark Constructors
     /**
@@ -64,7 +64,7 @@ public:
     ~WeatherDefenderApp() { }
     
 #pragma mark Application State
-
+    
     /**
      * The method called after OpenGL is initialized, but before running the application.
      *
