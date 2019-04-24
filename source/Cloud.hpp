@@ -60,6 +60,7 @@ protected:
     
     /** The scene graph node for the Cloud. Contains the cloud's shadow. */
     std::shared_ptr<PolygonNode> _shadowNode;
+    cugl::Vec2 _targetPos;
     
     std::shared_ptr<Node> _node;
 
@@ -211,6 +212,7 @@ public:
     }
     
     bool isRainCloud(){return _isRainCloud;}
+    void setTargetPos(Vec2 pos) {_targetPos = pos;}
     
 #pragma mark -
 #pragma mark Animation

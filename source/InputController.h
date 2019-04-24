@@ -196,7 +196,16 @@ public:
     bool longPressed() {return _longPress;}
     
     std::unordered_set<long> getTouchIDs() {return _touchIDs;}
-    void removeFromTouchID(long touchID) {if (_touchIDs.count(touchID)) _touchIDs.erase(touchID);}
+    
+    void removeFromTouchID(long touchID) {
+        if (_touchIDs.count(touchID)){
+            _touchIDs.erase(touchID);
+        }
+        if (_dtouches.count(touchID)){
+            _dtouches.erase(touchID);
+        }
+        
+    }
     
     /**
      * Returns the location (in world space) of the selection.

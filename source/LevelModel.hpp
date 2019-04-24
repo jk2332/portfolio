@@ -74,6 +74,8 @@ protected:
 
     std::shared_ptr<cugl::ProgressBar>  _bar;
 
+    bool _over;
+
     // float _scale;
     
     /** The AssetManager for the game mode */
