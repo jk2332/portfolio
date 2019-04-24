@@ -94,7 +94,7 @@ protected:
     std::vector<std::shared_ptr<Cloud>> _clouds;
 
 	/** Selector to allow mouse control of the ragdoll */
-    std::map<long, std::shared_ptr<cugl::ObstacleSelector>> _selectors;
+    std::map<long, Obstacle *> _selectors;
 
     /** The node referencing the crosshair */
     std::shared_ptr<cugl::PolygonNode> _crosshair;
@@ -141,6 +141,7 @@ protected:
     
     void splitClouds();
     void makeRain(Obstacle * cloud);
+    Obstacle * getSelectedObstacle(Vec2 pos, long touchID);
     void processRemoval();
     /**
      * Returns the active screen size of this scene.
@@ -285,7 +286,7 @@ public:
      */
     void beginContact(b2Contact* contact);
     void endContact(b2Contact* contact);
-    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2 pinchpos);
+    void combineByPinch(Cloud * cind1, Cloud * cind2, Vec2& pinchpos);
     void checkForCombining(Obstacle * ob);
     void checkForThunder(Obstacle * ob);
     bool backToLevelSelect() {return _backToLevelSelect;}

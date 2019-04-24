@@ -141,7 +141,7 @@ bool ObstacleSelector::select() {
     std::function<bool(b2Fixture* fixture)> callback = [this](b2Fixture* fixture) {
         return onQuery(fixture);
     };
-    
+
     Rect pointer(_position.x-_size.width/2.0f, _position.y-_size.height/2.0f,
                  _size.width,_size.height);
     _controller->queryAABB(callback,pointer);
@@ -153,7 +153,7 @@ bool ObstacleSelector::select() {
         _jointDef.target.Set(_position.x,_position.y);
         _mouseJoint = (b2MouseJoint*)_controller->getWorld()->CreateJoint(&_jointDef);
         body->SetAwake(true);
-        
+
         Obstacle* obs = getObstacle();
         if (obs) {
             obs->setListener([this](Obstacle* obs) { updateTarget(obs); } );
@@ -161,7 +161,6 @@ bool ObstacleSelector::select() {
     } else {
         updateTarget(nullptr);
     }
-    
     return _selection != nullptr;
 }
 
@@ -177,7 +176,7 @@ void ObstacleSelector::deselect() {
             obs->setListener(nullptr);
         }
         updateTarget(nullptr);
-        _controller->getWorld()->DestroyJoint(_mouseJoint);
+//        _controller->getWorld()->DestroyJoint(_mouseJoint);
         _selection = nullptr;
         _mouseJoint = nullptr;
     }

@@ -63,8 +63,6 @@ using namespace cugl;
 long splitCoolDown = -1;
 //long doubleTapCoolDown = -1;
 long gesCoolDown = -1;
-float iosToDesktopScaleX;
-float iosToDesktopScaleY;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
 Vec2 pinchPos = Vec2::ZERO;
@@ -254,6 +252,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // IMPORTANT: SCALING MUST BE UNIFORM
     // This means that we cannot change the aspect ratio of the physics world
     // Shift to center if a bad fit
+    
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
@@ -351,13 +350,15 @@ void GameScene::dispose() {
 void GameScene::reset() {
 //    _selector->deselect();
     for (auto &s : _selectors){
-        s.second->deselect();
+        s.second = nullptr;
     }
     _world->clear();
 //    _cloud = nullptr;
 //    _selector->setDebugScene(nullptr);
     for (auto &s : _selectors){
-        s.second->setDebugScene(nullptr);
+        if (s.second){
+            s.second->setDebugScene(nullptr);
+        }
     }
     _worldnode->removeAllChildren();
     _debugnode->removeAllChildren();
@@ -559,7 +560,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const s
 #pragma mark -
 #pragma mark Physics Handling
 
-void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
+void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2& pinchPos){
     if (cind1 == nullptr || cind2 == nullptr) {
         return;
     }
@@ -578,14 +579,14 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
         cloudToBeDeleted = cind1;
     }
 
-    pinchPos.x = pinchPos.x/iosToDesktopScaleX;
-    pinchPos.y = 18 - pinchPos.y/iosToDesktopScaleY;
+    Vec2 pos = _worldnode->screenToNodeCoords(pinchPos);
+    pos /= _scale;
 
     // check that pinch center is in between collided clouds
-    float x_left_gap = pinchPos.x - min(c1p.x, c2p.x);
-    float x_right_gap = max(c1p.x, c2p.x) - pinchPos.x;
-    float y_bottom_gap = pinchPos.y - min(c1p.y, c2p.y);
-    float y_top_gap = max(c1p.y, c2p.y) - pinchPos.y;
+    float x_left_gap = pos.x - min(c1p.x, c2p.x);
+    float x_right_gap = max(c1p.x, c2p.x) - pos.x;
+    float y_bottom_gap = pos.y - min(c1p.y, c2p.y);
+    float y_top_gap = max(c1p.y, c2p.y) - pos.y;
 
     if ((x_left_gap >= 0 && x_left_gap <= PINCH_OFFSET && x_right_gap >= 0 && x_right_gap <= PINCH_OFFSET) || (y_bottom_gap >= 0 && y_bottom_gap <= PINCH_OFFSET && y_top_gap <= PINCH_OFFSET && y_top_gap >= 0)){
         CULog("contact between %s and %s", cind1->getName().c_str(), cind2->getName().c_str());
@@ -595,8 +596,8 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
         for(auto &ts : _selectors) {
             long touchID = ts.first;
             auto s = ts.second;
-            if (s->isSelected() && s->getObstacle() && s->getObstacle()->getName() == cind1->getName()){
-                s->deselect();
+            if (s != nullptr && s->getName() == cind1->getName()){
+                s = nullptr;
                 toDelete = touchID;
                 break;
             }
@@ -612,15 +613,12 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2, Vec2 pinchPos){
     }
 }
 
-bool isCloud(Obstacle * ob){
-    if (ob->getName().find("cloud") == 0) return true;
-    return false;
-}
+
 
 void GameScene::checkForCombining(Obstacle * ob){
 //    CULog("check for combining");
 //    std::cout << ob << endl;
-    if (pinched && ob && isCloud(ob)){
+    if (pinched && ob){
         if (pinchedCloud1 == nullptr) {
             pinchedCloud1 = (Cloud *) ob;
         }
@@ -637,7 +635,7 @@ void GameScene::checkForCombining(Obstacle * ob){
 }
 
 void GameScene::checkForThunder(Obstacle * o){
-    if (o && isCloud(o) && ((Cloud *) o)->isRainCloud()) {
+    if (o && ((Cloud *) o)->isRainCloud()) {
         if (click1 == -1){
             click1 = ticks;
             clicked_cloud = o;
@@ -658,6 +656,21 @@ void GameScene::checkForThunder(Obstacle * o){
             
         }
     }
+}
+
+Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
+    Obstacle * ob = nullptr;
+    for (auto &c : _clouds){
+        auto left = c->getPosition().x - c->getWidth()/2;
+        auto right = c->getPosition().x + c->getWidth()/2;
+        auto up = c->getPosition().y + c->getHeight()/2;
+        auto down = c->getPosition().y - c->getHeight()/2;
+        if (left <= pos.x && pos.x <= right && down <= pos.y && pos.y <= up){
+            ob = (Obstacle *) c.get();
+            break;
+        }
+    }
+    return ob;
 }
 
 /**
@@ -769,38 +782,27 @@ void GameScene::update(float dt) {
     for (auto const& touchID : IDs) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
-            pos = _worldnode->screenToNodeCoords(pos);
-            std::shared_ptr<ObstacleSelector> selector;
+            pos = _worldnode->screenToNodeCoords(pos)/_scale;
             Obstacle * ob;
             if (!_selectors.count(touchID)){
-                selector = ObstacleSelector::alloc(_world);
-                selector->setDebugColor(DYNAMIC_COLOR);
-                selector->setDebugScene(_debugnode);
-                selector->setPosition(pos/_scale);
-                if (!selector->isSelected()){
-                    selector->select();
-                }
-                auto ob = selector->getObstacle();
-                if (!(selector->isSelected() && ob && isCloud(ob)) && !touchIDs_started_outside.count(touchID)){
-                    touchIDs_started_outside.insert({touchID, selector->getPosition()});
+                ob = getSelectedObstacle(pos, touchID);
+                if (ob == nullptr) {
+                    touchIDs_started_outside.insert({touchID, pos});
                 }
                 checkForCombining(ob);
-                if (ob && !isCloud(ob)){
-                    selector->deselect();
-                }
-                _selectors.insert({touchID, selector});
+                _selectors.insert({touchID, ob});
             }
             else{
-                selector =_selectors.at(touchID);
-                selector->setPosition(pos/_scale);
-                if (!selector->isSelected()){
-                    selector->select();
+                ob =_selectors.at(touchID);
+                if (ob == nullptr){
+                    ob = getSelectedObstacle(pos, touchID);
                 }
-                if (selector->isSelected()){
-                    auto ob = selector->getObstacle();
+                if (ob) {
                     checkForCombining(ob);
+                    bool flag = false;
                     if (touchIDs_started_outside.count(touchID)){
-                        if (cloudsToSplit_temp.count(touchID) == 0 && isCloud(ob)){
+                        flag = true;
+                        if (cloudsToSplit_temp.count(touchID) == 0){
                             float y_dist = abs(ob->getPosition().y - touchIDs_started_outside.at(touchID).y);
                             if (y_dist > SWIPE_VERT_OFFSET){
                                 if (ticks - gesCoolDown >= GES_COOLDOWN){
@@ -810,10 +812,10 @@ void GameScene::update(float dt) {
                                 }
                             }
                         }
-                        selector->deselect();
                     }
-                    if (ob && !isCloud(ob)){
-                        selector->deselect();
+                    if (!flag){
+                        ob->setPosition(pos);
+                        _levelworldnode->getChildByName(ob->getName())->setPosition(pos);
                     }
                 }
             }
@@ -823,16 +825,19 @@ void GameScene::update(float dt) {
     selected = _input.didSelect();
     for (auto const& touchID : IDs) {
         if (!selected.count(touchID)){
+            auto pos = _input.getSelection(touchID);
+            pos = _worldnode->screenToNodeCoords(pos)/_scale;
+            
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
-                if (_selectors.count(touchID) && abs(_selectors.at(touchID)->getPosition().y - cloudPos.y) >= SWIPE_VERT_OFFSET){
+                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
                 cloudsToSplit_temp.erase(touchID);
             }
             if (_selectors.count(touchID)){
-                if (_selectors.at(touchID)->isSelected()){
-                    auto o = _selectors.at(touchID)->getObstacle();
+                if (_selectors.at(touchID) != nullptr){
+                    auto o = _selectors.at(touchID);
                     if (ticks - gesCoolDown >= GES_COOLDOWN){
                         checkForThunder(o);
                     }
@@ -841,7 +846,7 @@ void GameScene::update(float dt) {
                         makeRain(o);
                     }
                 }
-                _selectors.at(touchID)->deselect();
+                _selectors.at(touchID) = nullptr;
                 _selectors.erase(touchID);
             }
             if (touchIDs_started_outside.count(touchID)){
@@ -913,7 +918,7 @@ void GameScene::processRemoval(){
             long toDelete = -1;
             for (auto &ts : _selectors){
                 auto s = ts.second;
-                if (s->isSelected() && s->getObstacle() && s->getObstacle()->getName() == cname){
+                if (s != nullptr && s->getName() == cname){
                     toDelete = ts.first;
                     break;
                 }
@@ -931,7 +936,7 @@ void GameScene::processRemoval(){
 }
 
 void GameScene::makeRain(Obstacle * ob){
-    if (!(ob && isCloud(ob))) return;
+    if (!ob) return;
     
     auto c = (Cloud *) ob;
 //    if (!c->isRainCloud()) return;
@@ -1068,8 +1073,6 @@ void GameScene::beginContact(b2Contact* contact) {
  */
 Size GameScene::computeActiveSize() const {
     Size dimen = Application::get()->getDisplaySize();
-    iosToDesktopScaleX = dimen.getIWidth()/32.0f;
-    iosToDesktopScaleY = dimen.getIHeight()/18.0f;
     float ratio1 = dimen.width/dimen.height;
     float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
     if (ratio1 < ratio2) {
