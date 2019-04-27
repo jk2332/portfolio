@@ -98,7 +98,8 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     if (!_root) {
         clearRootNode();
     }
-    
+    _over = false;
+
     _root = node;
     _scale.set(_root->getContentSize().width/_bounds.size.width,
                _root->getContentSize().height/_bounds.size.height);
@@ -151,10 +152,22 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     _winnode->setVisible(false);
     _worldnode->addChild(_winnode, 7);
 
-    auto background = _assets->get<Texture>("bar");
-    auto foreground = _assets->get<Texture>("barcolor");
-    _bar = ProgressBar::alloc(background, foreground);
-    _bar->setPosition(Vec2(850.0f, 525.0f));
+    auto barempty = _assets->get<Texture>("barempty");
+    auto barfull = _assets->get<Texture>("barfull");
+    auto leftcap = barfull->getSubTexture(0.f, 0.1f, 0.f, 1.0f);
+    auto rightcap = barfull->getSubTexture(0.99f, 1.f, 0.f, 1.0f);
+    auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
+
+    _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
+    _bar->setScale(0.5f);
+    _bar->setPosition(Vec2(500.0f, 300.0f));
+
+    auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
+    auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
+    sunNode->setPosition(Vec2(450.0f, 300.0f));
+    _worldnode->addChildWithName(sunNode, "sun");
+    moonNode->setPosition(Vec2(1000.0f, 300.0f));
+    _worldnode->addChildWithName(moonNode, "moon");
 
     _worldnode->addChildWithName(_bar, "bar");
 }
@@ -495,7 +508,9 @@ void LevelModel::update(int ticks) {
     for (auto &plant : _plants) {
         plantsDead = plantsDead && plant->getState() == dead;
     }
+    
     if (plantsDead) {
+        CULog("All plants are dead");
         _over = true;
         _winnode->setText("Game Over" + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
@@ -503,11 +518,12 @@ void LevelModel::update(int ticks) {
 
 
     if (ticks >= _time) {
+        CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
         _over = true;
         ticks = _time;
-        return;
+        // return;
     }
     
     float progress = (float)ticks/(float)_time;
