@@ -115,7 +115,7 @@ void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
 
 void ParticleShader::dispose() {
     Shader::dispose();
-    //glDeleteTextures(1, texture);
+    particleTexture.dispose();
     glDeleteProgram(_program);
     CULogGLError();
     glDeleteShader(_fragShader);

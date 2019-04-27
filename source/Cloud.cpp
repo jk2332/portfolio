@@ -125,7 +125,7 @@ void Cloud::update(float delta) {
         _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
                                                                + faceSprite->getSize()/2.0f)
-                                 + Vec2(0, -_scale*_disp));
+                                 + Vec2(0, -_disp));
     }
 }
 
@@ -170,20 +170,23 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  * {@link Obstacle#update(float)} method.
  *
  * @param node  The scene graph node representing this Ragdoll, which has been added to the world node already.
+ *
+ * RETURNS THE POINTER TO THIS CLOUD'S SHADOW. ASSUME CALLER WILL ADD SHADOW TO THE WORLD
  */
-void Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement,
-                        std::shared_ptr<Texture> cloudFace, std::shared_ptr<PolygonNode> shadow){
+std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow){
     _cloudNode = node;
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);
-    sprite->setContentSize(cloudFace->getSize());
+    sprite->setContentSize(cloudFace->getSize()*_drawscale);
     sprite->setPosition(_cloudNode->getSize()/2.0f);
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
-    _shadowNode = shadow;
-    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
-    _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f - Vec2(0, displacement));
+    _shadowNode = PolygonNode::allocWithTexture(shadow);
+//    _shadowNode->setContentSize(_shadowNode->getSize()*_scale);
+    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale/_drawscale);
+    _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f - Vec2(0, displacement/_scale));
+    return _shadowNode;
     //shadow node has already been added to the scene graph
 }
 

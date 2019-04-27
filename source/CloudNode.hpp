@@ -14,8 +14,7 @@
 #include <cugl/2d/CUTexturedNode.h>
 #include <cugl/math/polygon/CUSimpleTriangulator.h>
 #include "particleShader.hpp"
-
-#define PARTICLE_NUM 10
+#include "Constants.hpp"
 namespace cugl {
     
     /**

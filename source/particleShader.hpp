@@ -136,7 +136,7 @@ public:
     ParticleShader(){_pg = ParticleGenerator();}
     
     ParticleShader(GLuint amount){
-        _particleScale = 1.0;
+        _particleScale = 1.0f;
         _pg = ParticleGenerator(amount);
     }
     

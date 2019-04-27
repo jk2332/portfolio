@@ -36,7 +36,7 @@ private:
     
 protected:
     float _drawscale;
-    std::vector<std::shared_ptr<cugl::Texture>> _textures;
+    std::shared_ptr<cugl::Texture> _texture;
     int _gridNumX;
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
@@ -78,7 +78,7 @@ public:
      *
      * @return  true if the obstacle is initialized properly, false otherwise.
      */
-    bool init(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY);
+    bool init(float scale, std::shared_ptr<cugl::Texture> texture, int gridNumX, int gridNumY);
     
     
 #pragma mark -
@@ -96,9 +96,9 @@ public:
      *
      * @return a newly allocated Board
      */
-    static std::shared_ptr<Board> alloc(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY) {
+    static std::shared_ptr<Board> alloc(float scale, std::shared_ptr<Texture> texture, int gridNumX, int gridNumY) {
         std::shared_ptr<Board> result = std::make_shared<Board>();
-        return (result->init(scale, textures, gridNumX, gridNumY) ? result : nullptr);
+        return (result->init(scale, texture, gridNumX, gridNumY) ? result : nullptr);
     }
  
 #pragma mark -

@@ -14,6 +14,19 @@
 /** Opacity of the foreground mask */
 #define FRGD_OPACITY    64
 
+//Level Geography
+/** This is adjusted by screen aspect ratio to get the height */
+#define SCENE_WIDTH  1024
+#define SCENE_HEIGHT 576
+
+/** Width of the game world in Box2d units */
+#define DEFAULT_WIDTH   32.0f
+/** Height of the game world in Box2d units */
+#define DEFAULT_HEIGHT  18.0f
+#define SWIPE_VERT_OFFSET   3.5
+#define GES_COOLDOWN      20
+#define SPLIT_COOLDOWN      30
+
 // Physics constants for initialization
 /** Density of non-crate objects */
 #define BASIC_DENSITY       0.0f
@@ -31,7 +44,8 @@
 #define SOUND_THRESHOLD     3
 #define PINCH_OFFSET        32
 #define PINCH_CLOUD_DIST_OFFSET     5.5
-
+/** The new lessened gravity for this world */
+#define WATER_GRAVITY   0.1f
 /** Color to outline the physics nodes */
 #define STATIC_COLOR    Color4::YELLOW
 /** Opacity of the physics outlines */
@@ -81,5 +95,9 @@
 #define OFFSET_Y         0
 
 #define SIGN  "sign"
+
+#define PARTICLE_NUM 10
+#define UI_ZVALUE 100
+
 
 #endif /* Constants_hpp */

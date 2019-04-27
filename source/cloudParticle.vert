@@ -25,9 +25,11 @@ uniform vec4 color;
 
 void main(){
     float scaleX = 0.005f;
-    float scaleY = scaleX*1.75;
-    float offsetScaleX = scaleX/2.55;
-    float offsetScaleY = scaleY/2.55;
+    float scaleY = scaleX*1.75f;
+    float offsetScaleX = scaleX/2.55f;
+    float offsetScaleY = scaleY/2.55f;
+//    float offsetScaleX = 1.0f;
+//    float offsetScaleY = 1.0f;
     TexCoords = texCoords;
     ParticleColor = color;
 // gl_Position = projection * vec4((position * scale) + offset, 0.0, 1.0);
