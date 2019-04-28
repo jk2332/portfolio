@@ -14,8 +14,8 @@
 #include "cloudParticle.vert"
 #include "cloudParticle.frag"
 #include <vector>
-#define MAX_JOSTLE 4.0f
-#define MAX_VELOCITY 5.0f
+#include "Constants.hpp"
+
 using namespace cugl;
 
 //                                      Position        Texcoords

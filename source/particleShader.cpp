@@ -27,15 +27,18 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
         Vec3 currentCircle = cloudSections[i];
         int trueAmount = this->amount;
         //Create twice as many particles for the core section
-        if (i == 0){trueAmount = 2*this->amount;}
+//        if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
             //Determine radius in range 0 to radius of currentCircle
-            float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
+//            float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
             float t = 0.25*M_PI*j;
-            int spacing = 15;
+//            int spacing = 15;
+            float r = 0;
+            int spacing = 1;
             //center particles on the cloud
-            Vec2 centering = Vec2(-10,-10);
+//            Vec2 centering = Vec2(-10,-10);
+            Vec2 centering = Vec2::ZERO;
             Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
             offset = offset + centering;
             
@@ -54,26 +57,26 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
 //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
-        if (i == 0){trueAmount = 2*this->amount;}
+//        if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
             int index = trueAmount*i + j;
-            if (i != 0){index = index + this->amount;}
+//            if (i != 0){index = index + this->amount;}
             
             CloudParticle &p = this->particles[index];
             Vec2 basePosition = cloud_pos + particleScale*p.offset;
             
-            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
-                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
-                p.jostle = Vec2::ZERO;
-                //Determine v1 and v2 in range 0 to maxVelocity
-                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
-            }
-            else{
-                p.jostle += dt*p.velocity;
-            }
+//            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
+//                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
+//                p.jostle = Vec2::ZERO;
+//                //Determine v1 and v2 in range 0 to maxVelocity
+//                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+//                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+//                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+//            }
+//            else{
+//                p.jostle += dt*p.velocity;
+//            }
             p.position = basePosition + p.jostle;
             
             float greater = p.jostle.x;

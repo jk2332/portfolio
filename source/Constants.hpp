@@ -19,10 +19,6 @@
 #define SCENE_WIDTH  1024
 #define SCENE_HEIGHT 576
 
-/** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
-/** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
 #define SWIPE_VERT_OFFSET   3.5
 #define GES_COOLDOWN      20
 #define SPLIT_COOLDOWN      30
@@ -94,9 +90,11 @@
 #define OFFSET_Y         0
 
 #define SIGN  "sign"
-
-#define PARTICLE_NUM 10
 #define UI_ZVALUE 100
 
+//Cloud Particles
+#define PARTICLE_NUM 1
+#define MAX_JOSTLE 4.0f
+#define MAX_VELOCITY 5.0f
 
 #endif /* Constants_hpp */
