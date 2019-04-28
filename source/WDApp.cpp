@@ -148,7 +148,7 @@ void WeatherDefenderApp::update(float timestep) {
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
-        _levelSelect.init(_assets);
+        _levelSelect.init(_assets, true);
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
@@ -161,13 +161,14 @@ void WeatherDefenderApp::update(float timestep) {
         assert (levelId != "level0");
         _gameplay.init(_assets, levelId);
         _levelselected = true;
+        
     } else if (_levelselected && _loaded && _gameplay.isActive()){
         _gameplay.update(timestep);
     }
+    
     else if (_levelselected && _loaded){
-//        _gameplay.setBackToLevelSelect(false);
         _gameplay.dispose();
-        _levelSelect.init(_assets);
+        _levelSelect.init(_assets, false);
         _levelselected = false;
     }
 }

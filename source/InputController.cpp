@@ -340,7 +340,7 @@ void RagdollInput::touchEndedCB(const cugl::TouchEvent& event, bool focus) {
             CULog("long press");
         }
         else {
-            CULog("not pressed for long enough");
+//            CULog("not pressed for long enough");
         }
     }
 }

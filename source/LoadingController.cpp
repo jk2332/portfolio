@@ -49,10 +49,6 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/loading.json");
-    _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
-    _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
-    _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
-    _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
     
     auto layer = assets->get<Node>("load");
     layer->setContentSize(dimen);

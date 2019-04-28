@@ -42,12 +42,13 @@ class CrateModel;
 class LevelModel : public Asset {
 protected:
     /** The root node of this level */
-    std::shared_ptr<Node> _root;
+    std::shared_ptr<Node> _root = nullptr;
     /** The bounds of this level in physics coordinates */
     Rect _bounds;
     /** The global gravity for this level */
     Vec2 _gravity;
     /** The level drawing scale (difference between physics and drawing coordinates) */
+    Vec2 _scale;
     Vec2 _debugScale;
     
     float _cscale;
@@ -55,19 +56,21 @@ protected:
     float _drawscale;
     
     /** Reference to the physics root of the scene graph */
-    std::shared_ptr<Node> _worldnode;
+    std::shared_ptr<Node> _worldnode = nullptr;
     /** Reference to the debug root of the scene graph */
-    std::shared_ptr<Node> _debugnode;
+    std::shared_ptr<Node> _debugnode = nullptr;
     
     // Physics objects for the game
     /** The physics word; part of the model (though listeners elsewhere) */
+
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _clouds;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
-    std::shared_ptr<Board> _board;
+    bool _alreadyLoaded = false;
+//    std::shared_ptr<Board> _board;
 
     std::shared_ptr<cugl::Label> _winnode;
     int _time;
@@ -109,7 +112,6 @@ protected:
      * @return true if the exit door was successfully loaded
      */
     bool loadPlant(const std::shared_ptr<JsonValue>& json);
-    
     /**
      * Loads a single wall object
      *
@@ -357,6 +359,7 @@ public:
      * references to other assets, then these should be disconnected earlier.
      */
     void unload();
+    bool reset();
     
     
     //#pragma mark -
@@ -376,6 +379,7 @@ public:
     */
     void update(int ticks);
     int getPlantScore();
+    void dispose();
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */

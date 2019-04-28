@@ -21,26 +21,20 @@ using namespace cugl;
 
 ParticleGenerator::ParticleGenerator(){}
 
-ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
+ParticleGenerator::ParticleGenerator(GLuint amount, float ds): amount(amount){
     CULogGLError();
-    for (int i = 0; i < cloudSections.size(); i++){
+    drawscale = ds;
+    for (int i = 0; i < 1; i++){
         Vec3 currentCircle = cloudSections[i];
         int trueAmount = this->amount;
         //Create twice as many particles for the core section
-//        if (i == 0){trueAmount = 2*this->amount;}
+        if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
             //Determine radius in range 0 to radius of currentCircle
-//            float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
+            float r = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/currentCircle.x));
             float t = 0.25*M_PI*j;
-//            int spacing = 15;
-            float r = 0;
-            int spacing = 1;
-            //center particles on the cloud
-//            Vec2 centering = Vec2(-10,-10);
-            Vec2 centering = Vec2::ZERO;
-            Vec2 offset = spacing*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
-            offset = offset + centering;
+            Vec2 offset = drawscale*Vec2(r*cos(t) + currentCircle.y, r*sin(t) + currentCircle.z);
             
             //Determine v1 and v2 in range 0 to maxVelocity
             float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
@@ -50,18 +44,17 @@ ParticleGenerator::ParticleGenerator(GLuint amount): amount(amount){
             this->particles.push_back(CloudParticle(offset, velocity));
         }
     }
-    
 }
 
 void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
 //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
-//        if (i == 0){trueAmount = 2*this->amount;}
+        if (i == 0){trueAmount = 2*this->amount;}
         
         for (GLuint j = 0; j < trueAmount; ++j){
             int index = trueAmount*i + j;
-//            if (i != 0){index = index + this->amount;}
+            if (i != 0){index = index + this->amount;}
             
             CloudParticle &p = this->particles[index];
             Vec2 basePosition = cloud_pos + particleScale*p.offset;
@@ -134,8 +127,9 @@ void ParticleShader::dispose() {
 }
 
 void ParticleShader::onStartup(std::shared_ptr<cugl::Texture> texture){
-    particleTexture = *texture;
-//    particleTexture.initWithFile("textures/particle1.png");
+//    particleTexture = *texture;
+    particleTexture = Texture();
+    particleTexture.initWithFile("textures/particle1.png");
     compileProgram();
 }
 
@@ -268,5 +262,5 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
         _pg.maxJostle = MAX_JOSTLE*_particleScale;
         _pg.maxVelocity = MAX_VELOCITY*_particleScale;
     }
-    this->_pg.Update(dt, cloud_pos - Vec2(500,300), _particleScale);
+    this->_pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale);
 }

@@ -25,17 +25,18 @@ static GLfloat ogParticleQuad[16]= {-10.0f,-10.0f,   0.0f, 0.0f,
                                      10.0f, 10.0f,   1.0f, 1.0f};
 
 //                                      Radius CenterX CenterY
-static vector<Vec3> ogCloudSections = { Vec3(2.5,   0.0,   1.5), //Central Circle
-                                        Vec3(1.3,  -3.8,   1.3),
-                                        Vec3(1.3,   3.7,   1.3),
-                                        Vec3(0.8,   3.0,   2.7),
-                                        Vec3(0.7,   2.5,   0.0),
-                                        Vec3(0.8,  -2.9,   2.7),
-                                        Vec3(0.6,  -2.6,   0.1),
-                                        Vec3(0.8,   1.9,   3.4),
-                                        Vec3(0.8,  -2.1,   3.9),
-                                        Vec3(0.8,   0.6,   4.0),
-                                        Vec3(0.8,  -0.8,   4.7)};
+static vector<Vec3> ogCloudSections = { Vec3(1.25,  0.0,   0.0), //Central Circle
+                                        Vec3(0.65, -1.9,  -0.1),
+                                        Vec3(0.65,  1.85, -0.1),
+                                        Vec3(0.40,  1.5,   0.6),
+                                        Vec3(0.35,  1.25, -0.75),
+                                        Vec3(0.40, -1.45,  0.6),
+                                        Vec3(0.30, -1.3,  -0.7),
+                                        Vec3(0.40,  0.95,  0.95),
+                                        Vec3(0.40, -1.05,  1.2),
+                                        Vec3(0.40,  0.3,   1.25),
+                                        Vec3(0.40, -0.4,   1.6)};
+
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 static GLuint VAO;
@@ -58,7 +59,7 @@ class ParticleGenerator {
 public:
     // Constructors
     ParticleGenerator();
-    ParticleGenerator(GLuint amount);
+    ParticleGenerator(GLuint amount, float ds);
     // Update all particles
     void Update(GLfloat dt, Vec2 cloud_pos, float particleScale);
     // Render all particles
@@ -66,20 +67,21 @@ public:
     // State
     std::vector<CloudParticle> particles;
     GLuint amount;
+    float drawscale = 1.0f;
     float maxJostle = MAX_JOSTLE;
     float maxVelocity = MAX_VELOCITY;
-    //                               Radius CenterX CenterY
-    vector<Vec3> cloudSections = {  Vec3(2.5,   0.0,   1.5), //Central Circle
-                                    Vec3(1.3,  -3.8,   1.3),
-                                    Vec3(1.3,   3.7,   1.3),
-                                    Vec3(0.8,   3.0,   2.7),
-                                    Vec3(0.7,   2.5,   0.0),
-                                    Vec3(0.8,  -2.9,   2.7),
-                                    Vec3(0.6,  -2.6,   0.1),
-                                    Vec3(0.8,   1.9,   3.4),
-                                    Vec3(0.8,  -2.1,   3.9),
-                                    Vec3(0.8,   0.6,   4.0),
-                                    Vec3(0.8,  -0.8,   4.7)};
+    //                              Radius CenterX CenterY
+    vector<Vec3> cloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
+                                    Vec3(0.65, -1.9,  -0.1),
+                                    Vec3(0.65,  1.85, -0.1),
+                                    Vec3(0.40,  1.5,   0.6),
+                                    Vec3(0.35,  1.25, -0.75),
+                                    Vec3(0.40, -1.45,  0.6),
+                                    Vec3(0.30, -1.3,  -0.7),
+                                    Vec3(0.40,  0.95,  0.95),
+                                    Vec3(0.40, -1.05,  1.2),
+                                    Vec3(0.40,  0.3,   1.25),
+                                    Vec3(0.40, -0.4,   1.6)};
     // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     int firstUnusedParticle();
     // Respawns particle
@@ -135,9 +137,9 @@ public:
    
     ParticleShader(){_pg = ParticleGenerator();}
     
-    ParticleShader(GLuint amount){
+    ParticleShader(GLuint amount, float ds){
         _particleScale = 1.0f;
-        _pg = ParticleGenerator(amount);
+        _pg = ParticleGenerator(amount, ds);
     }
     
     void onStartup(std::shared_ptr<cugl::Texture> texture);

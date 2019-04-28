@@ -39,6 +39,7 @@
 /** Threshold for generating sound on collision */
 #define SOUND_THRESHOLD     3
 #define PINCH_OFFSET        32
+
 #define PINCH_CLOUD_DIST_OFFSET     5.5
 /** The new lessened gravity for this world */
 #define WATER_GRAVITY   0.1f
@@ -58,6 +59,10 @@
 #define needSun 2
 #define needShade 3
 #define dead 4
+
+//Clouds
+#define ORIGINAL_SIZE_X    165
+#define ORIGINAL_SIZE_Y    84
 
 // Level Model
 #define DYNAMIC_COLOR   Color4::GREEN
@@ -94,7 +99,7 @@
 
 //Cloud Particles
 #define PARTICLE_NUM 1
-#define MAX_JOSTLE 4.0f
-#define MAX_VELOCITY 5.0f
+#define MAX_JOSTLE 8.0f
+#define MAX_VELOCITY 10.0f
 
 #endif /* Constants_hpp */

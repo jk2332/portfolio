@@ -50,11 +50,10 @@ namespace cugl {
     protected:
         /** A triangulator for those incomplete polygons */
         static SimpleTriangulator _triangulator;
-        float drawscale = 1.0;
     public:
 #pragma mark -
         ParticleShader ps;
-        
+        float drawscale;
         void setDrawScale(float ds){drawscale = ds;}
         
 #pragma mark Constructor
@@ -82,10 +81,10 @@ namespace cugl {
         
 #pragma mark -
 #pragma mark Static Constructors
-        static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture){
+        static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture, float ds){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
             CULogGLError();
-            node->ps = ParticleShader(PARTICLE_NUM);
+            node->ps = ParticleShader(PARTICLE_NUM, ds);
             node->ps.onStartup(texture);
             return (node->init() ? node : nullptr);
         }

@@ -37,6 +37,22 @@
 
 using namespace cugl;
 
+#pragma mark -
+#pragma mark Level Geography
+
+/** This is adjusted by screen aspect ratio to get the height */
+#define SCENE_WIDTH  1024
+#define SCENE_HEIGHT 576
+
+/** Width of the game world in Box2d units */
+#define DEFAULT_WIDTH   32.0f
+/** Height of the game world in Box2d units */
+#define DEFAULT_HEIGHT  18.0f
+#define SWIPE_VERT_OFFSET   3.5*32
+#define GES_COOLDOWN      20
+#define SPLIT_COOLDOWN      30
+
+
 //long swipeCoolDown = -1;
 //long pinchCoolDown = -1;
 
@@ -64,7 +80,6 @@ Obstacle * clicked_cloud = nullptr;
 long temp = 01;
 long rainingTicks = 0l;
 bool pinched = false;
-std::vector<Obstacle *> rainDrops;
 std::shared_ptr<Plant> currentPlant;
 
 #pragma mark -
@@ -158,40 +173,34 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         CULog("Fail!");
         return false;
     }
+    
 
     // Start up the input handler
     _input.init();
-
-    _clouds = _level->getClouds();
-    _world = ObstacleWorld::alloc(rect,gravity);
-    _max_cloud_id = _clouds.size();
-
-    // Create the world and attach the listeners.
-    
-//    _world->activateCollisionCallbacks(true);
-//    _world->onBeginContact = [this](b2Contact* contact) {
-//        beginContact(contact);
-//    };
-//    _world->onEndContact = [this](b2Contact* contact){
-//        endContact(contact);
-//    };
-//    _world->beforeSolve = [this](b2Contact* contact, const b2Manifold* oldManifold) {
-//        beforeSolve(contact,oldManifold);
-//    };
-
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-    
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-
+    
     _rootnode = Node::alloc();
     _rootnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
-
     _assets = assets;
+
+    _level->setDebugNode(_debugnode);
+    _level->reset();
+    _clouds = _level->getClouds();
+    _level->setDrawScale(_scale);
+    _level->setAssets(_assets);
+    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
+    _levelworldnode = _level->getWorldNode();
+    _world = ObstacleWorld::alloc(rect,gravity);
+    _max_cloud_id = _clouds.size();
+
+
+    // IMPORTANT: SCALING MUST BE UNIFORM
+    // This means that we cannot change the aspect ratio of the physics world
+    // Shift to center if a bad fit
+
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -206,11 +215,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setName("debug");
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
-    _level->setDebugNode(_debugnode);
+
 
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
+    
     
     _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
@@ -218,10 +228,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
-    _level->setDrawScale(_scale);
-    _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
-    _levelworldnode = _level->getWorldNode();
 
     populate();
     _active = true;
@@ -238,40 +244,32 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
-    if (_active) {
-        _input.dispose();
-        _level = nullptr;
-        for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
-            (*it) = nullptr;
-        }
-        for(auto it = _plants.begin(); it != _plants.end(); ++it) {
-            (*it) = nullptr;
-        }
-        for(auto it = _rainDrops.begin(); it != _rainDrops.end(); ++it) {
-            (*it) = nullptr;
-        }
-        for(auto it = rainDrops.begin(); it != rainDrops.end(); ++it) {
-            (*it) = nullptr;
-        }
-        _memory = nullptr;
-        _particles.clear();
-        _board->dispose();
-        currentPlant = nullptr;
-        _world = nullptr;
-        _selectors.clear();
-        cloudsToSplit.clear();
-        cloudsToSplit_temp.clear();
-        touchIDs_started_outside.clear();
+    _input.dispose();
+    _clouds.clear();
+    _plants.clear();
+    _memory = nullptr;
+    _rainNode = nullptr;
+    _particles.clear();
+//    _shadows.clear();
+    _board->dispose();
+    currentPlant = nullptr;
+    _world = nullptr;
+    _selectors.clear();
+    cloudsToSplit.clear();
+    cloudsToSplit_temp.clear();
+    touchIDs_started_outside.clear();
+    if (_levelSelectButton != nullptr && _levelSelectButton->isVisible()){
+
         _levelSelectButton->deactivate();
-        _levelSelectButton = nullptr;
-        _worldnode = nullptr;
-        _levelworldnode = nullptr;
-        _rootnode = nullptr;
-        _debugnode = nullptr;
-        _complete = false;
-        _debug = false;
-        Scene::dispose();
     }
+    _levelSelectButton = nullptr;
+    _worldnode = nullptr;
+    _level->dispose();
+    _level = nullptr;
+    _debugnode = nullptr;
+    _complete = false;
+    _debug = false;
+    Scene::dispose();
 }
 
 
@@ -297,7 +295,6 @@ void GameScene::reset() {
     _debugnode->removeAllChildren();
     _rootnode->removeAllChildren();
     _levelworldnode->removeAllChildren();
-
 
     setComplete(false);
     populate();
@@ -441,7 +438,7 @@ void GameScene::populate() {
     _levelworldnode->addChild(_rainNode);
     
     auto levelSelectButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("backToLevelSelectButton"));
-    levelSelectButtonNode->setContentSize(dimen/12);
+    levelSelectButtonNode->setContentSize(Size(1.5, 1.5)*_scale);
     levelSelectButtonNode->setName("backToLevelSelectButton");
     levelSelectButtonNode->setPosition(0, 0);
     
@@ -449,9 +446,7 @@ void GameScene::populate() {
     _levelSelectButton->setPosition(0, 0);
     _levelSelectButton->setListener([=](const std::string& name, bool down) {
         this->_active = !down;
-//        this->_backToLevelSelect = down;
     });
-    _levelSelectButton->setContentSize(dimen/12);
     _levelSelectButton->setVisible(true);
     _levelSelectButton->activate(10);
     _worldnode->addChild(_levelSelectButton);
@@ -461,7 +456,7 @@ void GameScene::populate() {
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _scale);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
         shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
@@ -581,15 +576,18 @@ void GameScene::checkForCombining(Obstacle * ob){
 }
 
 void GameScene::checkForRain(Obstacle * o){
-    if (o && ((Cloud *) o)->isRainCloud()) {
+    if (o) {
+        std::cout << (o->getName()) << endl;
         if (click1 == -1){
+            CULog("first click");
             click1 = ticks;
             clicked_cloud = o;
         }
         else if (click2 == -1){
             click2 = ticks;
             long gap = click2 - click1;
-            if (gap <= 50 && clicked_cloud && clicked_cloud->getName() == o->getName()){
+            if (gap <= 70 && clicked_cloud && clicked_cloud->getName() == o->getName()){
+                CULog("second click");
                 gesCoolDown = ticks;
                 makeRain(o);
             }
@@ -630,8 +628,6 @@ void GameScene::update(float dt) {
     _input.update(dt);
     ticks++;
     
-//    CULog("after updating input");
-
 
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
@@ -647,19 +643,8 @@ void GameScene::update(float dt) {
             CULog("pinched");
             gesCoolDown = ticks;
             pinched = true;
-//            if (!_input.isShortPinch()) pinched = true;
             pinchPos = _input.getPinchSelection();
         }
-    }
-    
-//    if (_levelSelectButton->isDown()){
-//        _backToLevelSelect = true;
-//    }
-//    else {
-//        _backToLevelSelect = false;
-//    }
-    if (_levelSelectButton->isDown()){
-        CULog("gameplay button pressed");
     }
     
     bool shaded;
@@ -726,7 +711,6 @@ void GameScene::update(float dt) {
        plant->update(dt);
    }
     
-    
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
     
@@ -758,7 +742,7 @@ void GameScene::update(float dt) {
                         flag = true;
                         if (cloudsToSplit_temp.count(touchID) == 0){
                             float y_dist = abs(ob->getPosition().y - touchIDs_started_outside.at(touchID).y);
-                            if (y_dist > SWIPE_VERT_OFFSET){
+                            if (y_dist > SWIPE_VERT_OFFSET/_scale){
                                 if (ticks - gesCoolDown >= GES_COOLDOWN){
                                     CULog("swiped");
                                     gesCoolDown = ticks;
@@ -787,7 +771,7 @@ void GameScene::update(float dt) {
             
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
-                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
+                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET/_scale){
                     CULog("inserting");
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
@@ -797,7 +781,6 @@ void GameScene::update(float dt) {
                 auto o = _selectors.at(touchID);
                 if (o != nullptr){
                     if (ticks - gesCoolDown >= GES_COOLDOWN){
-                        gesCoolDown = ticks;
                         checkForRain(o);
                     }
                     if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
@@ -844,15 +827,7 @@ void GameScene::update(float dt) {
             auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
             cloudNode->setContentSize(c->getCloudSize());
             float scale = c->getCloudSizeScale();
-            
-            for (auto child: cloudNode->getChildren()){
-                if (child->getName() == "cloudFace"){
-//                    child->setContentSize(CLOUDFACE_DEFAULT_SIZE*scale);
-                }
-                else {
-//                    child->setContentSize(CLOUD_SHADOW_DEFAULT_SIZE*scale);
-                }
-            }
+
             c->setSize(CLOUD_DEFAULT_SIZE*scale);
             c->getBody()->DestroyFixture(&c->getBody()->GetFixtureList()[0]);
             b2Shape * shape = c->getBody()->GetFixtureList()[0].GetShape();
@@ -904,9 +879,9 @@ void GameScene::makeRain(Obstacle * ob){
     
     auto c = (Cloud *) ob;
 //    if (!c->isRainCloud()) return;
-    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9.3/10));
-    
     Vec2 cloud_pos = c->getPosition();
+    
+    CULog("make it rain");
 
     // Draw rain droplets
     for (int i = -3; i < 3; i++){
@@ -936,6 +911,8 @@ void GameScene::makeRain(Obstacle * ob){
             }
         }
     }
+    
+    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9.3/10));
 
 }
 
@@ -946,19 +923,20 @@ void GameScene::splitClouds(){
         // split clouds here
         Cloud * c =(Cloud *)(ic.second);
         
-        // too small to split
-        if (c->getCloudSizeScale()/sqrt(2) <= 0.6) continue;
+        // to small to split
+        if (c->getCloudSizeScale()/sqrt(2) <= 0.7) continue;
+
         
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
         _max_cloud_id++;
-        auto new_pos = Vec2(cloudPos.x - c->getWidth()/2, cloudPos.y);
+        auto new_pos = Vec2(cloudPos.x - c->getWidth()/2 - 1, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
 
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _scale);
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
         cloudNode->setDrawScale(_scale);

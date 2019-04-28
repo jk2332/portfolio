@@ -80,6 +80,16 @@ void LevelModel::clearRootNode() {
     _root = nullptr;
 }
 
+void LevelModel::dispose(){
+    _root = nullptr;
+    _worldnode = nullptr;
+    _debugnode = nullptr;
+    _clouds.clear();
+    _plants.clear();
+    _pests.clear();
+    _bar = nullptr;
+}
+
 
 /**
  * Sets the scene graph node for drawing purposes.
@@ -94,15 +104,16 @@ void LevelModel::clearRootNode() {
  * @release the previous scene graph node used by this object
  */
 
+
 void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     if (!_root) {
         clearRootNode();
     }
     _over = false;
-
+    
     _root = node;
     _debugScale.set(_root->getContentSize().width/_bounds.size.width,
-               _root->getContentSize().height/_bounds.size.height);
+                    _root->getContentSize().height/_bounds.size.height);
     
     // Create, but transfer ownership to root
     _worldnode = Node::alloc();
@@ -120,7 +131,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     // Add the individual elements
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
-
+    
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
         if (plant != nullptr) {
@@ -129,7 +140,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
         }
     }
     _worldnode->addChildWithName(plantNode, "plantNode");
-
+    
     auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
         if (pest != nullptr) {
@@ -138,14 +149,14 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
         }
     }
     _worldnode->addChildWithName(pestNode, "pestNode");
-
+    
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
     _winnode->setPosition(dimen/2.0f);
     _winnode->setForeground(STATIC_COLOR);
     _winnode->setVisible(false);
     _worldnode->addChild(_winnode, UI_ZVALUE);
-
+    
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
     auto leftcap = barfull->getSubTexture(0.f, 0.1f, 0.f, 1.0f);
@@ -153,7 +164,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
     auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
     auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
-
+    
     _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
     float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getSize().height;
     _bar->setScale(x);
@@ -165,7 +176,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     _worldnode->addChildWithName(sunNode, "sun");
     moonNode->setScale(x);
     moonNode->setPosition(_bar->getPosition()
-                         + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
+                          + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
     _worldnode->addChildWithName(moonNode, "moon");
     _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
 }
@@ -214,6 +225,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         CUAssertLog(false, "Failed to load level file");
         return false;
     }
+    
     // Initial geometry
     auto layers = json->get("layers");
     for(int i = 0; i < layers->size(); i++) {
@@ -292,6 +304,11 @@ void LevelModel::unload() {
     _cloudLayer = nullptr;
     _plantLayer = nullptr;
     _pestLayer = nullptr;
+
+    _clouds.clear();
+    _plants.clear();
+    _pests.clear();
+//    _board = nullptr;
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         (*it) = nullptr;
     }
@@ -301,7 +318,7 @@ void LevelModel::unload() {
     for(auto it = _pests.begin(); it != _pests.end(); ++it) {
         (*it) = nullptr;
     }
-    _board = nullptr;
+    //    _board = nullptr;
     _winnode = nullptr;
     _bar = nullptr;
     _assets = nullptr;
@@ -400,6 +417,7 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     success = success && json->get(TYPE)->isString();
     auto plantType = json->getString(TYPE);
 
+
     auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _drawscale);
     auto plantName = "plant" + std::to_string(plantId);
     plant->setName(plantName);
@@ -442,6 +460,7 @@ bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
     success = success && json->get("side")->isString();
     auto side = json->getString("side");
 
+
     auto pest = Pest::alloc(x, y, pestType, side, _drawscale);
     auto pestName = pestType + std::to_string(plantId);
     pest->setName(pestName);
@@ -467,6 +486,46 @@ bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
  * @return true if the crate was successfully loaded
  */
 bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
+    return true;
+}
+
+bool LevelModel::reset(){
+    if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+    CULog("resetting");
+    if (_cloudLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_cloudLayer->size();
+        CULog("reloaded cloud size %i", csize);
+        for(int ii = 0; ii < csize; ii++) {
+            loadCloud(_cloudLayer->get(ii), ii);
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
+        return false;
+    }
+    
+    if (_plantLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_plantLayer->size();
+        for(int ii = 0; ii < csize; ii++) {
+            loadPlant(_plantLayer->get(ii));
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
+        return false;
+    }
+    
+    if (_pestLayer != nullptr) {
+        // Convert the object to an array so we can see keys and values
+        int csize = (int)_pestLayer->size();
+        for(int ii = 0; ii < csize; ii++) {
+            loadPest(_pestLayer->get(ii));
+        }
+    } else {
+        CUAssertLog(false, "Failed to load crates");
+        return false;
+    }
+    
     return true;
 }
 

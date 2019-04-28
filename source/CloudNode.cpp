@@ -13,7 +13,7 @@
 
 using namespace cugl;
 /**
- * Sets the texture polgon to the vertices expressed in image space.
+ * Sets the texture polygon to the vertices expressed in image space.
  *
  * The polygon will be triangulated using the rules of SimpleTriangulator.
  * All PolygonNode objects share a single triangulator, so this method is
