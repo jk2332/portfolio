@@ -687,11 +687,11 @@ void GameScene::update(float dt) {
                      }
                  }
                  //uncomment to ensure the right tiles are shaded
-                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(230,230,230,0));
+//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(230,230,230,0));
              }
              else{
                  //uncomment to ensure the right tiles are shaded
-                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(255,0,0,0));
+//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(255,0,0,0));
              }
         }
     }
