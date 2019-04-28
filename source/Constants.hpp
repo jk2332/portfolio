@@ -52,7 +52,6 @@
 #define DYNAMIC_COLOR   Color4::GREEN
 #define PRIMARY_FONT        "retro"
 
-
 // Pests
 #define LEFT -2
 #define RIGHT 10
@@ -96,7 +95,7 @@
 
 #define SIGN  "sign"
 
-#define PARTICLE_NUM 0
+#define PARTICLE_NUM 10
 #define UI_ZVALUE 100
 
 
