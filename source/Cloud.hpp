@@ -64,7 +64,7 @@ protected:
     
     std::shared_ptr<Node> _node;
 
-    float _disp;
+    Vec2 _disp;
     
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
@@ -323,7 +323,7 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    std::shared_ptr<PolygonNode> setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, float displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow);
+    std::shared_ptr<PolygonNode> setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

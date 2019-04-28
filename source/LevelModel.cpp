@@ -98,9 +98,10 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     if (!_root) {
         clearRootNode();
     }
-    
+    _over = false;
+
     _root = node;
-    _scale.set(_root->getContentSize().width/_bounds.size.width,
+    _debugScale.set(_root->getContentSize().width/_bounds.size.width,
                _root->getContentSize().height/_bounds.size.height);
     
     // Create, but transfer ownership to root
@@ -109,7 +110,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     _worldnode->setPosition(Vec2::ZERO);
     
     _debugnode = Node::alloc();
-    _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
+    _debugnode->setScale(_debugScale); // Debug node draws in PHYSICS coordinates
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(Vec2::ZERO);
     
@@ -126,17 +127,17 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
             plant->setAssets(_assets);
             plant->setSceneNode(plantNode, plant->getName());
         }
-   }
-   _worldnode->addChildWithName(plantNode, "plantNode");
+    }
+    _worldnode->addChildWithName(plantNode, "plantNode");
 
-   auto pestNode = Node::alloc();
+    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
             pest->setSceneNode(pestNode, pest->getName());
         }
-   }
-   _worldnode->addChildWithName(pestNode, "pestNode");
+    }
+    _worldnode->addChildWithName(pestNode, "pestNode");
 
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -145,11 +146,27 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     _winnode->setVisible(false);
     _worldnode->addChild(_winnode, UI_ZVALUE);
 
-    auto background = _assets->get<Texture>("bar");
-    auto foreground = _assets->get<Texture>("barcolor");
-    _bar = ProgressBar::alloc(background, foreground);
-    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - foreground->getSize());
+    auto barempty = _assets->get<Texture>("barempty");
+    auto barfull = _assets->get<Texture>("barfull");
+    auto leftcap = barfull->getSubTexture(0.f, 0.1f, 0.f, 1.0f);
+    auto rightcap = barfull->getSubTexture(0.99f, 1.f, 0.f, 1.0f);
+    auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
+    auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
+    auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
 
+    _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
+    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getSize().height;
+    _bar->setScale(x);
+    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getSize().width
+                                                            + x*moonNode->getSize().width, _bar->getSize().height));
+    sunNode->setScale(x);
+    sunNode->setPosition(_bar->getPosition()
+                         + Vec2(-sunNode->getSize().width/2.0f, sunNode->getSize().height/2.0f));
+    _worldnode->addChildWithName(sunNode, "sun");
+    moonNode->setScale(x);
+    moonNode->setPosition(_bar->getPosition()
+                         + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
+    _worldnode->addChildWithName(moonNode, "moon");
     _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
 }
 
@@ -489,7 +506,9 @@ void LevelModel::update(int ticks) {
     for (auto &plant : _plants) {
         plantsDead = plantsDead && plant->getState() == dead;
     }
+    
     if (plantsDead) {
+        CULog("All plants are dead");
         _over = true;
         _winnode->setText("You Lost" + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
@@ -497,11 +516,12 @@ void LevelModel::update(int ticks) {
 
 
     if (ticks >= _time) {
+        CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
         _over = true;
         ticks = _time;
-        return;
+        // return;
     }
     
     float progress = (float)ticks/(float)_time;

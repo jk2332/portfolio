@@ -187,7 +187,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
 
     _rootnode = Node::alloc();
-    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _rootnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
 
@@ -207,7 +207,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     _level->setDebugNode(_debugnode);
-
 
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
@@ -242,14 +241,24 @@ void GameScene::dispose() {
     if (_active) {
         _input.dispose();
         _level = nullptr;
-        _clouds.clear();
-        _plants.clear();
-        _rainDrops.clear();
+        for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
+            (*it) = nullptr;
+        }
+        for(auto it = _plants.begin(); it != _plants.end(); ++it) {
+            (*it) = nullptr;
+        }
+        for(auto it = _rainDrops.begin(); it != _rainDrops.end(); ++it) {
+            (*it) = nullptr;
+        }
+        for(auto it = rainDrops.begin(); it != rainDrops.end(); ++it) {
+            (*it) = nullptr;
+        }
+        for(auto it = rainDrops.begin(); it != rainDrops.end(); ++it) {
+            (*it) = nullptr;
+        }
         _memory = nullptr;
         _particles.clear();
-        _shadows.clear();
         _board->dispose();
-        rainDrops.clear();
         currentPlant = nullptr;
         _world = nullptr;
         _selectors.clear();
@@ -451,14 +460,15 @@ void GameScene::populate() {
     _worldnode->addChild(_levelSelectButton);
     
     int i = 0;
+    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setScale(_scale);
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
-        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, (GRID_HEIGHT + DOWN_LEFT_CORNER_Y)*_scale, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 90);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
         _level->getWorldNode()->sortZOrder();
         i++;
     }
@@ -677,11 +687,11 @@ void GameScene::update(float dt) {
                      }
                  }
                  //uncomment to ensure the right tiles are shaded
-//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(230,230,230,0));
+                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(230,230,230,0));
              }
              else{
                  //uncomment to ensure the right tiles are shaded
-//                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(255,0,0,0));
+                 _board->getNodeAt(i, j)->setColor(getColor() - Color4(255,0,0,0));
              }
         }
     }
@@ -952,10 +962,11 @@ void GameScene::splitClouds(){
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
-
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 90);
+        Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
         _level->getWorldNode()->sortZOrder();
         
         new_cloud->setDebugColor(DYNAMIC_COLOR);
@@ -995,7 +1006,6 @@ void GameScene::beginContact(b2Contact* contact) {
 //        CULog("clouds null");
         return;
     }
-
 }
 
 

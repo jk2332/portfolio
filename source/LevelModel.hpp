@@ -48,7 +48,7 @@ protected:
     /** The global gravity for this level */
     Vec2 _gravity;
     /** The level drawing scale (difference between physics and drawing coordinates) */
-    Vec2 _scale;
+    Vec2 _debugScale;
     
     float _cscale;
     
@@ -77,8 +77,6 @@ protected:
     std::shared_ptr<cugl::ProgressBar>  _bar;
 
     bool _over;
-
-    // float _scale;
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -262,7 +260,7 @@ public:
      *
      * @return the drawing scale for this game level
      */
-    const Vec2& getDrawScale() const { return _scale; }
+    const float getDrawScale() const { return _drawscale; }
     std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos);
     
     /**

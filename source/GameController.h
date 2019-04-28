@@ -67,8 +67,6 @@ protected:
     std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
-    std::vector<std::shared_ptr<PolygonNode>> _shadows;
-
     
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;

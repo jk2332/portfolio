@@ -96,7 +96,7 @@
 
 #define SIGN  "sign"
 
-#define PARTICLE_NUM 10
+#define PARTICLE_NUM 0
 #define UI_ZVALUE 100
 
 
