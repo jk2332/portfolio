@@ -50,7 +50,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _contacting = false;
     _node = nullptr;
     _centroid  = nullptr;
-    // _drawscale = scale;
+     _drawscale = 1.0f;
     _isRainCloud = false;
     _unitNum = 1;
     _isRaining = false;
@@ -113,13 +113,13 @@ void Cloud::markForRemoval() {
 void Cloud::update(float delta) {
     Obstacle::update(delta);
     if (_node != nullptr) {
-        _node->setPosition(getPosition()*_scale);
+        _node->setPosition(getPosition()*_drawscale);
         _node->setAngle(getAngle());
     }
     else if (_cloudNode != nullptr) {
-        _cloudNode->setPosition(_scale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
+        _cloudNode->setPosition(_drawscale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
-        _cloudNode->ps.update(getPosition()*_scale, delta, _cloudSizeScale);
+        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale);
         shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
         _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
@@ -182,7 +182,7 @@ std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<
     _cloudNode->addChildWithName(sprite, "cloudFace");
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);
-//    _shadowNode->setContentSize(_shadowNode->getSize()*_scale);
+//    _shadowNode->setContentSize(_shadowNode->getSize()*_drawscale);
     _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
     _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     //rely on caller to add shadow node to the world
