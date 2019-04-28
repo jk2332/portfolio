@@ -33,7 +33,7 @@ float BUTTON_Y[] = { 150.f, 200.f, 150, 300};
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
+bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets, bool isFirstTime) {
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
@@ -45,31 +45,29 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    _assets->loadDirectory("json/levelselect.json");
-    std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
-    auto bknode = PolygonNode::allocWithTexture(image);
-    bknode->setContentSize(dimen);
-    addChild(bknode);
+    if (isFirstTime) {
+        _assets->loadDirectory("json/levelselect.json");
+        std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
+        auto bknode = PolygonNode::allocWithTexture(image);
+        bknode->setContentSize(dimen);
+        addChild(bknode);
+        
+        auto layer = _assets->get<Node>("levelselect");
+        layer->setContentSize(dimen);
+        layer->doLayout();
+        addChild(layer);
+    }
     
-    //    _bar = std::dynamic_pointer_cast<ProgressBar>(assets->get<Node>("load_bar"));
     for (int i = 0; i < _num_level; i++){
-        std::string name = "level" + std::to_string(i) + "button";
-        auto button_node = PolygonNode::allocWithTexture(_assets->get<Texture>(name));
-        button_node->setContentSize(dimen/10);
-        button_node->setPosition(BUTTON_X[i], BUTTON_Y[i]);
-        std::shared_ptr<Button> button = Button::alloc(button_node);
-        button->setPosition(BUTTON_X[i], BUTTON_Y[i]);
+        std::string name = "levelselect_level" + std::to_string(i);
+        auto button = std::dynamic_pointer_cast<Button>(assets->get<Node>(name));
         button->setListener([=](const std::string& name, bool down) {
-            if (this->_active){
-                this->_active = down;
-            }
+            this->_active = down;
         });
-        button->setContentSize(dimen/10);
-        button->setVisible(true);
         button->activate(i + 1);
         _levelButtons.push_back(button);
-        addChild(button);
     }
+
     Application::get()->setClearColor(Color4(192,192,192,255));
     return true;
 }
@@ -116,7 +114,6 @@ void LevelSelect::update(float progress) {
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i);
         if (_levelButtons.at(i)->isDown()) {
-            CULog("selected level: %i", i);
             _selectedLevel = i;
         }
     }

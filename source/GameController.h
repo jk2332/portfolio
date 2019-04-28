@@ -54,14 +54,11 @@ protected:
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
     Size CLOUD_DEFAULT_SIZE = Size(5.1, 2.6);
-    Size CLOUDFACE_DEFAULT_SIZE = Size(25, 20);
-    Size CLOUD_SHADOW_DEFAULT_SIZE = Size(171, 43);
     
     RagdollInput _input;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
     std::shared_ptr<cugl::Button> _levelSelectButton;
-    std::vector<std::shared_ptr<Obstacle>> _rainDrops;
     std::shared_ptr<ParticleNode> _rainNode;
     std::shared_ptr<cugl::FreeList<Particle>> _memory;
     std::set<Particle*> _particles;

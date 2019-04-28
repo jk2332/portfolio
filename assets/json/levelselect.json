@@ -7,13 +7,125 @@
             "file":      "/textures/cloud-1.png"
         },
         "level1button": {
-            "file":      "/textures/cloud-3.png"
+            "file":      "/textures/cloud-2.png"
         },
         "level2button": {
-            "file":      "/textures/cloud-2.png"
+            "file":      "/textures/cloud-3.png"
         },
         "level3button": {
             "file":      "/textures/cloud-4.png"
+        }
+    },
+    "scenes" : {
+        "levelselect" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children" : {
+                "level0"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "level0button"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.4,
+                        "y_offset" : -0.08
+                    }
+                },
+                "level1"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "level1button"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.22,
+                        "y_offset" : -0.13
+                    }
+                },
+                "level2"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "level2button"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.03,
+                        "y_offset" : -0.22
+                    }
+                },
+                "level3"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "level3button"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.07,
+                        "y_offset" : 0.04
+                    }
+                }
+                
+            }
+            
         }
     }
 }

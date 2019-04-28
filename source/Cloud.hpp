@@ -214,6 +214,14 @@ public:
     bool isRainCloud(){return _isRainCloud;}
     void setTargetPos(Vec2 pos) {_targetPos = pos;}
     Vec2* getTargetPos() {return &_targetPos;}
+//    void setIsRainCloud() {
+//        if (_cloudSizeScale >= 1.414) {
+//            _isRainCloud = true;
+//        }
+//        else {
+//            _isRainCloud = false;
+//        }
+//    }
     
 #pragma mark -
 #pragma mark Animation

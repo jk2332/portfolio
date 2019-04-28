@@ -45,6 +45,7 @@ protected:
     //    bool  _completed;
     std::vector<std::shared_ptr<cugl::Button>> _levelButtons;
     int _selectedLevel = -1;
+    float _scale;
     int _num_level = 4;
     
     
@@ -91,7 +92,7 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, bool firstTime);
     
     
 #pragma mark -
