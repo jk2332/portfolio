@@ -130,10 +130,9 @@ void ParticleShader::dispose() {
     CULogGLError();
 }
 
-void ParticleShader::onStartup(){
-    particleTexture = Texture();
-    particleTexture.initWithFile("textures/particle1.png");
-    
+void ParticleShader::onStartup(std::shared_ptr<cugl::Texture> texture){
+    particleTexture = *texture;
+//    particleTexture.initWithFile("textures/particle1.png");
     compileProgram();
 }
 

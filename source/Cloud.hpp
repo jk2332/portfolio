@@ -344,7 +344,7 @@ public:
      *
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
-    void setDrawScale(float scale);
+    void setDrawScale(float drawscale);
     void setIsRaining(float b){_isRaining = b;}
     void setId(int id){_id = id;}
     int getId(){return _id;}

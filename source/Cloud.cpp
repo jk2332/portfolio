@@ -183,7 +183,7 @@ std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<
     _disp = displacement;
     _shadowNode = PolygonNode::allocWithTexture(shadow);
 //    _shadowNode->setContentSize(_shadowNode->getSize()*_scale);
-    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale/_drawscale);
+    _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
     _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     //rely on caller to add shadow node to the world
     return _shadowNode;
@@ -223,7 +223,7 @@ void Cloud::setCloudSizeScale(float s) {
  *
  * @param scale The ratio of the Ragdoll sprite to the physics body
  */
-void Cloud::setDrawScale(float scale) {
-    _drawscale = scale;
+void Cloud::setDrawScale(float drawscale) {
+    _drawscale = drawscale;
 }
 

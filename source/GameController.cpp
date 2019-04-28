@@ -232,7 +232,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(true);
+    setDebug(false);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -259,6 +259,7 @@ void GameScene::dispose() {
     cloudsToSplit_temp.clear();
     touchIDs_started_outside.clear();
     if (_levelSelectButton != nullptr && _levelSelectButton->isVisible()){
+
         _levelSelectButton->deactivate();
     }
     _levelSelectButton = nullptr;
@@ -355,7 +356,7 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall1 *= _scale;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
-//    sprite->setColor(Color4::CLEAR);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj1,sprite,1);  // All walls share the same texture
     
 #pragma mark : Wall polygon 2
@@ -378,7 +379,7 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall2 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall2);
-//    sprite->setColor(Color4::CLEAR);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj2,sprite,1);  // All walls share the same texture
 
 #pragma mark : Wall polygon 3
@@ -401,7 +402,7 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall3 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall3);
-//    sprite->setColor(Color4::CLEAR);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj3,sprite,1);  // All walls share the same texture
 
 #pragma mark : Wall polygon 4
@@ -424,7 +425,7 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall4 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall4);
-//    sprite->setColor(Color4::CLEAR);
+    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj4,sprite,1);  // All walls share the same texture
     
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("smallRain"));
@@ -454,12 +455,13 @@ void GameScene::populate() {
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
-        cloud->setScale(_scale);
+        cloud->setDrawScale(_scale);
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
+        cloudNode->setDrawScale(_scale);
         shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();
         i++;
     }
@@ -932,15 +934,17 @@ void GameScene::splitClouds(){
         auto new_pos = Vec2(cloudPos.x - c->getWidth()/2 - 1, cloudPos.y);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
-        
+        new_cloud->setDrawScale(_scale);
+
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
-        
+        cloudNode->setDrawScale(_scale);
+
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
         shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();
         
         new_cloud->setDebugColor(DYNAMIC_COLOR);

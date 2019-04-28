@@ -570,14 +570,14 @@ void LevelModel::update(int ticks) {
         CULog("All plants are dead");
         _over = true;
         _winnode->setText("You Lost" + std::to_string(getPlantScore()));
-        _winnode->setVisible(true);
+//        _winnode->setVisible(true);
     }
 
 
     if (ticks >= _time) {
         CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
-        _winnode->setVisible(true);
+//        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
         // return;

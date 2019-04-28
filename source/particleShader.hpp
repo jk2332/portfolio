@@ -140,7 +140,7 @@ public:
         _pg = ParticleGenerator(amount);
     }
     
-    void onStartup();
+    void onStartup(std::shared_ptr<cugl::Texture> texture);
 
     void compileProgram();
     
