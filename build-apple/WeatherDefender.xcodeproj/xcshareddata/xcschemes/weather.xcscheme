@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-               BuildableName = "WeatherDefenderiOS.app"
-               BlueprintName = "WeatherDefenderiOS"
+               BlueprintIdentifier = "F891A3E5226D3D0100F22BD1"
+               BuildableName = "WeatherDefender.app"
+               BlueprintName = "WeatherDefender"
                ReferencedContainer = "container:WeatherDefender.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -74,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EB122D9F1E281F4A0019E2D1"
-            BuildableName = "WeatherDefenderiOS.app"
-            BlueprintName = "WeatherDefenderiOS"
+            BlueprintIdentifier = "F891A3E5226D3D0100F22BD1"
+            BuildableName = "WeatherDefender.app"
+            BlueprintName = "WeatherDefender"
             ReferencedContainer = "container:WeatherDefender.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

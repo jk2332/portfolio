@@ -115,7 +115,7 @@ void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
 
 void ParticleShader::dispose() {
     Shader::dispose();
-    //glDeleteTextures(1, texture);
+    particleTexture.dispose();
     glDeleteProgram(_program);
     CULogGLError();
     glDeleteShader(_fragShader);
@@ -230,7 +230,7 @@ void ParticleShader::drawParticles(){
     for (CloudParticle p : _pg.particles){
         if (p.life > 0.0f){
             SetVector2f(OFFSET_UNIFORM, p.position);
-            SetVector4f(COLOR_UNIFORM, Vec4(p.opacity, 0.0, 0.0, 0.0));
+            SetVector4f(COLOR_UNIFORM, Vec4(p.opacity, p.color.x, p.color.y, p.color.z));
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             CULogGLError();
         }

@@ -49,7 +49,7 @@ struct CloudParticle {
     float life;
     Vec4 color;
     Vec2 offset;
-    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,1.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
+    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -136,7 +136,7 @@ public:
     ParticleShader(){_pg = ParticleGenerator();}
     
     ParticleShader(GLuint amount){
-        _particleScale = 1.0;
+        _particleScale = 1.0f;
         _pg = ParticleGenerator(amount);
     }
     

@@ -1,7 +1,7 @@
 {
 	"textures": {
 		"earth": {
-			"file":     "textures/t.png",
+			"file":     "textures/earthtile.png",
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
@@ -79,11 +79,17 @@
         "progressbar": {
             "file":     "textures/progressbar.png"
         },
-        "bar": {
-            "file":     "textures/bar.png"
+        "barempty": {
+            "file":     "textures/empty-bar.png"
         },
-        "barcolor": {
-            "file":     "textures/barcolor.png"
+        "barfull": {
+            "file":     "textures/full-bar.png"
+        },
+        "suncap": {
+            "file":     "textures/sun.png"
+        },
+        "mooncap": {
+            "file":     "textures/moon.png"
         },
         "sign": {
             "file":     "textures/woodboard.png"

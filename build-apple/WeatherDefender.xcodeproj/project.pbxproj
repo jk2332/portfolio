@@ -135,7 +135,7 @@
 		1BD618772266BF70001F8D5B /* LevelModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LevelModel.hpp; sourceTree = "<group>"; };
 		EB122D981E281EE70019E2D1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		EB122D9A1E281EFC0019E2D1 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WeatherDefender (iOS).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB122DA01E281F4A0019E2D1 /* WeatherDefenderiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherDefenderiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2C2255201D8C140090F94D /* CUGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CUGL.xcodeproj; path = "../cugl/build-apple/CUGL.xcodeproj"; sourceTree = "<group>"; };
 		EB3B95851E25B1FA00314284 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 		EB59D52B1E25281300A93BB5 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
@@ -203,6 +203,24 @@
 		F867DC31224013500038F905 /* CloudNode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CloudNode.hpp; sourceTree = "<group>"; };
 		F86A31512239D6D500233ED5 /* cloudParticle.frag */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = cloudParticle.frag; sourceTree = "<group>"; };
 		F86A31522239D6D600233ED5 /* cloudParticle.vert */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = cloudParticle.vert; sourceTree = "<group>"; };
+		F891A3CE226D39B600F22BD1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F891A3CF226D39B600F22BD1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F891A3D1226D39B600F22BD1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F891A3D2226D39B600F22BD1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F891A3D5226D39B600F22BD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F891A3D7226D39B700F22BD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F891A3DA226D39B700F22BD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F891A3DC226D39B700F22BD1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F891A3DD226D39B700F22BD1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F891A3E8226D3D0100F22BD1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F891A3E9226D3D0100F22BD1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F891A3EB226D3D0100F22BD1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F891A3EC226D3D0100F22BD1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F891A3EF226D3D0100F22BD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F891A3F1226D3D0200F22BD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F891A3F4226D3D0200F22BD1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F891A3F6226D3D0200F22BD1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F891A3F7226D3D0200F22BD1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F8939EA22236FE2900199385 /* MenuController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MenuController.cpp; sourceTree = "<group>"; };
 		F8939EA32236FE2900199385 /* MenuController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MenuController.hpp; sourceTree = "<group>"; };
 		F8939EA62236FEED00199385 /* Pest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Pest.cpp; sourceTree = "<group>"; };
@@ -282,6 +300,8 @@
 				EBB1AC281DF8C75400C353B0 /* Source */,
 				EBB1AC2E1DF8C81D00C353B0 /* Assets */,
 				EBB1AC341DF8C86C00C353B0 /* Resources */,
+				F891A3CD226D39B600F22BD1 /* weather */,
+				F891A3E7226D3D0100F22BD1 /* weather */,
 				EBB1AC351DF8C87400C353B0 /* Frameworks */,
 				EBB1AC071DF8C6BC00C353B0 /* Products */,
 				EB2C2255201D8C140090F94D /* CUGL.xcodeproj */,
@@ -292,7 +312,7 @@
 			isa = PBXGroup;
 			children = (
 				EBB1AC061DF8C6BC00C353B0 /* WeatherDefender (Mac).app */,
-				EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */,
+				EB122DA01E281F4A0019E2D1 /* WeatherDefenderiOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -428,12 +448,44 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
+		F891A3CD226D39B600F22BD1 /* weather */ = {
+			isa = PBXGroup;
+			children = (
+				F891A3CE226D39B600F22BD1 /* AppDelegate.h */,
+				F891A3CF226D39B600F22BD1 /* AppDelegate.m */,
+				F891A3D1226D39B600F22BD1 /* ViewController.h */,
+				F891A3D2226D39B600F22BD1 /* ViewController.m */,
+				F891A3D4226D39B600F22BD1 /* Main.storyboard */,
+				F891A3D7226D39B700F22BD1 /* Assets.xcassets */,
+				F891A3D9226D39B700F22BD1 /* LaunchScreen.storyboard */,
+				F891A3DC226D39B700F22BD1 /* Info.plist */,
+				F891A3DD226D39B700F22BD1 /* main.m */,
+			);
+			path = weather;
+			sourceTree = "<group>";
+		};
+		F891A3E7226D3D0100F22BD1 /* weather */ = {
+			isa = PBXGroup;
+			children = (
+				F891A3E8226D3D0100F22BD1 /* AppDelegate.h */,
+				F891A3E9226D3D0100F22BD1 /* AppDelegate.m */,
+				F891A3EB226D3D0100F22BD1 /* ViewController.h */,
+				F891A3EC226D3D0100F22BD1 /* ViewController.m */,
+				F891A3EE226D3D0100F22BD1 /* Main.storyboard */,
+				F891A3F1226D3D0200F22BD1 /* Assets.xcassets */,
+				F891A3F3226D3D0200F22BD1 /* LaunchScreen.storyboard */,
+				F891A3F6226D3D0200F22BD1 /* Info.plist */,
+				F891A3F7226D3D0200F22BD1 /* main.m */,
+			);
+			path = weather;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EB122D9F1E281F4A0019E2D1 /* WeatherDefender (iOS) */ = {
+		EB122D9F1E281F4A0019E2D1 /* WeatherDefenderiOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefender (iOS)" */;
+			buildConfigurationList = EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefenderiOS" */;
 			buildPhases = (
 				EB122D9C1E281F4A0019E2D1 /* Sources */,
 				EB122D9D1E281F4A0019E2D1 /* Frameworks */,
@@ -443,9 +495,9 @@
 			);
 			dependencies = (
 			);
-			name = "WeatherDefender (iOS)";
+			name = WeatherDefenderiOS;
 			productName = "UIDemo (iOS)";
-			productReference = EB122DA01E281F4A0019E2D1 /* WeatherDefender (iOS).app */;
+			productReference = EB122DA01E281F4A0019E2D1 /* WeatherDefenderiOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		EBB1AC051DF8C6BC00C353B0 /* WeatherDefender (Mac) */ = {
@@ -481,7 +533,7 @@
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = 22F3WA64X8;
+						DevelopmentTeam = TX52T47YPD;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -506,7 +558,7 @@
 			projectRoot = "";
 			targets = (
 				EBB1AC051DF8C6BC00C353B0 /* WeatherDefender (Mac) */,
-				EB122D9F1E281F4A0019E2D1 /* WeatherDefender (iOS) */,
+				EB122D9F1E281F4A0019E2D1 /* WeatherDefenderiOS */,
 			);
 		};
 /* End PBXProject section */
@@ -627,6 +679,41 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		F891A3D4226D39B600F22BD1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F891A3D5226D39B600F22BD1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F891A3D9226D39B700F22BD1 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F891A3DA226D39B700F22BD1 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		F891A3EE226D3D0100F22BD1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F891A3EF226D3D0100F22BD1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F891A3F3226D3D0200F22BD1 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F891A3F4226D3D0200F22BD1 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		EB122DB51E281F4A0019E2D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -645,7 +732,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defender;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -669,7 +756,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.weather;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defender;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -796,7 +883,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 22F3WA64X8;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -810,7 +897,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 22F3WA64X8;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -821,7 +908,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefender (iOS)" */ = {
+		EB122DB41E281F4A0019E2D1 /* Build configuration list for PBXNativeTarget "WeatherDefenderiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB122DB51E281F4A0019E2D1 /* Debug */,

@@ -49,7 +49,11 @@ protected:
     Vec2 _gravity;
     /** The level drawing scale (difference between physics and drawing coordinates) */
     Vec2 _scale;
+    Vec2 _debugScale;
+    
     float _cscale;
+    
+    float _drawscale;
     
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<Node> _worldnode = nullptr;
@@ -58,10 +62,11 @@ protected:
     
     // Physics objects for the game
     /** The physics word; part of the model (though listeners elsewhere) */
-    std::shared_ptr<cugl::JsonValue> _cloudLayer = nullptr;
-    std::shared_ptr<cugl::JsonValue> _plantLayer = nullptr;
-    std::shared_ptr<cugl::JsonValue> _pestLayer = nullptr;
-    std::vector<std::shared_ptr<Cloud>> _cloud;
+
+    std::shared_ptr<cugl::JsonValue> _cloudLayer;   
+    std::shared_ptr<cugl::JsonValue> _plantLayer;   
+    std::shared_ptr<cugl::JsonValue> _pestLayer;   
+    std::vector<std::shared_ptr<Cloud>> _clouds;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     bool _alreadyLoaded = false;
@@ -75,8 +80,6 @@ protected:
     std::shared_ptr<cugl::ProgressBar>  _bar;
 
     bool _over;
-
-    // float _scale;
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -202,8 +205,8 @@ public:
     void setDebugNode(std::shared_ptr<cugl::Node> node) {_debugnode = node;}
     std::shared_ptr<Node> getDebugNode() {return _debugnode;}
     
-    std::vector<std::shared_ptr<Cloud>> getClouds() { return _cloud; };
-    void setClouds(std::vector<std::shared_ptr<Cloud>> clouds) { _cloud = clouds; }
+    std::vector<std::shared_ptr<Cloud>> getClouds() { return _clouds; };
+    void setClouds(std::vector<std::shared_ptr<Cloud>> clouds) { _clouds = clouds; }
     
     std::shared_ptr<Node> getWorldNode() { return _worldnode; };
 
@@ -259,7 +262,7 @@ public:
      *
      * @return the drawing scale for this game level
      */
-    const Vec2& getDrawScale() const { return _scale; }
+    const float getDrawScale() const { return _drawscale; }
     std::shared_ptr<Cloud> createNewCloud(int id, Vec2 pos);
     
     /**
@@ -300,7 +303,7 @@ public:
      * @retain  a reference to this scene graph node
      * @release the previous scene graph node used by this object
      */
-    void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::vector<std::shared_ptr<PolygonNode>> shadows);
+    void setRootNode(const std::shared_ptr<Node>& root, Size dimen);
     
     /**
      * Sets the loaded assets for this game level

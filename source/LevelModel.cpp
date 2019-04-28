@@ -59,6 +59,7 @@ LevelModel::~LevelModel(void) {
  */
 void LevelModel::setDrawScale(float value) {
     _cscale = value;
+    _drawscale = value;
 }
 
 /**
@@ -83,7 +84,7 @@ void LevelModel::dispose(){
     _root = nullptr;
     _worldnode = nullptr;
     _debugnode = nullptr;
-    _cloud.clear();
+    _clouds.clear();
     _plants.clear();
     _pests.clear();
     _bar = nullptr;
@@ -103,16 +104,16 @@ void LevelModel::dispose(){
  * @release the previous scene graph node used by this object
  */
 
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
-                             std::vector<std::shared_ptr<PolygonNode>> shadows) {
-    
+
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     if (!_root) {
         clearRootNode();
     }
+    _over = false;
     
     _root = node;
-    _scale.set(_root->getContentSize().width/_bounds.size.width,
-               _root->getContentSize().height/_bounds.size.height);
+    _debugScale.set(_root->getContentSize().width/_bounds.size.width,
+                    _root->getContentSize().height/_bounds.size.height);
     
     // Create, but transfer ownership to root
     _worldnode = Node::alloc();
@@ -120,7 +121,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     _worldnode->setPosition(Vec2::ZERO);
     
     _debugnode = Node::alloc();
-    _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
+    _debugnode->setScale(_debugScale); // Debug node draws in PHYSICS coordinates
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(Vec2::ZERO);
     
@@ -130,44 +131,54 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     // Add the individual elements
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
-
-    int i = 0;
-    for(auto &shadow : shadows) {
-        _worldnode->addChildWithName(shadow, "shadow" + std::to_string(i));
-    }
-
+    
     auto plantNode = Node::alloc();
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
             plant->setSceneNode(plantNode, plant->getName());
         }
-   }
-   _worldnode->addChildWithName(plantNode, "plantNode");
-
-   auto pestNode = Node::alloc();
+    }
+    _worldnode->addChildWithName(plantNode, "plantNode");
+    
+    auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
             pest->setSceneNode(pestNode, pest->getName());
         }
-   }
-   _worldnode->addChildWithName(pestNode, "pestNode");
-
+    }
+    _worldnode->addChildWithName(pestNode, "pestNode");
+    
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
     _winnode->setPosition(dimen/2.0f);
     _winnode->setForeground(STATIC_COLOR);
     _winnode->setVisible(false);
-    _worldnode->addChild(_winnode, 7);
-
-    auto background = _assets->get<Texture>("bar");
-    auto foreground = _assets->get<Texture>("barcolor");
-    _bar = ProgressBar::alloc(background, foreground);
-//    _bar->setPosition(Vec2(850.0f, 525.0f));
-    _bar->setPosition(dimen.width - _bar->getWidth(), dimen.height - _bar->getHeight());
-
-    _worldnode->addChildWithName(_bar, "bar");
+    _worldnode->addChild(_winnode, UI_ZVALUE);
+    
+    auto barempty = _assets->get<Texture>("barempty");
+    auto barfull = _assets->get<Texture>("barfull");
+    auto leftcap = barfull->getSubTexture(0.f, 0.1f, 0.f, 1.0f);
+    auto rightcap = barfull->getSubTexture(0.99f, 1.f, 0.f, 1.0f);
+    auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
+    auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
+    auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
+    
+    _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
+    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getSize().height;
+    _bar->setScale(x);
+    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getSize().width
+                                                            + x*moonNode->getSize().width, _bar->getSize().height));
+    sunNode->setScale(x);
+    sunNode->setPosition(_bar->getPosition()
+                         + Vec2(-sunNode->getSize().width/2.0f, sunNode->getSize().height/2.0f));
+    _worldnode->addChildWithName(sunNode, "sun");
+    moonNode->setScale(x);
+    moonNode->setPosition(_bar->getPosition()
+                          + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
+    _worldnode->addChildWithName(moonNode, "moon");
+    _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
 }
 
 /**
@@ -293,19 +304,21 @@ void LevelModel::unload() {
     _cloudLayer = nullptr;
     _plantLayer = nullptr;
     _pestLayer = nullptr;
-//    for(auto it = _cloud.begin(); it != _cloud.end(); ++it) {
-//        (*it) = nullptr;
-//    }
-//    for(auto it = _plants.begin(); it != _plants.end(); ++it) {
-//        (*it) = nullptr;
-//    }
-//    for(auto it = _pests.begin(); it != _pests.end(); ++it) {
-//        (*it) = nullptr;
-//    }
-    _cloud.clear();
+
+    _clouds.clear();
     _plants.clear();
     _pests.clear();
 //    _board = nullptr;
+    for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _plants.begin(); it != _plants.end(); ++it) {
+        (*it) = nullptr;
+    }
+    for(auto it = _pests.begin(); it != _pests.end(); ++it) {
+        (*it) = nullptr;
+    }
+    //    _board = nullptr;
     _winnode = nullptr;
     _bar = nullptr;
     _assets = nullptr;
@@ -347,7 +360,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setMass(0.1f);
     
     if (success) {
-      _cloud.push_back(cloud);
+      _clouds.push_back(cloud);
     } else {
       cloud = nullptr;
     }
@@ -404,7 +417,8 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     success = success && json->get(TYPE)->isString();
     auto plantType = json->getString(TYPE);
 
-    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _cscale);
+
+    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _drawscale);
     auto plantName = "plant" + std::to_string(plantId);
     plant->setName(plantName);
     plant->setPlantType(plantType);
@@ -446,7 +460,8 @@ bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
     success = success && json->get("side")->isString();
     auto side = json->getString("side");
 
-    auto pest = Pest::alloc(x, y, pestType, side, _cscale);
+
+    auto pest = Pest::alloc(x, y, pestType, side, _drawscale);
     auto pestName = pestType + std::to_string(plantId);
     pest->setName(pestName);
 
@@ -475,7 +490,7 @@ bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
 }
 
 bool LevelModel::reset(){
-    if (_cloud.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+    if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
     CULog("resetting");
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
@@ -550,19 +565,22 @@ void LevelModel::update(int ticks) {
     for (auto &plant : _plants) {
         plantsDead = plantsDead && plant->getState() == dead;
     }
+    
     if (plantsDead) {
+        CULog("All plants are dead");
         _over = true;
-        _winnode->setText("Game Over" + std::to_string(getPlantScore()));
+        _winnode->setText("You Lost" + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
     }
 
 
     if (ticks >= _time) {
+        CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
         _winnode->setVisible(true);
         _over = true;
         ticks = _time;
-        return;
+        // return;
     }
     
     float progress = (float)ticks/(float)_time;

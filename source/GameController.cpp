@@ -27,7 +27,7 @@
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
 #include <cugl/2d/CUPathNode.h>
 #include <Box2D/Collision/b2Collision.h>
-
+#include "Constants.hpp"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -52,10 +52,9 @@ using namespace cugl;
 #define GES_COOLDOWN      20
 #define SPLIT_COOLDOWN      30
 
+
 //long swipeCoolDown = -1;
 //long pinchCoolDown = -1;
-
-#define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
 long gesCoolDown = -1;
@@ -73,26 +72,6 @@ std::map<long, Vec2> touchIDs_started_outside;
 /** The wall vertices */
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
-//TODO::FIX WALLS!
-//float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-//    1.0f,  7.1f, 16.0f,  7.1f, 16.0f,  7.0f,
-//    0.0f,  7.0f,  0.0f, 18.0f };
-//float WALL2[] = { 32.0f, 18.0f, 32.0f,  7.0f, 16.0f,  7.0f,
-//    16.0f,  7.1f, 31.0f,  7.1f, 31.0f, 17.0f,
-//    16.0f, 17.0f, 16.0f, 18.0f };
-
-float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-    0.f,  0.0f,  0.0f, 18.0f };
-float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
-    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
-    16.0f, 17.0f, 16.0f, 18.0f };
-
-
-int plants[] = { 1, 4, 18, 21, 24};
-//int plants[] = { 9 };
-
-/** The initial position of the ragdoll head */
 int ticks = 0;
 long click1 = -1;
 long click2 = -1;
@@ -102,18 +81,6 @@ long temp = 01;
 long rainingTicks = 0l;
 bool pinched = false;
 std::shared_ptr<Plant> currentPlant;
-
-#pragma mark -
-#pragma mark Physics Constants
-
-/** The density for all of (external) objects */
-#define BASIC_DENSITY       0.0f
-/** The friction for all of (external) objects */
-#define BASIC_FRICTION      0.1f
-/** The restitution for all of (external) objects */
-#define BASIC_RESTITUTION   0.1f
-/** The new lessened gravity for this world */
-#define WATER_GRAVITY   0.1f
 
 #pragma mark -
 #pragma mark Constructors
@@ -193,7 +160,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
     
-
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimen = computeActiveSize();
     if (assets == nullptr) {
@@ -215,6 +181,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
     _rootnode = Node::alloc();
+    _rootnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
     _assets = assets;
@@ -224,7 +191,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _clouds = _level->getClouds();
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen, _shadows); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
     _world = ObstacleWorld::alloc(rect,gravity);
     _max_cloud_id = _clouds.size();
@@ -239,6 +206,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
     _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
+    _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
     
@@ -248,29 +216,18 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
 
+
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
     
-
-    std::vector<std::shared_ptr<Texture>> textures;
-    textures.push_back(_assets->get<Texture>("tile"));
-    _board = Board::alloc(32, textures, GRID_NUM_X, GRID_NUM_Y);
+    
+    _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
     auto boardNode = Node::alloc();
-//    boardNode->setZOrder(1);
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
-    
-    //Cloud Shadows
-    shared_ptr<Texture> shadow = _assets->get<Texture>("shadow");
-    for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
-        shared_ptr<PolygonNode> _shadowNode = PolygonNode::allocWithTexture(shadow);
-        _shadows.push_back(_shadowNode);
-    }
-    
-    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
 
     populate();
     _active = true;
@@ -293,7 +250,7 @@ void GameScene::dispose() {
     _memory = nullptr;
     _rainNode = nullptr;
     _particles.clear();
-    _shadows.clear();
+//    _shadows.clear();
     _board->dispose();
     currentPlant = nullptr;
     _world = nullptr;
@@ -354,6 +311,23 @@ void GameScene::reset() {
  * with your serialization loader, which would process a level file.
  */
 void GameScene::populate() {
+    //Change from draw coordinates to Box2D coordinates
+    float w = SCENE_WIDTH/_scale;
+    float h = SCENE_HEIGHT/_scale;
+    //Define wall vertices in terms of the width and height of the playable area
+    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f,  0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
+    float WALL2[] = { w,h, w,h*0.9f,  0.0f,h*0.9f, 0.0f,h };
+    float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
+    float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };
+
+    //Ragdoll Walls
+    //float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
+    //    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
+    //    0.f,  0.0f,  0.0f, 18.0f };
+    //float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
+    //    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
+    //    16.0f, 17.0f, 16.0f, 18.0f };
+    
 #pragma mark : Wall polygon 1
     // Create ground pieces
     // All walls share the same texture
@@ -361,7 +335,7 @@ void GameScene::populate() {
     std::string wname = "wall";
     
 //     Create the polygon outline
-    Poly2 wall1(WALL1,16);
+    Poly2 wall1(WALL1,8);
     SimpleTriangulator triangulator;
     triangulator.set(wall1);
     triangulator.calculate();
@@ -381,10 +355,11 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall1 *= _scale;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
+//    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj1,sprite,1);  // All walls share the same texture
     
 #pragma mark : Wall polygon 2
-    Poly2 wall2(WALL2,16);
+    Poly2 wall2(WALL2,8);
     triangulator.set(wall2);
     triangulator.calculate();
     wall2.setIndices(triangulator.getTriangulation());
@@ -403,7 +378,54 @@ void GameScene::populate() {
     // Add the scene graph nodes to this object
     wall2 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall2);
+//    sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj2,sprite,1);  // All walls share the same texture
+
+#pragma mark : Wall polygon 3
+    Poly2 wall3(WALL3,8);
+    triangulator.set(wall3);
+    triangulator.calculate();
+    wall3.setIndices(triangulator.getTriangulation());
+    wall3.setType(Poly2::Type::SOLID);
+
+    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall3);
+    wallobj3->setDebugColor(STATIC_COLOR);
+    wallobj3->setName(wname);
+
+    // Set the physics attributes
+    wallobj3->setBodyType(b2_staticBody);
+    wallobj3->setDensity(BASIC_DENSITY);
+    wallobj3->setFriction(BASIC_FRICTION);
+    wallobj3->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall3 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall3);
+//    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj3,sprite,1);  // All walls share the same texture
+
+#pragma mark : Wall polygon 4
+    Poly2 wall4(WALL4,8);
+    triangulator.set(wall4);
+    triangulator.calculate();
+    wall4.setIndices(triangulator.getTriangulation());
+    wall4.setType(Poly2::Type::SOLID);
+
+    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall4);
+    wallobj4->setDebugColor(STATIC_COLOR);
+    wallobj4->setName(wname);
+
+    // Set the physics attributes
+    wallobj4->setBodyType(b2_staticBody);
+    wallobj4->setDensity(BASIC_DENSITY);
+    wallobj4->setFriction(BASIC_FRICTION);
+    wallobj4->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall4 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall4);
+//    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj4,sprite,1);  // All walls share the same texture
     
     _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("smallRain"));
     // _rainNode->setBlendFunc(GL_ONE, GL_ONE);
@@ -411,7 +433,7 @@ void GameScene::populate() {
     //CAPACITY
     _memory = FreeList<Particle>::alloc(100);
     Size size = Application::get()->getDisplaySize();
-    _rainNode->setContentSize(size);
+    _rainNode->setContentSize(size*_scale);
     _levelworldnode->addChild(_rainNode);
     
     auto levelSelectButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("backToLevelSelectButton"));
@@ -429,13 +451,16 @@ void GameScene::populate() {
     _worldnode->addChild(_levelSelectButton);
     
     int i = 0;
+    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setScale(_scale);
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
-        cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows[i]);
+        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
+        _level->getWorldNode()->sortZOrder();
         i++;
     }
 }
@@ -898,6 +923,7 @@ void GameScene::splitClouds(){
         
         // to small to split
         if (c->getCloudSizeScale()/sqrt(2) <= 0.7) continue;
+
         
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
@@ -910,11 +936,13 @@ void GameScene::splitClouds(){
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
-        shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
-        _shadows.push_back(new_shadow);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(_max_cloud_id), -1);
+        
+        Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), 1);
         _level->getWorldNode()->sortZOrder();
-        new_cloud->setSceneNodeParticles(cloudNode, GRID_HEIGHT + DOWN_LEFT_CORNER_Y, _assets->get<Texture>("cloudFace"), _shadows.back());
+        
         new_cloud->setDebugColor(DYNAMIC_COLOR);
         new_cloud->setDebugScene(_debugnode);
 
@@ -937,29 +965,6 @@ void GameScene::splitClouds(){
  * @param  contact  The two bodies that collided
  */
 void GameScene::beginContact(b2Contact* contact) {
-//    CULog("begin contact");
-
-//    b2Body* body1 = contact->GetFixtureA()->GetBody();
-//    b2Body* body2 = contact->GetFixtureB()->GetBody();
-//
-//    // If we hit the "win" door, we are done
-//    Obstacle * b1 = (Obstacle *)(body1->GetUserData());
-//    Obstacle * b2 = (Obstacle *)(body2->GetUserData());
-//
-//    if (b1->isBullet() && b2->isBullet()) return;
-////    if (b1->isBullet() && b2->isBullet()) return;
-//    if (b1->isBullet() && !b1->isRemoved()){
-//        CULog("bullet in contact");
-//        ((BoxObstacle *) b1)->markRemoved(true);
-//        return;
-//    }
-//
-//    if (b2->isBullet() && !b2->isRemoved()){
-//        CULog("bullet in contact");
-//        ((BoxObstacle *) b2)->markRemoved(true);
-//        return;
-//    }
-
     Cloud *cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetUserData());
     if (cloud1 != nullptr && cloud1->getName().empty()) {
         cloud1 = static_cast<Cloud*>(contact->GetFixtureA()->GetBody()->GetNext()->GetUserData());
@@ -975,7 +980,6 @@ void GameScene::beginContact(b2Contact* contact) {
 //        CULog("clouds null");
         return;
     }
-
 }
 
 
@@ -989,9 +993,11 @@ Size GameScene::computeActiveSize() const {
     Size dimen = Application::get()->getDisplaySize();
     float ratio1 = dimen.width/dimen.height;
     float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
+//    dimen *= SCENE_WIDTH/dimen.width;
+
     if (ratio1 < ratio2) {
         dimen *= SCENE_WIDTH/dimen.width;
-    } else {
+    }else {
         dimen *= SCENE_HEIGHT/dimen.height;
     }
     return dimen;

@@ -47,11 +47,13 @@ int main(int argc, char * argv[]) {
     
     // Set the properties of your application
     app.setName("Weather Defender");
-    app.setOrganization("GDIAC");
+    app.setOrganization("Puppy Spirit");
     app.setHighDPI(true);
 
-    //app.setFullscreen(true);
+//    app.setFullscreen(true);
+//    app.setSize(1024, 576);
     app.setSize(1024, 576);
+
     app.setFPS(60.0f);
 #if CU_PLATFORM == CU_PLATFORM_MACOS || CU_PLATFORM == CU_PLATFORM_WINDOWS
     app.setMultiSampled(true);

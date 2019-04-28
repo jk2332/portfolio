@@ -37,9 +37,9 @@ using namespace cugl;
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
 
-bool Board::init(float scale, std::vector<std::shared_ptr<cugl::Texture>> textures, int gridNumX, int gridNumY) {
+bool Board::init(float scale, std::shared_ptr<cugl::Texture> texture, int gridNumX, int gridNumY) {
     _drawscale = scale;
-    _textures = textures;
+    _texture = texture;
     _gridNumX = gridNumX;
     _gridNumY = gridNumY;
     
@@ -53,7 +53,7 @@ bool Board::init(float scale, std::vector<std::shared_ptr<cugl::Texture>> textur
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Board::dispose() {
-    _textures.clear();
+    _texture = nullptr;
 }
 
 
@@ -82,7 +82,7 @@ void Board::dispose() {
 void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
     for (int i = 0; i < _gridNumX; i++){
         for (int j = 0; j < _gridNumY; j++){
-            std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_textures.at(0));
+            std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_texture);
             single_grid->setPosition(gridCoordToPosition(Vec2(i, j)));
             single_grid->setContentSize(DRAW_WIDTH*_drawscale, DRAW_HEIGHT*_drawscale);
             _nodes.push_back(single_grid);
