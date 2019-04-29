@@ -98,7 +98,7 @@
 #define UI_ZVALUE 100
 
 //Cloud Particles
-#define PARTICLE_NUM 1
+#define PARTICLE_NUM 10
 #define MAX_JOSTLE 8.0f
 #define MAX_VELOCITY 10.0f
 
