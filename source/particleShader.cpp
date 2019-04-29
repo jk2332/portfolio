@@ -24,7 +24,7 @@ ParticleGenerator::ParticleGenerator(){}
 ParticleGenerator::ParticleGenerator(GLuint amount, float ds): amount(amount){
     CULogGLError();
     drawscale = ds;
-    for (int i = 0; i < 1; i++){
+    for (int i = 0; i < cloudSections.size(); i++){
         Vec3 currentCircle = cloudSections[i];
         int trueAmount = this->amount;
         //Create twice as many particles for the core section
