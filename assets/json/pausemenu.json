@@ -1,0 +1,96 @@
+{
+    "textures": {
+        "levelSelectButton2": {
+            "file":      "/textures/SelectedLevel.png"
+        },
+        "quitButton": {
+            "file":      "/textures/quit.png"
+        }
+    },
+    "scenes" : {
+        "pauseMenu" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children" : {
+                "plevelselectbutton"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "levelSelectButton2"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.4,
+                        "y_offset" : -0.08
+                    }
+                },
+                "pquitbutton"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "quitButton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.03,
+                        "y_offset" : -0.22
+                    }
+                },
+                "pcontinuebutton"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "play"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.07,
+                        "y_offset" : 0.04
+                    }
+                }
+            }
+        }
+    }
+}
+

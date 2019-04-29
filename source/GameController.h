@@ -58,12 +58,13 @@ protected:
     RagdollInput _input;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
-    std::shared_ptr<cugl::Button> _levelSelectButton;
+    std::shared_ptr<cugl::Button> _pauseButton;
     std::shared_ptr<ParticleNode> _rainNode;
     std::shared_ptr<cugl::FreeList<Particle>> _memory;
     std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
+    bool _paused;
     
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
@@ -283,6 +284,7 @@ public:
     void combineByPinch(Cloud * cind1, Cloud * cind2);
     void checkForCombining(Obstacle * ob);
     void checkForRain(Obstacle * ob);
+    bool gamePaused() { return _paused; }
 //    bool backToLevelSelect() {return _backToLevelSelect;}
 //    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
 

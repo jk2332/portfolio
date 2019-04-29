@@ -75,6 +75,8 @@
 		F15F4AB622223516006D5CD3 /* Plant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F15F4AB422223516006D5CD3 /* Plant.cpp */; };
 		F1A5DAF62268F14A00E47219 /* CloudController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1A5DAF42268F14A00E47219 /* CloudController.cpp */; };
 		F1A5DAF72268F14A00E47219 /* CloudController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1A5DAF42268F14A00E47219 /* CloudController.cpp */; };
+		F1ACCB4C2276810700AD68C2 /* PauseMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1ACCB4A2276810700AD68C2 /* PauseMenu.cpp */; };
+		F1ACCB4D2276810700AD68C2 /* PauseMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1ACCB4A2276810700AD68C2 /* PauseMenu.cpp */; };
 		F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1B4E5482224517700D807D5 /* Cloud.cpp */; };
 		F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F2EDA0223331F600ECCD4B /* Board.cpp */; };
 		F85C7948224DCBA200E1E679 /* particleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F85C7946224DCBA200E1E679 /* particleShader.cpp */; };
@@ -192,6 +194,8 @@
 		F15F4AB522223516006D5CD3 /* Plant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Plant.hpp; sourceTree = "<group>"; };
 		F1A5DAF42268F14A00E47219 /* CloudController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloudController.cpp; sourceTree = "<group>"; };
 		F1A5DAF52268F14A00E47219 /* CloudController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CloudController.hpp; sourceTree = "<group>"; };
+		F1ACCB4A2276810700AD68C2 /* PauseMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PauseMenu.cpp; sourceTree = "<group>"; };
+		F1ACCB4B2276810700AD68C2 /* PauseMenu.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PauseMenu.hpp; sourceTree = "<group>"; };
 		F1B4E5482224517700D807D5 /* Cloud.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Cloud.cpp; sourceTree = "<group>"; };
 		F1B4E5492224517700D807D5 /* Cloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Cloud.hpp; sourceTree = "<group>"; };
 		F1F2EDA0223331F600ECCD4B /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
@@ -363,6 +367,8 @@
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
+				F1ACCB4A2276810700AD68C2 /* PauseMenu.cpp */,
+				F1ACCB4B2276810700AD68C2 /* PauseMenu.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -634,6 +640,7 @@
 				F8939EB92237517400199385 /* PestController.cpp in Sources */,
 				1B18648622673567003E0C2B /* Constants.cpp in Sources */,
 				F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */,
+				F1ACCB4D2276810700AD68C2 /* PauseMenu.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
 				1BD618762266BF4F001F8D5B /* LevelModel.cpp in Sources */,
 				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
@@ -668,6 +675,7 @@
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
 				F867DC32224013500038F905 /* CloudNode.cpp in Sources */,
+				F1ACCB4C2276810700AD68C2 /* PauseMenu.cpp in Sources */,
 				F85C7948224DCBA200E1E679 /* particleShader.cpp in Sources */,
 				F1B4E54A2224517700D807D5 /* Cloud.cpp in Sources */,
 				1B8274CB22676656008F7E17 /* LevelSelect.cpp in Sources */,

@@ -52,6 +52,12 @@ void Plant::dispose() {
     for (std::shared_ptr<Texture> a : _textures){
         a = nullptr;
     }
+    _node = nullptr;
+    _signNode = nullptr;
+    _assets = nullptr;
+    _actions = nullptr;
+    _grow = nullptr;
+    _grow2 = nullptr;
 }
 
 void Plant::setShade(bool f) {

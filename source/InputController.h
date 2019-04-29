@@ -49,6 +49,7 @@ private:
     bool  _keyDebug;
     /** Whether the exit key is down */
     bool  _keyExit;
+    bool _keyPause;
     bool _keySplit;
     bool _keyJoin;
     
@@ -106,6 +107,7 @@ protected:
     bool _splitPressed;
     bool _joinPressed;
     bool _resetPressed;
+    bool _pausePressed;
     /** Whether the debug toggle was chosen. */
     bool _debugPressed;
     /** Whether the exit action was chosen. */
@@ -221,6 +223,7 @@ public:
      * @return true if the reset button was pressed.
      */
     bool didReset() const { return _resetPressed; }
+    bool didPause() const {return _pausePressed;}
     bool didSplit()const {return _splitPressed;}
     
     bool didJoin()const {return _joinPressed;}

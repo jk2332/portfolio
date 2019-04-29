@@ -162,6 +162,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimen = computeActiveSize();
+    _paused = false;
     if (assets == nullptr) {
         return false;
     } else if (!Scene::init(dimen)) {
@@ -173,7 +174,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         CULog("Fail!");
         return false;
     }
-    
+    _assets = assets;
 
     // Start up the input handler
     _input.init();
@@ -184,7 +185,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
-    _assets = assets;
 
     _level->setDebugNode(_debugnode);
     _level->reset();
@@ -193,6 +193,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _level->setAssets(_assets);
     _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
+    
     _world = ObstacleWorld::alloc(rect,gravity);
     _max_cloud_id = _clouds.size();
 
@@ -232,7 +233,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(false);
+    setDebug(true);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -245,30 +246,37 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     _input.dispose();
+    for (auto &c : _clouds){
+        c->dispose();
+    }
     _clouds.clear();
+    for (auto &p : _plants){
+        p->dispose();
+    }
     _plants.clear();
     _memory = nullptr;
     _rainNode = nullptr;
     _particles.clear();
 //    _shadows.clear();
-    _board->dispose();
+//    _board->dispose();
     currentPlant = nullptr;
     _world = nullptr;
     _selectors.clear();
     cloudsToSplit.clear();
     cloudsToSplit_temp.clear();
     touchIDs_started_outside.clear();
-    if (_levelSelectButton != nullptr && _levelSelectButton->isVisible()){
-
-        _levelSelectButton->deactivate();
+    if (_pauseButton != nullptr && _pauseButton->isVisible()){
+        _pauseButton->deactivate();
     }
-    _levelSelectButton = nullptr;
+    _pauseButton = nullptr;
+    if (_level) _level->dispose();
     _worldnode = nullptr;
-    _level->dispose();
     _level = nullptr;
+    _rootnode = nullptr;
     _debugnode = nullptr;
     _complete = false;
     _debug = false;
+    _active = false;
     Scene::dispose();
 }
 
@@ -437,32 +445,35 @@ void GameScene::populate() {
     _rainNode->setContentSize(size*_scale);
     _levelworldnode->addChild(_rainNode);
     
-    auto levelSelectButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("backToLevelSelectButton"));
-    levelSelectButtonNode->setContentSize(Size(1.5, 1.5)*_scale);
-    levelSelectButtonNode->setName("backToLevelSelectButton");
-    levelSelectButtonNode->setPosition(0, 0);
-    
-    _levelSelectButton = Button::alloc(levelSelectButtonNode);
-    _levelSelectButton->setPosition(0, 0);
-    _levelSelectButton->setListener([=](const std::string& name, bool down) {
-        this->_active = !down;
+    auto pauseButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pauseButton"));
+    pauseButtonNode->setContentSize(Size(4, 2)*_scale);
+    pauseButtonNode->setName("pauseButton");
+    pauseButtonNode->setPosition(0, 0);
+
+    _pauseButton = Button::alloc(pauseButtonNode);
+    _pauseButton->deactivate();
+    _pauseButton->setVisible(false);
+    _pauseButton->setPosition(0, 0);
+    _pauseButton->setListener([=](const std::string& name, bool down) {
+        this->_active = down;
+        _paused = true;
     });
-    _levelSelectButton->setVisible(true);
-    _levelSelectButton->activate(10);
-    _worldnode->addChild(_levelSelectButton);
+    _worldnode->addChild(_pauseButton);
     
     int i = 0;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
+        CULog("setting particles for the clouds");
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
+//        cloud->setCloudSizeScale(1);
         auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
         shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
-        _level->getWorldNode()->sortZOrder();
+        _levelworldnode->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
+        _levelworldnode->sortZOrder();
         i++;
     }
 }
@@ -579,7 +590,7 @@ void GameScene::checkForRain(Obstacle * o){
     if (o) {
         std::cout << (o->getName()) << endl;
         if (click1 == -1){
-            CULog("first click");
+//            CULog("first click");
             click1 = ticks;
             clicked_cloud = o;
         }
@@ -587,7 +598,7 @@ void GameScene::checkForRain(Obstacle * o){
             click2 = ticks;
             long gap = click2 - click1;
             if (gap <= 70 && clicked_cloud && clicked_cloud->getName() == o->getName()){
-                CULog("second click");
+//                CULog("second click");
                 gesCoolDown = ticks;
                 makeRain(o);
             }
@@ -633,9 +644,11 @@ void GameScene::update(float dt) {
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didReset()) { reset(); }
     if (_input.didExit())  {
-        CULog("Shutting down");
         Application::get()->quit();
     }
+    
+    _pauseButton->activate(10);
+    _pauseButton->setVisible(true);
     
     // process combining
     if (_input.didPinchSelect()){
@@ -827,7 +840,8 @@ void GameScene::update(float dt) {
             auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
             cloudNode->setContentSize(c->getCloudSize());
             float scale = c->getCloudSizeScale();
-
+            c->setCloudSizeScale(scale);
+            
             c->setSize(CLOUD_DEFAULT_SIZE*scale);
             c->getBody()->DestroyFixture(&c->getBody()->GetFixtureList()[0]);
             b2Shape * shape = c->getBody()->GetFixtureList()[0].GetShape();
@@ -881,7 +895,7 @@ void GameScene::makeRain(Obstacle * ob){
 //    if (!c->isRainCloud()) return;
     Vec2 cloud_pos = c->getPosition();
     
-    CULog("make it rain");
+//    CULog("make it rain");
 
     // Draw rain droplets
     for (int i = -3; i < 3; i++){

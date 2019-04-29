@@ -129,6 +129,9 @@
         },
         "backToLevelSelectButton": {
             "file":     "textures/Back.png"
+        },
+        "pauseButton": {
+            "file":     "textures/Pause_2.png"
         }
 	},
     "sounds": {
