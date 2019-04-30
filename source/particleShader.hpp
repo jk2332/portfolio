@@ -18,11 +18,11 @@
 
 using namespace cugl;
 
-//                                      Position        Texcoords
-static GLfloat ogParticleQuad[16]= {-10.0f,-10.0f,   0.0f, 0.0f,
-                                    -10.0f, 10.0f,   0.0f, 1.0f,
-                                     10.0f,-10.0f,   1.0f, 0.0f,
-                                     10.0f, 10.0f,   1.0f, 1.0f};
+//                                   Position                                        Texcoords
+static GLfloat ogParticleQuad[16]= {-10.0f*PARTICLE_FACTOR,-10.0f*PARTICLE_FACTOR,   0.0f, 0.0f,
+                                    -10.0f*PARTICLE_FACTOR, 10.0f*PARTICLE_FACTOR,   0.0f, 1.0f,
+                                     10.0f*PARTICLE_FACTOR,-10.0f*PARTICLE_FACTOR,   1.0f, 0.0f,
+                                     10.0f*PARTICLE_FACTOR, 10.0f*PARTICLE_FACTOR,   1.0f, 1.0f};
 
 //                                      Radius CenterX CenterY
 static vector<Vec3> ogCloudSections = { Vec3(1.25,  0.0,   0.0), //Central Circle
@@ -46,11 +46,9 @@ static GLuint EBO;
 // Represents a single particle and its state
 struct CloudParticle {
     Vec2 position, velocity, jostle;
-    float opacity;
-    float life;
     Vec4 color;
     Vec2 offset;
-    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition), opacity(1.0f), life(1.0f){}
+    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -82,10 +80,6 @@ public:
                                     Vec3(0.40, -1.05,  1.2),
                                     Vec3(0.40,  0.3,   1.25),
                                     Vec3(0.40, -0.4,   1.6)};
-    // Returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
-    int firstUnusedParticle();
-    // Respawns particle
-    void respawnParticle(CloudParticle &particle, Vec2 offset = Vec2(0.0f, 0.0f));
 };
 
 class ParticleShader : public Shader {
@@ -108,11 +102,12 @@ protected:
     Texture particleTexture;
     ParticleGenerator _pg;
     //                               Position        Texcoords
-    GLfloat particle_quad [16] = {  -10.0f,-10.0f,   0.0f, 0.0f,
-                                    -10.0f, 10.0f,   0.0f, 1.0f,
-                                     10.0f,-10.0f,   1.0f, 0.0f,
-                                     10.0f, 10.0f,   1.0f, 1.0f};
+    GLfloat particle_quad [16] = {  0.0f,0.0f,   0.0f, 0.0f,
+                                    0.0f,0.0f,   0.0f, 1.0f,
+                                    0.0f,0.0f,   1.0f, 0.0f,
+                                    0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
+    Vec2 aspectRatio;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -137,12 +132,13 @@ public:
    
     ParticleShader(){_pg = ParticleGenerator();}
     
-    ParticleShader(GLuint amount, float ds){
-        _particleScale = 1.0f;
+    ParticleShader(GLuint amount, float ds, Vec2 ar){
+        _particleScale = 0.0f;
         _pg = ParticleGenerator(amount, ds);
+        aspectRatio = ar;
     }
     
-    void onStartup(std::shared_ptr<cugl::Texture> texture);
+    void onStartup();
 
     void compileProgram();
     

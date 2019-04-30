@@ -40,19 +40,6 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Level Geography
 
-/** This is adjusted by screen aspect ratio to get the height */
-#define SCENE_WIDTH  1024
-#define SCENE_HEIGHT 576
-
-/** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
-/** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
-#define SWIPE_VERT_OFFSET   3.5*32
-#define GES_COOLDOWN      20
-#define SPLIT_COOLDOWN      30
-
-
 //long swipeCoolDown = -1;
 //long pinchCoolDown = -1;
 
@@ -177,6 +164,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // Start up the input handler
     _input.init();
+    
+    // IMPORTANT: SCALING MUST BE UNIFORM
+    // This means that we cannot change the aspect ratio of the physics world
+    // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
@@ -195,12 +186,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _levelworldnode = _level->getWorldNode();
     _world = ObstacleWorld::alloc(rect,gravity);
     _max_cloud_id = _clouds.size();
-
-
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -216,11 +201,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
 
-
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
-    
     
     _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
@@ -228,11 +211,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
-
     populate();
     _active = true;
     _complete = false;
-    setDebug(false);
+    setDebug(true);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -250,7 +232,6 @@ void GameScene::dispose() {
     _memory = nullptr;
     _rainNode = nullptr;
     _particles.clear();
-//    _shadows.clear();
     _board->dispose();
     currentPlant = nullptr;
     _world = nullptr;
@@ -259,7 +240,6 @@ void GameScene::dispose() {
     cloudsToSplit_temp.clear();
     touchIDs_started_outside.clear();
     if (_levelSelectButton != nullptr && _levelSelectButton->isVisible()){
-
         _levelSelectButton->deactivate();
     }
     _levelSelectButton = nullptr;
@@ -316,8 +296,8 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f,  0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
-    float WALL2[] = { w,h, w,h*0.9f,  0.0f,h*0.9f, 0.0f,h };
+    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f, 0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
+    float WALL2[] = { w,h, w,h*0.9f, 0.0f,h*0.9f, 0.0f,h };
     float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
     float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };
 
@@ -456,7 +436,7 @@ void GameScene::populate() {
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _scale);
+        auto cloudNode = CloudNode::alloc(_scale, dimen);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
         shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
@@ -742,7 +722,7 @@ void GameScene::update(float dt) {
                         flag = true;
                         if (cloudsToSplit_temp.count(touchID) == 0){
                             float y_dist = abs(ob->getPosition().y - touchIDs_started_outside.at(touchID).y);
-                            if (y_dist > SWIPE_VERT_OFFSET/_scale){
+                            if (y_dist > SWIPE_VERT_OFFSET){
                                 if (ticks - gesCoolDown >= GES_COOLDOWN){
                                     CULog("swiped");
                                     gesCoolDown = ticks;
@@ -771,7 +751,7 @@ void GameScene::update(float dt) {
             
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
-                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET/_scale){
+                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
                     CULog("inserting");
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
@@ -936,7 +916,7 @@ void GameScene::splitClouds(){
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
 
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"), _scale);
+        auto cloudNode = CloudNode::alloc(_scale, dimen);
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
         cloudNode->setDrawScale(_scale);
@@ -997,12 +977,19 @@ Size GameScene::computeActiveSize() const {
     Size dimen = Application::get()->getDisplaySize();
     float ratio1 = dimen.width/dimen.height;
     float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-//    dimen *= SCENE_WIDTH/dimen.width;
 
     if (ratio1 < ratio2) {
         dimen *= SCENE_WIDTH/dimen.width;
+        for(int i = 0; i < 4; i++){
+            ogParticleQuad[i*4] = (dimen.height/SCENE_HEIGHT)*ogParticleQuad[i*4];
+            ogParticleQuad[i*4 + 1] = (dimen.height/SCENE_HEIGHT)*ogParticleQuad[i*4 + 1];
+        }
     }else {
         dimen *= SCENE_HEIGHT/dimen.height;
+        for(int i = 0; i < 4; i++){
+            ogParticleQuad[i*4] = (dimen.width/SCENE_WIDTH)*ogParticleQuad[i*4];
+            ogParticleQuad[i*4 + 1] = (dimen.width/SCENE_WIDTH)*ogParticleQuad[i*4 + 1];
+        }
     }
     return dimen;
 }

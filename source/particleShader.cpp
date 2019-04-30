@@ -8,14 +8,13 @@
 
 #include "particleShader.hpp"
 
-#define POSITION_ATTRIBUTE  "position"
+#define POSITION_ATTRIBUTE   "position"
 #define TEXCOORDS_ATTRIBUTE  "texCoords"
-#define PROJECTION_UNIFORM  "projection"
-#define OFFSET_UNIFORM  "offset"
-#define COLOR_UNIFORM     "color"
-#define SPRITE_UNIFORM     "sprite"
-#define OPACITY_UNIFORM     "opacity"
-#define TEXTURE_POSITION    0
+#define OFFSET_UNIFORM       "offset"
+#define COLOR_UNIFORM        "color"
+#define SPRITE_UNIFORM       "sprite"
+#define ASPECT_UNIFORM       "aspectRatio"
+#define TEXTURE_POSITION     0
 
 using namespace cugl;
 
@@ -59,54 +58,26 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
             CloudParticle &p = this->particles[index];
             Vec2 basePosition = cloud_pos + particleScale*p.offset;
             
-//            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
-//                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
-//                p.jostle = Vec2::ZERO;
-//                //Determine v1 and v2 in range 0 to maxVelocity
-//                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-//                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-//                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
-//            }
-//            else{
-//                p.jostle += dt*p.velocity;
-//            }
+            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
+                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
+                p.jostle = Vec2::ZERO;
+                //Determine v1 and v2 in range 0 to maxVelocity
+                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+            }
+            else{
+                p.jostle += dt*p.velocity;
+            }
             p.position = basePosition + p.jostle;
             
             float greater = p.jostle.x;
             if (p.jostle.y > p.jostle.x){
                 greater = p.jostle.y;
             }
-            p.opacity = 1.0 - abs(greater/maxJostle);
+            p.color.w = 1.0 - abs(greater/maxJostle);
         }
     }
-}
-
-// Stores the index of the last particle used (for quick access to next dead particle)
-int lastUsedParticle = 0;
-int ParticleGenerator::firstUnusedParticle(){
-    // First search from last used particle, this will usually return almost instantly
-    for (int i = lastUsedParticle; i < this->amount; ++i){
-        if (this->particles[i].life <= 0.0f){
-            lastUsedParticle = i;
-            return i;
-        }
-    }
-    // Otherwise, do a linear search
-    for (int i = 0; i < lastUsedParticle; ++i){
-        if (this->particles[i].life <= 0.0f){
-            lastUsedParticle = i;
-            return i;
-        }
-    }
-    // All particles are taken, override the first one (note that if it repeatedly hits this case, more particles should be reserved)
-    lastUsedParticle = 0;
-    return 0;
-}
-
-void ParticleGenerator::respawnParticle(CloudParticle &particle, Vec2 offset){
-    particle.position = Vec2(500,500);
-    particle.life = 1.0f;
-    particle.velocity = Vec2(5.0f,5.0f);
 }
 
 void ParticleShader::dispose() {
@@ -126,8 +97,7 @@ void ParticleShader::dispose() {
     CULogGLError();
 }
 
-void ParticleShader::onStartup(std::shared_ptr<cugl::Texture> texture){
-//    particleTexture = *texture;
+void ParticleShader::onStartup(){
     particleTexture = Texture();
     particleTexture.initWithFile("textures/particle1.png");
     compileProgram();
@@ -224,12 +194,11 @@ void ParticleShader::drawParticles(){
     CULogGLError();
 
     for (CloudParticle p : _pg.particles){
-        if (p.life > 0.0f){
-            SetVector2f(OFFSET_UNIFORM, p.position);
-            SetVector4f(COLOR_UNIFORM, Vec4(p.opacity, p.color.x, p.color.y, p.color.z));
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-            CULogGLError();
-        }
+        SetVector2f(OFFSET_UNIFORM, PARTICLE_FACTOR*p.position);
+        SetVector2f(ASPECT_UNIFORM, aspectRatio);
+        SetVector4f(COLOR_UNIFORM, p.color);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        CULogGLError();
     }
     particleTexture.unbind();
     CULogGLError();

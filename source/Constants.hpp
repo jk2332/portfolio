@@ -19,10 +19,6 @@
 #define SCENE_WIDTH  1024
 #define SCENE_HEIGHT 576
 
-#define SWIPE_VERT_OFFSET   3.5
-#define GES_COOLDOWN      20
-#define SPLIT_COOLDOWN      30
-
 // Physics constants for initialization
 /** Density of non-crate objects */
 #define BASIC_DENSITY       0.0f
@@ -99,7 +95,12 @@
 
 //Cloud Particles
 #define PARTICLE_NUM 10
+#define PARTICLE_FACTOR   0.005f
 #define MAX_JOSTLE 8.0f
 #define MAX_VELOCITY 10.0f
+
+#define SWIPE_VERT_OFFSET   3.5
+#define GES_COOLDOWN      20
+#define SPLIT_COOLDOWN      30
 
 #endif /* Constants_hpp */

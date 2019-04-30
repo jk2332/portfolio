@@ -81,11 +81,11 @@ namespace cugl {
         
 #pragma mark -
 #pragma mark Static Constructors
-        static std::shared_ptr<CloudNode> alloc(std::shared_ptr<cugl::Texture> texture, float ds){
+        static std::shared_ptr<CloudNode> alloc(float ds, Vec2 ar){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
             CULogGLError();
-            node->ps = ParticleShader(PARTICLE_NUM, ds);
-            node->ps.onStartup(texture);
+            node->ps = ParticleShader(PARTICLE_NUM, ds, ar);
+            node->ps.onStartup();
             return (node->init() ? node : nullptr);
         }
         
