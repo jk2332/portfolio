@@ -81,7 +81,6 @@ void LevelModel::clearRootNode() {
 }
 
 void LevelModel::dispose(){
-    _root = nullptr;
     _worldnode = nullptr;
     _debugnode = nullptr;
     _clouds.clear();
@@ -329,6 +328,7 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
+    CULog("loading cloud");
     bool success = true;
     std::shared_ptr<JsonValue> cloudLayer;
 

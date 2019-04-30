@@ -17,6 +17,7 @@
 #include "GameController.h"
 #include "LoadingController.h"
 #include "LevelSelect.hpp"
+#include "PauseMenu.hpp"
 
 /**
  * This class represents the application root for the ragdoll demo.
@@ -33,12 +34,14 @@ protected:
     GameScene _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    PauseMenu _pause;
     LevelSelect _levelSelect;
     
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     bool _levelselected;
+    bool _paused;
     
     
 public:

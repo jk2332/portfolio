@@ -48,15 +48,13 @@ void WeatherDefenderApp::onStartup() {
     
     // Create a "loading" screen
     _loaded = false;
+    _levelselected = false;
+    _paused = false;
     _loading.init(_assets);
     
     // Que up the other assets
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
-    _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
-    _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
-    _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
     
     CULogGLError();
     glGenVertexArrays(1, &VAO);
@@ -145,16 +143,17 @@ void WeatherDefenderApp::update(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
         
-    } else if (!_loaded) {
+    } else if (!_loaded && !_loading.isActive()) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
-        _levelSelect.init(_assets, true);
+        _levelSelect.init(_assets);
+        _levelSelect.setAssetLoaded(true);
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
         _levelSelect.update(0.01f);
         
-    } else if (!_levelselected){
+    } else if (!_levelselected && !_levelSelect.isActive()){
         auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
         _levelSelect.dispose();
         CULogGLError();
@@ -165,12 +164,41 @@ void WeatherDefenderApp::update(float timestep) {
     } else if (_levelselected && _loaded && _gameplay.isActive()){
         _gameplay.update(timestep);
     }
-    
+
     else if (_levelselected && _loaded){
         _gameplay.dispose();
-        _levelSelect.init(_assets, false);
+        _levelSelect.init(_assets);
         _levelselected = false;
     }
+    
+//    else if (_levelselected && _loaded && _gameplay.isActive()){
+//        _gameplay.update(timestep);
+//    }
+//
+//    else if (_levelselected && _loaded && !_gameplay.isActive() && !_paused){
+//        CULogGLError();
+//        _pause.init(_assets);
+//        _pause.setAssetLoaded(true);
+//        _paused = true;
+//    }
+//
+//    else if (_levelselected && _loaded && _paused){
+//        _pause.update(0.01f);
+//    }
+//
+//    else if (_levelselected && _loaded && !_pause.isActive()){
+//        _pause.dispose();
+//        _paused = false;
+//        CULogGLError();
+//        if (_pause.backToLevelSelected()){
+//            _levelSelect.init(_assets);
+//            _levelselected = false;
+//        }
+//        else if (_pause.continueSelected()){
+//            Application::onResume();
+//        }
+//    }
+        
 }
 
 
@@ -184,6 +212,17 @@ void WeatherDefenderApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void WeatherDefenderApp::draw() {
+//    if (!_loaded) {
+//        _loading.render(_batch);
+//    } else if (!_levelselected){
+//        //        _gameplay.render(_batch);
+//        _levelSelect.render(_batch);
+//    } else if (_paused) {
+//        _pause.render(_batch);
+//    }
+//    else {
+//        _gameplay.render(_batch);
+//    }
     if (!_loaded) {
         _loading.render(_batch);
     } else if (!_levelselected){

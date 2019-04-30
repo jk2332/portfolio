@@ -33,7 +33,7 @@ float BUTTON_Y[] = { 150.f, 200.f, 150, 300};
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets, bool isFirstTime) {
+bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     Size dimen = computeActiveSize();
     if (assets == nullptr) {
@@ -45,29 +45,28 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets, bool i
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    if (isFirstTime) {
-        _assets->loadDirectory("json/levelselect.json");
-        std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
-        auto bknode = PolygonNode::allocWithTexture(image);
-        bknode->setContentSize(dimen);
-        addChild(bknode);
-        
-        auto layer = _assets->get<Node>("levelselect");
-        layer->setContentSize(dimen);
-        layer->doLayout();
-        addChild(layer);
-    }
+    
+    std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
+    auto bknode = PolygonNode::allocWithTexture(image);
+    bknode->setContentSize(dimen);
+    addChild(bknode);
+    
+    auto layer = _assets->get<Node>("levelselect");
+    layer->setContentSize(dimen);
+    layer->doLayout();
+    addChild(layer);
     
     for (int i = 0; i < _num_level; i++){
         std::string name = "levelselect_level" + std::to_string(i);
         auto button = std::dynamic_pointer_cast<Button>(assets->get<Node>(name));
+        button->deactivate();
+        button->setVisible(false);
+        _levelButtons.push_back(button);
         button->setListener([=](const std::string& name, bool down) {
             this->_active = down;
         });
-        button->activate(i + 1);
-        _levelButtons.push_back(button);
     }
-
+    
     Application::get()->setClearColor(Color4(192,192,192,255));
     return true;
 }
@@ -85,6 +84,7 @@ void LevelSelect::dispose() {
     }
     _levelButtons.clear();
     _assets = nullptr;
+    removeAllChildren();
     _selectedLevel = -1;
 }
 
@@ -110,9 +110,9 @@ void LevelSelect::update(float progress) {
     //    }
     //    _selectedLevel = -1;
     //    _selected = false;
-    for (int i =0; i < _levelButtons.size(); i++){
+    for (int i = 0; i < _levelButtons.size(); i++){
         _levelButtons.at(i)->setVisible(true);
-        _levelButtons.at(i)->activate(i);
+        _levelButtons.at(i)->activate(i + 1);
         if (_levelButtons.at(i)->isDown()) {
             _selectedLevel = i;
         }

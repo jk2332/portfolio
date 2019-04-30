@@ -20,6 +20,7 @@ using namespace cugl;
 
 /** The key to use for reseting the game */
 #define RESET_KEY KeyCode::R
+#define PAUSE_KEY   KeyCode::P
 /** The key for toggling the debug display */
 #define DEBUG_KEY KeyCode::D
 /** The key for exitting the game */
@@ -54,6 +55,7 @@ bool longPressTemp;
  */
 RagdollInput::RagdollInput() :
 _active(false),
+_pausePressed(false),
 _resetPressed(false),
 _pinched(false),
 _debugPressed(false),
@@ -115,7 +117,7 @@ bool RagdollInput::init() {
     }
     _pinchTimestamp.mark();
     bool success = true;
-    CULog("after setting timestamps");
+//    CULog("after setting timestamps");
     
 #ifndef CU_TOUCH_SCREEN
     success = Input::activate<Keyboard>();
@@ -180,6 +182,7 @@ void RagdollInput::update(float dt) {
     
     // Map "keyboard" events to the current frame boundary
     _keyReset  = keys->keyPressed(RESET_KEY);
+    _keyPause = keys->keyPressed(PAUSE_KEY);
     _keySplit = keys->keyPressed(SPLIT_KEY);
     _keyJoin = keys->keyPressed(JOIN_KEY);
     _keyDebug  = keys->keyPressed(DEBUG_KEY);
@@ -188,6 +191,7 @@ void RagdollInput::update(float dt) {
 #endif
     
     _resetPressed = _keyReset;
+    _pausePressed = _keyPause;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
     _splitPressed = _keySplit;
@@ -200,6 +204,7 @@ void RagdollInput::update(float dt) {
     _keyExit = false;
     _keyReset = false;
     _keyDebug = false;
+    _keyPause = false;
     _keySplit = false;
     _keyJoin = false;
     
@@ -212,6 +217,7 @@ void RagdollInput::update(float dt) {
 void RagdollInput::clear() {
     _resetPressed = false;
     _debugPressed = false;
+    _pausePressed = false;
     _exitPressed  = false;
     _pinched = false;
     for (auto & timestamp : _timestamps) {

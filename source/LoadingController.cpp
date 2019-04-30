@@ -45,23 +45,32 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     } else if (!Scene::init(dimen)) {
         return false;
     }
+    
     _active = true;
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     _assets->loadDirectory("json/loading.json");
+    _assets->loadDirectory("json/levelselect.json");
+    
+    _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
+    _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);
+    _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
+    _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
     
     auto layer = assets->get<Node>("load");
     layer->setContentSize(dimen);
     layer->doLayout(); // This rearranges the children to fit the screen
+    addChild(layer);
     
     _bar = std::dynamic_pointer_cast<ProgressBar>(assets->get<Node>("load_bar"));
     _button = std::dynamic_pointer_cast<Button>(assets->get<Node>("load_claw_play"));
+    _button->deactivate();
+    _button->setVisible(false);
     _button->setListener([=](const std::string& name, bool down) {
         this->_active = down;
     });
-    
     Application::get()->setClearColor(Color4(192,192,192,255));
-    addChild(layer);
+
     return true;
 }
 
@@ -77,6 +86,7 @@ void LoadingScene::dispose() {
     _bar = nullptr;
     _assets = nullptr;
     _progress = 0.0f;
+    removeAllChildren();
 }
 
 

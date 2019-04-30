@@ -5,8 +5,8 @@
 //  Copyright © 2019 Cornell Game Design Initiative. All rights reserved.
 //
 
-#ifndef LevelSelect_hpp
-#define LevelSelect_hpp
+#ifndef PauseMenu_hpp
+#define PauseMenu_hpp
 
 #include <stdio.h>
 
@@ -25,29 +25,25 @@
  * Once asset loading is completed, it will display a play button.  Clicking
  * this button will inform the application root to switch to the gameplay mode.
  */
-class LevelSelect : public cugl::Scene {
+class PauseMenu : public cugl::Scene {
 protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
-    
-    //    // VIEW
-    //    /** The animated progress bar */
-    //    std::shared_ptr<cugl::ProgressBar>  _bar;
-    //    /** The "play" button */
-    //    std::shared_ptr<cugl::Button> _button;
-    
-    //    // MODEL
-    //    /** The progress displayed on the screen */
-    //    float _progress;
-    //    /** Whether or not the player has pressed play to continue */
-    //    bool  _completed;
-    std::vector<std::shared_ptr<cugl::Button>> _levelButtons;
-    int _selectedLevel = -1;
+   
+//    std::shared_ptr<cugl::Button> _backToMainButton;
+    std::shared_ptr<cugl::Button> _quitButton;
+    std::shared_ptr<cugl::Button> _continueButton;
+    std::shared_ptr<cugl::Button> _backToLevelButton;
+//    std::shared_ptr<cugl::Node> _quitButtonNode;
+//    std::shared_ptr<cugl::Node> _continueButtonNode;
+//    std::shared_ptr<cugl::Node> _backToLevelButtonNode;
+
     bool _assetLoaded = false;
+    bool _continueSelected;
+    bool _backToLevelSelected;
     float _scale;
-    int _num_level = 4;
     
     
     /**
@@ -57,7 +53,6 @@ protected:
      * ratios
      */
     cugl::Size computeActiveSize() const;
-
     
 public:
 #pragma mark -
@@ -68,7 +63,7 @@ public:
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    LevelSelect() : Scene() {}
+    PauseMenu() : Scene() {}
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -76,7 +71,7 @@ public:
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~LevelSelect() { dispose(); }
+    ~PauseMenu() { dispose(); }
     
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -113,9 +108,11 @@ public:
      *
      * @return true if loading is complete, but the player has not pressed play
      */
-    bool isPending(int i) const;
-    int getLevelSelected() {return _selectedLevel;}
+    bool isPending(std::shared_ptr<cugl::Button> b) const;
+    bool backToLevelSelected(){return _backToLevelSelected;}
+    bool continueSelected(){return _continueSelected;}
     void setAssetLoaded(bool b) {_assetLoaded = b;}
 };
 
 #endif /* LevelSelect_hpp */
+
