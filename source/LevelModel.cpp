@@ -328,7 +328,7 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
-    CULog("loading cloud");
+//    CULog("loading cloud");
     bool success = true;
     std::shared_ptr<JsonValue> cloudLayer;
 

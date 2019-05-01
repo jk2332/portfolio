@@ -73,9 +73,16 @@ std::map<long, Vec2> touchIDs_started_outside;
 float CLOUD[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 
 int ticks = 0;
-long click1 = -1;
-long click2 = -1;
+long rclick1 = -1;
+long rclick2 = -1;
+long rclick1_touchID = -1;
+long lclick1 = -1;
+long lclick2 = -1;
+long lclick1_touchID = -1;
+
 Obstacle * clicked_cloud = nullptr;
+bool shadowClicked = false;
+Obstacle * clickedShadowCloud = nullptr;
 
 long temp = 01;
 long rainingTicks = 0l;
@@ -463,7 +470,7 @@ void GameScene::populate() {
     int i = 0;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
-        CULog("setting particles for the clouds");
+//        CULog("setting particles for the clouds");
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
 //        cloud->setCloudSizeScale(1);
@@ -586,37 +593,67 @@ void GameScene::checkForCombining(Obstacle * ob){
     }
 }
 
-void GameScene::checkForRain(Obstacle * o){
+void GameScene::checkForRain(Obstacle * o, long touchID){
     if (o) {
-        std::cout << (o->getName()) << endl;
-        if (click1 == -1){
-//            CULog("first click");
-            click1 = ticks;
+        if (rclick1 == -1){
+            rclick1 = ticks;
             clicked_cloud = o;
+            rclick1_touchID = touchID;
         }
-        else if (click2 == -1){
-            click2 = ticks;
-            long gap = click2 - click1;
-            if (gap <= 70 && clicked_cloud && clicked_cloud->getName() == o->getName()){
-//                CULog("second click");
+        else if (rclick2 == -1){
+            rclick2 = ticks;
+            long gap = rclick2 - rclick1;
+            if (gap <= 60 && clicked_cloud && clicked_cloud->getName() == o->getName() && touchID != rclick1_touchID){
                 gesCoolDown = ticks;
                 makeRain(o);
             }
-            click1 = -1;
-            click2 = -1;
+            rclick1 = -1;
+            rclick2 = -1;
+            rclick1_touchID = -1;
             clicked_cloud = nullptr;
+        }
+    }
+}
+
+void GameScene::checkForLightening(Obstacle * o, long touchID){
+    if (o) {
+        if (lclick1 == -1){
+            lclick1 = ticks;
+            clickedShadowCloud = o;
+            lclick1_touchID = touchID;
+        }
+        else if (lclick2 == -1){
+            lclick2 = ticks;
+            long gap = lclick2 - lclick1;
+            if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() && touchID != lclick1_touchID){
+                CULog("make lightening here");
+                gesCoolDown = ticks;
+            }
+            lclick1 = -1;
+            lclick2 = -1;
+            lclick1_touchID = -1;
+            clickedShadowCloud = nullptr;
         }
     }
 }
 
 Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
     Obstacle * ob = nullptr;
+    shadowClicked = false;
     for (auto &c : _clouds){
         auto left = c->getPosition().x - c->getWidth()/2;
         auto right = c->getPosition().x + c->getWidth()/2;
         auto up = c->getPosition().y + c->getHeight()/2;
         auto down = c->getPosition().y - c->getHeight()/2;
+        auto shadowNodePos = _worldnode->nodeToWorldCoords(c->getShadowNode()->getPosition());
+        int p = (pow((pos.x*_scale - shadowNodePos.x), 2) / pow(c->getShadowNode()->getWidth()/2, 2)) + (pow((pos.y*_scale - shadowNodePos.y), 2) / pow(c->getShadowNode()->getHeight()/2, 2));
+        
         if (left <= pos.x && pos.x <= right && down <= pos.y && pos.y <= up){
+            ob = (Obstacle *) c.get();
+            break;
+        }
+        else if (p < 1){
+            shadowClicked = true;
             ob = (Obstacle *) c.get();
             break;
         }
@@ -737,18 +774,23 @@ void GameScene::update(float dt) {
                 if (ob == nullptr) {
                     touchIDs_started_outside.insert({touchID, pos});
                 }
-                checkForCombining(ob);
                 if (ob){
-                    ((Cloud *) ob)->setTargetPos(pos);
+                    if (!shadowClicked) {
+                        checkForCombining(ob);
+                        ((Cloud *) ob)->setTargetPos(pos);
+                        _selectors.insert({touchID, ob});
+                    }
+                    else {
+                        _shadowSelectors.insert({touchID, ob});
+                    }
                 }
-                _selectors.insert({touchID, ob});
             }
             else{
                 ob =_selectors.at(touchID);
                 if (ob == nullptr){
                     ob = getSelectedObstacle(pos, touchID);
                 }
-                if (ob) {
+                if (ob && !shadowClicked) {
                     checkForCombining(ob);
                     bool flag = false;
                     if (touchIDs_started_outside.count(touchID)){
@@ -766,8 +808,7 @@ void GameScene::update(float dt) {
                     }
                     if (!flag){
                         ((Cloud *) ob)->setTargetPos(pos);
-                    }
-                    else {
+                    } else {
                         ((Cloud *) ob)->setTargetPos(((Cloud *) ob)->getPosition());
                     }
                 }
@@ -790,11 +831,12 @@ void GameScene::update(float dt) {
                 }
                 cloudsToSplit_temp.erase(touchID);
             }
+            Obstacle * o;
             if (_selectors.count(touchID)){
-                auto o = _selectors.at(touchID);
+                o = _selectors.at(touchID);
                 if (o != nullptr){
                     if (ticks - gesCoolDown >= GES_COOLDOWN){
-                        checkForRain(o);
+                        checkForRain(o, touchID);
                     }
                     if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
                         gesCoolDown = ticks;
@@ -804,6 +846,14 @@ void GameScene::update(float dt) {
                 }
                 _selectors.at(touchID) = nullptr;
                 _selectors.erase(touchID);
+            }
+            if (_shadowSelectors.count(touchID)){
+                o = _shadowSelectors.at(touchID);
+                if (o != nullptr && ticks - gesCoolDown >= GES_COOLDOWN){
+                    checkForLightening(o, touchID);
+                }
+                _shadowSelectors.at(touchID) = nullptr;
+                _shadowSelectors.erase(touchID);
             }
             if (touchIDs_started_outside.count(touchID)){
                 touchIDs_started_outside.erase(touchID);
@@ -883,6 +933,7 @@ void GameScene::processRemoval(){
             }
             c->deactivatePhysics(*_world->getWorld());
             _world->removeObstacle(((Obstacle *) c.get()));
+            c->dispose();
             _clouds.erase(_clouds.begin() + i);
         }
     }
@@ -895,7 +946,7 @@ void GameScene::makeRain(Obstacle * ob){
 //    if (!c->isRainCloud()) return;
     Vec2 cloud_pos = c->getPosition();
     
-//    CULog("make it rain");
+    CULog("make it rain");
 
     // Draw rain droplets
     for (int i = -3; i < 3; i++){
@@ -945,7 +996,13 @@ void GameScene::splitClouds(){
         auto cloudPos = c->getPosition();
         
         _max_cloud_id++;
-        auto new_pos = Vec2(cloudPos.x - c->getWidth()/2 - 1, cloudPos.y);
+        Vec2 new_pos;
+        if (cloudPos.x - c->getWidth()*1.5 - 3 > 0){
+            new_pos = Vec2(cloudPos.x - c->getWidth()/2 - 1, cloudPos.y);
+        }
+        else{
+            new_pos = Vec2(cloudPos.x + c->getWidth()/2 + 1, cloudPos.y);
+        }
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
