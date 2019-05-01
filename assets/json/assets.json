@@ -10,8 +10,11 @@
             "minfilter": "linear",
             "magfilter": "linear"
         },
-        "rain": {
-            "file":     "textures/rain.png"
+        "rain-film": {
+            "file":     "textures/rain-film.png"
+        },
+        "lightning-film": {
+            "file":     "textures/lightning-film.png"
         },
         "cloud": {
             "file":     "textures/shadowcloud.png"

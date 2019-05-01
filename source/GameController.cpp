@@ -483,7 +483,7 @@ void GameScene::populate() {
         auto cloudNode = CloudNode::alloc(_scale, dimen);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
-        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
         _levelworldnode->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _levelworldnode->sortZOrder();
@@ -910,19 +910,20 @@ void GameScene::makeRain(Obstacle * ob){
     auto c = (Cloud *) ob;
 //    if (!c->isRainCloud()) return;
     Vec2 cloud_pos = c->getPosition();
+    c->setIsRaining(true);
     
 //    CULog("make it rain");
 
     // Draw rain droplets
-    for (int i = -3; i < 3; i++){
-        Particle* sprite = _memory->malloc();
-        if (sprite != nullptr) {
-            sprite->setTrajectory(-0.5f*M_PI);
-            sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
-            _rainNode->addParticle(sprite);
-            _pQ.push_back(sprite);
-        }
-    }
+    // for (int i = -3; i < 3; i++){
+    //     Particle* sprite = _memory->malloc();
+    //     if (sprite != nullptr) {
+    //         sprite->setTrajectory(-0.5f*M_PI);
+    //         sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
+    //         _rainNode->addParticle(sprite);
+    //         _pQ.push_back(sprite);
+    //     }
+    // }
 
     bool rained;
     shared_ptr<Node> thisNode;
@@ -972,7 +973,7 @@ void GameScene::splitClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
         
         _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();
@@ -1005,7 +1006,7 @@ void GameScene::createResourceClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
 
 //        _shadows.push_back(new_shadow);
 
