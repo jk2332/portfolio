@@ -37,12 +37,13 @@ using namespace cugl;
  * @return  true if the obstacle is initialized properly, false otherwise.
  */
 
-bool Board::init(float scale, std::shared_ptr<cugl::Texture> texture, int gridNumX, int gridNumY) {
+bool Board::init(float screenWidth, float scale, std::shared_ptr<cugl::Texture> texture, int gridNumX, int gridNumY) {
     _drawscale = scale;
     _texture = texture;
     _gridNumX = gridNumX;
     _gridNumY = gridNumY;
-    
+//    _offsetX = (screenWidth/_drawscale - 2 - (DOWN_LEFT_CORNER_X * 2 + gridNumX * GRID_WIDTH)) / (gridNumX - 1);
+//    _offsetX /= _drawscale;
     return true;
 }
 
@@ -84,7 +85,7 @@ void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
         for (int j = 0; j < _gridNumY; j++){
             std::shared_ptr<PolygonNode> single_grid = PolygonNode::allocWithTexture(_texture);
             single_grid->setPosition(gridCoordToPosition(Vec2(i, j)));
-            single_grid->setContentSize(DRAW_WIDTH*_drawscale, DRAW_HEIGHT*_drawscale);
+            single_grid->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
             _nodes.push_back(single_grid);
             
             node->addChildWithName(single_grid, "grid"+std::to_string(i) + std::to_string(j));

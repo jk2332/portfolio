@@ -49,6 +49,12 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
 }
 
 void Pest::dispose() {
+    texture = nullptr;
+    _actions = nullptr;
+    _move = nullptr;
+    _assets = nullptr;
+    _node = nullptr;
+    
 }
 
 void Pest::walk() {

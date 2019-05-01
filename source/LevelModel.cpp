@@ -85,6 +85,9 @@ void LevelModel::dispose(){
     _debugnode = nullptr;
     _clouds.clear();
     _plants.clear();
+    for (auto &p : _pests){
+        p->dispose();
+    }
     _pests.clear();
     _bar = nullptr;
 }
@@ -312,7 +315,7 @@ void LevelModel::unload() {
     _clouds.clear();
     _plants.clear();
     _pests.clear();
-//    _board = nullptr;
+    _board = nullptr;
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         (*it) = nullptr;
     }

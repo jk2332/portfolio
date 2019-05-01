@@ -72,7 +72,7 @@
 #define WIDTH_FIELD   "width"
 #define TIME_FIELD   "time"
 #define TYPE   "type"
-#define GRID_NUM_X          9
+#define GRID_NUM_X          7
 #define GRID_NUM_Y          3
 
 // Board
@@ -81,12 +81,12 @@
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_SPACING    2
-#define GRID_WIDTH      3
-#define GRID_HEIGHT     2.5f
-#define DRAW_WIDTH     3
-#define DRAW_HEIGHT     2
+#define GRID_WIDTH      3.2
+#define GRID_HEIGHT     2.7f
+#define DRAW_WIDTH     4
+#define DRAW_HEIGHT     3
 #define DOWN_LEFT_CORNER_X    3
-#define DOWN_LEFT_CORNER_Y    4
+#define DOWN_LEFT_CORNER_Y    3.5
 #define OFFSET_X         0
 #define OFFSET_Y         0
 
