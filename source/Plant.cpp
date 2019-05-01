@@ -36,7 +36,6 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     // Plant animations
     _actions = ActionManager::alloc();
     _grow = Animate::alloc(0, 8, 1.0f, 1);
-    _grow2 = Animate::alloc(0, 8, 1.0f, 1);
 
 
     return true;
@@ -57,7 +56,6 @@ void Plant::dispose() {
     _assets = nullptr;
     _actions = nullptr;
     _grow = nullptr;
-    _grow2 = nullptr;
 }
 
 void Plant::setShade(bool f) {
@@ -69,15 +67,15 @@ void Plant::setRained(bool f) {
 }
 
 void Plant::updateState(){
-    //CULog("Update %s state", getName().c_str());
-    if (_state == dead || _stage == _maxStage){
+    if (_state == dead) { 
         changeSign();
         //do nothing
         return;
-    }
-    else {
+    } else {
+        if  (_attacked) {
+            decHealth();
+        }
         if (_state == needShade){
-//            CULog("update needs shade");
             if (_shaded){
                 incHealth();
                 _shadeCounter += 1;
@@ -136,17 +134,17 @@ void Plant::updateState(){
                 }
             }
         }
+    }
 
-        changeSign();
+    changeSign();
 
-        _shaded = false;
-        _rained = false;
+    _shaded = false;
+    _rained = false;
 
-        if(_health <= -healthLimit){
-            setState(dead);
-        } else if (_progress >= 3) {
-            upgradeSprite();
-        }
+    if(_health <= -healthLimit){
+        setState(dead);
+    } else if (_progress >= 3) {
+        upgradeSprite();
     }
 }
 
@@ -173,12 +171,7 @@ void Plant::upgradeSprite() {
         _active = true;
         _stage += 1;
         CULog("Apparently grew %d", (_stage));
-        if (true) {
-        // if (_node->getTexture()->getWidth() > 2300) {
-            _actions->activate("current", _grow, _node);
-        } else {
-            _actions->activate("current", _grow2, _node);
-        }
+        _actions->activate("current", _grow, _node);
     }
 }
 

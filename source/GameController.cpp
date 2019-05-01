@@ -40,8 +40,18 @@ using namespace cugl;
 #pragma mark -
 #pragma mark Level Geography
 
-//long swipeCoolDown = -1;
-//long pinchCoolDown = -1;
+/** This is adjusted by screen aspect ratio to get the height */
+#define SCENE_WIDTH  1024
+#define SCENE_HEIGHT 576
+
+/** Width of the game world in Box2d units */
+#define DEFAULT_WIDTH   32.0f
+/** Height of the game world in Box2d units */
+#define DEFAULT_HEIGHT  18.0f
+#define SWIPE_VERT_OFFSET   3.5
+#define GES_COOLDOWN      20
+#define SPLIT_COOLDOWN      30
+#define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
 long gesCoolDown = -1;
@@ -182,7 +192,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _clouds = _level->getClouds();
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen, _shadows, _board, _world); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
     
     _world = ObstacleWorld::alloc(rect,gravity);
@@ -195,6 +205,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
+
+    // Code to change background into an animation node so skyline changes over the day
+    // _worldnode = AnimationNode::alloc(_assets->get<Texture>("background-film"), 1, 33);
+    // _worldnode->setName("world");
+    // _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    // _worldnode->setPosition(offset);
+    // _changeDay = Animate::alloc(0, 32, 5.0f, 1);
+    // _actions->activate("current", _changeDay, _worldnode);
     
     _debugnode = Node::alloc();
     _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
@@ -212,6 +230,20 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
+    
+    //Cloud Shadows
+    shared_ptr<Texture> shadow = _assets->get<Texture>("shadow");
+    for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
+        shared_ptr<PolygonNode> _shadowNode = PolygonNode::allocWithTexture(shadow);
+        _shadows.push_back(_shadowNode);
+    }
+    
+    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _level->setDrawScale(_scale);
+    _level->setAssets(_assets);
+    _level->setRootNode(_rootnode, dimen, _shadows, _board, _world); // Obtains ownership of root.
+    _levelworldnode = _level->getWorldNode();
+
     populate();
     _active = true;
     _complete = false;
@@ -686,13 +718,14 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-            for(auto &plant : _level->getPlants()) {
-                if (plant->getStage() > 2 && plant->getX()) {
-                    targetX = plant->getX();
-                    pest->walk();
-                    break;
-                }
-            }
+            pest->walk();
+            // for(auto &plant : _level->getPlants()) {
+            //     if (plant->getStage() > 2 && plant->getX()) {
+            //         targetX = plant->getX();
+            //         pest->walk();
+            //         break;
+            //     }
+            // }
 
         }
     }
@@ -812,6 +845,7 @@ void GameScene::update(float dt) {
     
     // process clouds to split
     splitClouds();
+    createResourceClouds();
     cloudsToSplit.clear();
     
     processRemoval();
@@ -951,7 +985,34 @@ void GameScene::splitClouds(){
     }
 }
 
+void GameScene::createResourceClouds(){
+    auto cloudInfo = _level->getNewClouds();
 
+    while (!cloudInfo.empty())
+    {
+        auto cloud = cloudInfo.back();
+        _max_cloud_id++;
+        Vec2 new_pos = std::get<0>(cloud);
+        std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
+
+        auto cloudNode = CloudNode::alloc(_scale, dimen);
+        cloudNode->setName(new_cloud->getName());
+        cloudNode->setPosition(new_pos);
+        shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
+        _shadows.push_back(new_shadow);
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(_max_cloud_id), -1);
+        _level->getWorldNode()->sortZOrder();
+        Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+        new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        new_cloud->setDebugColor(DYNAMIC_COLOR);
+        new_cloud->setDebugScene(_debugnode);
+
+        _clouds.push_back(new_cloud);
+        addObstacle(_levelworldnode, new_cloud, cloudNode, 1);
+        cloudInfo.pop_back();
+    }
+    _level->setNewClouds(cloudInfo);
+}
 
 
 /**

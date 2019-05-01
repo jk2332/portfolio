@@ -63,15 +63,31 @@ void Pest::walk() {
 
 void Pest::update(float dt) {
     if (!((_node->getPositionX() < _scaledTargetX && _side == "left") || (_node->getPositionX() > _scaledTargetX && _side == "right"))) {
+        // Stop when target reached
         _active = false;
     }
     if (_active) {
-//        CULog("pest updated");
         _actions->update(dt);
         auto pos = _node->getPosition();
         _node->setPosition(Vec2(pos.x + _speed, pos.y));
         _actions->activate("current", _move, _node);
     }
+}
+
+bool Pest::checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode) {
+    if (_active) {
+        return false;
+    }
+    Vec2 sc = worldNode->nodeToWorldCoords(_node->getPosition());
+    Vec2 gridPos = worldNode->nodeToWorldCoords(gridNode->getPosition());
+    float a = _node->getWidth()/2;
+    float b = _node->getHeight()/2;
+    
+    int p = (pow((gridPos.x - sc.x), 2) / pow(a, 2)) + (pow((gridPos.y - sc.y), 2) / pow(b, 2));
+    //inside
+    if (p < 1){return true;}
+    //outside
+    else{return false;}
 }
 
 void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id){

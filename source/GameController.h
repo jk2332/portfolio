@@ -71,6 +71,7 @@ protected:
     int _max_cloud_id = 0;
 
 
+    std::vector<std::shared_ptr<PolygonNode>> _shadows;
 
 
     // VIEW
@@ -100,6 +101,9 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
+
+    // std::shared_ptr<ActionManager> _actions;
+    // std::shared_ptr<Animate> _changeDay;
 
 #pragma mark Internal Object Management
     /**
@@ -299,6 +303,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);    
+    void createResourceClouds();
 
 #pragma mark -
 #pragma mark Gameplay Handling
