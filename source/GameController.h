@@ -39,6 +39,13 @@
 #include <set>
 #include <cugl/2d/CUPathNode.h>
 
+//                                       Position       Texcoords
+static GLfloat masterParticleQuad[16] ={-10.0f,-10.0f,  0.0f, 0.0f,
+                                        -10.0f, 10.0f,  0.0f, 1.0f,
+                                         10.0f,-10.0f,  1.0f, 0.0f,
+                                         10.0f, 10.0f,  1.0f, 1.0f};
+static float particleFactor = 0.0f;
+
 /**
  * This class is the primary gameplay constroller for the demo.
  *
@@ -64,14 +71,11 @@ protected:
     std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
+    Vec3 dimenWithIndicator;
     bool _paused;
-    
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
     int _max_cloud_id = 0;
-
-
-
 
     // VIEW
     /** Reference to the physics root of the scene graph */
@@ -101,6 +105,9 @@ protected:
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
+
+    // std::shared_ptr<ActionManager> _actions;
+    // std::shared_ptr<Animate> _changeDay;
 
 #pragma mark Internal Object Management
     /**
@@ -145,7 +152,7 @@ protected:
      * This method is for graceful handling of different aspect
      * ratios
      */
-    cugl::Size computeActiveSize() const;
+    Vec3 computeActiveSize() const;
 
 public:
 #pragma mark -
@@ -301,6 +308,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);    
+    void createResourceClouds();
 
 #pragma mark -
 #pragma mark Gameplay Handling

@@ -52,9 +52,13 @@ int main(int argc, char * argv[]) {
 
 //    app.setFullscreen(true);
     app.setSize(1024, 576);
-
+//    app.setSize(512, 288);
+//    app.setSize(800, 400);
 //    app.setSize(1200, 300);
-
+//    app.setSize(1600, 400);
+//    app.setSize(200, 900);
+//    app.setSize(800, 800);
+    
     app.setFPS(60.0f);
 #if CU_PLATFORM == CU_PLATFORM_MACOS || CU_PLATFORM == CU_PLATFORM_WINDOWS
     app.setMultiSampled(true);

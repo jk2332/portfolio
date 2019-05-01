@@ -19,14 +19,6 @@
 #define SCENE_WIDTH  1024
 #define SCENE_HEIGHT 576
 
-/** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
-/** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
-#define SWIPE_VERT_OFFSET   3.5
-#define GES_COOLDOWN      20
-#define SPLIT_COOLDOWN      30
-
 // Physics constants for initialization
 /** Density of non-crate objects */
 #define BASIC_DENSITY       0.0f
@@ -64,6 +56,10 @@
 #define needShade 3
 #define dead 4
 
+//Clouds
+#define ORIGINAL_SIZE_X    165
+#define ORIGINAL_SIZE_Y    84
+
 // Level Model
 #define DYNAMIC_COLOR   Color4::GREEN
 #define X_COORD   "x"
@@ -95,9 +91,17 @@
 #define OFFSET_Y         0
 
 #define SIGN  "sign"
-
-#define PARTICLE_NUM 10
 #define UI_ZVALUE 100
 
+//Cloud Particles
+#define PARTICLE_NUM 10
+#define PARTICLE_FACTOR_W   0.005f
+#define PARTICLE_FACTOR_H   0.01f
+#define MAX_JOSTLE 8.0f
+#define MAX_VELOCITY 10.0f
+
+#define SWIPE_VERT_OFFSET   3.5
+#define GES_COOLDOWN      20
+#define SPLIT_COOLDOWN      30
 
 #endif /* Constants_hpp */

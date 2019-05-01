@@ -48,13 +48,10 @@ using namespace cugl;
 #define DEFAULT_WIDTH   32.0f
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
-#define SWIPE_VERT_OFFSET   3.5*32
+#define SWIPE_VERT_OFFSET   3.5
 #define GES_COOLDOWN      20
 #define SPLIT_COOLDOWN      30
-
-
-//long swipeCoolDown = -1;
-//long pinchCoolDown = -1;
+#define PARTICLE_MODE  true
 
 long splitCoolDown = -1;
 long gesCoolDown = -1;
@@ -168,7 +165,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
-    dimen = computeActiveSize();
+    dimenWithIndicator = computeActiveSize();
+    dimen = Size(dimenWithIndicator.x, dimenWithIndicator.y);
     _paused = false;
     if (assets == nullptr) {
         return false;
@@ -185,6 +183,10 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // Start up the input handler
     _input.init();
+    
+    // IMPORTANT: SCALING MUST BE UNIFORM
+    // This means that we cannot change the aspect ratio of the physics world
+    // Shift to center if a bad fit
     _scale = dimen.width == SCENE_WIDTH ? dimen.width/rect.size.width : dimen.height/rect.size.height;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     
@@ -198,17 +200,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _clouds = _level->getClouds();
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
     
     _world = ObstacleWorld::alloc(rect,gravity);
     _max_cloud_id = _clouds.size();
-
-
-    // IMPORTANT: SCALING MUST BE UNIFORM
-    // This means that we cannot change the aspect ratio of the physics world
-    // Shift to center if a bad fit
-
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
@@ -217,6 +213,14 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
+
+    // Code to change background into an animation node so skyline changes over the day
+    // _worldnode = AnimationNode::alloc(_assets->get<Texture>("background-film"), 1, 33);
+    // _worldnode->setName("world");
+    // _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    // _worldnode->setPosition(offset);
+    // _changeDay = Animate::alloc(0, 32, 5.0f, 1);
+    // _actions->activate("current", _changeDay, _worldnode);
     
     _debugnode = Node::alloc();
     _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
@@ -224,11 +228,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
 
-
     addChildWithName(_worldnode,"worldNode");
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
-    
     
     _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
@@ -236,6 +238,11 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _board->setSceneNode(boardNode);
     _worldnode->addChildWithName(boardNode, "boardNode");
     
+    _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
+    _level->setDrawScale(_scale);
+    _level->setAssets(_assets);
+    _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
+    _levelworldnode = _level->getWorldNode();
 
     populate();
     _active = true;
@@ -264,7 +271,6 @@ void GameScene::dispose() {
     _memory = nullptr;
     _rainNode = nullptr;
     _particles.clear();
-//    _shadows.clear();
 //    _board->dispose();
     currentPlant = nullptr;
     _world = nullptr;
@@ -331,8 +337,8 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f,  0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
-    float WALL2[] = { w,h, w,h*0.9f,  0.0f,h*0.9f, 0.0f,h };
+    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f, 0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
+    float WALL2[] = { w,h, w,h*0.9f, 0.0f,h*0.9f, 0.0f,h };
     float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
     float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };
 
@@ -474,10 +480,10 @@ void GameScene::populate() {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
 //        cloud->setCloudSizeScale(1);
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+        auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
-        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
         _levelworldnode->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _levelworldnode->sortZOrder();
@@ -506,6 +512,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const s
     obj->setDebugScene(_debugnode);
 
     // Position the scene graph node (enough for static objects)
+    auto p = obj->getPosition();
     node->setPosition(obj->getPosition()*_scale);
     worldNode->addChild(node,zOrder);
 
@@ -742,13 +749,14 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-            for(auto &plant : _level->getPlants()) {
-                if (plant->getStage() > 2 && plant->getX()) {
-                    targetX = plant->getX();
-                    pest->walk();
-                    break;
-                }
-            }
+            pest->walk();
+            // for(auto &plant : _level->getPlants()) {
+            //     if (plant->getStage() > 2 && plant->getX()) {
+            //         targetX = plant->getX();
+            //         pest->walk();
+            //         break;
+            //     }
+            // }
 
         }
     }
@@ -797,7 +805,7 @@ void GameScene::update(float dt) {
                         flag = true;
                         if (cloudsToSplit_temp.count(touchID) == 0){
                             float y_dist = abs(ob->getPosition().y - touchIDs_started_outside.at(touchID).y);
-                            if (y_dist > SWIPE_VERT_OFFSET/_scale){
+                            if (y_dist > SWIPE_VERT_OFFSET){
                                 if (ticks - gesCoolDown >= GES_COOLDOWN){
                                     CULog("swiped");
                                     gesCoolDown = ticks;
@@ -825,7 +833,7 @@ void GameScene::update(float dt) {
             
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
-                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET/_scale){
+                if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
                     CULog("inserting");
                     cloudsToSplit.insert({touchID, cloudsToSplit_temp.at(touchID)});
                 }
@@ -881,6 +889,7 @@ void GameScene::update(float dt) {
     
     // process clouds to split
     splitClouds();
+    createResourceClouds();
     cloudsToSplit.clear();
     
     processRemoval();
@@ -945,19 +954,20 @@ void GameScene::makeRain(Obstacle * ob){
     auto c = (Cloud *) ob;
 //    if (!c->isRainCloud()) return;
     Vec2 cloud_pos = c->getPosition();
+    c->setIsRaining(true);
     
     CULog("make it rain");
 
     // Draw rain droplets
-    for (int i = -3; i < 3; i++){
-        Particle* sprite = _memory->malloc();
-        if (sprite != nullptr) {
-            sprite->setTrajectory(-0.5f*M_PI);
-            sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
-            _rainNode->addParticle(sprite);
-            _pQ.push_back(sprite);
-        }
-    }
+    // for (int i = -3; i < 3; i++){
+    //     Particle* sprite = _memory->malloc();
+    //     if (sprite != nullptr) {
+    //         sprite->setTrajectory(-0.5f*M_PI);
+    //         sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
+    //         _rainNode->addParticle(sprite);
+    //         _pQ.push_back(sprite);
+    //     }
+    // }
 
     bool rained;
     shared_ptr<Node> thisNode;
@@ -1007,13 +1017,13 @@ void GameScene::splitClouds(){
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
 
-        auto cloudNode = CloudNode::alloc(_assets->get<Texture>("particle"));
+        auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(new_cloud->getName());
-        cloudNode->setPosition(new_pos);
+        cloudNode->setPosition(Vec2(5, 5));
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
         
         _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();
@@ -1027,7 +1037,39 @@ void GameScene::splitClouds(){
     }
 }
 
+void GameScene::createResourceClouds(){
+    auto cloudInfo = _level->getNewClouds();
 
+    while (!cloudInfo.empty())
+    {
+        auto cloud = cloudInfo.back();
+        _max_cloud_id++;
+        Vec2 new_pos = std::get<0>(cloud);
+        float cloud_size = std::get<1>(cloud);
+        std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
+        new_cloud->setDrawScale(_scale);
+        new_cloud->setCloudSizeScale(cloud_size);
+
+        auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
+        cloudNode->setName(new_cloud->getName());
+        cloudNode->setPosition(new_pos);
+        cloudNode->setDrawScale(_scale);
+
+        Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
+
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
+        _level->getWorldNode()->sortZOrder();
+
+        new_cloud->setDebugColor(DYNAMIC_COLOR);
+        new_cloud->setDebugScene(_debugnode);
+
+        _clouds.push_back(new_cloud);
+        addObstacle(_levelworldnode, new_cloud, cloudNode, 1);
+        cloudInfo.pop_back();
+    }
+    _level->setNewClouds(cloudInfo);
+}
 
 
 /**
@@ -1064,16 +1106,32 @@ void GameScene::beginContact(b2Contact* contact) {
  * This method is for graceful handling of different aspect
  * ratios
  */
-Size GameScene::computeActiveSize() const {
-    Size dimen = Application::get()->getDisplaySize();
+Vec3 GameScene::computeActiveSize() const {
+    Size displaySize = Application::get()->getDisplaySize();
+    Size dimen = displaySize;
+    float thirdCoord;
     float ratio1 = dimen.width/dimen.height;
     float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-//    dimen *= SCENE_WIDTH/dimen.width;
-
+    bool setQuad = false;
+    if (particleFactor == 0.0f){setQuad = true;}
     if (ratio1 < ratio2) {
         dimen *= SCENE_WIDTH/dimen.width;
+        thirdCoord = 0.0f;
+        particleFactor = PARTICLE_FACTOR_W;
+    }else if (ratio1 > ratio2) {
+        dimen *= SCENE_HEIGHT/dimen.height;
+        thirdCoord = 1.0f;
+        particleFactor = PARTICLE_FACTOR_H;
     }else {
         dimen *= SCENE_HEIGHT/dimen.height;
+        thirdCoord = 0.0f;
+        particleFactor = PARTICLE_FACTOR_W;
     }
-    return dimen;
+    if (setQuad){
+        for(int i = 0; i < 4; i++){
+            masterParticleQuad[i*4] = (particleFactor)*masterParticleQuad[i*4];
+            masterParticleQuad[i*4 + 1] = (particleFactor)*masterParticleQuad[i*4 + 1];
+        }
+    }
+    return Vec3(dimen.width, dimen.height, thirdCoord);
 }
