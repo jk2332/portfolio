@@ -719,14 +719,13 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-            pest->walk();
-            // for(auto &plant : _level->getPlants()) {
-            //     if (plant->getStage() > 2 && plant->getX()) {
-            //         targetX = plant->getX();
-            //         pest->walk();
-            //         break;
-            //     }
-            // }
+             for(auto &plant : _level->getPlants()) {
+                 if (plant->getStage() > 2 && plant->getX()) {
+                     targetX = plant->getX();
+                     pest->walk();
+                     break;
+                 }
+             }
 
         }
     }
@@ -908,22 +907,9 @@ void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     
     auto c = (Cloud *) ob;
-//    if (!c->isRainCloud()) return;
+
     Vec2 cloud_pos = c->getPosition();
     c->setIsRaining(true);
-    
-//    CULog("make it rain");
-
-    // Draw rain droplets
-    // for (int i = -3; i < 3; i++){
-    //     Particle* sprite = _memory->malloc();
-    //     if (sprite != nullptr) {
-    //         sprite->setTrajectory(-0.5f*M_PI);
-    //         sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
-    //         _rainNode->addParticle(sprite);
-    //         _pQ.push_back(sprite);
-    //     }
-    // }
 
     bool rained;
     shared_ptr<Node> thisNode;
