@@ -512,6 +512,7 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const s
     obj->setDebugScene(_debugnode);
 
     // Position the scene graph node (enough for static objects)
+    auto p = obj->getPosition();
     node->setPosition(obj->getPosition()*_scale);
     worldNode->addChild(node,zOrder);
 
@@ -967,7 +968,7 @@ void GameScene::splitClouds(){
 
         auto cloudNode = CloudNode::alloc(_scale, dimen);
         cloudNode->setName(new_cloud->getName());
-        cloudNode->setPosition(new_pos);
+        cloudNode->setPosition(Vec2(5, 5));
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
@@ -993,17 +994,24 @@ void GameScene::createResourceClouds(){
         auto cloud = cloudInfo.back();
         _max_cloud_id++;
         Vec2 new_pos = std::get<0>(cloud);
+        float cloud_size = std::get<1>(cloud);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
+        new_cloud->setDrawScale(_scale);
+        new_cloud->setCloudSizeScale(cloud_size);
 
         auto cloudNode = CloudNode::alloc(_scale, dimen);
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
-        shared_ptr<PolygonNode> new_shadow = PolygonNode::allocWithTexture(_assets->get<Texture>("shadow"));
-        _shadows.push_back(new_shadow);
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadow" + std::to_string(_max_cloud_id), -1);
-        _level->getWorldNode()->sortZOrder();
+        cloudNode->setDrawScale(_scale);
+
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
+
+//        _shadows.push_back(new_shadow);
+
+        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
+        _level->getWorldNode()->sortZOrder();
+
         new_cloud->setDebugColor(DYNAMIC_COLOR);
         new_cloud->setDebugScene(_debugnode);
 
