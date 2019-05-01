@@ -53,7 +53,7 @@ using namespace cugl;
 #define SPLIT_COOLDOWN      30
 #define PARTICLE_MODE  true
 
-long splitCoolDown = -1;
+//long splitCoolDown = -1;
 long gesCoolDown = -1;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
@@ -81,8 +81,6 @@ Obstacle * clicked_cloud = nullptr;
 bool shadowClicked = false;
 Obstacle * clickedShadowCloud = nullptr;
 
-long temp = 01;
-long rainingTicks = 0l;
 bool pinched = false;
 std::shared_ptr<Plant> currentPlant;
 
@@ -232,7 +230,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
     
-    _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
+    _board = Board::alloc(SCENE_WIDTH, _scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
@@ -260,6 +258,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     ticks = 0;
+//    splitCoolDown = -1;
+    gesCoolDown = -1;
+    pinchedCloud1 = nullptr;
+    pinchedCloud2 = nullptr;
+    ticks = 0;
+    rclick1 = -1;
+    rclick2 = -1;
+    rclick1_touchID = -1;
+    lclick1 = -1;
+    lclick2 = -1;
+    lclick1_touchID = -1;
+    clicked_cloud = nullptr;
+    shadowClicked = false;
+    clickedShadowCloud = nullptr;
+    pinched = false;
+    
     _input.dispose();
     for (auto &c : _clouds){
         c->dispose();
