@@ -50,6 +50,8 @@ protected:
     /** The level drawing scale (difference between physics and drawing coordinates) */
     Vec2 _scale;
     Vec2 _debugScale;
+//    long _ticks;
+//    long _lastTicks;
     
     float _cscale;
     
@@ -384,7 +386,7 @@ public:
     /**
      * Update nodes of the level model including clouds, plants and the timer
     */
-    void update(int ticks);
+    void update(long ticks);
     int getPlantScore();
     void dispose();
     std::vector<std::tuple<Vec2, float>> getNewClouds() { return _newClouds; };

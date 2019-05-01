@@ -259,6 +259,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
+    ticks = 0;
     _input.dispose();
     for (auto &c : _clouds){
         c->dispose();
@@ -846,10 +847,6 @@ void GameScene::update(float dt) {
                     if (ticks - gesCoolDown >= GES_COOLDOWN){
                         checkForRain(o, touchID);
                     }
-                    if (_input.longPressed() && ticks - gesCoolDown >= GES_COOLDOWN){
-                        gesCoolDown = ticks;
-                        CULog("make thunder");
-                    }
                     ((Cloud *) o)->setTargetPos(((Cloud *) o)->getPosition());
                 }
                 _selectors.at(touchID) = nullptr;
@@ -999,7 +996,7 @@ void GameScene::splitClouds(){
         Cloud * c =(Cloud *)(ic.second);
         
         // to small to split
-        if (c->getCloudSizeScale()/sqrt(2) <= 0.7) continue;
+        if (c->getCloudSizeScale()/sqrt(2) <= 0.5) continue;
 
         
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
@@ -1048,7 +1045,7 @@ void GameScene::createResourceClouds(){
         float cloud_size = std::get<1>(cloud);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setDrawScale(_scale);
-        new_cloud->setCloudSizeScale(cloud_size);
+        new_cloud->setCloudSizeScale(0.5);
 
         auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(new_cloud->getName());
