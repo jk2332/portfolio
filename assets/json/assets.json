@@ -10,11 +10,11 @@
             "minfilter": "linear",
             "magfilter": "linear"
         },
-        "crosshair": {
-            "file":     "textures/crosshair.png"
+        "rain-film": {
+            "file":     "textures/rain-film.png"
         },
-        "rain": {
-            "file":     "textures/rain.png"
+        "lightning-film": {
+            "file":     "textures/lightning-film.png"
         },
         "cloud": {
             "file":     "textures/shadowcloud.png"
@@ -63,6 +63,15 @@
         },
         "corn3": {
             "file":     "textures/corn3.png"
+        },
+        "eggplant1": {
+            "file":     "textures/eggplant1.png"
+        },
+        "eggplant2": {
+            "file":     "textures/eggplant2.png"
+        },
+        "eggplant3": {
+            "file":     "textures/eggplant3.png"
         },
         "snail": {
             "file":     "textures/snailwalk.png"

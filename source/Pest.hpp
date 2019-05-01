@@ -134,6 +134,7 @@ public:
     void update(float dt);
     void walk();
     
+    bool checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
 
     void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
 };

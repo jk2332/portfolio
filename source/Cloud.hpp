@@ -85,6 +85,9 @@ protected:
     Vec2 _velocity;
     float _cloudSizeScale;
     float _scale;
+    std::shared_ptr<ActionManager> _actions;
+    std::shared_ptr<Animate> _rain;
+    std::shared_ptr<AnimationNode> _rain_node;
     
 //    /**
 //     * Returns the texture key for the given body part.
@@ -329,7 +332,8 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    std::shared_ptr<PolygonNode> setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow);
+    std::shared_ptr<PolygonNode> setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, 
+        std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *
@@ -343,7 +347,7 @@ public:
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
     void setDrawScale(float drawscale);
-    void setIsRaining(float b){_isRaining = b;}
+    void setIsRaining(bool b);
     void setId(int id){_id = id;}
     int getId(){return _id;}
     bool isRaining(){return _isRaining;}

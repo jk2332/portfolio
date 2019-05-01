@@ -29,6 +29,7 @@ protected:
     float _drawscale;
     bool _shaded;
     bool _rained;
+    bool _attacked;
     int _x;
     int _y;
     std::vector<std::shared_ptr<Texture>> _textures;
@@ -51,9 +52,6 @@ protected:
 
     std::shared_ptr<ActionManager> _actions;
     std::shared_ptr<Animate> _grow;
-    std::shared_ptr<Animate> _grow2;
-
-
 
 public:
 #pragma mark -
@@ -138,6 +136,7 @@ public:
 
     void setShade(bool f);
     void setRained(bool f);
+    void setAttacked(bool f) {_attacked = f;};
 
     int getX() {return _x;};
     int getY() {return _y;};

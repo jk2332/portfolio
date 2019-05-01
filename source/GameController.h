@@ -105,6 +105,9 @@ protected:
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
 
+    // std::shared_ptr<ActionManager> _actions;
+    // std::shared_ptr<Animate> _changeDay;
+
 #pragma mark Internal Object Management
     /**
      * Lays out the game geography.
@@ -303,6 +306,7 @@ public:
      * @param  contact  The collision manifold before contact
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);    
+    void createResourceClouds();
 
 #pragma mark -
 #pragma mark Gameplay Handling

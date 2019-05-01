@@ -103,16 +103,17 @@ void LevelModel::dispose(){
  * @release the previous scene graph node used by this object
  */
 
-
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std::shared_ptr<Board> board,
+                             std::shared_ptr<cugl::ObstacleWorld> world) {
     if (!_root) {
         clearRootNode();
     }
     _over = false;
-    
+    _world = world;
+
     _root = node;
-    _debugScale.set(_root->getContentSize().width/_bounds.size.width,
-                    _root->getContentSize().height/_bounds.size.height);
+    _scale.set(_root->getContentSize().width/_bounds.size.width,
+               _root->getContentSize().height/_bounds.size.height);
     
     // Create, but transfer ownership to root
     _worldnode = Node::alloc();
@@ -126,6 +127,8 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen) {
     
     _root->addChild(_worldnode,0);
     _root->addChild(_debugnode,1);
+
+    _board = board;
     
     // Add the individual elements
     std::shared_ptr<PolygonNode> poly;
@@ -236,8 +239,9 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
             _plantLayer = layer->get("objects");
         } else if (name == "Pests") {
             _pestLayer = layer->get("objects");
+        } else if (name == "ResourceClouds") {
+            _resourceLayer = layer->get("objects");
         }
-//       CULog(name.c_str());
     }
     
    _time = json->get(TIME_FIELD)->asInt();
@@ -557,6 +561,57 @@ Color4 LevelModel::parseColor(std::string name) {
 }
 
 void LevelModel::update(int ticks) {
+
+    // Find which plants are being attacked
+    shared_ptr<Node> thisNode;
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            bool attacked = false;
+            thisNode = _board->getNodeAt(i, j);
+
+            for (auto &p : _pests) {
+                if (p == nullptr) {
+                    continue;
+                }
+                else { //do this better later
+                    attacked = attacked || p->checkTarget(_worldnode, thisNode);
+                }
+            }
+
+            if (attacked) {
+                for (auto p : _plants){
+                    if (p != nullptr && p->getX() == i && p->getY() == j){
+                        CULog("plant being attacked");
+                        p->setAttacked(true);
+                     }
+                }
+            }
+        }
+    }
+
+
+    int csize = (int)_resourceLayer->size();
+    for(int ii = 0; ii < csize; ii++) {
+        if (std::find(_loaded.begin(), _loaded.end(), ii) != _loaded.end()) {
+            // This resource cloud has already been loaded
+            continue;
+        }
+
+        auto cloudJson = _resourceLayer->get(ii);
+        auto spawnTime = cloudJson->getInt(TIME_FIELD);
+        if (spawnTime > ticks) {
+            // Load it in the future
+            continue;
+        }
+
+        int x = cloudJson->getInt(X_COORD);
+        int y = cloudJson->getInt(Y_COORD);
+        float size = cloudJson->getFloat("size");
+        _newClouds.push_back(make_tuple(Vec2(x, y), size));
+        CULog("added cloud from level");
+        _loaded.push_back(ii);
+    }
+
     if (_over) {
         return;
     }
@@ -585,4 +640,22 @@ void LevelModel::update(int ticks) {
     
     float progress = (float)ticks/(float)_time;
     _bar->setProgress(progress);
+}
+
+void LevelModel::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder) {
+    _world->addObstacle(obj);
+    obj->setDebugScene(_debugnode);
+
+    // Position the scene graph node (enough for static objects)
+    node->setPosition(obj->getPosition()*_scale);
+    worldNode->addChild(node,zOrder);
+
+    // Dynamic objects need constant updating
+    if (obj->getBodyType() == b2_dynamicBody) {
+        Node* weak = node.get(); // No need for smart pointer in callback
+        obj->setListener([=](Obstacle* obs){
+            weak->setPosition(obs->getPosition()*_scale);
+            weak->setAngle(obs->getAngle());
+        });
+    }
 }

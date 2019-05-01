@@ -64,6 +64,7 @@ protected:
     /** The physics word; part of the model (though listeners elsewhere) */
 
     std::shared_ptr<cugl::JsonValue> _cloudLayer;   
+    std::shared_ptr<cugl::JsonValue> _resourceLayer;   
     std::shared_ptr<cugl::JsonValue> _plantLayer;   
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _clouds;
@@ -71,6 +72,11 @@ protected:
     std::vector<std::shared_ptr<Pest>> _pests;
     bool _alreadyLoaded = false;
 //    std::shared_ptr<Board> _board;
+    std::shared_ptr<Board> _board;
+    std::shared_ptr<cugl::ObstacleWorld> _world;
+    std::vector<std::tuple<Vec2, float>> _newClouds;
+
+    std::vector<int> _loaded;
 
     std::shared_ptr<cugl::Label> _winnode;
     int _time;
@@ -172,7 +178,7 @@ protected:
      * param node   The scene graph node to attach it to
      * param zOrder The drawing order
      */
-    void addObstacle(const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
+    void addObstacle(const std::shared_ptr<cugl::Node> worldNode, const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder);
     
 public:
 #pragma mark Static Constructors
@@ -303,7 +309,8 @@ public:
      * @retain  a reference to this scene graph node
      * @release the previous scene graph node used by this object
      */
-    void setRootNode(const std::shared_ptr<Node>& root, Size dimen);
+    void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::shared_ptr<Board> board,
+                     std::shared_ptr<cugl::ObstacleWorld> world);
     
     /**
      * Sets the loaded assets for this game level
@@ -380,6 +387,8 @@ public:
     void update(int ticks);
     int getPlantScore();
     void dispose();
+    std::vector<std::tuple<Vec2, float>> getNewClouds() { return _newClouds; };
+    void setNewClouds(std::vector<std::tuple<Vec2, float>> clouds) { _newClouds = clouds; };
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */
