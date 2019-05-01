@@ -181,6 +181,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
                           + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
     _worldnode->addChildWithName(moonNode, "moon");
     _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
+    
 }
 
 /**
@@ -332,7 +333,7 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
-    CULog("loading cloud");
+//    CULog("loading cloud");
     bool success = true;
     std::shared_ptr<JsonValue> cloudLayer;
 
@@ -560,8 +561,9 @@ Color4 LevelModel::parseColor(std::string name) {
     return Color4::WHITE;
 }
 
-void LevelModel::update(int ticks) {
-
+void LevelModel::update(long ticks) {
+//    _ticks = ticks;
+    
     // Find which plants are being attacked
     shared_ptr<Node> thisNode;
     for (int i=0; i < GRID_NUM_X; i++){

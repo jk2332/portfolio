@@ -96,6 +96,7 @@ protected:
 
 	/** Selector to allow mouse control of the ragdoll */
     std::map<long, Obstacle *> _selectors;
+    std::map<long, Obstacle *> _shadowSelectors;
 
 
     /** Whether we have completed this "game" */
@@ -290,7 +291,8 @@ public:
     void endContact(b2Contact* contact);
     void combineByPinch(Cloud * cind1, Cloud * cind2);
     void checkForCombining(Obstacle * ob);
-    void checkForRain(Obstacle * ob);
+    void checkForRain(Obstacle * ob, long touchID);
+    void checkForLightening(Obstacle * ob, long touchID);
     bool gamePaused() { return _paused; }
 //    bool backToLevelSelect() {return _backToLevelSelect;}
 //    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
