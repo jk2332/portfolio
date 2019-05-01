@@ -240,7 +240,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(true);
+    setDebug(false);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
