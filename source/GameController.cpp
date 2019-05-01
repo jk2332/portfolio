@@ -148,7 +148,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
-    dimen = computeActiveSize();
+    dimenWithIndicator = computeActiveSize();
+    dimen = Size(dimenWithIndicator.x, dimenWithIndicator.y);
     _paused = false;
     if (assets == nullptr) {
         return false;
@@ -195,7 +196,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
-    
+
     _debugnode = Node::alloc();
     _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
     _debugnode->setName("debug");
@@ -448,7 +449,7 @@ void GameScene::populate() {
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
 //        cloud->setCloudSizeScale(1);
-        auto cloudNode = CloudNode::alloc(_scale, dimen);
+        auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
         shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"));
@@ -931,7 +932,7 @@ void GameScene::splitClouds(){
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
 
-        auto cloudNode = CloudNode::alloc(_scale, dimen);
+        auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(new_cloud->getName());
         cloudNode->setPosition(new_pos);
         cloudNode->setDrawScale(_scale);
@@ -988,23 +989,32 @@ void GameScene::beginContact(b2Contact* contact) {
  * This method is for graceful handling of different aspect
  * ratios
  */
-Size GameScene::computeActiveSize() const {
-    Size dimen = Application::get()->getDisplaySize();
+Vec3 GameScene::computeActiveSize() const {
+    Size displaySize = Application::get()->getDisplaySize();
+    Size dimen = displaySize;
+    float thirdCoord;
     float ratio1 = dimen.width/dimen.height;
     float ratio2 = ((float)SCENE_WIDTH)/((float)SCENE_HEIGHT);
-
+    bool setQuad = false;
+    if (particleFactor == 0.0f){setQuad = true;}
     if (ratio1 < ratio2) {
         dimen *= SCENE_WIDTH/dimen.width;
-        for(int i = 0; i < 4; i++){
-            ogParticleQuad[i*4] = (dimen.height/SCENE_HEIGHT)*ogParticleQuad[i*4];
-            ogParticleQuad[i*4 + 1] = (dimen.height/SCENE_HEIGHT)*ogParticleQuad[i*4 + 1];
-        }
+        thirdCoord = 0.0f;
+        particleFactor = PARTICLE_FACTOR_W;
+    }else if (ratio1 > ratio2) {
+        dimen *= SCENE_HEIGHT/dimen.height;
+        thirdCoord = 1.0f;
+        particleFactor = PARTICLE_FACTOR_H;
     }else {
         dimen *= SCENE_HEIGHT/dimen.height;
+        thirdCoord = 0.0f;
+        particleFactor = PARTICLE_FACTOR_W;
+    }
+    if (setQuad){
         for(int i = 0; i < 4; i++){
-            ogParticleQuad[i*4] = (dimen.width/SCENE_WIDTH)*ogParticleQuad[i*4];
-            ogParticleQuad[i*4 + 1] = (dimen.width/SCENE_WIDTH)*ogParticleQuad[i*4 + 1];
+            masterParticleQuad[i*4] = (particleFactor)*masterParticleQuad[i*4];
+            masterParticleQuad[i*4 + 1] = (particleFactor)*masterParticleQuad[i*4 + 1];
         }
     }
-    return dimen;
+    return Vec3(dimen.width, dimen.height, thirdCoord);
 }
