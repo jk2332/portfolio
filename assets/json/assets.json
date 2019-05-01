@@ -115,6 +115,9 @@
         "iconRain": {
             "file":     "textures/iconRain.png"
         },
+        "signSun": {
+            "file":     "textures/signSun.png"
+        },
         "signShade": {
             "file":     "textures/signShade.png"
         },

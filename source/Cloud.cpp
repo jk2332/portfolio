@@ -61,7 +61,9 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _ob = nullptr;
 
     _actions = ActionManager::alloc();
-    _rain = Animate::alloc(0, 9, 1.0f, 1);
+    _actions2 = ActionManager::alloc();
+    _rain = Animate::alloc(1, 18, 1.0f, 1);
+    _lightning = Animate::alloc(0, 11, 1.0f, 1);
     return true;
 }
 
@@ -132,24 +134,30 @@ void Cloud::update(float delta) {
                                  + _disp);
     }
 
+    _actions2->update(delta);
     if (_isRaining) {
         _actions->update(delta);
+        setCloudSizeScale(_cloudSizeScale*sqrt(9.98/10.0f));
         _actions->activate("current", _rain, _rain_node);
     }
 }
 
-void Cloud::setIsRaining(bool b) {
-    // Really is more of a toggle rain
+void Cloud::setLightning() {
+    // Needs to be raining to lightning
      if (_isRaining) {
-        //  CULog("change texture");
-        // _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
+        _actions2->activate("current", _lightning, _lightning_node);
+     }
+}
+
+
+void Cloud::toggleRain() {
+     if (_isRaining) {
+         _rain_node->setVisible(false);
         _rain_node->setFrame(0);
-        // _active = false;
-        // _progress = 0;
         _isRaining = false;
-    } else {
+    } else if (isRainCloud()) {
         _isRaining = true;
-        CULog("Is raining lol");
+        _rain_node->setVisible(true);
         _actions->activate("current", _rain, _rain_node);
     }
 }
@@ -198,7 +206,8 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  *
  * RETURNS THE POINTER TO THIS CLOUD'S SHADOW. ASSUME CALLER WILL ADD SHADOW TO THE WORLD
  */
-std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain){
+std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, 
+    std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain, std::shared_ptr<Texture> lightning){
     _cloudNode = node;
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
@@ -213,13 +222,19 @@ std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<
     _shadowNode->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     //rely on caller to add shadow node to the world
 
-    _rain_node = AnimationNode::alloc(rain, 1, 10);
+    // Set rain animation
+    _rain_node = AnimationNode::alloc(rain, 1, 20);
     _rain_node->setAnchor(Vec2::ANCHOR_CENTER);
     _rain_node->setScale(0.35f);
-    auto s = _cloudNode->getSize();
-    // _rain_node->setPosition(s.getIHeight()/2.0f - 8.0f, s.getIWidth()/2.0f);
-    _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement/1.5f);
+    _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement/1.7f);
     _cloudNode->addChildWithName(_rain_node, "rainAnimation");
+
+    // Set lightning animation
+    _lightning_node = AnimationNode::alloc(lightning, 1, 12);
+    _lightning_node->setAnchor(Vec2::ANCHOR_CENTER);
+    _lightning_node->setScale(0.35f);
+    _lightning_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement/1.6f);
+    _cloudNode->addChildWithName(_lightning_node, "lightning");
 
     return _shadowNode;
 }
@@ -229,13 +244,19 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 }
 
 void Cloud::setCloudSizeScale(float s) {
-    if (s >= 1.414) {
+    if (s >= 1.0) {
+    // if (s >= 1.414) {
         _isRainCloud = true;
     }
     else {
         _isRainCloud = false;
     }
     if (s < 0.7) {
+        if (_isRaining) {
+            _rain_node->setFrame(0);
+            _rain_node->setVisible(false);
+            _isRaining = false;
+        } 
         _cloudSizeScale = 0.7;
     }
     else if (s > 5){

@@ -103,9 +103,8 @@ void LevelModel::dispose(){
  * @release the previous scene graph node used by this object
  */
 
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
-                             std::vector<std::shared_ptr<PolygonNode>> shadows, std::shared_ptr<Board> board,
-                            std::shared_ptr<cugl::ObstacleWorld> world) {
+void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std::shared_ptr<Board> board,
+                             std::shared_ptr<cugl::ObstacleWorld> world) {
     if (!_root) {
         clearRootNode();
     }
@@ -115,8 +114,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
     _root = node;
     _scale.set(_root->getContentSize().width/_bounds.size.width,
                _root->getContentSize().height/_bounds.size.height);
-
-    _shadows = shadows;
     
     // Create, but transfer ownership to root
     _worldnode = Node::alloc();
@@ -184,6 +181,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen,
                           + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
     _worldnode->addChildWithName(moonNode, "moon");
     _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
+    
 }
 
 /**
@@ -335,7 +333,7 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
-    CULog("loading cloud");
+//    CULog("loading cloud");
     bool success = true;
     std::shared_ptr<JsonValue> cloudLayer;
 
@@ -563,8 +561,9 @@ Color4 LevelModel::parseColor(std::string name) {
     return Color4::WHITE;
 }
 
-void LevelModel::update(int ticks) {
-
+void LevelModel::update(long ticks) {
+//    _ticks = ticks;
+    
     // Find which plants are being attacked
     shared_ptr<Node> thisNode;
     for (int i=0; i < GRID_NUM_X; i++){

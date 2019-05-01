@@ -35,7 +35,7 @@ protected:
 //    std::shared_ptr<cugl::Button> _backToMainButton;
     std::shared_ptr<cugl::Button> _quitButton;
     std::shared_ptr<cugl::Button> _continueButton;
-    std::shared_ptr<cugl::Button> _backToLevelButton;
+//    std::shared_ptr<cugl::Button> _backToLevelButton;
 //    std::shared_ptr<cugl::Node> _quitButtonNode;
 //    std::shared_ptr<cugl::Node> _continueButtonNode;
 //    std::shared_ptr<cugl::Node> _backToLevelButtonNode;

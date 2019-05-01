@@ -1,20 +1,20 @@
 {
     "textures": {
-        "levelSelectButton2": {
+        "lsbutton": {
             "file":      "/textures/SelectedLevel.png"
         },
-        "quitButton": {
+        "quitbutton": {
             "file":      "/textures/quit.png"
         }
     },
     "scenes" : {
-        "pauseMenu" : {
+        "pausemenu" : {
             "type"      : "Node",
             "format"    : {
                 "type" : "Anchored"
             },
             "children" : {
-                "plevelselectbutton"  : {
+                "ls"  : {
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
@@ -28,7 +28,7 @@
                         "up"       : {
                             "type"   : "Image",
                             "data"   : {
-                                "texture"  : "levelSelectButton2"
+                                "texture"  : "lsbutton"
                             }
                         }
                     },
@@ -39,7 +39,7 @@
                         "y_offset" : -0.08
                     }
                 },
-                "pquitbutton"  : {
+                "quit"  : {
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
@@ -53,18 +53,18 @@
                         "up"       : {
                             "type"   : "Image",
                             "data"   : {
-                                "texture"  : "quitButton"
+                                "texture"  : "quitbutton"
                             }
                         }
                     },
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset" :  -0.03,
-                        "y_offset" : -0.22
+                        "x_offset" :  -0.22,
+                        "y_offset" : -0.13
                     }
                 },
-                "pcontinuebutton"  : {
+                "continue"  : {
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
@@ -85,11 +85,13 @@
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset" :  -0.07,
-                        "y_offset" : 0.04
+                        "x_offset" :  -0.03,
+                        "y_offset" : -0.22
                     }
                 }
+                
             }
+            
         }
     }
 }

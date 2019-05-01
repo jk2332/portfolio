@@ -18,14 +18,8 @@
 
 using namespace cugl;
 
-//                                   Position                                        Texcoords
-static GLfloat ogParticleQuad[16]= {-10.0f*PARTICLE_FACTOR,-10.0f*PARTICLE_FACTOR,   0.0f, 0.0f,
-                                    -10.0f*PARTICLE_FACTOR, 10.0f*PARTICLE_FACTOR,   0.0f, 1.0f,
-                                     10.0f*PARTICLE_FACTOR,-10.0f*PARTICLE_FACTOR,   1.0f, 0.0f,
-                                     10.0f*PARTICLE_FACTOR, 10.0f*PARTICLE_FACTOR,   1.0f, 1.0f};
-
 //                                      Radius CenterX CenterY
-static vector<Vec3> ogCloudSections = { Vec3(1.25,  0.0,   0.0), //Central Circle
+const vector<Vec3> ogCloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
                                         Vec3(0.65, -1.9,  -0.1),
                                         Vec3(0.65,  1.85, -0.1),
                                         Vec3(0.40,  1.5,   0.6),
@@ -36,7 +30,6 @@ static vector<Vec3> ogCloudSections = { Vec3(1.25,  0.0,   0.0), //Central Circl
                                         Vec3(0.40, -1.05,  1.2),
                                         Vec3(0.40,  0.3,   1.25),
                                         Vec3(0.40, -0.4,   1.6)};
-
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 static GLuint VAO;
@@ -101,13 +94,19 @@ protected:
     /** The current shader texture */
     Texture particleTexture;
     ParticleGenerator _pg;
-    //                               Position        Texcoords
+    float particleFactor;
+    //                              Position     Texcoords
+    GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
+                                    0.0f, 0.0f,  0.0f, 1.0f,
+                                    0.0f, 0.0f,  1.0f, 0.0f,
+                                    0.0f, 0.0f,  1.0f, 1.0f};
+    //                              Position     Texcoords
     GLfloat particle_quad [16] = {  0.0f,0.0f,   0.0f, 0.0f,
                                     0.0f,0.0f,   0.0f, 1.0f,
                                     0.0f,0.0f,   1.0f, 0.0f,
                                     0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
-    Vec2 aspectRatio;
+    Vec3 aspectRatio;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -132,10 +131,15 @@ public:
    
     ParticleShader(){_pg = ParticleGenerator();}
     
-    ParticleShader(GLuint amount, float ds, Vec2 ar){
+    ParticleShader(GLuint amount, float ds, Vec3 ar, GLfloat pq[16], float pf){
         _particleScale = 0.0f;
         _pg = ParticleGenerator(amount, ds);
         aspectRatio = ar;
+        particleFactor = pf;
+        for(int i = 0; i < 16; i++){
+            ogParticleQuad[i] = pq[i];
+            particle_quad[i] = pq[i];
+        }
     }
     
     void onStartup();
@@ -152,6 +156,10 @@ public:
     
     void SetVector2f(const GLchar *name, const Vec2 &value){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
+    }
+
+    void SetVector3f(const GLchar *name, const Vec3 &value){
+        glUniform3f(glGetUniformLocation(_program, name), value.x, value.y, value.z);
     }
     
     void SetVector4f(const GLchar *name, const Vec4 &value){

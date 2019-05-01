@@ -44,33 +44,30 @@ bool PauseMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
-    if (!_assetLoaded){
-        _assets->loadDirectory("json/pausemenu.json");
-        _backToLevelButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pauseMenu_plevelselectbutton"));
-        _backToLevelButton->setListener([=](const std::string& name, bool down) {
-            this->_active = down;
-        });
-        _backToLevelButton->activate(100);
-        for (auto &c : getChildren()){
-            std::cout << c->getName() << endl;
-        }
-        addChild(_backToLevelButton);
-        
-        _quitButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pauseMenu_pquitbutton"));
-        _quitButton->setListener([=](const std::string& name, bool down) {
-            this->_active = down;
-            Application::get()->quit();
-        });
-        _quitButton->activate(101);
-        addChild(_quitButton);
-        
-        _continueButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pauseMenu_pcontinuebutton"));
-        _continueButton->setListener([=](const std::string& name, bool down) {
-            this->_active = down;
-        });
-        _continueButton->activate(102);
-        addChild(_continueButton);
-    }
+//    _backToLevelButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pauseMenu_plevelselectbutton"));
+//    _backToLevelButton->deactivate();
+//    _backToLevelButton->setVisible(false);
+//    _backToLevelButton->setListener([=](const std::string& name, bool down) {
+//        this->_active = down;
+//    });
+//    addChild(_backToLevelButton);
+    
+    _quitButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pausemenu_quit"));
+    _quitButton->deactivate();
+    _quitButton->setVisible(false);
+    _quitButton->setListener([=](const std::string& name, bool down) {
+        this->_active = down;
+        Application::get()->quit();
+    });
+    addChild(_quitButton);
+    
+    _continueButton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pausemenu_continue"));
+    _continueButton->deactivate();
+    _continueButton->setVisible(false);
+    _continueButton->setListener([=](const std::string& name, bool down) {
+        this->_active = down;
+    });
+    addChild(_continueButton);
 
     
     _continueSelected = false;
@@ -88,16 +85,17 @@ bool PauseMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void PauseMenu::dispose() {
     // Deactivate the button (platform dependent)
 //    if (isPending(_backToMainButton))_backToMainButton->deactivate();
-    if (isPending(_backToLevelButton)) _backToLevelButton->deactivate();
+//    if (isPending(_backToLevelButton)) _backToLevelButton->deactivate();
     if (isPending(_quitButton)) _quitButton->deactivate();
     if (isPending(_continueButton)) _continueButton->deactivate();
-    _backToLevelButton = nullptr;
+//    _backToLevelButton = nullptr;
 //    _backToMainButton = nullptr;
     _continueButton = nullptr;
     _quitButton = nullptr;
     _assets = nullptr;
 //    _backToMainSelected = false;
     _continueSelected = false;
+    removeAllChildren();
 }
 
 
@@ -111,10 +109,17 @@ void PauseMenu::dispose() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void PauseMenu::update(float progress) {
-    if (_backToLevelButton->isDown()){
-        _backToLevelSelected= true;
-    }
-    else if (_continueButton->isDown()){
+//    _backToLevelButton->activate(100);
+//    _backToLevelButton->setVisible(true);
+    _continueButton->activate(101);
+    _continueButton->setVisible(true);
+    _quitButton->activate(102);
+    _quitButton->setVisible(true);
+    
+//    if (_backToLevelButton->isDown()){
+//        _backToLevelSelected= true;
+//    }
+    if (_continueButton->isDown()){
         _continueSelected = true;
     }
     

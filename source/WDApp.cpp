@@ -141,9 +141,11 @@ void WeatherDefenderApp::onResume() {
  */
 void WeatherDefenderApp::update(float timestep) {
     if (!_loaded && _loading.isActive()) {
+        CULog("loading updating");
         _loading.update(0.01f);
         
     } else if (!_loaded && !_loading.isActive()) {
+        CULog("moving from loading to level select");
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
         _levelSelect.init(_assets);
@@ -151,9 +153,11 @@ void WeatherDefenderApp::update(float timestep) {
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
+        CULog("levelselect updating");
         _levelSelect.update(0.01f);
         
     } else if (!_levelselected && !_levelSelect.isActive()){
+        CULog("moving from level select to gameplay");
         auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
         _levelSelect.dispose();
         CULogGLError();
@@ -162,6 +166,10 @@ void WeatherDefenderApp::update(float timestep) {
         _levelselected = true;
         
     } else if (_levelselected && _loaded && _gameplay.isActive()){
+//        CULog("updating gameplay");
+        _gameplay.update(timestep);
+    }
+    else if (_levelselected && _loaded && _gameplay.isActive()){
         _gameplay.update(timestep);
     }
 
@@ -170,23 +178,17 @@ void WeatherDefenderApp::update(float timestep) {
         _levelSelect.init(_assets);
         _levelselected = false;
     }
-    
-//    else if (_levelselected && _loaded && _gameplay.isActive()){
-//        _gameplay.update(timestep);
-//    }
-//
 //    else if (_levelselected && _loaded && !_gameplay.isActive() && !_paused){
+//        CULog("moving from gameplay to pause");
 //        CULogGLError();
 //        _pause.init(_assets);
 //        _pause.setAssetLoaded(true);
 //        _paused = true;
-//    }
-//
-//    else if (_levelselected && _loaded && _paused){
+//    } else if (_levelselected && _loaded && !_gameplay.isActive() && _paused){
+//        CULog("updating pause");
 //        _pause.update(0.01f);
-//    }
-//
-//    else if (_levelselected && _loaded && !_pause.isActive()){
+//    } else if (_levelselected && _loaded && !_pause.isActive()){
+//        CULog("moving from pause to sth else");
 //        _pause.dispose();
 //        _paused = false;
 //        CULogGLError();
@@ -198,7 +200,7 @@ void WeatherDefenderApp::update(float timestep) {
 //            Application::onResume();
 //        }
 //    }
-        
+    
 }
 
 
@@ -212,24 +214,24 @@ void WeatherDefenderApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void WeatherDefenderApp::draw() {
-//    if (!_loaded) {
-//        _loading.render(_batch);
-//    } else if (!_levelselected){
-//        //        _gameplay.render(_batch);
-//        _levelSelect.render(_batch);
-//    } else if (_paused) {
-//        _pause.render(_batch);
-//    }
-//    else {
-//        _gameplay.render(_batch);
-//    }
     if (!_loaded) {
         _loading.render(_batch);
     } else if (!_levelselected){
         //        _gameplay.render(_batch);
         _levelSelect.render(_batch);
+    } else if (_paused) {
+        _pause.render(_batch);
     }
     else {
         _gameplay.render(_batch);
     }
+//    if (!_loaded) {
+//        _loading.render(_batch);
+//    } else if (!_levelselected){
+//        //        _gameplay.render(_batch);
+//        _levelSelect.render(_batch);
+//    }
+//    else {
+//        _gameplay.render(_batch);
+//    }
 }

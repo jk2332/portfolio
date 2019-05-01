@@ -192,10 +192,10 @@ void ParticleShader::drawParticles(){
     CULogGLError();
     glUniform1i(_uSprite, TEXTURE_POSITION);
     CULogGLError();
-
+    
     for (CloudParticle p : _pg.particles){
-        SetVector2f(OFFSET_UNIFORM, PARTICLE_FACTOR*p.position);
-        SetVector2f(ASPECT_UNIFORM, aspectRatio);
+        SetVector2f(OFFSET_UNIFORM, particleFactor*p.position);
+        SetVector3f(ASPECT_UNIFORM, aspectRatio);
         SetVector4f(COLOR_UNIFORM, p.color);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         CULogGLError();

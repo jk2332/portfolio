@@ -85,7 +85,7 @@ void LevelSelect::dispose() {
     _levelButtons.clear();
     _assets = nullptr;
     removeAllChildren();
-    _selectedLevel = -1;
+//    _selectedLevel = -1;
 }
 
 
