@@ -81,9 +81,16 @@ void LevelModel::clearRootNode() {
 }
 
 void LevelModel::dispose(){
+    CULog("level being disposed");
     _worldnode = nullptr;
     _debugnode = nullptr;
+    for (auto &c: _clouds){
+        c->dispose();
+    }
     _clouds.clear();
+    for (auto &p: _plants){
+        p->dispose();
+    }
     _plants.clear();
     for (auto &p : _pests){
         p->dispose();
@@ -321,6 +328,7 @@ int LevelModel::getPlantScore() {
  * references to other assets, then these should be disconnected earlier.
  */
 void LevelModel::unload() {
+    CULog("level being unloaded");
     _cloudLayer = nullptr;
     _plantLayer = nullptr;
     _pestLayer = nullptr;
@@ -519,6 +527,8 @@ bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
 
 bool LevelModel::reset(){
     if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+    CULog("level reset called");
+
     CULog("resetting");
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values

@@ -74,6 +74,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Cloud::dispose() {
+    CULog("cloud disposed");
     _node = nullptr;
     _texture = nullptr;
     _cloudNode = nullptr;
@@ -150,9 +151,7 @@ void Cloud::update(float delta) {
 
 void Cloud::setLightning() {
     // Needs to be raining to lightning
-     if (_isRaining) {
-        _actions2->activate("current", _lightning, _lightning_node);
-     }
+     _actions2->activate("current", _lightning, _lightning_node);
 }
 
 

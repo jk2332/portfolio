@@ -48,6 +48,17 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Plant::dispose() {
+    _health = 0;
+    _stage = 1;
+    _shaded = false;
+    _state = noNeed;
+    _progress = 0;
+    _active = false;
+    _shadeCounter = 0;
+    
+    // Plant animations
+    _actions = ActionManager::alloc();
+    _grow = Animate::alloc(0, 8, 1.5f, 1);
     for (std::shared_ptr<Texture> a : _textures){
         a = nullptr;
     }

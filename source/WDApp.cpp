@@ -153,7 +153,7 @@ void WeatherDefenderApp::update(float timestep) {
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
-        CULog("levelselect updating");
+//        CULog("levelselect updating");
         _levelSelect.update(0.01f);
         
     } else if (!_levelselected && !_levelSelect.isActive()){

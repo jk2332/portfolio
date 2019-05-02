@@ -50,6 +50,9 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
 }
 
 void Pest::dispose() {
+    _active = false;
+    _health = pestHealth[_type];
+    
     texture = nullptr;
     _actions = nullptr;
     _move = nullptr;

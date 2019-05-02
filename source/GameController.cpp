@@ -272,6 +272,9 @@ void GameScene::dispose() {
     clicked_cloud = nullptr;
     shadowClicked = false;
     clickedShadowCloud = nullptr;
+    _shadowSelectors.clear();
+    _pD.clear();
+    _pQ.clear();
     pinched = false;
     
     _input.dispose();
@@ -642,7 +645,7 @@ void GameScene::checkForRain(Obstacle * o, long touchID){
 void GameScene::makeLightning(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
-//    if (!c->isRainCloud()) return;
+    if (!c->isRainCloud()) return;
     c->setLightning();
 
     bool lightning;
@@ -1074,7 +1077,7 @@ void GameScene::createResourceClouds(){
         float cloud_size = std::get<1>(cloud);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setDrawScale(_scale);
-        new_cloud->setCloudSizeScale(1/sqrt(2));
+//        new_cloud->setCloudSizeScale(1/sqrt(2));
 
         auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(new_cloud->getName());
