@@ -36,9 +36,12 @@ protected:
     std::shared_ptr<Animate> _move;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Node> _node;
+    std::shared_ptr<Node> _node_rev;
     std::string _side;
     std::string _name;
     int _xside;
+
+    bool _scared;
     
     float _scaledTargetX;
 
@@ -133,6 +136,8 @@ public:
 
     void update(float dt);
     void walk();
+
+    void setScared(bool b) { _scared = b; };
     
     bool checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
 

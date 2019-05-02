@@ -144,6 +144,7 @@ protected:
     
     void splitClouds();
     void makeRain(Obstacle * cloud);
+    void makeLightning(Obstacle * cloud);
     Obstacle * getSelectedObstacle(Vec2 pos, long touchID);
     void processRemoval();
     /**

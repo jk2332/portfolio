@@ -639,6 +639,31 @@ void GameScene::checkForRain(Obstacle * o, long touchID){
     }
 }
 
+void GameScene::makeLightning(Obstacle * ob){
+    if (!ob) return;
+    auto c = (Cloud *) ob;
+    c->setLightning();
+
+    bool lightning;
+    shared_ptr<Node> thisNode;
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            lightning = false;
+            thisNode = _board->getNodeAt(i, j);
+            lightning = c->shadowCheck(_worldnode, thisNode);
+
+            if (lightning) {
+                for (std::shared_ptr<Pest> p : _level->getPests()){
+                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
+                        CULog("Set scared!");
+                        p->setScared(true);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void GameScene::checkForLightning(Obstacle * o, long touchID){
     if (o) {
         if (lclick1 == -1){
@@ -651,9 +676,7 @@ void GameScene::checkForLightning(Obstacle * o, long touchID){
             long gap = lclick2 - lclick1;
             if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() ){
             // if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() && touchID != lclick1_touchID){
-                CULog("make lightning here");
-                auto c = (Cloud *) o;
-                c->setLightning();
+                makeLightning(o);
                 gesCoolDown = ticks;
             }
             lclick1 = -1;
@@ -792,6 +815,7 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
+            pest->walk();
              for(auto &plant : _level->getPlants()) {
                  if (plant->getStage() > 2 && plant->getX()) {
                      targetX = plant->getX();
@@ -799,7 +823,6 @@ void GameScene::update(float dt) {
                      break;
                  }
              }
-
         }
     }
 
@@ -990,8 +1013,6 @@ void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
     c->toggleRain();
-
-    
 }
 
 
