@@ -47,13 +47,13 @@
             "file":     "textures/cf2.png"
         },
         "tomato1": {
-            "file":     "textures/tom-filmstrip1.png"
+            "file":     "textures/tomato-film1.png"
         },
         "tomato2": {
-            "file":     "textures/tom2.png"
+            "file":     "textures/tomato-film2.png"
         },
         "tomato3": {
-            "file":     "textures/tom3.png"
+            "file":     "textures/tomato-film3.png"
         },
         "corn1": {
             "file":     "textures/corn1.png"

@@ -144,6 +144,7 @@ protected:
     
     void splitClouds();
     void makeRain(Obstacle * cloud);
+    void makeLightning(Obstacle * cloud);
     Obstacle * getSelectedObstacle(Vec2 pos, long touchID);
     void processRemoval();
     /**
@@ -292,7 +293,7 @@ public:
     void combineByPinch(Cloud * cind1, Cloud * cind2);
     void checkForCombining(Obstacle * ob);
     void checkForRain(Obstacle * ob, long touchID);
-    void checkForLightening(Obstacle * ob, long touchID);
+    void checkForLightning(Obstacle * ob, long touchID);
     bool gamePaused() { return _paused; }
 //    bool backToLevelSelect() {return _backToLevelSelect;}
 //    void setBackToLevelSelect(bool b) {_backToLevelSelect = b;}
