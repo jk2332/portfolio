@@ -19,21 +19,22 @@ map<string, float> pestXOffset = {{"snail", 0.6f}, {"raccoon", 1.4f}};
 
 bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
     _active = false;
-
     _target = Vec2(x, y);
-    _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH*(x) + GRID_WIDTH/2)*32.0f;
-    _scale = drawscale;
+    //scale in setSceneNode instead
+    _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH * x + GRID_WIDTH/2 + GRID_OFFSET_X * x);
     _type = type;
     _side = side;
     
-    if  (_side == "left") {
+    if(_side == "left") {
         _speed = pestSpeed[type];
         _xside = LEFT;
-        _scaledTargetX -= pestXOffset[_type] * 32.0f;
+        //scale in setSceneNode instead
+        _scaledTargetX -= pestXOffset[_type];
     } else if (_side == "right") {
         _speed = -pestSpeed[type];
         _xside = RIGHT;
-        _scaledTargetX += pestXOffset[_type] * 32.0f;
+        //scale in setSceneNode instead
+        _scaledTargetX += pestXOffset[_type];
     }
 
     _health = pestHealth[type];
@@ -105,7 +106,9 @@ bool Pest::checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode) {
     else{return false;}
 }
 
-void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id){
+void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id, float ds){
+    _drawscale = ds;
+    _scaledTargetX *= ds;
     if (_type == "snail") {
         if (_side == "left") {
             _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
@@ -125,7 +128,7 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setScale(1.1f);
-    cugl::Vec2 a = Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2)*32.0f, (0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2)*32.0f);
+    cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2 + GRID_HEIGHT*_target.y);
     _node->setPosition(a);
 
     _node_rev->setAnchor(Vec2::ANCHOR_CENTER);

@@ -226,6 +226,9 @@ public:
 //            _isRainCloud = false;
 //        }
 //    }
+    void setIsRaining(bool b){
+        _isRaining = b;
+    }
     
 #pragma mark -
 #pragma mark Animation
@@ -295,6 +298,7 @@ public:
     void setTexture(const std::shared_ptr<Texture>& texture);
 
     void setCloudSizeScale(float s);
+    
 
     Vec2 getVelocity() {return _velocity;}
     void setVelocity(Vec2 v) {_velocity = v;}

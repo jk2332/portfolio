@@ -141,7 +141,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
-            plant->setSceneNode(plantNode, plant->getName());
+            plant->setSceneNode(plantNode, plant->getName(), _drawscale);
         }
     }
     _worldnode->addChildWithName(plantNode, "plantNode");
@@ -150,7 +150,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
-            pest->setSceneNode(pestNode, pest->getName());
+            pest->setSceneNode(pestNode, pest->getName(), _drawscale);
         }
     }
     _worldnode->addChildWithName(pestNode, "pestNode");
@@ -188,9 +188,9 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     for (int i = 0; i < _resourceLayer->size(); i++){
         int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
         float t = foreground->getWidth();
-//        rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(), 0.0f));
         rcNode->setAnchor(Vec2::ANCHOR_TOP_CENTER);
-        rcNode->setPosition(Vec2::ZERO + Vec2(0, 0));
+        rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(),
+                                 foreground->getHeight() - 0.035f*SCENE_HEIGHT));
         rcNode->setScale(2);
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
@@ -436,8 +436,11 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     auto plantType = json->getString(TYPE);
 
 
-    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _drawscale);
+    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], 1.0f);
     auto plantName = "plant" + std::to_string(plantId);
+   
+    std::cout << plantName << " Level Model Drawscale: " << _drawscale << endl;
+
     plant->setName(plantName);
     plant->setPlantType(plantType);
 

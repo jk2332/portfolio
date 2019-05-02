@@ -194,9 +194,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setPosition(offset);
 
     _level->setDebugNode(_debugnode);
+    _level->setDrawScale(_scale);
     _level->reset();
     _clouds = _level->getClouds();
-    _level->setDrawScale(_scale);
     _level->setAssets(_assets);
     _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
@@ -642,6 +642,7 @@ void GameScene::checkForRain(Obstacle * o, long touchID){
 void GameScene::makeLightning(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
+//    if (!c->isRainCloud()) return;
     c->setLightning();
 
     bool lightning;
@@ -1011,6 +1012,7 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
+    CULog("toggle rain");
     c->toggleRain();
 }
 
@@ -1022,7 +1024,7 @@ void GameScene::splitClouds(){
         Cloud * c =(Cloud *)(ic.second);
         
         // to small to split
-        if (c->getCloudSizeScale()/sqrt(2) <= 0.5) continue;
+        if (c->getCloudSizeScale()/sqrt(2) < 0.5) continue;
 
         
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
@@ -1030,12 +1032,13 @@ void GameScene::splitClouds(){
         
         _max_cloud_id++;
         Vec2 new_pos;
-        if (cloudPos.x - c->getWidth()*1.5 - 3 > 0){
+        if (cloudPos.x - c->getWidth()*1.5 - 2 > 0){
             new_pos = Vec2(cloudPos.x - c->getWidth()/2 - 1, cloudPos.y);
         }
         else{
             new_pos = Vec2(cloudPos.x + c->getWidth()/2 + 1, cloudPos.y);
         }
+        
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setCloudSizeScale(c->getCloudSizeScale());
         new_cloud->setDrawScale(_scale);
@@ -1072,7 +1075,7 @@ void GameScene::createResourceClouds(){
         float cloud_size = std::get<1>(cloud);
         std::shared_ptr<Cloud> new_cloud = _level->createNewCloud(_max_cloud_id, new_pos);
         new_cloud->setDrawScale(_scale);
-        new_cloud->setCloudSizeScale(0.5);
+        new_cloud->setCloudSizeScale(1/sqrt(2));
 
         auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(new_cloud->getName());

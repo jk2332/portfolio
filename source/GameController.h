@@ -27,8 +27,6 @@
 #include <Box2D/Dynamics/b2WorldCallbacks.h>
 #include <vector>
 #include "InputController.h"
-#include "PestController.hpp"
-#include "CloudController.hpp"
 #include "ResourceController.hpp"
 #include "particleShader.hpp"
 #include "Plant.hpp"

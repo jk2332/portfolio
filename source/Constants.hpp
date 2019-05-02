@@ -89,6 +89,8 @@
 #define DOWN_LEFT_CORNER_Y    3.5
 #define OFFSET_X         0
 #define OFFSET_Y         0
+#define GRID_OFFSET_X   0.65
+#define GRID_OFFSET_Y   0.3
 
 #define SIGN  "sign"
 #define UI_ZVALUE 100

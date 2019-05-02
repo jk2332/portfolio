@@ -161,7 +161,6 @@ void WeatherDefenderApp::update(float timestep) {
         auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected());
         _levelSelect.dispose();
         CULogGLError();
-        assert (levelId != "level0");
         _gameplay.init(_assets, levelId);
         _levelselected = true;
         
@@ -169,7 +168,6 @@ void WeatherDefenderApp::update(float timestep) {
 //        CULog("updating gameplay");
         _gameplay.update(timestep);
     }
-
     else if (_levelselected && _loaded && !_gameplay.isActive()){
         _gameplay.dispose();
         _levelSelect.init(_assets);
