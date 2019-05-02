@@ -63,6 +63,7 @@ void Plant::setShade(bool f) {
 }
 
 void Plant::setRained(bool f) {
+    CULog("Set rained");
     _rained = f && (_state == needRain);
 }
 

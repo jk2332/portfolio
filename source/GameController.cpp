@@ -723,6 +723,29 @@ void GameScene::update(float dt) {
             pinchPos = _input.getPinchSelection();
         }
     }
+
+    for (auto &c : _clouds) {
+        if (c->isRaining()) {
+            bool rained;
+            shared_ptr<Node> thisNode;
+            for (int i=0; i < GRID_NUM_X; i++){
+                for (int j=0; j < GRID_NUM_Y; j++){
+                    rained = false;
+                    thisNode = _board->getNodeAt(i, j);
+                    rained = c->shadowCheck(_worldnode, thisNode);
+
+                    if (rained) {
+                        for (std::shared_ptr<Plant> p : _level->getPlants()){
+                            if (p != nullptr && p->getX() == i && p->getY() == j){
+                                p->setRained(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     
     bool shaded;
     shared_ptr<Node> thisNode;
@@ -965,29 +988,9 @@ void GameScene::processRemoval(){
 
 void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
-    
     auto c = (Cloud *) ob;
-
-    Vec2 cloud_pos = c->getPosition();
     c->toggleRain();
 
-    bool rained;
-    shared_ptr<Node> thisNode;
-    for (int i=0; i < GRID_NUM_X; i++){
-        for (int j=0; j < GRID_NUM_Y; j++){
-            rained = false;
-            thisNode = _board->getNodeAt(i, j);
-            rained = c->shadowCheck(_worldnode, thisNode);
-
-            if (rained) {
-                for (std::shared_ptr<Plant> p : _level->getPlants()){
-                    if (p != nullptr && p->getX() == i && p->getY() == j){
-                        p->setRained(true);
-                    }
-                }
-            }
-        }
-    }
     
 }
 
