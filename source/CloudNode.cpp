@@ -93,7 +93,9 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     batch->end();
     //my custom code
     CULogGLError();
-    ps.drawParticles();
+    for (shared_ptr<CloudNode> cn : subCloudNodes){
+        ps.drawParticles(cn->ps);
+    }
     CULogGLError();
     batch->begin(getScene()->getCamera()->getCombined());
     

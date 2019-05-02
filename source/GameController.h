@@ -82,7 +82,7 @@ protected:
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
     std::shared_ptr<cugl::Node> _levelworldnode;
-    
+    std::shared_ptr<CloudNode> masterCloudNode;
     
     /** The Box2D world */
     std::shared_ptr<cugl::ObstacleWorld> _world;

@@ -83,25 +83,27 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
 void ParticleShader::dispose() {
     Shader::dispose();
     particleTexture.dispose();
-    _pg.particles.clear();
-    glDeleteProgram(_program);
-    CULogGLError();
-    glDeleteShader(_fragShader);
-    CULogGLError();
-    glDeleteShader(_vertShader);
-    CULogGLError();
-    glDeleteBuffers(1, &EBO);
-    CULogGLError();
-    glDeleteBuffers(1, &VBO);
-    CULogGLError();
-    glDeleteVertexArrays(1, &VAO);
-    CULogGLError();
+    pg.particles.clear();
+    if (master){
+        glDeleteProgram(_program);
+        CULogGLError();
+        glDeleteShader(_fragShader);
+        CULogGLError();
+        glDeleteShader(_vertShader);
+        CULogGLError();
+        glDeleteBuffers(1, &EBO);
+        CULogGLError();
+        glDeleteBuffers(1, &VBO);
+        CULogGLError();
+        glDeleteVertexArrays(1, &VAO);
+        CULogGLError();
+    }
 }
 
 void ParticleShader::onStartup(){
     particleTexture = Texture();
     particleTexture.initWithFile("textures/particle1.png");
-    compileProgram();
+    if (master){compileProgram();}
 }
 
 void ParticleShader::compileProgram(){
@@ -151,7 +153,8 @@ void ParticleShader::compileProgram(){
 }
 
 // Render all particles
-void ParticleShader::drawParticles(){
+void ParticleShader::drawParticles(ParticleShader providedPS){
+    if (!master){return;}
     CULogGLError();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     CULogGLError();
@@ -164,7 +167,7 @@ void ParticleShader::drawParticles(){
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     CULogGLError();
     
-    glBufferData(GL_ARRAY_BUFFER, sizeof(particle_quad), particle_quad, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(providedPS.particle_quad), providedPS.particle_quad, GL_DYNAMIC_DRAW);
     CULogGLError();
     
     glGenBuffers(1, &EBO);
@@ -194,9 +197,9 @@ void ParticleShader::drawParticles(){
     glUniform1i(_uSprite, TEXTURE_POSITION);
     CULogGLError();
     
-    for (CloudParticle p : _pg.particles){
-        SetVector2f(OFFSET_UNIFORM, particleFactor*p.position);
-        SetVector3f(ASPECT_UNIFORM, aspectRatio);
+    for (CloudParticle p : providedPS.pg.particles){
+        SetVector2f(OFFSET_UNIFORM, providedPS.particleFactor*p.position);
+        SetVector3f(ASPECT_UNIFORM, providedPS.aspectRatio);
         SetVector4f(COLOR_UNIFORM, p.color);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         CULogGLError();
@@ -223,14 +226,14 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
             particle_quad[i*4 + 1] = _particleScale*ogParticleQuad[i*4 + 1];
         }
         
-        for(int j = 0; j < _pg.cloudSections.size(); j++){
-            _pg.cloudSections[j].x = ogCloudSections[j].x*_particleScale;
-            _pg.cloudSections[j].y = ogCloudSections[j].y*_particleScale;
-            _pg.cloudSections[j].z = ogCloudSections[j].z*_particleScale;
+        for(int j = 0; j < pg.cloudSections.size(); j++){
+            pg.cloudSections[j].x = ogCloudSections[j].x*_particleScale;
+            pg.cloudSections[j].y = ogCloudSections[j].y*_particleScale;
+            pg.cloudSections[j].z = ogCloudSections[j].z*_particleScale;
         }
         
-        _pg.maxJostle = MAX_JOSTLE*_particleScale;
-        _pg.maxVelocity = MAX_VELOCITY*_particleScale;
+        pg.maxJostle = MAX_JOSTLE*_particleScale;
+        pg.maxVelocity = MAX_VELOCITY*_particleScale;
     }
-    this->_pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale);
+    this->pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale);
 }

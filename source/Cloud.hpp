@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <cugl/cugl.h>
 #include <vector>
-#include "BubbleGenerator.h"
 #include "CloudNode.hpp"
 #include "Constants.hpp"
 
@@ -91,15 +90,6 @@ protected:
     std::shared_ptr<Animate> _lightning;
     std::shared_ptr<AnimationNode> _rain_node;
     std::shared_ptr<AnimationNode> _lightning_node;
-    
-//    /**
-//     * Returns the texture key for the given body part.
-//     *
-//     * As some body parts are symmetrical, we reuse textures.
-//     *
-//     * @return the texture key for the given body part
-//     */
-//    std::string getPartName(int part);
 
 public:
 #pragma mark -
@@ -161,23 +151,6 @@ public:
 
 #pragma mark -
 #pragma mark Static Constructors
-    /**
-     * Returns a newly allocated Ragdoll at the origin.
-     *
-     * The Ragdoll is scaled so that 1 pixel = 1 Box2d unit
-     *
-     * The scene graph is completely decoupled from the physics system.
-     * The node does not have to be the same size as the physics body. We
-     * only guarantee that the scene graph node is positioned correctly
-     * according to the drawing scale.
-     *
-     * @return a newly allocated Ragdoll at the origin.
-     */
-//    static std::shared_ptr<Cloud> alloc() {
-//        std::shared_ptr<Cloud> result = std::make_shared<Cloud>();
-//        return (result->init(cugl::Poly2::Poly2()) ? result : nullptr);
-//    }
-
     /**
      * Returns a newly allocated Ragdoll with the given position
      *
@@ -339,8 +312,7 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    std::shared_ptr<PolygonNode> setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, 
-        std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain, std::shared_ptr<Texture> lightning);
+    std::shared_ptr<PolygonNode> setSceneNode(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain, std::shared_ptr<Texture> lightning);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

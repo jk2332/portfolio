@@ -213,9 +213,10 @@ std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
  *
  * RETURNS THE POINTER TO THIS CLOUD'S SHADOW. ASSUME CALLER WILL ADD SHADOW TO THE WORLD
  */
-std::shared_ptr<PolygonNode> Cloud::setSceneNodeParticles(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, 
+std::shared_ptr<PolygonNode> Cloud::setSceneNode(const std::shared_ptr<cugl::CloudNode>& node,Vec2 displacement, std::shared_ptr<Texture> cloudFace,
     std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain, std::shared_ptr<Texture> lightning){
     _cloudNode = node;
+    
     _texture = cloudFace;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(cloudFace);
     sprite->setAnchor(Vec2::ANCHOR_CENTER);

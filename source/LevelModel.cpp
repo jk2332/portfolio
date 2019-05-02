@@ -83,13 +83,33 @@ void LevelModel::clearRootNode() {
 void LevelModel::dispose(){
     _worldnode = nullptr;
     _debugnode = nullptr;
+    for (auto &c : _clouds){
+        c->dispose();
+        c = nullptr;
+    }
     _clouds.clear();
+    for (auto &p : _plants){
+        p->dispose();
+        p = nullptr;
+    }
     _plants.clear();
     for (auto &p : _pests){
         p->dispose();
+        p = nullptr;
     }
     _pests.clear();
     _bar = nullptr;
+    _root = nullptr;
+    _cloudLayer = nullptr;
+    _resourceLayer = nullptr;
+    _plantLayer = nullptr;
+    _pestLayer = nullptr;
+    _board = nullptr;
+    _world = nullptr;
+    _newClouds.clear();
+    _winnode = nullptr;
+    _bar = nullptr;
+    _assets = nullptr;
 }
 
 
@@ -335,7 +355,6 @@ void LevelModel::unload() {
     for(auto it = _pests.begin(); it != _pests.end(); ++it) {
         (*it) = nullptr;
     }
-    //    _board = nullptr;
     _winnode = nullptr;
     _bar = nullptr;
     _assets = nullptr;
@@ -643,14 +662,13 @@ void LevelModel::update(long ticks) {
         CULog("All plants are dead");
         _over = true;
         _winnode->setText("You Lost" + std::to_string(getPlantScore()));
-//        _winnode->setVisible(true);
+        _winnode->setVisible(true);
     }
-
 
     if (ticks >= _time) {
         CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
-//        _winnode->setVisible(true);
+        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
         // return;

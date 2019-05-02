@@ -76,7 +76,11 @@ public:
 };
 
 class ParticleShader : public Shader {
+public:
+    ParticleGenerator pg;
 protected:
+    /** Is this shader the master particleShader?*/
+    bool master;
     /** The shader location for the position attribute */
     GLint _aPosition;
     /** The shader location for the texture coordinate attribute */
@@ -93,7 +97,6 @@ protected:
     Mat4  _mPerspective;
     /** The current shader texture */
     Texture particleTexture;
-    ParticleGenerator _pg;
     float particleFactor;
     //                              Position     Texcoords
     GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
@@ -129,11 +132,12 @@ public:
      */
     void dispose() override;
    
-    ParticleShader(){_pg = ParticleGenerator();}
+    ParticleShader(){pg = ParticleGenerator();}
     
-    ParticleShader(GLuint amount, float ds, Vec3 ar, GLfloat pq[16], float pf){
+    ParticleShader(GLuint amount, float ds, Vec3 ar, GLfloat pq[16], float pf, bool m){
+        master = m;
         _particleScale = 0.0f;
-        _pg = ParticleGenerator(amount, ds);
+        pg = ParticleGenerator(amount, ds);
         aspectRatio = ar;
         particleFactor = pf;
         for(int i = 0; i < 16; i++){
@@ -146,7 +150,7 @@ public:
 
     void compileProgram();
     
-    void drawParticles();
+    void drawParticles(ParticleShader providedPS);
     
     void update(Vec2 cloud_pos, float dt, float particleScale);
 

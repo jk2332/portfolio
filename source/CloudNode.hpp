@@ -55,7 +55,7 @@ namespace cugl {
         ParticleShader ps;
         float drawscale;
         void setDrawScale(float ds){drawscale = ds;}
-        
+        std::vector<shared_ptr<CloudNode>> subCloudNodes;
 #pragma mark Constructor
         /**
          * Creates an empty polygon with the degenerate texture.
@@ -78,16 +78,20 @@ namespace cugl {
          * longer safe to use.
          */
         ~CloudNode() {
+            for (auto &p : subCloudNodes){
+                p->dispose();
+            }
+            subCloudNodes.clear();
             ps.dispose();
             dispose();
         }
         
 #pragma mark -
 #pragma mark Static Constructors
-        static std::shared_ptr<CloudNode> alloc(float ds, Vec3 ar, GLfloat pq[16], float pf){
+        static std::shared_ptr<CloudNode> alloc(float ds, Vec3 ar, GLfloat pq[16], float pf, bool m){
             std::shared_ptr<CloudNode> node = std::make_shared<CloudNode>();
             CULogGLError();
-            node->ps = ParticleShader(PARTICLE_NUM, ds, ar, pq, pf);
+            node->ps = ParticleShader(PARTICLE_NUM, ds, ar, pq, pf, m);
             node->ps.onStartup();
             return (node->init() ? node : nullptr);
         }

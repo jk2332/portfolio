@@ -67,8 +67,6 @@
 		EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B56F2040ADD200238092 /* GameController.cpp */; };
 		EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* InputController.cpp */; };
 		EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5702040ADD200238092 /* InputController.cpp */; };
-		EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */; };
-		EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */; };
 		EBB4B5822040ADD300238092 /* LoadingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* LoadingController.cpp */; };
 		EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBB4B5762040ADD300238092 /* LoadingController.cpp */; };
 		EBE28ECE1DFEDCFA00C059A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */; };
@@ -182,8 +180,6 @@
 		EBB4B5702040ADD200238092 /* InputController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputController.cpp; sourceTree = "<group>"; };
 		EBB4B5712040ADD200238092 /* InputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputController.h; sourceTree = "<group>"; };
 		EBB4B5722040ADD200238092 /* LoadingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingController.h; sourceTree = "<group>"; };
-		EBB4B5742040ADD300238092 /* BubbleGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleGenerator.h; sourceTree = "<group>"; };
-		EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleGenerator.cpp; sourceTree = "<group>"; };
 		EBB4B5762040ADD300238092 /* LoadingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadingController.cpp; sourceTree = "<group>"; };
 		EBE28ECD1DFEDCFA00C059A7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		F15F4AB422223516006D5CD3 /* Plant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Plant.cpp; sourceTree = "<group>"; };
@@ -318,8 +314,6 @@
 			children = (
 				F1F2EDA0223331F600ECCD4B /* Board.cpp */,
 				F1F2EDA1223331F600ECCD4B /* Board.hpp */,
-				EBB4B5752040ADD300238092 /* BubbleGenerator.cpp */,
-				EBB4B5742040ADD300238092 /* BubbleGenerator.h */,
 				F1B4E5482224517700D807D5 /* Cloud.cpp */,
 				F1B4E5492224517700D807D5 /* Cloud.hpp */,
 				F867DC30224013500038F905 /* CloudNode.cpp */,
@@ -630,7 +624,6 @@
 				F1ACCB4D2276810700AD68C2 /* PauseMenu.cpp in Sources */,
 				EBB4B57B2040ADD300238092 /* GameController.cpp in Sources */,
 				1BD618762266BF4F001F8D5B /* LevelModel.cpp in Sources */,
-				EBB4B5812040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				EBB4B57D2040ADD300238092 /* InputController.cpp in Sources */,
 				F867DC33224013500038F905 /* CloudNode.cpp in Sources */,
 				F85C7949224DCBA200E1E679 /* particleShader.cpp in Sources */,
@@ -655,7 +648,6 @@
 				EBB4B5822040ADD300238092 /* LoadingController.cpp in Sources */,
 				EBB4B57A2040ADD300238092 /* GameController.cpp in Sources */,
 				1BD3690A224E289B00C253C4 /* Particle.cpp in Sources */,
-				EBB4B5802040ADD300238092 /* BubbleGenerator.cpp in Sources */,
 				EBB4B57C2040ADD300238092 /* InputController.cpp in Sources */,
 				EBB4B5782040ADD300238092 /* WDApp.cpp in Sources */,
 				F867DC32224013500038F905 /* CloudNode.cpp in Sources */,
