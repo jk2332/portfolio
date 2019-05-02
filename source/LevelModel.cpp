@@ -427,6 +427,7 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
 
 
     auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _drawscale);
+    std::cout << _drawscale << endl;
     auto plantName = "plant" + std::to_string(plantId);
     plant->setName(plantName);
     plant->setPlantType(plantType);

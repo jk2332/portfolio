@@ -166,7 +166,11 @@ bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
     
     int p = (pow((gridPos.x - sc.x), 2) / pow(a, 2)) + (pow((gridPos.y - sc.y), 2) / pow(b, 2));
     //inside
-    if (p < 1){return true;}
+    if (p < 1){
+//        gridNode->setColor(Color4(255, 0, 0));
+        return true;
+        
+    }
     //outside
     else{return false;}
 }

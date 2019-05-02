@@ -21,7 +21,7 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
     _active = false;
 
     _target = Vec2(x, y);
-    _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH*(x) + GRID_WIDTH/2)*32.0f;
+    _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH * x + GRID_WIDTH/2 + GRID_OFFSET_X * x)*32.0f;
     _scale = drawscale;
     _type = type;
     _side = side;
@@ -112,7 +112,7 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setScale(1.1f);
-    cugl::Vec2 a = Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2)*32.0f, (0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2)*32.0f);
+    cugl::Vec2 a = Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside)*32.0f, (0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2 + GRID_HEIGHT*_target.y)*32.0f);
     _node->setPosition(a);
 
     node->addChildWithName(_node, id);

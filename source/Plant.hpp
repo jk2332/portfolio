@@ -44,6 +44,7 @@ protected:
     int _progress;
     bool _active;
     std::string _ptype;
+    
 
     int _shadeCounter;
     std::shared_ptr<AnimationNode> _node;
@@ -153,6 +154,21 @@ public:
     void update(float dt);
 
     void changeSign() ;
+    
+//    Vec2 gridCoordToPosition(cugl::Vec2 p){
+//        return gridCoordToPosition(p.x, p.y);
+//    }
+//    
+//    Vec2 gridCoordToPosition(float x, float y){
+//        Vec2 a = 32*Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*x + GRID_WIDTH/2 + GRID_OFFSET_X * x),
+//                            (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*y - GRID_HEIGHT/2 + GRID_OFFSET_Y * y));
+//        std::cout << x<< endl;
+//        cout << y << endl;
+//        std::cout << a.x << endl;
+//        std::cout << a.y << endl;
+//        
+//        return a;
+//    }
     
 };
 
