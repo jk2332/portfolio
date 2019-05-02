@@ -51,7 +51,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _node = nullptr;
     _centroid  = nullptr;
      _drawscale = 1.0f;
-    _isRainCloud = false;
+    _isRainCloud = true;
     _unitNum = 1;
     _isRaining = false;
     _rainCoolDown = 50l;
@@ -151,14 +151,17 @@ void Cloud::setLightning() {
 
 
 void Cloud::toggleRain() {
+    setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
+         CULog("undo rain");
          _rain_node->setVisible(false);
         _rain_node->setFrame(0);
         _isRaining = false;
-    } else if (isRainCloud()) {
-        _isRaining = true;
+    } else if (_isRainCloud){
+        CULog("do rain");
         _rain_node->setVisible(true);
         _actions->activate("current", _rain, _rain_node);
+        _isRaining = true;
     }
 }
 
@@ -174,7 +177,11 @@ bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
     
     int p = (pow((gridPos.x - sc.x), 2) / pow(a, 2)) + (pow((gridPos.y - sc.y), 2) / pow(b, 2));
     //inside
-    if (p < 1){return true;}
+    if (p < 1){
+//        gridNode->setColor(Color4(255, 0, 0));
+        return true;
+        
+    }
     //outside
     else{return false;}
 }
@@ -244,20 +251,20 @@ void Cloud::setSceneNode(const std::shared_ptr<cugl::Node>& node){
 }
 
 void Cloud::setCloudSizeScale(float s) {
-    if (s >= 1.0) {
-    // if (s >= 1.414) {
+     if (s >= 1) {
         _isRainCloud = true;
     }
     else {
         _isRainCloud = false;
-    }
-    if (s < 0.7) {
         if (_isRaining) {
             _rain_node->setFrame(0);
             _rain_node->setVisible(false);
             _isRaining = false;
-        } 
-        _cloudSizeScale = 0.7;
+        }
+        _cloudSizeScale = s;
+    }
+    if (s < 0.5) {
+        
     }
     else if (s > 5){
         _cloudSizeScale = 5;

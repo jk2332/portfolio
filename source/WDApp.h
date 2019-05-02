@@ -38,6 +38,7 @@ protected:
     LevelSelect _levelSelect;
     
     
+    
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     bool _levelselected;

@@ -14,7 +14,6 @@
 #include <vector>
 #include "Constants.hpp"
 
-#include "Plant.hpp"
 
 using namespace cugl;
 
@@ -43,8 +42,8 @@ protected:
     int _gridNumY;
     std::vector<std::shared_ptr<cugl::Node>> _nodes;
 //    float _offsetX;
-    float offsetY = 0.3;
-    float _offsetX = 0.65;
+//    float offsetY = 0.3;
+//    float _offsetX = 0.65;
 
 public:
 #pragma mark -
@@ -145,8 +144,8 @@ public:
     }
     
     Vec2 gridCoordToPosition(float x, float y){
-        Vec2 a = 32.0f*Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*x + GRID_WIDTH/2 + _offsetX * x),
-                            (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*y - GRID_HEIGHT/2 + offsetY * y));
+        Vec2 a = _drawscale*Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH * x + GRID_WIDTH/2 + GRID_OFFSET_X * x),
+                            (DOWN_LEFT_CORNER_Y + GRID_HEIGHT * y - GRID_HEIGHT/2 + GRID_OFFSET_Y * y));
         return a;
     }
     
@@ -159,8 +158,8 @@ public:
             return std::make_pair(-1, -1);
         }
         else {
-            int new_x = int((x - DOWN_LEFT_CORNER_X)/GRID_WIDTH);
-            int new_y = int((y - DOWN_LEFT_CORNER_Y)/GRID_HEIGHT);
+            int new_x = int((x - DOWN_LEFT_CORNER_X)/(GRID_WIDTH + GRID_OFFSET_X));
+            int new_y = int((y - DOWN_LEFT_CORNER_Y)/(GRID_HEIGHT +GRID_OFFSET_Y));
             return std::make_pair(new_x, new_y);
         }
     }
@@ -170,7 +169,7 @@ public:
     }
     
     bool isInBounds(float x, float y){
-        if (x <= DOWN_LEFT_CORNER_X || x >= DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX || y <= DOWN_LEFT_CORNER_Y || y >= DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_gridNumY){
+        if (x <= DOWN_LEFT_CORNER_X || x >= DOWN_LEFT_CORNER_X + GRID_WIDTH*_gridNumX + GRID_OFFSET_X * x || y <= DOWN_LEFT_CORNER_Y || y >= DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_gridNumY + GRID_OFFSET_Y * y){
             return false;
         }
         return true;
