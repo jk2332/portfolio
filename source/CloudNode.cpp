@@ -86,23 +86,23 @@ void CloudNode::setPolygon(const Rect& rect) {
  * @param tint      The tint to blend with the Node color.
  */
 void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& transform, Color4 tint) {
-//    if (!_rendered) {
-//        generateRenderData();
-//    }
-//    
-//    batch->end();
-//    //my custom code
-//    CULogGLError();
-//    ps.drawParticles();
-//    CULogGLError();
-//    batch->begin(getScene()->getCamera()->getCombined());
-//    
-//    batch->setColor(tint);
-//    batch->setTexture(_texture);
-//    batch->setBlendEquation(_blendEquation);
-//    batch->setBlendFunc(_srcFactor, _dstFactor);
-//    batch->fill(_vertices.data(),(unsigned int)_vertices.size(),0,
-//                _polygon.getIndices().data(),(unsigned int)_polygon.getIndices().size(),0,transform);
+    if (!_rendered) {
+        generateRenderData();
+    }
+
+    batch->end();
+    //my custom code
+    CULogGLError();
+    ps.drawParticles();
+    CULogGLError();
+    batch->begin(getScene()->getCamera()->getCombined());
+
+    batch->setColor(tint);
+    batch->setTexture(_texture);
+    batch->setBlendEquation(_blendEquation);
+    batch->setBlendFunc(_srcFactor, _dstFactor);
+    batch->fill(_vertices.data(),(unsigned int)_vertices.size(),0,
+                _polygon.getIndices().data(),(unsigned int)_polygon.getIndices().size(),0,transform);
 }
 
 /** A triangulator for those incomplete polygons */
