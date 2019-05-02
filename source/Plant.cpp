@@ -35,7 +35,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     
     // Plant animations
     _actions = ActionManager::alloc();
-    _grow = Animate::alloc(0, 8, 1.0f, 1);
+    _grow = Animate::alloc(0, 8, 1.5f, 1);
 
 
     return true;
@@ -67,9 +67,9 @@ void Plant::setRained(bool f) {
 }
 
 void Plant::updateState(){
+    _progress += 2;
     if (_state == dead) { 
         changeSign();
-        //do nothing
         return;
     } else {
         if  (_attacked) {
@@ -159,8 +159,8 @@ void Plant::changeSign() {
 }
 
 void Plant::upgradeSprite() {
-     if (_active) {
-         CULog("change texture");
+     if (_active && _stage < _maxStage) {
+         CULog("change texture to stage %d", (_stage));
         _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
         _node->setFrame(0);
         _active = false;
@@ -168,7 +168,7 @@ void Plant::upgradeSprite() {
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
-        CULog("Apparently grew %d", (_stage));
+        CULog("Grew to stage %d", (_stage));
         _actions->activate("current", _grow, _node);
     }
 }
@@ -182,19 +182,20 @@ void Plant::setState(int s){
     _health = 0;
 }
 
-void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name){
+void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name, float ds){
+    _drawscale = ds;
     _node = AnimationNode::alloc(_assets->get<Texture>(getPlantType() + std::to_string(_stage)), 1, 9);
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setScale(0.15f);
-    cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2)*32.0f, (0.4f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2 + GRID_OFFSET_Y*_y)*32.0f);
+    cugl::Vec2 a = _drawscale*cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2),
+                              (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/4 + GRID_OFFSET_Y*_y));
     _node->setPosition(a);
     
     _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>("signSun"));
-    _signNode->setScale(0.25f);
-
-    cugl::Vec2 b = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2)*32.0f,
-                              (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - GRID_HEIGHT/2)*32.0f);
-
+    _signNode->setScale(0.3f);
+    _signNode->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
+    cugl::Vec2 b = _drawscale*cugl::Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH,
+                              (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - GRID_HEIGHT));
     _signNode->setPosition(b);
 
     node->addChildWithName(_node, name);

@@ -142,6 +142,9 @@
         "backToLevelSelectButton": {
             "file":     "textures/Back.png"
         },
+        "rcIndicator": {
+            "file":     "textures/rcIndicator.png"
+        },
         "pauseButton": {
             "file":     "textures/Pause_2.png"
         }

@@ -149,7 +149,7 @@ void WeatherDefenderApp::update(float timestep) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
         _levelSelect.init(_assets);
-        _levelSelect.setAssetLoaded(true);
+//        _levelSelect.setAssetLoaded(true);
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
@@ -168,7 +168,7 @@ void WeatherDefenderApp::update(float timestep) {
 //        CULog("updating gameplay");
         _gameplay.update(timestep);
     }
-    else if (_levelselected && _loaded){
+    else if (_levelselected && _loaded && !_gameplay.isActive()){
         _gameplay.dispose();
         _levelSelect.init(_assets);
         _levelselected = false;

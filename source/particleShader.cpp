@@ -83,6 +83,7 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
 void ParticleShader::dispose() {
     Shader::dispose();
     particleTexture.dispose();
+    _pg.particles.clear();
     glDeleteProgram(_program);
     CULogGLError();
     glDeleteShader(_fragShader);

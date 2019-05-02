@@ -115,7 +115,7 @@ public:
         return (result->init(x, y, rainProb, shadeProb, drawscale) ? result : nullptr);
     }
 
-    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name);
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name, float ds);
 
     int getType() {return _type;}
     void setType(int t) {_type = t;}

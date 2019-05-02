@@ -194,9 +194,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setPosition(offset);
 
     _level->setDebugNode(_debugnode);
+    _level->setDrawScale(_scale);
     _level->reset();
     _clouds = _level->getClouds();
-    _level->setDrawScale(_scale);
     _level->setAssets(_assets);
     _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
@@ -245,7 +245,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     populate();
     _active = true;
     _complete = false;
-    setDebug(true);
+    setDebug(false);
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
@@ -727,7 +727,6 @@ void GameScene::update(float dt) {
     _input.update(dt);
     ticks++;
     
-
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didReset()) { reset(); }
@@ -816,7 +815,6 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-            pest->walk();
              for(auto &plant : _level->getPlants()) {
                  if (plant->getStage() > 2 && plant->getX()) {
                      targetX = plant->getX();

@@ -30,7 +30,6 @@ protected:
     std::string _type;
     float _speed;
     int _damage;
-    float _scale;
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<ActionManager> _actions;
     std::shared_ptr<Animate> _move;
@@ -40,11 +39,9 @@ protected:
     std::string _side;
     std::string _name;
     int _xside;
-
+    float _drawscale;
     bool _scared;
-    
     float _scaledTargetX;
-
     bool _active;
     
 public:
@@ -108,7 +105,7 @@ public:
         return (result->init(x, y, texture, side, drawscale) ? result : nullptr);
     }
     
-    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id);
+    void setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id, float ds);
     
     std::string getType() {return _type;}
     void setType(int t) {_type = t;}

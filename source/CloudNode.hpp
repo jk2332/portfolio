@@ -77,7 +77,10 @@ namespace cugl {
          * However, the polygon and drawing commands will be deleted and no
          * longer safe to use.
          */
-        ~CloudNode() { dispose(); }
+        ~CloudNode() {
+            ps.dispose();
+            dispose();
+        }
         
 #pragma mark -
 #pragma mark Static Constructors

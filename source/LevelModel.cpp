@@ -144,7 +144,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
-            plant->setSceneNode(plantNode, plant->getName());
+            plant->setSceneNode(plantNode, plant->getName(), _drawscale);
         }
     }
     _worldnode->addChildWithName(plantNode, "plantNode");
@@ -153,7 +153,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
-            pest->setSceneNode(pestNode, pest->getName());
+            pest->setSceneNode(pestNode, pest->getName(), _drawscale);
         }
     }
     _worldnode->addChildWithName(pestNode, "pestNode");
@@ -172,21 +172,31 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
     auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
     auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
+    auto rcNode = PolygonNode::allocWithTexture(_assets->get<Texture>("rcIndicator"));
     
     _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
-    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getSize().height;
+    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
     _bar->setScale(x);
-    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getSize().width
-                                                            + x*moonNode->getSize().width, _bar->getSize().height));
+    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getWidth() + x*moonNode->getWidth(),
+                                                            _bar->getHeight()));
     sunNode->setScale(x);
-    sunNode->setPosition(_bar->getPosition()
-                         + Vec2(-sunNode->getSize().width/2.0f, sunNode->getSize().height/2.0f));
+    sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
     _worldnode->addChildWithName(sunNode, "sun");
     moonNode->setScale(x);
-    moonNode->setPosition(_bar->getPosition()
-                          + Vec2(_bar->getSize().width + moonNode->getSize().width/2.0f, moonNode->getSize().height/2.0f));
+    moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
+                                                     moonNode->getHeight()/2.0f));
     _worldnode->addChildWithName(moonNode, "moon");
     _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
+    
+    for (int i = 0; i < _resourceLayer->size(); i++){
+        int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
+        float t = foreground->getWidth();
+        rcNode->setAnchor(Vec2::ANCHOR_TOP_CENTER);
+        rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(),
+                                 foreground->getHeight() - 0.035f*SCENE_HEIGHT));
+        rcNode->setScale(2);
+        _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
+    }
     
 }
 
@@ -433,9 +443,11 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     auto plantType = json->getString(TYPE);
 
 
-    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], _drawscale);
-    std::cout << _drawscale << endl;
+    auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], 1.0f);
     auto plantName = "plant" + std::to_string(plantId);
+   
+    std::cout << plantName << " Level Model Drawscale: " << _drawscale << endl;
+
     plant->setName(plantName);
     plant->setPlantType(plantType);
 
