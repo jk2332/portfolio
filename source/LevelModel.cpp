@@ -101,6 +101,7 @@ void LevelModel::dispose(){
     _pests.clear();
     _bar = nullptr;
     _root = nullptr;
+    //Can't set these to null here? Crashes game.
 //    _cloudLayer = nullptr;
 //    _resourceLayer = nullptr;
 //    _plantLayer = nullptr;
@@ -671,13 +672,13 @@ void LevelModel::update(long ticks) {
         CULog("All plants are dead");
         _over = true;
         _winnode->setText("You Lost" + std::to_string(getPlantScore()));
-        _winnode->setVisible(true);
+//        _winnode->setVisible(true);
     }
 
     if (ticks >= _time) {
         CULog("tick over time");
         _winnode->setText("Score: " + std::to_string(getPlantScore()));
-        _winnode->setVisible(true);
+//        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
         // return;

@@ -206,18 +206,21 @@ bool SpriteBatch::init(unsigned int capacity, std::shared_ptr<SpriteShader> shad
     
     // Generate the buffers
     glGenBuffers(1, &_vertBuffer);
+    CULogGLError();
     if (!validateBuffer(_vertBuffer, "Unable to unable to generate Vertex Buffer Object")) {
         dispose();
         return false;
     }
     
     glGenVertexArrays (1, &_vertArray);
+    CULogGLError();
     if (!validateBuffer(_vertArray, "Unable to unable to generate Vertex Array Object")) {
         dispose();
         return false;
     }
     
     glGenBuffers(1, &_indxBuffer);
+    CULogGLError();
     if (!validateBuffer(_indxBuffer, "Unable to unable to generate Index Buffer Object")) {
         dispose();
         return false;
@@ -225,11 +228,15 @@ bool SpriteBatch::init(unsigned int capacity, std::shared_ptr<SpriteShader> shad
     
     // Bind and link the buffers
     glBindBuffer( GL_ARRAY_BUFFER, _vertBuffer );
+    CULogGLError();
     glBindVertexArray(_vertArray);
+    CULogGLError();
     glBufferData( GL_ARRAY_BUFFER, _vertSize * sizeof(Vertex2), _vertData, GL_DYNAMIC_DRAW );
-
+    CULogGLError();
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indxBuffer );
+    CULogGLError();
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, _indxSize * sizeof(GLuint), _indxData, GL_DYNAMIC_DRAW );
+    CULogGLError();
     _texture = SpriteBatch::getBlankTexture();
     return true;
 }
