@@ -90,6 +90,9 @@ void LevelModel::dispose(){
     }
     _pests.clear();
     _bar = nullptr;
+    _newClouds.clear();
+    _loaded.clear();
+    _assets = nullptr;
 }
 
 
@@ -311,10 +314,6 @@ void LevelModel::unload() {
     _cloudLayer = nullptr;
     _plantLayer = nullptr;
     _pestLayer = nullptr;
-
-    _clouds.clear();
-    _plants.clear();
-    _pests.clear();
     _board = nullptr;
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         (*it) = nullptr;
@@ -328,6 +327,14 @@ void LevelModel::unload() {
     //    _board = nullptr;
     _winnode = nullptr;
     _bar = nullptr;
+    _assets = nullptr;
+    _worldnode = nullptr;
+    _debugnode = nullptr;
+    _plants.clear();
+    _clouds.clear();
+    _pests.clear();
+    _newClouds.clear();
+    _loaded.clear();
     _assets = nullptr;
 }
 

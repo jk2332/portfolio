@@ -79,6 +79,12 @@ void Cloud::dispose() {
     _cloudNode = nullptr;
     _shadowNode = nullptr;
     _ob = nullptr;
+    _actions = nullptr;
+    _actions2 = nullptr;
+    _rain = nullptr;
+    _lightning= nullptr;
+    _rain_node = nullptr;
+    _lightning_node = nullptr;
 }
 
 

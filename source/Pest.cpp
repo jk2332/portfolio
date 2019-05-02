@@ -54,6 +54,7 @@ void Pest::dispose() {
     _move = nullptr;
     _assets = nullptr;
     _node = nullptr;
+    _node_rev = nullptr;
     
 }
 
