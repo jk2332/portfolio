@@ -59,17 +59,11 @@ protected:
     std::shared_ptr<PolygonNode> _shadowNode;
     cugl::Vec2 _targetPos;
     
-    std::shared_ptr<Node> _node;
-
     Vec2 _disp;
     
     // Represents the box obstacle representing the cloud
     std::shared_ptr<BoxObstacle> _ob;
-
     std::string _cloudTexture;
-    
-//    /** Cache object for transforming the force according the object angle */
-//    cugl::Mat4 _affine;
 
     /** The scale between the physics world and the screen (MUST BE UNIFORM) */
     float _drawscale;
@@ -289,9 +283,6 @@ public:
      */
     const std::shared_ptr<CloudNode>& getCloudNode() const { return _cloudNode; }
 
-    const std::shared_ptr<Node>& getNode() const { return _node; }
-
-
     /**
      * Sets the scene graph node representing this Ragdoll.
      *
@@ -312,7 +303,7 @@ public:
      */
     void setSceneNode(const std::shared_ptr<cugl::Node>& node);
     
-    std::shared_ptr<PolygonNode> setSceneNode(const std::shared_ptr<cugl::CloudNode>& node, Vec2 displacement, std::shared_ptr<Texture> cloudFace, std::shared_ptr<Texture> shadow, std::shared_ptr<Texture> rain, std::shared_ptr<Texture> lightning);
+    vector<shared_ptr<Node>> setSceneNode(const shared_ptr<cugl::CloudNode>& node, Vec2 displacement, shared_ptr<Texture> cloudFace, shared_ptr<Texture> shadow, shared_ptr<Texture> rain, shared_ptr<Texture> lightning);
     /**
      * Sets the ratio of the Ragdoll sprite to the physics body
      *

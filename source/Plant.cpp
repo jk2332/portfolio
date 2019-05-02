@@ -210,7 +210,7 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 b = _drawscale*cugl::Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH,
                               (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - GRID_HEIGHT));
     _signNode->setPosition(b);
-
+    //Don't need z-ordering for children of master plant node
     node->addChildWithName(_node, name);
     node->addChildWithName(_signNode, name + "sign");
 }

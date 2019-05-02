@@ -87,7 +87,7 @@ void Board::setSceneNode(const std::shared_ptr<cugl::Node>& node){
             single_grid->setPosition(gridCoordToPosition(Vec2(i, j)));
             single_grid->setContentSize(GRID_WIDTH*_drawscale, GRID_HEIGHT*_drawscale);
             _nodes.push_back(single_grid);
-            
+            //children of the board don't need z ordering
             node->addChildWithName(single_grid, "grid"+std::to_string(i) + std::to_string(j));
         }
     }

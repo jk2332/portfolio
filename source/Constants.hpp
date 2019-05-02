@@ -81,19 +81,30 @@
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_SPACING    2
-#define GRID_WIDTH      3.2
+#define GRID_WIDTH      3.2f
 #define GRID_HEIGHT     2.7f
-#define DRAW_WIDTH     4
+#define DRAW_WIDTH      4
 #define DRAW_HEIGHT     3
-#define DOWN_LEFT_CORNER_X    3
-#define DOWN_LEFT_CORNER_Y    3.5
+#define DOWN_LEFT_CORNER_X    2.75f
+#define DOWN_LEFT_CORNER_Y    3.5f
 #define OFFSET_X         0
 #define OFFSET_Y         0
-#define GRID_OFFSET_X   0.65
-#define GRID_OFFSET_Y   0.3
+#define GRID_OFFSET_X   0.65f
+#define GRID_OFFSET_Y   0.3f
 
 #define SIGN  "sign"
-#define UI_ZVALUE 100
+#define Z_PAUSE 12
+#define Z_UI 11
+#define Z_CLOUD 10
+#define Z_RAIN 9
+#define Z_LIGHTNING 8
+#define Z_PEST 7
+#define Z_SIGN 6
+#define Z_PLANT 5
+#define Z_SHADOW 4
+#define Z_GRID 3
+#define Z_BACKGROUND 2
+#define Z_EXTENDEDBKGD 1
 
 //Cloud Particles
 #define PARTICLE_NUM 10

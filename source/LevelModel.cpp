@@ -167,7 +167,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
             plant->setSceneNode(plantNode, plant->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(plantNode, "plantNode");
+    _worldnode->addChildWithName(plantNode, "plantNode", Z_PLANT);
     
     auto pestNode = Node::alloc();
     for(auto &pest : _pests) {
@@ -176,14 +176,14 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
             pest->setSceneNode(pestNode, pest->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(pestNode, "pestNode");
+    _worldnode->addChildWithName(pestNode, "pestNode", Z_PEST);
     
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
     _winnode->setPosition(dimen/2.0f);
     _winnode->setForeground(STATIC_COLOR);
     _winnode->setVisible(false);
-    _worldnode->addChild(_winnode, UI_ZVALUE);
+    _worldnode->addChild(_winnode, Z_UI);
     
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
@@ -201,12 +201,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
                                                             _bar->getHeight()));
     sunNode->setScale(x);
     sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
-    _worldnode->addChildWithName(sunNode, "sun");
+    _worldnode->addChildWithName(sunNode, "sun", Z_UI);
     moonNode->setScale(x);
     moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
                                                      moonNode->getHeight()/2.0f));
-    _worldnode->addChildWithName(moonNode, "moon");
-    _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
+    _worldnode->addChildWithName(moonNode, "moon", Z_UI);
+    _worldnode->addChildWithName(_bar, "bar", Z_UI);
     
     for (int i = 0; i < _resourceLayer->size(); i++){
         int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
@@ -215,6 +215,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
         rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(),
                                  foreground->getHeight() - 0.035f*SCENE_HEIGHT));
         rcNode->setScale(2);
+        //don't need zordering because it is a child of the progress bar
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
     

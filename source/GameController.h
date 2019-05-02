@@ -64,15 +64,10 @@ protected:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
     std::shared_ptr<cugl::Button> _pauseButton;
-    std::shared_ptr<ParticleNode> _rainNode;
-    std::shared_ptr<cugl::FreeList<Particle>> _memory;
-    std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
     Vec3 dimenWithIndicator;
     bool _paused;
-    std::vector<Particle*> _pQ;
-    std::vector<Particle*> _pD;
     int _max_cloud_id = 0;
 
     // VIEW
