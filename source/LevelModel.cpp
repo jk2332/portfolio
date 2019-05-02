@@ -16,10 +16,8 @@
 
 using namespace std;
 
-// map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}};
-map<string, int> shadeMap = {{"tomato", 0}, {"corn", 25}};
-map<string, int> rainMap = {{"tomato", 0}, {"corn", 10}};
-// map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}};
+map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}};
+map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}};
 float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 std::string cloud_texture_key;
 

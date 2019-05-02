@@ -50,6 +50,18 @@
                 {
                  "gid":5,
                  "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"tomato",
+                 "visible":true,
+                 "width":94,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
                  "id":7,
                  "name":"",
                  "rotation":0,
