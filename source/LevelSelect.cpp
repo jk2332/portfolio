@@ -64,6 +64,7 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         _levelButtons.push_back(button);
         button->setListener([=](const std::string& name, bool down) {
             this->_active = down;
+            _selectedLevel = i + 1;
         });
     }
     
@@ -113,9 +114,9 @@ void LevelSelect::update(float progress) {
     for (int i = 0; i < _levelButtons.size(); i++){
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i + 1);
-        if (_levelButtons.at(i)->isDown()) {
-            _selectedLevel = i + 1;
-        }
+//        if (_levelButtons.at(i)->isDown()) {
+//            _selectedLevel = i + 1;
+//        }
     }
 }
 
