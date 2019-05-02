@@ -154,7 +154,7 @@
               "name":"Pests",
               "objects": [
                      {
-                            "x": 1,
+                            "x": 4,
                             "y": 1,
                             "type": "snail",
                             "side": "left",
@@ -162,7 +162,7 @@
                      },
                      {
                             "x": 2,
-                            "y": 2,
+                            "y": 0,
                             "type": "snail",
                             "side": "right",
                             "id": 6

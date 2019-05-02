@@ -194,8 +194,8 @@
               "name":"Pests",
               "objects": [
                      {
-                            "x": 4,
-                            "y": 0,
+                            "x": 5,
+                            "y": 1,
                             "type": "raccoon",
                             "side": "left",
                             "id": 2

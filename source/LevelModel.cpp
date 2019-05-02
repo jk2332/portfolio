@@ -447,7 +447,6 @@ std::shared_ptr<Cloud> LevelModel::createNewCloud(int id, Vec2 pos){
     return cloud;
 }
 
-
 bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     bool success = true;
 
@@ -466,8 +465,6 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], 1.0f);
     auto plantName = "plant" + std::to_string(plantId);
    
-//    std::cout << plantName << " Level Model Drawscale: " << _drawscale << endl;
-
     plant->setName(plantName);
     plant->setPlantType(plantType);
 

@@ -117,16 +117,18 @@ void Plant::updateState(){
             }
         }
         else if (_state == noNeed){
-            int statusChance = rand() %  100 + 1;
-            if (statusChance < _rainProb) {
-                _state = needRain;
-                _rainProb /= 2;
-            } else if (statusChance < _rainProb + _shadeProb) {
-                _state = needShade;
-                _shadeProb /= 1.5;
-            } else {
-                if (!_shaded){
-                    _progress += 1;
+            if (_stage < _maxStage){
+                int statusChance = rand() %  100 + 1;
+                if (statusChance < _rainProb) {
+                    _state = needRain;
+                    _rainProb /= 2;
+                } else if (statusChance < _rainProb + _shadeProb) {
+                    _state = needShade;
+                    _shadeProb /= 1.5;
+                } else {
+                    if (!_shaded){
+                        _progress += 1;
+                    }
                 }
             }
         } else if (_state == needSun) {
