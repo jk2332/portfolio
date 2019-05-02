@@ -16,8 +16,8 @@
 
 using namespace std;
 
-map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}};
-map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}};
+map<string, int> shadeMap = {{"tomato", 40}, {"corn", 25}, {"eggplant", 10}};
+map<string, int> rainMap = {{"tomato", 25}, {"corn", 10}, {"eggplant", 40}};
 float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 std::string cloud_texture_key;
 
@@ -465,7 +465,7 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     auto plant = Plant::alloc(x, y, rainMap[plantType.c_str()], shadeMap[plantType], 1.0f);
     auto plantName = "plant" + std::to_string(plantId);
    
-    std::cout << plantName << " Level Model Drawscale: " << _drawscale << endl;
+//    std::cout << plantName << " Level Model Drawscale: " << _drawscale << endl;
 
     plant->setName(plantName);
     plant->setPlantType(plantType);

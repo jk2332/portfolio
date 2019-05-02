@@ -1,0 +1,227 @@
+{ "height":18,
+ "infinite":false,
+ "time": 5000,
+ "layers":[
+        {
+         "id":2,
+         "image":"..\/code\/cs4152\/assets\/textures\/technical-background.png",
+         "name":"Image Layer 1",
+         "offsetx":26.6667,
+         "offsety":2.66667,
+         "opacity":1,
+         "type":"imagelayer",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJzt1zERAAAIA7Hi3zQmuC4k01v4BAAAAAAAAPhoig0AAPzmPwAAgBb\/AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHBvAeB\/ABw=",
+         "encoding":"base64",
+         "height":100,
+         "id":4,
+         "name":"Ground tiles",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":200,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJzt17EJAEAIwEAb91\/ZFR4eEfRugrSJAAAAAAAA2CunAwAAgPN+vsTTAAAAnTwHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPCiALFWABU=",
+         "encoding":"base64",
+         "height":100,
+         "id":7,
+         "name":"Plant tile layer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":200,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":9,
+         "name":"Plants",
+         "objects":[
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"corn",
+                 "visible":true,
+                 "width":94,
+                 "x":1,
+                 "y":1
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"eggplant",
+                 "visible":true,
+                 "width":94,
+                 "x":2,
+                 "y":1
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"corn",
+                 "visible":true,
+                 "width":94,
+                 "x":3,
+                 "y":1
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"eggplant",
+                 "visible":true,
+                 "width":94,
+                 "x":4,
+                 "y":1
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":7,
+                 "name":"",
+                 "rotation":0,
+                 "type":"corn",
+                 "visible":true,
+                 "width":94,
+                 "x":5,
+                 "y":1
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":8,
+         "name":"ResourceClouds",
+         "objects":[
+                {
+                 "gid":9,
+                 "height":105,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":206,
+                 "texture": "cloud",
+                 "time": 150,
+                 "size": 1.0,
+                 "x":16,
+                 "y":10
+                }
+              ],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        },
+        {
+         "draworder":"topdown",
+         "id":8,
+         "name":"Clouds",
+         "objects":[
+                {
+                 "gid":3,
+                 "height":84,
+                 "id":1,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":165,
+                 "texture": "cloud",
+                 "x":28,
+                 "y":10
+                }, 
+                {
+                 "gid":6,
+                 "height":126,
+                 "id":2,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":248,
+                 "texture": "cloud",
+                 "x":22,
+                 "y":10
+                }, 
+                {
+                 "gid":9,
+                 "height":105,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":206,
+                 "texture": "cloud",
+                 "x":16,
+                 "y":10
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        },
+       {
+              "name":"Pests",
+              "objects": [
+                     {
+                            "x": 4,
+                            "y": 0,
+                            "type": "raccoon",
+                            "side": "left",
+                            "id": 2
+                     },
+                     {
+                            "x": 4,
+                            "y": 0,
+                            "type": "snail",
+                            "side": "left",
+                            "id": 2
+                     }
+              ]
+       }],
+ "nextlayerid":10,
+ "nextobjectid":8,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.2.3",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "source":"Tileset.tsx"
+        }],
+ "tilewidth":32,
+ "type":"map",
+ "version":1.2,
+ "width":32
+}

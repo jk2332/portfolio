@@ -72,12 +72,16 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     return true;
 }
 
+static std::vector<std::shared_ptr<cugl::Button> > extracted(const std::vector<std::shared_ptr<cugl::Button> > &_levelButtons) {
+    return _levelButtons;
+}
+
 /**
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void LevelSelect::dispose() {
     // Deactivate the button (platform dependent)
-    for (int i = 0; i < _levelButtons.size(); i++){
+    for (int i = 0; i < extracted(_levelButtons).size(); i++){
         if (isPending(i)){
             _levelButtons.at(i)->deactivate();
             //            _levelButtons.at(i)->removeListener();

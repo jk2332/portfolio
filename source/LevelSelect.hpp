@@ -47,7 +47,7 @@ protected:
     int _selectedLevel = -1;
     bool _assetLoaded = false;
     float _scale;
-    int _num_level = 4;
+    int _num_level = 5;
     
     
     /**
