@@ -53,7 +53,7 @@ using namespace cugl;
 #define SPLIT_COOLDOWN      30
 #define PARTICLE_MODE  true
 
-long splitCoolDown = -1;
+//long splitCoolDown = -1;
 long gesCoolDown = -1;
 Cloud * pinchedCloud1 = nullptr;
 Cloud * pinchedCloud2 = nullptr;
@@ -81,8 +81,6 @@ Obstacle * clicked_cloud = nullptr;
 bool shadowClicked = false;
 Obstacle * clickedShadowCloud = nullptr;
 
-long temp = 01;
-long rainingTicks = 0l;
 bool pinched = false;
 std::shared_ptr<Plant> currentPlant;
 
@@ -232,7 +230,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     addChildWithName(_debugnode,"debugNode");
     addChildWithName(_rootnode,"rootnode");
     
-    _board = Board::alloc(_scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
+    _board = Board::alloc(SCENE_WIDTH, _scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
@@ -260,6 +258,22 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  */
 void GameScene::dispose() {
     ticks = 0;
+//    splitCoolDown = -1;
+    gesCoolDown = -1;
+    pinchedCloud1 = nullptr;
+    pinchedCloud2 = nullptr;
+    ticks = 0;
+    rclick1 = -1;
+    rclick2 = -1;
+    rclick1_touchID = -1;
+    lclick1 = -1;
+    lclick2 = -1;
+    lclick1_touchID = -1;
+    clicked_cloud = nullptr;
+    shadowClicked = false;
+    clickedShadowCloud = nullptr;
+    pinched = false;
+    
     _input.dispose();
     for (auto &c : _clouds){
         c->dispose();
@@ -484,7 +498,8 @@ void GameScene::populate() {
         auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor);
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
-        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
+        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, 
+        _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
         addObstacle(_levelworldnode, cloud, cloudNode, 1);
         _levelworldnode->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _levelworldnode->sortZOrder();
@@ -611,7 +626,8 @@ void GameScene::checkForRain(Obstacle * o, long touchID){
         else if (rclick2 == -1){
             rclick2 = ticks;
             long gap = rclick2 - rclick1;
-            if (gap <= 60 && clicked_cloud && clicked_cloud->getName() == o->getName() && touchID != rclick1_touchID){
+            if (gap <= 60 && clicked_cloud && clicked_cloud->getName() == o->getName()){
+            // if (gap <= 60 && clicked_cloud && clicked_cloud->getName() == o->getName() && touchID != rclick1_touchID){
                 gesCoolDown = ticks;
                 makeRain(o);
             }
@@ -623,7 +639,32 @@ void GameScene::checkForRain(Obstacle * o, long touchID){
     }
 }
 
-void GameScene::checkForLightening(Obstacle * o, long touchID){
+void GameScene::makeLightning(Obstacle * ob){
+    if (!ob) return;
+    auto c = (Cloud *) ob;
+    c->setLightning();
+
+    bool lightning;
+    shared_ptr<Node> thisNode;
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            lightning = false;
+            thisNode = _board->getNodeAt(i, j);
+            lightning = c->shadowCheck(_worldnode, thisNode);
+
+            if (lightning) {
+                for (std::shared_ptr<Pest> p : _level->getPests()){
+                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
+                        CULog("Set scared!");
+                        p->setScared(true);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void GameScene::checkForLightning(Obstacle * o, long touchID){
     if (o) {
         if (lclick1 == -1){
             lclick1 = ticks;
@@ -633,8 +674,9 @@ void GameScene::checkForLightening(Obstacle * o, long touchID){
         else if (lclick2 == -1){
             lclick2 = ticks;
             long gap = lclick2 - lclick1;
-            if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() && touchID != lclick1_touchID){
-                CULog("make lightening here");
+            if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() ){
+            // if (gap <= 60 && clickedShadowCloud && clickedShadowCloud->getName() == o->getName() && touchID != lclick1_touchID){
+                makeLightning(o);
                 gesCoolDown = ticks;
             }
             lclick1 = -1;
@@ -703,6 +745,29 @@ void GameScene::update(float dt) {
             pinchPos = _input.getPinchSelection();
         }
     }
+
+    for (auto &c : _clouds) {
+        if (c->isRaining()) {
+            bool rained;
+            shared_ptr<Node> thisNode;
+            for (int i=0; i < GRID_NUM_X; i++){
+                for (int j=0; j < GRID_NUM_Y; j++){
+                    rained = false;
+                    thisNode = _board->getNodeAt(i, j);
+                    rained = c->shadowCheck(_worldnode, thisNode);
+
+                    if (rained) {
+                        for (std::shared_ptr<Plant> p : _level->getPlants()){
+                            if (p != nullptr && p->getX() == i && p->getY() == j){
+                                p->setRained(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     
     bool shaded;
     shared_ptr<Node> thisNode;
@@ -750,14 +815,13 @@ void GameScene::update(float dt) {
             int targetY = pest->getTarget().y;
             int targetX;
             pest->walk();
-            // for(auto &plant : _level->getPlants()) {
-            //     if (plant->getStage() > 2 && plant->getX()) {
-            //         targetX = plant->getX();
-            //         pest->walk();
-            //         break;
-            //     }
-            // }
-
+             for(auto &plant : _level->getPlants()) {
+                 if (plant->getStage() > 2 && plant->getX()) {
+                     targetX = plant->getX();
+                     pest->walk();
+                     break;
+                 }
+             }
         }
     }
 
@@ -854,7 +918,7 @@ void GameScene::update(float dt) {
             if (_shadowSelectors.count(touchID)){
                 o = _shadowSelectors.at(touchID);
                 if (o != nullptr && ticks - gesCoolDown >= GES_COOLDOWN){
-                    checkForLightening(o, touchID);
+                    checkForLightning(o, touchID);
                 }
                 _shadowSelectors.at(touchID) = nullptr;
                 _shadowSelectors.erase(touchID);
@@ -946,45 +1010,8 @@ void GameScene::processRemoval(){
 
 void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
-    
     auto c = (Cloud *) ob;
-//    if (!c->isRainCloud()) return;
-    Vec2 cloud_pos = c->getPosition();
-    c->setIsRaining(true);
-    
-    CULog("make it rain");
-
-    // Draw rain droplets
-    // for (int i = -3; i < 3; i++){
-    //     Particle* sprite = _memory->malloc();
-    //     if (sprite != nullptr) {
-    //         sprite->setTrajectory(-0.5f*M_PI);
-    //         sprite->setPosition(Vec2(cloud_pos.x + 0.9 * i + 0.3, cloud_pos.y - 1.5)*_scale);
-    //         _rainNode->addParticle(sprite);
-    //         _pQ.push_back(sprite);
-    //     }
-    // }
-
-    bool rained;
-    shared_ptr<Node> thisNode;
-    for (int i=0; i < GRID_NUM_X; i++){
-        for (int j=0; j < GRID_NUM_Y; j++){
-            rained = false;
-            thisNode = _board->getNodeAt(i, j);
-            rained = c->shadowCheck(_worldnode, thisNode);
-
-            if (rained) {
-                for (std::shared_ptr<Plant> p : _level->getPlants()){
-                    if (p != nullptr && p->getX() == i && p->getY() == j){
-                        p->setRained(true);
-                    }
-                }
-            }
-        }
-    }
-    
-    c->setCloudSizeScale(c->getCloudSizeScale()*sqrt(9.3/10));
-
+    c->toggleRain();
 }
 
 
@@ -1019,7 +1046,8 @@ void GameScene::splitClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, 
+        _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
         
         _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();
@@ -1052,7 +1080,8 @@ void GameScene::createResourceClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("lightning-film"));
+        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNodeParticles(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, 
+        _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
 
         _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
         _level->getWorldNode()->sortZOrder();

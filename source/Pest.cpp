@@ -49,6 +49,12 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
 }
 
 void Pest::dispose() {
+    texture = nullptr;
+    _actions = nullptr;
+    _move = nullptr;
+    _assets = nullptr;
+    _node = nullptr;
+    
 }
 
 void Pest::walk() {
@@ -70,12 +76,21 @@ void Pest::update(float dt) {
         _actions->update(dt);
         auto pos = _node->getPosition();
         _node->setPosition(Vec2(pos.x + _speed, pos.y));
+        _node_rev->setPosition(Vec2(pos.x + _speed, pos.y));
         _actions->activate("current", _move, _node);
+    }
+    if (_scared) {
+        _node->setVisible(false);
+        _node_rev->setVisible(true);
+        _actions->update(dt);
+        auto pos = _node_rev->getPosition();
+        _node_rev->setPosition(Vec2(pos.x - _speed, pos.y));
+        _actions->activate("current", _move, _node_rev);
     }
 }
 
 bool Pest::checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode) {
-    if (_active) {
+    if (_active || _scared) {
         return false;
     }
     Vec2 sc = worldNode->nodeToWorldCoords(_node->getPosition());
@@ -94,14 +109,18 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     if (_type == "snail") {
         if (_side == "left") {
             _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
+            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 6);
         } else if (_side == "right") {
             _node = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 6);
+            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
         }
     } else if (_type == "raccoon") {
         if (_side == "left") {
             _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 10);
+            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 10);
         } else if (_side == "right") {
             _node = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 10);
+            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 10);
         }
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
@@ -109,5 +128,11 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id)
     cugl::Vec2 a = Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2)*32.0f, (0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
 
+    _node_rev->setAnchor(Vec2::ANCHOR_CENTER);
+    _node_rev->setScale(1.1f);
+    _node_rev->setPosition(a);
+    _node_rev->setVisible(false);
+
     node->addChildWithName(_node, id);
+    node->addChildWithName(_node_rev, id + "rev");
 }

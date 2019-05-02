@@ -108,21 +108,17 @@ void Plant::updateState(){
         else if (_state == noNeed){
             int statusChance = rand() %  100 + 1;
             if (statusChance < _rainProb) {
-                CULog("%s now needs rain, rng is %d", getName().c_str(), statusChance);
                 _state = needRain;
                 _rainProb /= 2;
             } else if (statusChance < _rainProb + _shadeProb) {
-//                CULog("%s now needs shade, rng is %d", getName().c_str(), statusChance);
                 _state = needShade;
                 _shadeProb /= 1.5;
             } else {
-//                CULog("%s still needs nothing, rng is %d", getName().c_str(), statusChance);
                 if (!_shaded){
                     _progress += 1;
                 }
             }
         } else if (_state == needSun) {
-//            CULog("update needs sun");
             if (!_shaded){
                 incHealth();
                 if (_health >= 0){setState(noNeed);}
@@ -155,8 +151,10 @@ void Plant::changeSign() {
         _signNode->setTexture(_assets->get<Texture>("signRain"));
     } else if (_state == dead) {
         _signNode->setTexture(_assets->get<Texture>("signSkull"));
-    } else {
+    } else if (_stage >= _maxStage) {
         _signNode->setTexture(_assets->get<Texture>("signHappy"));
+    } else {
+        _signNode->setTexture(_assets->get<Texture>("signSun"));
     }
 }
 
@@ -191,7 +189,7 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 a = cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f, (0.4f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y - GRID_HEIGHT/2)*32.0f);
     _node->setPosition(a);
     
-    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>("signHappy"));
+    _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>("signSun"));
     _signNode->setScale(0.25f);
 
     cugl::Vec2 b = cugl::Vec2((0.75f + DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_WIDTH/2)*32.0f,
