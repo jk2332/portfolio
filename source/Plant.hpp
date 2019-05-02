@@ -142,6 +142,7 @@ public:
     int getX() {return _x;};
     int getY() {return _y;};
     int getStage() {return _stage;};
+    void setStage(int s){_stage = s;}
 
     void setPlantType(std::string s) { _ptype = s; };
     std::string getPlantType() {return _ptype;};

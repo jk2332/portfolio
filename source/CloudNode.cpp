@@ -89,7 +89,7 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     if (!_rendered) {
         generateRenderData();
     }
-    
+
     batch->end();
     //my custom code
     CULogGLError();
@@ -98,7 +98,7 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     }
     CULogGLError();
     batch->begin(getScene()->getCamera()->getCombined());
-    
+
     batch->setColor(tint);
     batch->setTexture(_texture);
     batch->setBlendEquation(_blendEquation);

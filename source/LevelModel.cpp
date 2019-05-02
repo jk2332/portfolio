@@ -81,6 +81,7 @@ void LevelModel::clearRootNode() {
 }
 
 void LevelModel::dispose(){
+    CULog("level being disposed");
     _worldnode = nullptr;
     _debugnode = nullptr;
     for (auto &c : _clouds){
@@ -100,15 +101,16 @@ void LevelModel::dispose(){
     _pests.clear();
     _bar = nullptr;
     _root = nullptr;
-    _cloudLayer = nullptr;
-    _resourceLayer = nullptr;
-    _plantLayer = nullptr;
-    _pestLayer = nullptr;
+//    _cloudLayer = nullptr;
+//    _resourceLayer = nullptr;
+//    _plantLayer = nullptr;
+//    _pestLayer = nullptr;
     _board = nullptr;
     _world = nullptr;
     _newClouds.clear();
     _winnode = nullptr;
     _bar = nullptr;
+    _loaded.clear();
     _assets = nullptr;
 }
 
@@ -338,13 +340,10 @@ int LevelModel::getPlantScore() {
  * references to other assets, then these should be disconnected earlier.
  */
 void LevelModel::unload() {
+    CULog("level being unloaded");
     _cloudLayer = nullptr;
     _plantLayer = nullptr;
     _pestLayer = nullptr;
-
-    _clouds.clear();
-    _plants.clear();
-    _pests.clear();
     _board = nullptr;
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
         (*it) = nullptr;
@@ -357,6 +356,14 @@ void LevelModel::unload() {
     }
     _winnode = nullptr;
     _bar = nullptr;
+    _assets = nullptr;
+    _worldnode = nullptr;
+    _debugnode = nullptr;
+    _plants.clear();
+    _clouds.clear();
+    _pests.clear();
+    _newClouds.clear();
+    _loaded.clear();
     _assets = nullptr;
 }
 
@@ -531,6 +538,8 @@ bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
 
 bool LevelModel::reset(){
     if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+    CULog("level reset called");
+
     CULog("resetting");
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
