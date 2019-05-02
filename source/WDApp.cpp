@@ -149,7 +149,7 @@ void WeatherDefenderApp::update(float timestep) {
         _loading.dispose(); // Disables the input listeners in this mode
         CULogGLError();
         _levelSelect.init(_assets);
-        _levelSelect.setAssetLoaded(true);
+//        _levelSelect.setAssetLoaded(true);
         _loaded = true;
         
     } else if (!_levelselected && _levelSelect.isActive()){
@@ -158,7 +158,7 @@ void WeatherDefenderApp::update(float timestep) {
         
     } else if (!_levelselected && !_levelSelect.isActive()){
         CULog("moving from level select to gameplay");
-        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected() + 1);
+        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected());
         _levelSelect.dispose();
         CULogGLError();
         assert (levelId != "level0");
@@ -169,11 +169,8 @@ void WeatherDefenderApp::update(float timestep) {
 //        CULog("updating gameplay");
         _gameplay.update(timestep);
     }
-    else if (_levelselected && _loaded && _gameplay.isActive()){
-        _gameplay.update(timestep);
-    }
 
-    else if (_levelselected && _loaded){
+    else if (_levelselected && _loaded && !_gameplay.isActive()){
         _gameplay.dispose();
         _levelSelect.init(_assets);
         _levelselected = false;
@@ -219,8 +216,6 @@ void WeatherDefenderApp::draw() {
     } else if (!_levelselected){
         //        _gameplay.render(_batch);
         _levelSelect.render(_batch);
-    } else if (_paused) {
-        _pause.render(_batch);
     }
     else {
         _gameplay.render(_batch);

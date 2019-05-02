@@ -114,7 +114,7 @@ void LevelSelect::update(float progress) {
         _levelButtons.at(i)->setVisible(true);
         _levelButtons.at(i)->activate(i + 1);
         if (_levelButtons.at(i)->isDown()) {
-            _selectedLevel = i;
+            _selectedLevel = i+1;
         }
     }
 }

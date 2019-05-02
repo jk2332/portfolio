@@ -684,7 +684,6 @@ void GameScene::update(float dt) {
     _input.update(dt);
     ticks++;
     
-
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didReset()) { reset(); }
