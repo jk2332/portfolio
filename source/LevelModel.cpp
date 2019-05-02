@@ -189,8 +189,8 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
         int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
         float t = foreground->getWidth();
 //        rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(), 0.0f));
-        rcNode->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-        rcNode->setPosition(Vec2::ZERO + Vec2(0, sunNode->getHeight()));
+        rcNode->setAnchor(Vec2::ANCHOR_TOP_CENTER);
+        rcNode->setPosition(Vec2::ZERO + Vec2(0, 0));
         rcNode->setScale(2);
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
