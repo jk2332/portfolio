@@ -35,7 +35,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     
     // Plant animations
     _actions = ActionManager::alloc();
-    _grow = Animate::alloc(0, 8, 1.0f, 1);
+    _grow = Animate::alloc(0, 8, 1.5f, 1);
 
 
     return true;
@@ -67,6 +67,7 @@ void Plant::setRained(bool f) {
 }
 
 void Plant::updateState(){
+    _progress += 2;
     if (_state == dead) { 
         changeSign();
         //do nothing
@@ -159,8 +160,8 @@ void Plant::changeSign() {
 }
 
 void Plant::upgradeSprite() {
-     if (_active) {
-         CULog("change texture");
+     if (_active && _stage < _maxStage) {
+         CULog("change texture to stage %d", (_stage));
         _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
         _node->setFrame(0);
         _active = false;
@@ -168,7 +169,7 @@ void Plant::upgradeSprite() {
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
-        CULog("Apparently grew %d", (_stage));
+        CULog("Grew to stage %d", (_stage));
         _actions->activate("current", _grow, _node);
     }
 }
