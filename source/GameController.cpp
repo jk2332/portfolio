@@ -198,7 +198,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _level->reset();
     _clouds = _level->getClouds();
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
     
     _world = ObstacleWorld::alloc(rect,gravity);
@@ -475,7 +474,7 @@ void GameScene::populate() {
         this->_active = down;
         _paused = true;
     });
-    _worldnode->addChild(_pauseButton, Z_PAUSE);
+    _levelworldnode->addChild(_pauseButton, Z_PAUSE);
     
     //Must add this node right before the actual clouds
     masterCloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor, true);
