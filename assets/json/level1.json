@@ -192,8 +192,8 @@
                  "texture": "cloud",
                  "time": 1500,
                  "size": 1.0,
-                 "x":16,
-                 "y":10
+                 "x":5,
+                 "y":15
                 }
               ],
          "opacity":1,

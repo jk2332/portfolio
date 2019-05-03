@@ -128,10 +128,10 @@
                  "visible":true,
                  "width":206,
                  "texture": "cloud",
-                 "time": 150,
+                 "time": 3000,
                  "size": 1.0,
-                 "x":16,
-                 "y":10
+                 "x":5,
+                 "y":15
                 }
               ],
          "opacity":1,
