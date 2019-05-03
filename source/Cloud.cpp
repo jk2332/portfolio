@@ -133,6 +133,14 @@ void Cloud::update(float delta) {
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
                                                                + faceSprite->getSize()/2.0f)
                                  + _disp);
+        _lightning_node->setScale(0.35f*_cloudSizeScale);
+        _lightning_node->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
+                                                               + faceSprite->getSize()/2.0f)
+                                 + _disp);
+        _rain_node->setScale(0.35f*_cloudSizeScale);
+        _rain_node->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
+                                                               + faceSprite->getSize()/2.0f)
+                                 + _disp);
     }
 
     _actions2->update(delta);
@@ -230,16 +238,16 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
 
     // Set lightning animation
     _lightning_node = AnimationNode::alloc(lightning, 1, 12);
-    _lightning_node->setAnchor(Vec2::ANCHOR_CENTER);
-    _lightning_node->setScale(0.35f);
-    _lightning_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement/1.6f);
+    _lightning_node->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
+    _lightning_node->setScale(0.5f*_cloudSizeScale);
+    _lightning_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     _lightning_node->setName("lightning");
     
     // Set rain animation
     _rain_node = AnimationNode::alloc(rain, 1, 20);
-    _rain_node->setAnchor(Vec2::ANCHOR_CENTER);
-    _rain_node->setScale(0.35f);
-    _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement/1.7f);
+    _rain_node->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
+    _rain_node->setScale(0.5f*_cloudSizeScale);
+    _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     _rain_node->setName("rainAnimation");
 
     //rely on caller to add shadow, lightning, and rain nodes to the world
