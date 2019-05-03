@@ -160,7 +160,7 @@ bool AnimationNode::initWithData(const SceneLoader* loader, const std::shared_pt
  */
 void AnimationNode::setFrame(int frame) {
     CUAssertLog(frame >= 0 && frame < _size, "Invalid animation frame %d", frame);
-    if(frame >= 0 && frame < _size){CULog("yikes");}
+
     _frame = frame;
     float x = (frame % _cols)*_bounds.size.width;
     float y = _texture->getSize().height - (1+frame/_cols)*_bounds.size.height;

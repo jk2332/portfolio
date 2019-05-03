@@ -58,6 +58,7 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _assets->loadAsync<LevelModel>("level3","json/level3.json",nullptr);
     _assets->loadAsync<LevelModel>("level4","json/level4.json",nullptr);
     _assets->loadAsync<LevelModel>("level5","json/level5.json",nullptr);
+    _assets->loadAsync<LevelModel>("level6","json/level6.json",nullptr);
 
     auto layer = assets->get<Node>("load");
     layer->setContentSize(dimen);
