@@ -11,7 +11,7 @@
             "magfilter": "linear"
         },
         "rain-film": {
-            "file":     "textures/rain-film.png"
+            "file":     "textures/rain3.png"
         },
         "lightning-film": {
             "file":     "textures/lightning-film.png"

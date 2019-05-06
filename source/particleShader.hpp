@@ -38,9 +38,8 @@ static GLuint EBO;
 
 // Represents a single particle and its state
 struct CloudParticle {
-    Vec2 position, velocity, jostle;
+    Vec2 position, velocity, jostle, offset;
     Vec4 color;
-    Vec2 offset;
     CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
 };
 
