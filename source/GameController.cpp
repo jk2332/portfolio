@@ -693,9 +693,11 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
         auto left = c->getPosition().x - c->getWidth()/2;
         auto right = c->getPosition().x + c->getWidth()/2;
         auto up = c->getPosition().y + c->getHeight()/2;
-        auto down = c->getPosition().y - c->getHeight()/2;
-        auto shadowNodePos = _worldnode->nodeToWorldCoords(c->getShadowNode()->getPosition());
-        int p = (pow((pos.x*_scale - shadowNodePos.x), 2) / pow(c->getShadowNode()->getWidth()/2, 2)) + (pow((pos.y*_scale - shadowNodePos.y), 2) / pow(c->getShadowNode()->getHeight()/2, 2));
+        auto down = c->getPosition().y - c->getHeight()/2;        
+        Vec2 shadowNodePos = _worldnode->nodeToWorldCoords(c->getShadowNode()->getPosition());
+        Vec2 shadowClickPos = _worldnode->nodeToWorldCoords(_scale*pos);
+
+        int p = (pow((shadowClickPos.x - shadowNodePos.x), 2) / pow(c->getShadowNode()->getWidth()/2, 2)) + (pow((shadowClickPos.y - shadowNodePos.y), 2) / pow(c->getShadowNode()->getHeight()/2, 2));
         
         if (left <= pos.x && pos.x <= right && down <= pos.y && pos.y <= up){
             ob = (Obstacle *) c.get();
