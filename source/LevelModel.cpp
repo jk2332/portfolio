@@ -160,23 +160,34 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
     
-    auto plantNode = Node::alloc();
+    vector<shared_ptr<Node>> rows;
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
-            plant->setSceneNode(plantNode, plant->getName(), _drawscale);
+            plant->setSceneNode(_worldnode, plant->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(plantNode, "plantNode", Z_PLANT);
+//    _worldnode->addChildWithName(rows.at(2), "plantNodeBack", Z_PLANT_BACK);
+//    _worldnode->addChildWithName(rows.at(1), "plantNodeMiddle", Z_PLANT_MIDDLE);
+//    _worldnode->addChildWithName(rows.at(0), "plantNodeFront", Z_PLANT_FRONT);
     
-    auto pestNode = Node::alloc();
+    rows.clear();
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
-            pest->setSceneNode(pestNode, pest->getName(), _drawscale);
+            pest->setSceneNode(_worldnode, pest->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(pestNode, "pestNode", Z_PEST);
+//    _worldnode->addChildWithName(rows.at(2), "pestNodeBack", Z_PEST_BACK);
+//    _worldnode->addChildWithName(rows.at(1), "pestNodeMiddle", Z_PEST_MIDDLE);
+//    _worldnode->addChildWithName(rows.at(0), "pestNodeFront", Z_PEST_FRONT);
     
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -218,7 +229,7 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
         //don't need zordering because it is a child of the progress bar
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
-    
+    _worldnode->sortZOrder();
 }
 
 /**

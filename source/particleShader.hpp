@@ -40,7 +40,8 @@ static GLuint EBO;
 struct CloudParticle {
     Vec2 position, velocity, jostle, offset;
     Vec4 color;
-    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
+    float lifetime;
+    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4::ZERO), lifetime(0.0f), offset(selectedPosition){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -51,7 +52,7 @@ public:
     ParticleGenerator();
     ParticleGenerator(GLuint amount, float ds);
     // Update all particles
-    void Update(GLfloat dt, Vec2 cloud_pos, float particleScale);
+    void Update(GLfloat dt, Vec2 cloud_pos, float particleScale, bool scaleChange);
     // Render all particles
     void Draw();
     // State
@@ -109,6 +110,7 @@ protected:
                                     0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
     Vec3 aspectRatio;
+    bool wasRaining;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -139,6 +141,7 @@ public:
         pg = ParticleGenerator(amount, ds);
         aspectRatio = ar;
         particleFactor = pf;
+        wasRaining = false;
         for(int i = 0; i < 16; i++){
             ogParticleQuad[i] = pq[i];
             particle_quad[i] = pq[i];
@@ -151,7 +154,7 @@ public:
     
     void drawParticles(ParticleShader providedPS);
     
-    void update(Vec2 cloud_pos, float dt, float particleScale);
+    void update(Vec2 cloud_pos, float dt, float particleScale, bool raining);
 
     void SetFloat1f(const GLchar *name, float value){
         glUniform1f(glGetUniformLocation(_program, name), value);

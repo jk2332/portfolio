@@ -81,9 +81,15 @@ void Cloud::dispose() {
     _actions = nullptr;
     _actions2 = nullptr;
     _rain = nullptr;
-    _lightning= nullptr;
-    _rain_node = nullptr;
-    _lightning_node = nullptr;
+    _lightning = nullptr;
+    if (_rain_node != nullptr){
+        _rain_node->removeFromParent();
+        _rain_node = nullptr;
+    }
+    if (_lightning_node != nullptr){
+        _lightning_node->removeFromParent();
+        _lightning_node = nullptr;
+    }
 }
 
 
@@ -127,7 +133,7 @@ void Cloud::update(float delta) {
     if (_cloudNode != nullptr) {
         _cloudNode->setPosition(_drawscale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
-        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale);
+        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale, _isRaining);
         shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
         _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()

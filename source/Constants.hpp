@@ -93,14 +93,23 @@
 #define GRID_OFFSET_Y   0.3f
 
 #define SIGN  "sign"
-#define Z_PAUSE 12
-#define Z_UI 11
-#define Z_CLOUD 10
-#define Z_RAIN 9
-#define Z_LIGHTNING 8
-#define Z_PEST 7
-#define Z_SIGN 6
-#define Z_PLANT 5
+#define Z_PAUSE 18
+#define Z_UI 17
+#define Z_CLOUD 16
+#define Z_RAIN 15
+#define Z_LIGHTNING 14
+//Nearest row
+#define Z_SIGN_FRONT 13
+#define Z_PEST_FRONT 12
+#define Z_PLANT_FRONT 11
+//Middle row
+#define Z_SIGN_MIDDLE 10
+#define Z_PEST_MIDDLE 9
+#define Z_PLANT_MIDDLE 8
+//Far-back row
+#define Z_SIGN_BACK 7
+#define Z_PEST_BACK 6
+#define Z_PLANT_BACK 5
 #define Z_SHADOW 4
 #define Z_GRID 3
 #define Z_BACKGROUND 2
@@ -112,6 +121,7 @@
 #define PARTICLE_FACTOR_H   0.01f
 #define MAX_JOSTLE 8.0f
 #define MAX_VELOCITY 10.0f
+#define INIT_TIME 0.6f
 
 #define SWIPE_VERT_OFFSET   3.5
 #define GES_COOLDOWN      20

@@ -132,7 +132,7 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id,
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
     _node->setScale(1.1f);
-    cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y - GRID_HEIGHT/2 + GRID_HEIGHT*_target.y);
+    cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y);
     _node->setPosition(a);
 
     _node_rev->setAnchor(Vec2::ANCHOR_CENTER);
@@ -140,6 +140,13 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id,
     _node_rev->setPosition(a);
     _node_rev->setVisible(false);
 
-    node->addChildWithName(_node, id);
-    node->addChildWithName(_node_rev, id + "rev");
+    int pestZ = Z_PEST_BACK;
+    if(_target.y == 1){
+        pestZ = Z_PEST_MIDDLE;
+    }
+    else if(_target.y == 0){
+        pestZ = Z_PEST_FRONT;
+    }
+    node->addChildWithName(_node, id, pestZ);
+    node->addChildWithName(_node_rev, id + "rev", pestZ);
 }

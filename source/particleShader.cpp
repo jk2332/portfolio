@@ -45,7 +45,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount, float ds): amount(amount){
     }
 }
 
-void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
+void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, bool scaleChange){
 //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
@@ -56,26 +56,37 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
             if (i != 0){index = index + this->amount;}
             
             CloudParticle &p = this->particles[index];
-            Vec2 basePosition = cloud_pos + particleScale*p.offset;
+            if(scaleChange){p.lifetime = 0.0f;}
+            else{p.lifetime += dt;}
             
-            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
-                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
+            if (p.lifetime <= INIT_TIME){
                 p.jostle = Vec2::ZERO;
-                //Determine v1 and v2 in range 0 to maxVelocity
-                float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-                float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+                float fraction = abs(p.lifetime/INIT_TIME);
+                p.position = cloud_pos + fraction*particleScale*p.offset;
+                p.color.w = fraction;
             }
-            else{
-                p.jostle += dt*p.velocity;
+            else {
+                Vec2 basePosition = cloud_pos + particleScale*p.offset;
+                
+                if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
+                    (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
+                    p.jostle = Vec2::ZERO;
+                    //Determine v1 and v2 in range 0 to maxVelocity
+                    float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                    float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
+                    p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+                }
+                else{
+                    p.jostle += dt*p.velocity;
+                }
+                p.position = basePosition + p.jostle;
+                
+                float greater = p.jostle.x;
+                if (p.jostle.y > p.jostle.x){
+                    greater = p.jostle.y;
+                }
+                p.color.w = 1.0 - abs(greater/maxJostle);
             }
-            p.position = basePosition + p.jostle;
-            
-            float greater = p.jostle.x;
-            if (p.jostle.y > p.jostle.x){
-                greater = p.jostle.y;
-            }
-            p.color.w = 1.0 - abs(greater/maxJostle);
         }
     }
 }
@@ -106,6 +117,7 @@ void ParticleShader::onStartup(){
     if (master){compileProgram();}
 }
 
+// For use by the master CloudNode only
 void ParticleShader::compileProgram(){
     _vertSource = oglCTVert;
     _fragSource = oglCTFrag;
@@ -152,7 +164,8 @@ void ParticleShader::compileProgram(){
     }
 }
 
-// Render all particles
+// Render all particles for given particleShader
+// For use by the master CloudNode only
 void ParticleShader::drawParticles(ParticleShader providedPS){
     if (!master){return;}
     CULogGLError();
@@ -217,10 +230,12 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     CULogGLError();
 }
 
-void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
+void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale, bool raining){
     //Adjust size of particles based on scale of cloud
+    bool scaleChange = false;
     if (_particleScale != particleScale){
         _particleScale = particleScale;
+        scaleChange = !raining && !wasRaining;
         for (int i = 0; i < 4; i++){
             particle_quad[i*4] = _particleScale*ogParticleQuad[i*4];
             particle_quad[i*4 + 1] = _particleScale*ogParticleQuad[i*4 + 1];
@@ -235,5 +250,6 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale){
         pg.maxJostle = MAX_JOSTLE*_particleScale;
         pg.maxVelocity = MAX_VELOCITY*_particleScale;
     }
-    this->pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale);
+    wasRaining = raining;
+    this->pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale, scaleChange);
 }

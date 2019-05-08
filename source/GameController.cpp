@@ -477,6 +477,7 @@ void GameScene::populate() {
     _levelworldnode->addChild(_pauseButton, Z_PAUSE);
     
     //Must add this node right before the actual clouds
+    CULogGLError();
     masterCloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor, true);
     _levelworldnode->addChildWithName(masterCloudNode, "masterCloudNode", Z_CLOUD);
 
@@ -803,12 +804,11 @@ void GameScene::update(float dt) {
     }
 
     //Check win/loss conditions
-    auto plantNode = _levelworldnode->getChildByName("plantNode");
     for (auto &plant : _level->getPlants()){
        if (ticks % 250 == 0 && ticks > 150) {
            plant->updateState();
        }
-       int st = plant->getState();
+//       int st = plant->getState();
    }
 
     if (ticks % 50 == 0 && ticks > 50) {
