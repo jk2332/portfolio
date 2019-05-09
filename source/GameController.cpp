@@ -815,6 +815,7 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
+            pest->walk();
              for(auto &plant : _level->getPlants()) {
                  if (plant->getStage() > 2 && plant->getX()) {
                      targetX = plant->getX();
@@ -995,7 +996,7 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
-    CULog("toggle rain");
+    // CULog("toggle rain");
     c->toggleRain();
 }
 

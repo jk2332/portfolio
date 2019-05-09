@@ -638,7 +638,6 @@ void LevelModel::update(long ticks) {
             if (attacked) {
                 for (auto p : _plants){
                     if (p != nullptr && p->getX() == i && p->getY() == j){
-                        CULog("plant being attacked");
                         p->setAttacked(true);
                      }
                 }
