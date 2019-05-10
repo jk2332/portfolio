@@ -24,7 +24,12 @@ uniform sampler2D sprite;
 
 void main(){
     color = texture(sprite, TexCoords);
-    color.a = ParticleColor.a;
+    if (color.a == 0.0f){
+//        color.rgb = color.rgb + vec3(255, 255, 255);
+    }
+    else{
+        color.a = ParticleColor.a;
+    }
 }
 
 /////////// SHADER END //////////
@@ -50,7 +55,12 @@ uniform sampler2D sprite;
 
 void main(){
     color = texture(sprite, TexCoords);
-    color.a = ParticleColor.a;
+//    if (color.a == 0.0f){
+////        color.rgb = color.rgb + vec3(255, 255, 255);
+//    }
+//    else{
+        color.a = ParticleColor.a;
+//    }
 }
 /////////// SHADER END //////////
 );

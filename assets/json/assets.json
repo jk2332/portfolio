@@ -41,7 +41,7 @@
             "file":     "textures/tile5.png"
         },
         "background": {
-            "file":     "textures/alpha-background.png"
+            "file":     "textures/openbeta-background.png"
         },
         "cloudFace": {
             "file":     "textures/cf2.png"
