@@ -81,19 +81,39 @@
 /** Height of the game world in Box2d units */
 #define DEFAULT_HEIGHT  18.0f
 #define GRID_SPACING    2
-#define GRID_WIDTH      3.2
+#define GRID_WIDTH      3.2f
 #define GRID_HEIGHT     2.7f
-#define DRAW_WIDTH     4
+#define DRAW_WIDTH      4
 #define DRAW_HEIGHT     3
-#define DOWN_LEFT_CORNER_X    3
-#define DOWN_LEFT_CORNER_Y    3.5
+#define DOWN_LEFT_CORNER_X    2.75f
+#define DOWN_LEFT_CORNER_Y    3.5f
 #define OFFSET_X         0
 #define OFFSET_Y         0
-#define GRID_OFFSET_X   0.65
-#define GRID_OFFSET_Y   0.3
+#define GRID_OFFSET_X   0.65f
+#define GRID_OFFSET_Y   0.3f
 
 #define SIGN  "sign"
-#define UI_ZVALUE 100
+#define Z_PAUSE 18
+#define Z_UI 17
+#define Z_CLOUD 16
+#define Z_RAIN 15
+#define Z_LIGHTNING 14
+//Nearest row
+#define Z_SIGN_FRONT 13
+#define Z_PEST_FRONT 12
+#define Z_PLANT_FRONT 11
+//Middle row
+#define Z_SIGN_MIDDLE 10
+#define Z_PEST_MIDDLE 9
+#define Z_PLANT_MIDDLE 8
+//Far-back row
+#define Z_SIGN_BACK 7
+#define Z_PEST_BACK 6
+#define Z_PLANT_BACK 5
+#define Z_SHADOW 4
+#define Z_GRID 3
+#define Z_BACKGROUND 2
+#define Z_EXTENDEDBKGD 1
 
 //Cloud Particles
 #define PARTICLE_NUM 10
@@ -101,6 +121,7 @@
 #define PARTICLE_FACTOR_H   0.01f
 #define MAX_JOSTLE 8.0f
 #define MAX_VELOCITY 10.0f
+#define INIT_TIME 0.6f
 
 #define SWIPE_VERT_OFFSET   3.5
 #define GES_COOLDOWN      20

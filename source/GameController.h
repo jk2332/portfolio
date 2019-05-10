@@ -84,6 +84,7 @@ protected:
     Vec3 dimenWithIndicator;
     std::vector<Particle*> _pQ;
     std::vector<Particle*> _pD;
+
     int _max_cloud_id = 0;
 
     // VIEW
@@ -189,7 +190,6 @@ public:
      */
     void dispose();
     
-    void resetVars();
 
     /**
      * Initializes the controller contents, and starts the game

@@ -11,7 +11,7 @@
             "magfilter": "linear"
         },
         "rain-film": {
-            "file":     "textures/rain-film.png"
+            "file":     "textures/rain3.png"
         },
         "lightning-film": {
             "file":     "textures/lightning-film.png"
@@ -76,8 +76,14 @@
         "snail": {
             "file":     "textures/snailwalk.png"
         },
+        "snaileat": {
+            "file":     "textures/snaileat.png"
+        },
         "snailrev": {
             "file":     "textures/snailwalkrev.png"
+        },
+        "raccooneat": {
+            "file":     "textures/raccooneat.png"
         },
         "raccoon": {
             "file":     "textures/raccoonwalk.png"

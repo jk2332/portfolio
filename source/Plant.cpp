@@ -62,6 +62,7 @@ void Plant::dispose() {
     for (std::shared_ptr<Texture> a : _textures){
         a = nullptr;
     }
+    
     _node = nullptr;
     _signNode = nullptr;
     _assets = nullptr;
@@ -173,7 +174,7 @@ void Plant::changeSign() {
 
 void Plant::upgradeSprite() {
      if (_active && _stage < _maxStage) {
-         CULog("change texture to stage %d", (_stage));
+        //  CULog("change texture to stage %d", (_stage));
         _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
         _node->setFrame(0);
         _active = false;
@@ -181,7 +182,7 @@ void Plant::upgradeSprite() {
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
-        CULog("Grew to stage %d", (_stage));
+        // CULog("Grew to stage %d", (_stage));
         _actions->activate("current", _grow, _node);
     }
 }
@@ -210,7 +211,17 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 b = _drawscale*cugl::Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH,
                               (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - GRID_HEIGHT));
     _signNode->setPosition(b);
-
-    node->addChildWithName(_node, name);
-    node->addChildWithName(_signNode, name + "sign");
+    //Need z-ordering for children of worldNode!
+    int plantZ = Z_PLANT_BACK;
+    int signZ = Z_SIGN_BACK;
+    if(_y == 1){
+        plantZ = Z_PLANT_MIDDLE;
+        signZ = Z_SIGN_MIDDLE;
+    }
+    else if(_y == 0){
+        plantZ = Z_PLANT_FRONT;
+        signZ = Z_SIGN_FRONT;
+    }
+    node->addChildWithName(_node, name, plantZ);
+    node->addChildWithName(_signNode, name + "sign", signZ);
 }

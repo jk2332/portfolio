@@ -162,30 +162,41 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
     
-    auto plantNode = Node::alloc();
+    vector<shared_ptr<Node>> rows;
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
-            plant->setSceneNode(plantNode, plant->getName(), _drawscale);
+            plant->setSceneNode(_worldnode, plant->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(plantNode, "plantNode");
+//    _worldnode->addChildWithName(rows.at(2), "plantNodeBack", Z_PLANT_BACK);
+//    _worldnode->addChildWithName(rows.at(1), "plantNodeMiddle", Z_PLANT_MIDDLE);
+//    _worldnode->addChildWithName(rows.at(0), "plantNodeFront", Z_PLANT_FRONT);
     
-    auto pestNode = Node::alloc();
+    rows.clear();
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    rows.push_back(Node::alloc());
+    
     for(auto &pest : _pests) {
         if (pest != nullptr) {
             pest->setAssets(_assets);
-            pest->setSceneNode(pestNode, pest->getName(), _drawscale);
+            pest->setSceneNode(_worldnode, pest->getName(), _drawscale);
         }
     }
-    _worldnode->addChildWithName(pestNode, "pestNode");
+//    _worldnode->addChildWithName(rows.at(2), "pestNodeBack", Z_PEST_BACK);
+//    _worldnode->addChildWithName(rows.at(1), "pestNodeMiddle", Z_PEST_MIDDLE);
+//    _worldnode->addChildWithName(rows.at(0), "pestNodeFront", Z_PEST_FRONT);
     
     _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
     _winnode->setAnchor(Vec2::ANCHOR_CENTER);
     _winnode->setPosition(dimen/2.0f);
     _winnode->setForeground(STATIC_COLOR);
     _winnode->setVisible(false);
-    _worldnode->addChild(_winnode, UI_ZVALUE);
+    _worldnode->addChild(_winnode, Z_UI);
     
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
@@ -203,12 +214,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
                                                             _bar->getHeight()));
     sunNode->setScale(x);
     sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
-    _worldnode->addChildWithName(sunNode, "sun");
+    _worldnode->addChildWithName(sunNode, "sun", Z_UI);
     moonNode->setScale(x);
     moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
                                                      moonNode->getHeight()/2.0f));
-    _worldnode->addChildWithName(moonNode, "moon");
-    _worldnode->addChildWithName(_bar, "bar", UI_ZVALUE);
+    _worldnode->addChildWithName(moonNode, "moon", Z_UI);
+    _worldnode->addChildWithName(_bar, "bar", Z_UI);
     
     for (int i = 0; i < _resourceLayer->size(); i++){
         int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
@@ -217,9 +228,10 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
         rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(),
                                  foreground->getHeight() - 0.035f*SCENE_HEIGHT));
         rcNode->setScale(2);
+        //don't need zordering because it is a child of the progress bar
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
-    
+    _worldnode->sortZOrder();
 }
 
 /**
@@ -399,6 +411,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
+//    cloud->setCloudSizeScale(1.5f); //for testing
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 
@@ -627,7 +640,6 @@ void LevelModel::update(long ticks) {
             if (attacked) {
                 for (auto p : _plants){
                     if (p != nullptr && p->getX() == i && p->getY() == j){
-                        CULog("plant being attacked");
                         p->setAttacked(true);
                      }
                 }

@@ -17,6 +17,9 @@
         },
         "level4button": {
             "file":      "/textures/cloud-5.png"
+        },
+        "level5button": {
+            "file":      "/textures/cloud-6.png"
         }
     },
     "scenes" : {
@@ -149,6 +152,31 @@
                         "y_anchor" : "middle",
                         "x_offset" :  -0.15,
                         "y_offset" : 0.25
+                    }
+                },
+                "level5"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.8
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "level5button"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle",
+                        "x_offset" : 0.02,
+                        "y_offset" : 0.4
                     }
                 }
             }

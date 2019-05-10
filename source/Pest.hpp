@@ -13,6 +13,11 @@
 #include <cugl/cugl.h>
 #include <vector>
 
+#define ATTACKING 0
+#define EATING 1
+#define RUNNING 2
+#define INACTIVE 3
+
 using namespace cugl;
 
 class Pest {
@@ -33,9 +38,11 @@ protected:
     std::shared_ptr<cugl::Texture> texture;
     std::shared_ptr<ActionManager> _actions;
     std::shared_ptr<Animate> _move;
+    std::shared_ptr<Animate> _eat;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Node> _node;
     std::shared_ptr<Node> _node_rev;
+    std::shared_ptr<Node> _eat_node;
     std::string _side;
     std::string _name;
     int _xside;
@@ -43,6 +50,9 @@ protected:
     bool _scared;
     float _scaledTargetX;
     bool _active;
+    bool _attacked;
+    bool _ate;
+    int _state;
     
 public:
 #pragma mark -
@@ -134,7 +144,7 @@ public:
     void update(float dt);
     void walk();
 
-    void setScared(bool b) { _scared = b; };
+    void setScared(bool b);
     
     bool checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
 

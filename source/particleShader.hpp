@@ -20,16 +20,16 @@ using namespace cugl;
 
 //                                      Radius CenterX CenterY
 const vector<Vec3> ogCloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
-                                        Vec3(0.65, -1.9,  -0.1),
-                                        Vec3(0.65,  1.85, -0.1),
-                                        Vec3(0.40,  1.5,   0.6),
-                                        Vec3(0.35,  1.25, -0.75),
-                                        Vec3(0.40, -1.45,  0.6),
-                                        Vec3(0.30, -1.3,  -0.7),
-                                        Vec3(0.40,  0.95,  0.95),
-                                        Vec3(0.40, -1.05,  1.2),
-                                        Vec3(0.40,  0.3,   1.25),
-                                        Vec3(0.40, -0.4,   1.6)};
+    Vec3(0.65, -1.9,  -0.1),
+    Vec3(0.65,  1.85, -0.1),
+    Vec3(0.40,  1.5,   0.6),
+    Vec3(0.35,  1.25, -0.75),
+    Vec3(0.40, -1.45,  0.6),
+    Vec3(0.30, -1.3,  -0.7),
+    Vec3(0.40,  0.95,  0.95),
+    Vec3(0.40, -1.05,  1.2),
+    Vec3(0.40,  0.3,   1.25),
+    Vec3(0.40, -0.4,   1.6)};
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 static GLuint VAO;
@@ -37,29 +37,11 @@ static GLuint VBO;
 static GLuint EBO;
 
 // Represents a single particle and its state
-//struct CloudParticle {
-//    Vec2 position, velocity, jostle;
-//    Vec4 color;
-//    Vec2 offset;
-//    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
-//};
-
-class CloudParticle{
-public:
-    Vec2 position;
-    Vec2 velocity;
-    Vec2 jostle;
-    Vec2 offset;
+struct CloudParticle {
+    Vec2 position, velocity, jostle, offset;
     Vec4 color;
-    
-    CloudParticle(void) { }
-    virtual ~CloudParticle(void) { }
-    bool init(Vec2 selectedPosition, Vec2 selectedVelocity);
-    static std::shared_ptr<CloudParticle> alloc(Vec2 selectedPosition, Vec2 selectedVelocity) {
-        std::shared_ptr<CloudParticle> result = std::make_shared<CloudParticle>();
-        return (result->init(selectedPosition, selectedVelocity) ? result : nullptr);
-    }
-    
+    float lifetime;
+    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4::ZERO), lifetime(0.0f), offset(selectedPosition){}
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -70,27 +52,27 @@ public:
     ParticleGenerator();
     ParticleGenerator(GLuint amount, float ds);
     // Update all particles
-    void Update(GLfloat dt, Vec2 cloud_pos, float particleScale);
+    void Update(GLfloat dt, Vec2 cloud_pos, float particleScale, bool scaleChange);
     // Render all particles
     void Draw();
     // State
-    std::vector<std::shared_ptr<CloudParticle>> particles;
+    std::vector<CloudParticle> particles;
     GLuint amount;
     float drawscale = 1.0f;
     float maxJostle = MAX_JOSTLE;
     float maxVelocity = MAX_VELOCITY;
     //                              Radius CenterX CenterY
     vector<Vec3> cloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
-                                    Vec3(0.65, -1.9,  -0.1),
-                                    Vec3(0.65,  1.85, -0.1),
-                                    Vec3(0.40,  1.5,   0.6),
-                                    Vec3(0.35,  1.25, -0.75),
-                                    Vec3(0.40, -1.45,  0.6),
-                                    Vec3(0.30, -1.3,  -0.7),
-                                    Vec3(0.40,  0.95,  0.95),
-                                    Vec3(0.40, -1.05,  1.2),
-                                    Vec3(0.40,  0.3,   1.25),
-                                    Vec3(0.40, -0.4,   1.6)};
+        Vec3(0.65, -1.9,  -0.1),
+        Vec3(0.65,  1.85, -0.1),
+        Vec3(0.40,  1.5,   0.6),
+        Vec3(0.35,  1.25, -0.75),
+        Vec3(0.40, -1.45,  0.6),
+        Vec3(0.30, -1.3,  -0.7),
+        Vec3(0.40,  0.95,  0.95),
+        Vec3(0.40, -1.05,  1.2),
+        Vec3(0.40,  0.3,   1.25),
+        Vec3(0.40, -0.4,   1.6)};
 };
 
 class ParticleShader : public Shader {
@@ -118,16 +100,17 @@ protected:
     float particleFactor;
     //                              Position     Texcoords
     GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
-                                    0.0f, 0.0f,  0.0f, 1.0f,
-                                    0.0f, 0.0f,  1.0f, 0.0f,
-                                    0.0f, 0.0f,  1.0f, 1.0f};
+        0.0f, 0.0f,  0.0f, 1.0f,
+        0.0f, 0.0f,  1.0f, 0.0f,
+        0.0f, 0.0f,  1.0f, 1.0f};
     //                              Position     Texcoords
     GLfloat particle_quad [16] = {  0.0f,0.0f,   0.0f, 0.0f,
-                                    0.0f,0.0f,   0.0f, 1.0f,
-                                    0.0f,0.0f,   1.0f, 0.0f,
-                                    0.0f,0.0f,   1.0f, 1.0f};
+        0.0f,0.0f,   0.0f, 1.0f,
+        0.0f,0.0f,   1.0f, 0.0f,
+        0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
     Vec3 aspectRatio;
+    bool wasRaining;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -149,7 +132,7 @@ public:
      * You must reinitialize the shader to use it.
      */
     void dispose() override;
-   
+    
     ParticleShader(){pg = ParticleGenerator();}
     
     ParticleShader(GLuint amount, float ds, Vec3 ar, GLfloat pq[16], float pf, bool m){
@@ -158,6 +141,7 @@ public:
         pg = ParticleGenerator(amount, ds);
         aspectRatio = ar;
         particleFactor = pf;
+        wasRaining = false;
         for(int i = 0; i < 16; i++){
             ogParticleQuad[i] = pq[i];
             particle_quad[i] = pq[i];
@@ -165,13 +149,13 @@ public:
     }
     
     void onStartup();
-
+    
     void compileProgram();
     
     void drawParticles(ParticleShader providedPS);
     
-    void update(Vec2 cloud_pos, float dt, float particleScale);
-
+    void update(Vec2 cloud_pos, float dt, float particleScale, bool raining);
+    
     void SetFloat1f(const GLchar *name, float value){
         glUniform1f(glGetUniformLocation(_program, name), value);
     }
@@ -179,7 +163,7 @@ public:
     void SetVector2f(const GLchar *name, const Vec2 &value){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
     }
-
+    
     void SetVector3f(const GLchar *name, const Vec3 &value){
         glUniform3f(glGetUniformLocation(_program, name), value.x, value.y, value.z);
     }

@@ -228,16 +228,16 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setName("debug");
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
-
-    addChildWithName(_worldnode,"worldNode");
-    addChildWithName(_debugnode,"debugNode");
-    addChildWithName(_rootnode,"rootnode");
+    
+    addChildWithName(_worldnode,"worldNode", Z_BACKGROUND);
+    addChildWithName(_debugnode,"debugNode", Z_BACKGROUND);
+    addChildWithName(_rootnode,"rootnode", Z_BACKGROUND);
     
     _board = Board::alloc(SCENE_WIDTH, _scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
     auto boardNode = Node::alloc();
     _board->setSceneNode(boardNode);
-    _worldnode->addChildWithName(boardNode, "boardNode");
+    _worldnode->addChildWithName(boardNode, "boardNode", Z_GRID);
     
     _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDrawScale(_scale);
@@ -256,10 +256,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     return true;
 }
 
-// setting the values right again
-void GameScene::resetVars(){
+
+
+/**
+ * Disposes of all (non-static) resources allocated to this mode.
+ */
+void GameScene::dispose() {
     ticks = 0;
-    //    splitCoolDown = -1;
     gesCoolDown = -1;
     pinchedCloud1 = nullptr;
     pinchedCloud2 = nullptr;
@@ -273,8 +276,6 @@ void GameScene::resetVars(){
     shadowClicked = false;
     clickedShadowCloud = nullptr;
     _shadowSelectors.clear();
-    _pD.clear();
-    _pQ.clear();
     pinched = false;
     masterCloudNode = nullptr;
     for (auto &c : _clouds){
@@ -292,15 +293,6 @@ void GameScene::resetVars(){
     touchIDs_started_outside.clear();
     removePauseDisplay();
     _complete = false;
-}
-
-
-
-/**
- * Disposes of all (non-static) resources allocated to this mode.
- */
-void GameScene::dispose() {
-    resetVars();
     _input.dispose();
     _memory = nullptr;
     _rainNode = nullptr;
@@ -396,7 +388,7 @@ void GameScene::populate() {
     wall1 *= _scale;
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
     sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj1,sprite,1);  // All walls share the same texture
+    addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
     
 #pragma mark : Wall polygon 2
     Poly2 wall2(WALL2,8);
@@ -419,7 +411,7 @@ void GameScene::populate() {
     wall2 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall2);
     sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj2,sprite,1);  // All walls share the same texture
+    addObstacle(_worldnode, wallobj2,sprite,Z_BACKGROUND);  // All walls share the same texture
 
 #pragma mark : Wall polygon 3
     Poly2 wall3(WALL3,8);
@@ -442,7 +434,7 @@ void GameScene::populate() {
     wall3 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall3);
     sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj3,sprite,1);  // All walls share the same texture
+    addObstacle(_worldnode, wallobj3,sprite,Z_BACKGROUND);  // All walls share the same texture
 
 #pragma mark : Wall polygon 4
     Poly2 wall4(WALL4,8);
@@ -465,16 +457,7 @@ void GameScene::populate() {
     wall4 *= _scale;
     sprite = PolygonNode::allocWithTexture(image,wall4);
     sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj4,sprite,1);  // All walls share the same texture
-    
-    _rainNode = ParticleNode::allocWithTexture(_assets->get<Texture>("smallRain"));
-    // _rainNode->setBlendFunc(GL_ONE, GL_ONE);
-    _rainNode->setPosition(Vec2::ZERO);
-    //CAPACITY
-    _memory = FreeList<Particle>::alloc(100);
-    Size size = Application::get()->getDisplaySize();
-    _rainNode->setContentSize(size*_scale);
-    _levelworldnode->addChild(_rainNode);
+    addObstacle(_worldnode, wallobj4,sprite,Z_BACKGROUND);  // All walls share the same texture
     
     //Add all the buttons for pause
     auto pauseButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pauseButton"));
@@ -485,7 +468,8 @@ void GameScene::populate() {
     _pauseButton = Button::alloc(pauseButtonNode);
     _pauseButton->deactivate();
     _pauseButton->setVisible(false);
-    _pauseButton->setPosition(0, 0);
+    _pauseButton->setAnchor(Vec2::ANCHOR_TOP_LEFT);
+    _pauseButton->setPosition(0, SCENE_HEIGHT);
     _pauseButton->setListener([=](const std::string& name, bool down) {
         _paused = true;
         displayPause();
@@ -493,12 +477,13 @@ void GameScene::populate() {
         _resetSelected = false;
         _continueSelected = false;
     });
-    _worldnode->addChild(_pauseButton);
+    _levelworldnode->addChild(_pauseButton);
     
     //Must add this node right before the actual clouds
+    CULogGLError();
     masterCloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor, true);
-    _levelworldnode->addChildWithName(masterCloudNode, "masterCloudNode");
-    
+    _levelworldnode->addChildWithName(masterCloudNode, "masterCloudNode", Z_CLOUD);
+
     int i = 0;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
@@ -510,9 +495,17 @@ void GameScene::populate() {
         masterCloudNode->subCloudNodes.push_back(shared_ptr<CloudNode>(cloudNode));
         cloudNode->setName(cloud->getName());
         cloudNode->setDrawScale(_scale);
-        shared_ptr<PolygonNode> new_shadow = cloud->setSceneNode(cloudNode,-_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
-        addObstacle(_levelworldnode, cloud, cloudNode, 1);
-        _levelworldnode->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
+        Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+        vector<shared_ptr<Node>> newNodes = cloud->setSceneNode(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
+        
+        for (shared_ptr<Node> n : newNodes){
+            int zToUse = 0;
+            if(n->getName() == "shadow"){zToUse = Z_SHADOW;}
+            else if(n->getName() == "lightning"){zToUse = Z_LIGHTNING;}
+            else if(n->getName() == "rainAnimation"){zToUse = Z_RAIN;}
+            _levelworldnode->addChildWithName(n, n->getName() + cloudNode->getName(), zToUse);
+        }
+        addObstacle(_levelworldnode, cloud, cloudNode, Z_CLOUD);
         _levelworldnode->sortZOrder();
         i++;
     }
@@ -752,9 +745,11 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
         auto left = c->getPosition().x - c->getWidth()/2;
         auto right = c->getPosition().x + c->getWidth()/2;
         auto up = c->getPosition().y + c->getHeight()/2;
-        auto down = c->getPosition().y - c->getHeight()/2;
-        auto shadowNodePos = _worldnode->nodeToWorldCoords(c->getShadowNode()->getPosition());
-        int p = (pow((pos.x*_scale - shadowNodePos.x), 2) / pow(c->getShadowNode()->getWidth()/2, 2)) + (pow((pos.y*_scale - shadowNodePos.y), 2) / pow(c->getShadowNode()->getHeight()/2, 2));
+        auto down = c->getPosition().y - c->getHeight()/2;        
+        Vec2 shadowNodePos = _worldnode->nodeToWorldCoords(c->getShadowNode()->getPosition());
+        Vec2 shadowClickPos = _worldnode->nodeToWorldCoords(_scale*pos);
+
+        int p = (pow((shadowClickPos.x - shadowNodePos.x), 2) / pow(c->getShadowNode()->getWidth()/2, 2)) + (pow((shadowClickPos.y - shadowNodePos.y), 2) / pow(c->getShadowNode()->getHeight()/2, 2));
         
         if (left <= pos.x && pos.x <= right && down <= pos.y && pos.y <= up){
             ob = (Obstacle *) c.get();
@@ -867,20 +862,21 @@ void GameScene::update(float dt) {
        if (ticks % 250 == 0 && ticks > 150) {
            plant->updateState();
        }
-       int st = plant->getState();
+//       int st = plant->getState();
    }
 
     if (ticks % 50 == 0 && ticks > 50) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-             for(auto &plant : _plants) {
-                 if (plant->getStage() > 2 && plant->getX()) {
-                     targetX = plant->getX();
-                     pest->walk();
-                     break;
-                 }
-             }
+            pest->walk();
+            for(auto &plant : _plants) {
+                if (plant->getStage() > 2 && plant->getX()) {
+                    targetX = plant->getX();
+                    pest->walk();
+                    break;
+                }
+            }
         }
     }
 
@@ -989,23 +985,6 @@ void GameScene::update(float dt) {
         }
     }
     
-    
-    if (ticks % 80 == 0) {
-        for(auto it = _pD.begin(); it != _pD.end(); ++it) {
-            Particle* p = *it;
-            _rainNode->removeParticle(p);
-            _memory->free(p);
-        }
-        _pD.clear();
-        for(auto it = _pQ.begin(); it != _pQ.end(); ++it) {
-            Particle* p = *it;
-            _pD.push_back(p);
-        }
-        _pQ.clear();
-    }
-
-    _rainNode->update(_particles);
-    
     // process clouds to split
     splitClouds();
     createResourceClouds();
@@ -1078,10 +1057,9 @@ void GameScene::processRemoval(){
 void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
-    CULog("toggle rain");
+    // CULog("toggle rain");
     c->toggleRain();
 }
-
 
 void GameScene::splitClouds(){
 //    if (splitCoolDown == -1) splitCoolDown = ticks;
@@ -1116,18 +1094,22 @@ void GameScene::splitClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNode(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset,
-        _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
+        vector<shared_ptr<Node>> newNodes = new_cloud->setSceneNode(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
         
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
-        _level->getWorldNode()->sortZOrder();
-        
+        for (shared_ptr<Node> n : newNodes){
+            int zToUse = 0;
+            if(n->getName() == "shadow"){zToUse = Z_SHADOW;}
+            else if(n->getName() == "lightning"){zToUse = Z_LIGHTNING;}
+            else if(n->getName() == "rainAnimation"){zToUse = Z_RAIN;}
+            _levelworldnode->addChildWithName(n, n->getName() + cloudNode->getName(), zToUse);
+        }
         new_cloud->setDebugColor(DYNAMIC_COLOR);
         new_cloud->setDebugScene(_debugnode);
 
 //        CULog("created new cloud %i", new_cloud->getId());
         _clouds.push_back(new_cloud);
-        addObstacle(_levelworldnode, new_cloud, cloudNode, 1);
+        addObstacle(_levelworldnode, new_cloud, cloudNode, Z_CLOUD);
+        _levelworldnode->sortZOrder();
     }
 }
 
@@ -1151,17 +1133,21 @@ void GameScene::createResourceClouds(){
         cloudNode->setDrawScale(_scale);
 
         Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
-        shared_ptr<PolygonNode> new_shadow = new_cloud->setSceneNode(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset,
-        _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
-
-        _level->getWorldNode()->addChildWithName(new_shadow, "shadowOf" + cloudNode->getName(), -1);
-        _level->getWorldNode()->sortZOrder();
-
+        vector<shared_ptr<Node>> newNodes = new_cloud->setSceneNode(cloudNode, -_scale*Vec2(0, GRID_HEIGHT + DOWN_LEFT_CORNER_Y) - offset, _assets->get<Texture>("cloudFace"), _assets->get<Texture>("shadow"), _assets->get<Texture>("rain-film"), _assets->get<Texture>("lightning-film"));
+        
+        for (shared_ptr<Node> n : newNodes){
+            int zToUse = 0;
+            if(n->getName() == "shadow"){zToUse = Z_SHADOW;}
+            else if(n->getName() == "lightning"){zToUse = Z_LIGHTNING;}
+            else if(n->getName() == "rainAnimation"){zToUse = Z_RAIN;}
+            _levelworldnode->addChildWithName(n, n->getName() + cloudNode->getName(), zToUse);
+        }
         new_cloud->setDebugColor(DYNAMIC_COLOR);
         new_cloud->setDebugScene(_debugnode);
 
         _clouds.push_back(new_cloud);
-        addObstacle(_levelworldnode, new_cloud, cloudNode, 1);
+        addObstacle(_levelworldnode, new_cloud, cloudNode, Z_CLOUD);
+        _level->getWorldNode()->sortZOrder();
         cloudInfo.pop_back();
     }
     _level->setNewClouds(cloudInfo);
