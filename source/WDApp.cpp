@@ -48,6 +48,7 @@ void WeatherDefenderApp::onStartup() {
     
     // Create a "loading" screen
     _loaded = false;
+    _mainselected = false;
     _levelselected = false;
     _paused = false;
     _loading.init(_assets);
@@ -55,6 +56,7 @@ void WeatherDefenderApp::onStartup() {
     // Que up the other assets
     AudioChannels::start(24);
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    
     
     CULogGLError();
     glGenVertexArrays(1, &VAO);
@@ -81,6 +83,7 @@ void WeatherDefenderApp::onShutdown() {
     _loading.dispose();
     _levelSelect.dispose();
     _gameplay.dispose();
+    _main.dispose();
     _assets = nullptr;
     _batch = nullptr;
     
@@ -107,6 +110,7 @@ void WeatherDefenderApp::onShutdown() {
  * the background.
  */
 void WeatherDefenderApp::onSuspend() {
+    CULog("suspend being called");
     AudioChannels::get()->pauseAll();
 }
 
@@ -140,62 +144,96 @@ void WeatherDefenderApp::onResume() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void WeatherDefenderApp::update(float timestep) {
-    if (!_loaded && _loading.isActive()) {
-        CULog("loading updating");
+    if (!_loaded && _loading.isActive()){
         _loading.update(0.01f);
-        
-    } else if (!_loaded && !_loading.isActive()) {
-        CULog("moving from loading to level select");
-        _loading.dispose(); // Disables the input listeners in this mode
+    }
+    else if (!_loaded){
+        _loading.dispose();
         CULogGLError();
-        _levelSelect.init(_assets);
-//        _levelSelect.setAssetLoaded(true);
-        _loaded = true;
-        
-    } else if (!_levelselected && _levelSelect.isActive()){
-//        CULog("levelselect updating");
+        _loaded = _main.init(_assets);
+    }
+    else if (!_mainselected && _main.isActive()){
+        _main.update(0.01f);
+        if (_main.instSelected()){
+            CULog("inst selected from main");
+            _main.resetSelectBool();
+        }
+        else if (_main.creditSelected()){
+            CULog("credit selected from main");
+            _main.resetSelectBool();
+        }
+    }
+    else if (!_mainselected){
+        CULog("from main");
+        _main.dispose();
+        CULogGLError();
+        if (_main.startSelected()){
+//            CULog("start selected");
+            _mainselected = _gameplay.init(_assets, "level1");
+            _levelselected = _mainselected;
+            _main.resetSelectBool();
+            
+        }
+        else if (_main.levelSelected()){
+            CULog("level selected");
+            _mainselected = _levelSelect.init(_assets);
+            _levelselected = !_mainselected;
+            _main.resetSelectBool();
+        }
+    }
+    else if (!_levelselected && _levelSelect.isActive()){
         _levelSelect.update(0.01f);
-        
-    } else if (!_levelselected && !_levelSelect.isActive()){
-        CULog("moving from level select to gameplay");
-        auto levelId = "level" + std::to_string(_levelSelect.getLevelSelected());
+    }
+    else if (!_levelselected) {
+        CULog("from levelselect");
+        auto level = "level" + std::to_string(_levelSelect.getLevelSelected());
         _levelSelect.dispose();
         CULogGLError();
-        _gameplay.init(_assets, levelId);
-        _levelselected = true;
-        
-    } else if (_levelselected && _loaded && _gameplay.isActive()){
-//        CULog("updating gameplay");
-        _gameplay.update(timestep);
+        _levelselected = _gameplay.init(_assets, level);
+        _paused = false;
     }
-    else if (_levelselected && _loaded && !_gameplay.isActive()){
-        _gameplay.dispose();
-        _levelSelect.init(_assets);
-        _levelselected = false;
-    }
-//    else if (_levelselected && _loaded && !_gameplay.isActive() && !_paused){
-//        CULog("moving from gameplay to pause");
-//        CULogGLError();
-//        _pause.init(_assets);
-//        _pause.setAssetLoaded(true);
-//        _paused = true;
-//    } else if (_levelselected && _loaded && !_gameplay.isActive() && _paused){
-//        CULog("updating pause");
-//        _pause.update(0.01f);
-//    } else if (_levelselected && _loaded && !_pause.isActive()){
-//        CULog("moving from pause to sth else");
-//        _pause.dispose();
-//        _paused = false;
-//        CULogGLError();
-//        if (_pause.backToLevelSelected()){
-//            _levelSelect.init(_assets);
-//            _levelselected = false;
-//        }
-//        else if (_pause.continueSelected()){
-//            Application::onResume();
-//        }
-//    }
     
+    else if (_gameplay.isActive() && _paused){
+//        CULog("paused");
+        Application::onResume();
+        if (_gameplay.continueSelected()){
+            CULog("continue has been selected");
+            _gameplay.removePauseDisplay();
+            _gameplay.resetPauseBool();
+            _paused = false;
+        }
+    }
+    
+    else if (_gameplay.isActive()){
+        _gameplay.update(timestep);
+        if (_gameplay.paused()){
+            CULog("gameplay paused");
+            _paused = true;
+            _gameplay.resetPause();
+            Application::onSuspend();
+        }
+    }
+    else if (!_gameplay.isActive()){
+//        CULog("main has been selected");
+        if (_gameplay.resetSelected()){
+            CULog("reset has been selected");
+            auto level = _gameplay.getLevelId();
+            _gameplay.dispose();
+            CULogGLError();
+            bool b = _gameplay.init(_assets, level);
+            if (b) _paused = false;
+        }
+        else if (_gameplay.mainSelected()){
+            _gameplay.dispose();
+            CULogGLError();
+            _mainselected = !_main.init(_assets);
+            _levelselected = _mainselected;
+            if (!_mainselected){
+                _gameplay.resetPauseBool();
+                _paused = false;
+            }
+        }
+    }
 }
 
 
@@ -211,20 +249,15 @@ void WeatherDefenderApp::update(float timestep) {
 void WeatherDefenderApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
-    } else if (!_levelselected){
-        //        _gameplay.render(_batch);
+    }
+    else if (!_mainselected){
+        _main.render(_batch);
+    }
+    else if (!_levelselected){
         _levelSelect.render(_batch);
     }
     else {
         _gameplay.render(_batch);
     }
-//    if (!_loaded) {
-//        _loading.render(_batch);
-//    } else if (!_levelselected){
-//        //        _gameplay.render(_batch);
-//        _levelSelect.render(_batch);
-//    }
-//    else {
-//        _gameplay.render(_batch);
-//    }
+
 }

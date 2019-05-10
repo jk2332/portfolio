@@ -43,6 +43,9 @@
         "background": {
             "file":     "textures/openbeta-background.png"
         },
+        "bigBackground": {
+            "file":     "textures/big-background.png"
+        },
         "cloudFace": {
             "file":     "textures/cf2.png"
         },
@@ -152,7 +155,7 @@
             "file":     "textures/rcIndicator.png"
         },
         "pauseButton": {
-            "file":     "textures/Pause_2.png"
+            "file":     "textures/Pause_1.png"
         }
 	},
     "sounds": {

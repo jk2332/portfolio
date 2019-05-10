@@ -84,7 +84,7 @@ void LevelSelect::dispose() {
     for (int i = 0; i < extracted(_levelButtons).size(); i++){
         if (isPending(i)){
             _levelButtons.at(i)->deactivate();
-            //            _levelButtons.at(i)->removeListener();
+            _levelButtons.at(i) = nullptr;
         }
     }
     _levelButtons.clear();

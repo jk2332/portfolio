@@ -46,7 +46,7 @@ ParticleGenerator::ParticleGenerator(GLuint amount, float ds): amount(amount){
 }
 
 void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, bool scaleChange){
-//  Update all particles
+    //  Update all particles
     for (int i = 0; i < cloudSections.size(); i++){
         int trueAmount = this->amount;
         if (i == 0){trueAmount = 2*this->amount;}
@@ -181,7 +181,7 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     CULogGLError();
     //reusing the particle shader program
     glUseProgram( _program );
-//    CULog("Program is %d",_program);
+    //    CULog("Program is %d",_program);
     CULogGLError();
     glGenBuffers(1, &VBO);
     CULogGLError();
@@ -199,7 +199,7 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     
     _aPosition = glGetAttribLocation(_program, POSITION_ATTRIBUTE);
     CULogGLError();
-//    CULog("Variable address is %d",_aPosition);
+    //    CULog("Variable address is %d",_aPosition);
     glEnableVertexAttribArray(_aPosition);
     CULogGLError();
     glVertexAttribPointer(_aPosition, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);

@@ -20,16 +20,16 @@ using namespace cugl;
 
 //                                      Radius CenterX CenterY
 const vector<Vec3> ogCloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
-                                        Vec3(0.65, -1.9,  -0.1),
-                                        Vec3(0.65,  1.85, -0.1),
-                                        Vec3(0.40,  1.5,   0.6),
-                                        Vec3(0.35,  1.25, -0.75),
-                                        Vec3(0.40, -1.45,  0.6),
-                                        Vec3(0.30, -1.3,  -0.7),
-                                        Vec3(0.40,  0.95,  0.95),
-                                        Vec3(0.40, -1.05,  1.2),
-                                        Vec3(0.40,  0.3,   1.25),
-                                        Vec3(0.40, -0.4,   1.6)};
+    Vec3(0.65, -1.9,  -0.1),
+    Vec3(0.65,  1.85, -0.1),
+    Vec3(0.40,  1.5,   0.6),
+    Vec3(0.35,  1.25, -0.75),
+    Vec3(0.40, -1.45,  0.6),
+    Vec3(0.30, -1.3,  -0.7),
+    Vec3(0.40,  0.95,  0.95),
+    Vec3(0.40, -1.05,  1.2),
+    Vec3(0.40,  0.3,   1.25),
+    Vec3(0.40, -0.4,   1.6)};
 
 static GLuint elements[] = {0, 1, 2, 3, 1, 2};
 static GLuint VAO;
@@ -63,16 +63,16 @@ public:
     float maxVelocity = MAX_VELOCITY;
     //                              Radius CenterX CenterY
     vector<Vec3> cloudSections = {  Vec3(1.25,  0.0,   0.0), //Central Circle
-                                    Vec3(0.65, -1.9,  -0.1),
-                                    Vec3(0.65,  1.85, -0.1),
-                                    Vec3(0.40,  1.5,   0.6),
-                                    Vec3(0.35,  1.25, -0.75),
-                                    Vec3(0.40, -1.45,  0.6),
-                                    Vec3(0.30, -1.3,  -0.7),
-                                    Vec3(0.40,  0.95,  0.95),
-                                    Vec3(0.40, -1.05,  1.2),
-                                    Vec3(0.40,  0.3,   1.25),
-                                    Vec3(0.40, -0.4,   1.6)};
+        Vec3(0.65, -1.9,  -0.1),
+        Vec3(0.65,  1.85, -0.1),
+        Vec3(0.40,  1.5,   0.6),
+        Vec3(0.35,  1.25, -0.75),
+        Vec3(0.40, -1.45,  0.6),
+        Vec3(0.30, -1.3,  -0.7),
+        Vec3(0.40,  0.95,  0.95),
+        Vec3(0.40, -1.05,  1.2),
+        Vec3(0.40,  0.3,   1.25),
+        Vec3(0.40, -0.4,   1.6)};
 };
 
 class ParticleShader : public Shader {
@@ -104,14 +104,14 @@ protected:
     float particleFactor;
     //                              Position     Texcoords
     GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
-                                    0.0f, 0.0f,  0.0f, 1.0f,
-                                    0.0f, 0.0f,  1.0f, 0.0f,
-                                    0.0f, 0.0f,  1.0f, 1.0f};
+        0.0f, 0.0f,  0.0f, 1.0f,
+        0.0f, 0.0f,  1.0f, 0.0f,
+        0.0f, 0.0f,  1.0f, 1.0f};
     //                              Position     Texcoords
     GLfloat particle_quad [16] = {  0.0f,0.0f,   0.0f, 0.0f,
-                                    0.0f,0.0f,   0.0f, 1.0f,
-                                    0.0f,0.0f,   1.0f, 0.0f,
-                                    0.0f,0.0f,   1.0f, 1.0f};
+        0.0f,0.0f,   0.0f, 1.0f,
+        0.0f,0.0f,   1.0f, 0.0f,
+        0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
     Vec3 aspectRatio;
     //was it raining in the previous update loop?
@@ -139,7 +139,7 @@ public:
      * You must reinitialize the shader to use it.
      */
     void dispose() override;
-   
+    
     ParticleShader(){pg = ParticleGenerator();}
     
     ParticleShader(GLuint amount, float ds, Vec3 ar, GLfloat pq[16], float pf, bool m){
@@ -157,7 +157,7 @@ public:
     }
     
     void onStartup();
-
+    
     void compileProgram();
     
     void drawParticles(ParticleShader providedPS);
@@ -171,7 +171,7 @@ public:
     void SetVector2f(const GLchar *name, const Vec2 &value){
         glUniform2f(glGetUniformLocation(_program, name), value.x, value.y);
     }
-
+    
     void SetVector3f(const GLchar *name, const Vec3 &value){
         glUniform3f(glGetUniformLocation(_program, name), value.x, value.y, value.z);
     }

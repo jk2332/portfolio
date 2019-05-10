@@ -1,0 +1,175 @@
+{
+    "textures": {
+        "main menu background": {
+            "file":     "/textures/main-menu-background.png"
+        },
+        "main_creditbutton": {
+            "file":      "/textures/credits.png"
+        },
+        "main_instbutton": {
+            "file":      "/textures/instructions.png"
+        },
+        "main_lsbutton": {
+            "file":      "/textures/levelselect.png"
+        },
+        "main_startbutton": {
+            "file":      "/textures/main_start.png"
+        },
+        "main_creditboard": {
+            "file":      "/textures/Credit-Board.png"
+        },
+        "main_goback": {
+            "file":      "/textures/Back.png"
+        }
+    },
+    "scenes" : {
+        "main" : {
+            "type"      : "Node",
+            "format"    : {
+                "type" : "Anchored"
+            },
+            "children" : {
+                "credit"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.9
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "main_creditbutton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.2,
+                        "y_offset" : -0.3
+                    }
+                },
+                "instructions"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.9
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "main_instbutton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.2,
+                        "y_offset" : -0.15
+                    }
+                },
+                "level select"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.9
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "main_lsbutton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.2,
+                        "y_offset" : 0
+                    }
+                },
+                "start"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.9
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "main_startbutton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "right",
+                        "y_anchor" : "middle",
+                        "x_offset" :  -0.2,
+                        "y_offset" : 0.15
+                    }
+                },
+                "creditboard" : {
+                    "type"      : "Node",
+                    "format"    : {
+                        "type" : "Anchored"
+                    },
+                    "children" : {
+                       "image"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "main_creditboard",
+                                "anchor"   : [0.5,0.5],
+                                "scale" : 0.5
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle"
+                            },
+                            "children" : {
+                                "back"  : {
+                                    "type"   : "Button",
+                                    "data"   : {
+                                        "upnode"   : "up",
+                                        "visible"  : false,
+                                        "pushsize" : true,
+                                        "scale"    : 0.4
+                                    },
+                                    "children" : {
+                                        "up"       : {
+                                            "type"   : "Image",
+                                            "data"   : {
+                                                "texture"  : "main_goback"
+                                            }
+                                        }
+                                    },
+                                    "layout" : {
+                                        "x_anchor" : "right",
+                                        "y_anchor" : "down"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

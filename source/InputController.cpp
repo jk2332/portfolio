@@ -19,7 +19,7 @@ using namespace cugl;
 #pragma mark Input Constants
 
 /** The key to use for reseting the game */
-#define RESET_KEY KeyCode::R
+//#define RESET_KEY KeyCode::R
 #define PAUSE_KEY   KeyCode::P
 /** The key for toggling the debug display */
 #define DEBUG_KEY KeyCode::D
@@ -56,13 +56,13 @@ bool longPressTemp;
 RagdollInput::RagdollInput() :
 _active(false),
 _pausePressed(false),
-_resetPressed(false),
+//_resetPressed(false),
 _pinched(false),
 _debugPressed(false),
 _exitPressed(false),
 _keyUp(false),
 _keyDown(false),
-_keyReset(false),
+//_keyReset(false),
 _keySplit(false),
 _keyJoin(false),
 _splitPressed(false),
@@ -181,7 +181,7 @@ void RagdollInput::update(float dt) {
     Keyboard* keys = Input::get<Keyboard>();
     
     // Map "keyboard" events to the current frame boundary
-    _keyReset  = keys->keyPressed(RESET_KEY);
+//    _keyReset  = keys->keyPressed(RESET_KEY);
     _keyPause = keys->keyPressed(PAUSE_KEY);
     _keySplit = keys->keyPressed(SPLIT_KEY);
     _keyJoin = keys->keyPressed(JOIN_KEY);
@@ -190,7 +190,7 @@ void RagdollInput::update(float dt) {
     
 #endif
     
-    _resetPressed = _keyReset;
+//    _resetPressed = _keyReset;
     _pausePressed = _keyPause;
     _debugPressed = _keyDebug;
     _exitPressed  = _keyExit;
@@ -202,7 +202,7 @@ void RagdollInput::update(float dt) {
     // If it does not support keyboard, we must reset "virtual" keyboard
 #ifdef CU_TOUCH_SCREEN
     _keyExit = false;
-    _keyReset = false;
+//    _keyReset = false;
     _keyDebug = false;
     _keyPause = false;
     _keySplit = false;
@@ -215,7 +215,7 @@ void RagdollInput::update(float dt) {
  * Clears any buffered inputs so that we may start fresh.
  */
 void RagdollInput::clear() {
-    _resetPressed = false;
+//    _resetPressed = false;
     _debugPressed = false;
     _pausePressed = false;
     _exitPressed  = false;
