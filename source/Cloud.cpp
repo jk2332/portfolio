@@ -166,12 +166,12 @@ void Cloud::setLightning() {
 void Cloud::toggleRain() {
     setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
-         CULog("undo rain");
+        //  CULog("undo rain");
          _rain_node->setVisible(false);
         _rain_node->setFrame(0);
         _isRaining = false;
     } else if (_isRainCloud){
-        CULog("do rain");
+        // CULog("do rain");
         _rain_node->setVisible(true);
         _actions->activate("current", _rain, _rain_node);
         _isRaining = true;
