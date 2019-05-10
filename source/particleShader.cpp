@@ -40,9 +40,18 @@ ParticleGenerator::ParticleGenerator(GLuint amount, float ds): amount(amount){
             float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
             Vec2 velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
             
-            this->particles.push_back(CloudParticle(offset, velocity));
+            this->particles.push_back(CloudParticle::alloc(offset, velocity));
         }
     }
+}
+
+bool CloudParticle::init(Vec2 selectedPosition, Vec2 selectedVelocity) {
+    position = Vec2::ZERO;
+    jostle = Vec2::ZERO;
+    velocity = selectedVelocity;
+    color = Vec4(0.0f,0.0f,0.0f,0.0f);
+    offset = selectedPosition;
+    return true;
 }
 
 void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
@@ -55,27 +64,27 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale){
             int index = trueAmount*i + j;
             if (i != 0){index = index + this->amount;}
             
-            CloudParticle &p = this->particles[index];
-            Vec2 basePosition = cloud_pos + particleScale*p.offset;
+            auto &p = this->particles[index];
+            Vec2 basePosition = cloud_pos + particleScale*p->offset;
             
-            if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
-                (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
-                p.jostle = Vec2::ZERO;
+            if ((p->position.x > basePosition.x + maxJostle || p->position.y > basePosition.y + maxJostle) ||
+                (p->position.x < basePosition.x - maxJostle || p->position.y < basePosition.y - maxJostle)){
+                p->jostle = Vec2::ZERO;
                 //Determine v1 and v2 in range 0 to maxVelocity
                 float v1 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
                 float v2 = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/maxVelocity));
-                p.velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
+                p->velocity = Vec2(v1 - maxVelocity/2, v2 - maxVelocity/2);
             }
             else{
-                p.jostle += dt*p.velocity;
+                p->jostle += dt*p->velocity;
             }
-            p.position = basePosition + p.jostle;
+            p->position = basePosition + p->jostle;
             
-            float greater = p.jostle.x;
-            if (p.jostle.y > p.jostle.x){
-                greater = p.jostle.y;
+            float greater = p->jostle.x;
+            if (p->jostle.y > p->jostle.x){
+                greater = p->jostle.y;
             }
-            p.color.w = 1.0 - abs(greater/maxJostle);
+            p->color.w = 1.0 - abs(greater/maxJostle);
         }
     }
 }
@@ -197,10 +206,10 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     glUniform1i(_uSprite, TEXTURE_POSITION);
     CULogGLError();
     
-    for (CloudParticle p : providedPS.pg.particles){
-        SetVector2f(OFFSET_UNIFORM, providedPS.particleFactor*p.position);
+    for (auto p : providedPS.pg.particles){
+        SetVector2f(OFFSET_UNIFORM, providedPS.particleFactor*p->position);
         SetVector3f(ASPECT_UNIFORM, providedPS.aspectRatio);
-        SetVector4f(COLOR_UNIFORM, p.color);
+        SetVector4f(COLOR_UNIFORM, p->color);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         CULogGLError();
     }

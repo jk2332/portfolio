@@ -165,7 +165,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimenWithIndicator = computeActiveSize();
     dimen = Size(dimenWithIndicator.x, dimenWithIndicator.y);
+    _levelId = levelId;
+    
     _paused = false;
+    _mainSelected= false;
+    _resetSelected = false;
+    _continueSelected= false;
+    
     if (assets == nullptr) {
         return false;
     } else if (!Scene::init(dimen)) {
@@ -178,6 +184,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     _assets = assets;
+    
 
     // Start up the input handler
     _input.init();
@@ -193,13 +200,9 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _rootnode->setPosition(offset);
 
-    _level->setDebugNode(_debugnode);
-    _level->setDrawScale(_scale);
-    _level->reset();
+    _level->reload(false);
+    _plants = _level->getPlants();
     _clouds = _level->getClouds();
-    _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
-    _levelworldnode = _level->getWorldNode();
     
     _world = ObstacleWorld::alloc(rect,gravity);
     _max_cloud_id = _clouds.size();
@@ -253,16 +256,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     return true;
 }
 
-/**
- * Disposes of all (non-static) resources allocated to this mode.
- */
-void GameScene::dispose() {
+// setting the values right again
+void GameScene::resetVars(){
     ticks = 0;
-//    splitCoolDown = -1;
+    //    splitCoolDown = -1;
     gesCoolDown = -1;
     pinchedCloud1 = nullptr;
     pinchedCloud2 = nullptr;
-    ticks = 0;
     rclick1 = -1;
     rclick2 = -1;
     rclick1_touchID = -1;
@@ -277,7 +277,6 @@ void GameScene::dispose() {
     _pQ.clear();
     pinched = false;
     masterCloudNode = nullptr;
-    _input.dispose();
     for (auto &c : _clouds){
         c->dispose();
     }
@@ -286,17 +285,33 @@ void GameScene::dispose() {
         p->dispose();
     }
     _plants.clear();
-    _memory = nullptr;
-    _rainNode = nullptr;
-    _particles.clear();
-//    _board->dispose();
     currentPlant = nullptr;
-    _world = nullptr;
     _selectors.clear();
     cloudsToSplit.clear();
     cloudsToSplit_temp.clear();
     touchIDs_started_outside.clear();
-    if (_pauseButton != nullptr && _pauseButton->isVisible()){
+    removePauseDisplay();
+    _complete = false;
+}
+
+
+
+/**
+ * Disposes of all (non-static) resources allocated to this mode.
+ */
+void GameScene::dispose() {
+    resetVars();
+    _input.dispose();
+    _memory = nullptr;
+    _rainNode = nullptr;
+    _particles.clear();
+//    _board->dispose();
+    _world = nullptr;
+    _mainbutton = nullptr;
+    _resetbutton = nullptr;
+    _continuebutton = nullptr;
+    _pauseboard = nullptr;
+    if (_pauseButton != nullptr){
         _pauseButton->deactivate();
     }
     _pauseButton = nullptr;
@@ -305,7 +320,6 @@ void GameScene::dispose() {
     _level = nullptr;
     _rootnode = nullptr;
     _debugnode = nullptr;
-    _complete = false;
     _debug = false;
     _active = false;
     Scene::dispose();
@@ -321,22 +335,8 @@ void GameScene::dispose() {
  * This method disposes of the world and creates a new one.
  */
 void GameScene::reset() {
-    for (auto &s : _selectors){
-        s.second = nullptr;
-    }
-    _world->clear();
-    for (auto &s : _selectors){
-        if (s.second){
-            s.second->setDebugScene(nullptr);
-        }
-    }
-    _worldnode->removeAllChildren();
-    _debugnode->removeAllChildren();
-    _rootnode->removeAllChildren();
-    _levelworldnode->removeAllChildren();
-
-    setComplete(false);
-    populate();
+    
+    
 }
 
 /**
@@ -476,32 +476,36 @@ void GameScene::populate() {
     _rainNode->setContentSize(size*_scale);
     _levelworldnode->addChild(_rainNode);
     
+    //Add all the buttons for pause
     auto pauseButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pauseButton"));
-    pauseButtonNode->setContentSize(Size(4, 2)*_scale);
+    pauseButtonNode->setContentSize(Size(3, 3)*_scale);
     pauseButtonNode->setName("pauseButton");
     pauseButtonNode->setPosition(0, 0);
-
+    
     _pauseButton = Button::alloc(pauseButtonNode);
     _pauseButton->deactivate();
     _pauseButton->setVisible(false);
     _pauseButton->setPosition(0, 0);
     _pauseButton->setListener([=](const std::string& name, bool down) {
-        this->_active = down;
         _paused = true;
+        displayPause();
+        _mainSelected = false;
+        _resetSelected = false;
+        _continueSelected = false;
     });
     _worldnode->addChild(_pauseButton);
     
     //Must add this node right before the actual clouds
     masterCloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor, true);
     _levelworldnode->addChildWithName(masterCloudNode, "masterCloudNode");
-
+    
     int i = 0;
     Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
     for(auto it = _clouds.begin(); it != _clouds.end(); ++it) {
-//        CULog("setting particles for the clouds");
+        CULog("setting particles for the clouds");
         std::shared_ptr<Cloud> cloud = *it;
         cloud->setDrawScale(_scale);
-//        cloud->setCloudSizeScale(1);
+        //        cloud->setCloudSizeScale(1);
         auto cloudNode = CloudNode::alloc(_scale, dimenWithIndicator, masterParticleQuad, particleFactor, false);
         masterCloudNode->subCloudNodes.push_back(shared_ptr<CloudNode>(cloudNode));
         cloudNode->setName(cloud->getName());
@@ -512,6 +516,43 @@ void GameScene::populate() {
         _levelworldnode->sortZOrder();
         i++;
     }
+    
+    auto layer = _assets->get<Node>("pause");
+    if (_mainbutton == nullptr || _resetbutton == nullptr || _continuebutton == nullptr){
+        CULog("adding the buttons to the worldnode");
+        layer->setContentSize(dimen);
+        layer->doLayout();
+        _levelworldnode->addChild(layer);
+        
+        _pauseboard = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_pboard"));
+        _pauseboard->setVisible(false);
+        
+        _mainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard_main"));
+        _mainbutton->deactivate();
+        _mainbutton->setVisible(false);
+        _mainbutton->setListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _mainSelected = true;
+        });
+        std::cout << _mainbutton->getPosition().x << endl;
+        
+        _resetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard")->getChildByName("restart"));
+        _resetbutton->deactivate();
+        _resetbutton->setVisible(false);
+        _resetbutton->setListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _resetSelected = true;
+        });
+        
+        _continuebutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard")->getChildByName("continue"));
+        _continuebutton->deactivate();
+        _continuebutton->setVisible(false);
+        _continuebutton->setListener([=](const std::string& name, bool down) {
+            _continueSelected = true;
+        });
+        
+    }
+
 }
 
 /**
@@ -547,6 +588,17 @@ void GameScene::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const s
             weak->setAngle(obs->getAngle());
         });
     }
+}
+
+void GameScene::displayPause(){
+//    CULog("displaying pause button");
+    _continuebutton->setVisible(true);
+    _continuebutton->activate(80);
+    _resetbutton->setVisible(true);
+    _resetbutton->activate(81);
+    _mainbutton->setVisible(true);
+    _mainbutton->activate(82);
+    _pauseboard->setVisible(true);
 }
 
 
@@ -729,12 +781,14 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
+    
+    
     _input.update(dt);
     ticks++;
     
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
-    if (_input.didReset()) { reset(); }
+//    if (_input.didReset()) { reset(); }
     if (_input.didExit())  {
         Application::get()->quit();
     }
@@ -792,7 +846,7 @@ void GameScene::update(float dt) {
             }
 
              if (shaded) {
-                 for (std::shared_ptr<Plant> p : _level->getPlants()){
+                 for (std::shared_ptr<Plant> p : _plants){
                      if (p != nullptr && p->getX() == i && p->getY() == j){
                         p->setShade(true);
                      }
@@ -809,7 +863,7 @@ void GameScene::update(float dt) {
 
     //Check win/loss conditions
     auto plantNode = _levelworldnode->getChildByName("plantNode");
-    for (auto &plant : _level->getPlants()){
+    for (auto &plant : _plants){
        if (ticks % 250 == 0 && ticks > 150) {
            plant->updateState();
        }
@@ -820,7 +874,7 @@ void GameScene::update(float dt) {
         for (auto &pest : _level->getPests()){
             int targetY = pest->getTarget().y;
             int targetX;
-             for(auto &plant : _level->getPlants()) {
+             for(auto &plant : _plants) {
                  if (plant->getStage() > 2 && plant->getX()) {
                      targetX = plant->getX();
                      pest->walk();
@@ -834,7 +888,7 @@ void GameScene::update(float dt) {
         pest->update(dt);
     }
 
-   for(auto &plant : _level->getPlants()) {
+   for(auto &plant : _plants) {
        plant->update(dt);
    }
     
@@ -961,7 +1015,7 @@ void GameScene::update(float dt) {
     
     for (auto &c : _clouds) {
         if (c != nullptr) {
-            auto cloudNode = _level->getWorldNode()->getChildByName(c->getName());
+            auto cloudNode = _levelworldnode->getChildByName(c->getName());
             cloudNode->setContentSize(c->getCloudSize());
             float scale = c->getCloudSizeScale();
             c->setCloudSizeScale(scale);
@@ -981,6 +1035,13 @@ void GameScene::update(float dt) {
     
     _level->update(ticks);
     _world->update(dt);
+    
+    if (_resetSelected){
+        CULog("resetting the game");
+        reset();
+        resetPauseBool();
+    }
+    
 }
 
 

@@ -368,7 +368,8 @@ public:
      * references to other assets, then these should be disconnected earlier.
      */
     void unload();
-    bool reset();
+    bool reload(bool b);
+//    void reset();
     
     
     //#pragma mark -

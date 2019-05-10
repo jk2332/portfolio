@@ -146,7 +146,7 @@
             "file":     "textures/rcIndicator.png"
         },
         "pauseButton": {
-            "file":     "textures/Pause_2.png"
+            "file":     "textures/Pause_1.png"
         }
 	},
     "sounds": {

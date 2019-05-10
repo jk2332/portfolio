@@ -115,7 +115,6 @@ public:
      */
     bool isPending(int i) const;
     int getLevelSelected() {return _selectedLevel;}
-    void setAssetLoaded(bool b) {_assetLoaded = b;}
 };
 
 #endif /* LevelSelect_hpp */

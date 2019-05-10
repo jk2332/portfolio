@@ -37,11 +37,29 @@ static GLuint VBO;
 static GLuint EBO;
 
 // Represents a single particle and its state
-struct CloudParticle {
-    Vec2 position, velocity, jostle;
-    Vec4 color;
+//struct CloudParticle {
+//    Vec2 position, velocity, jostle;
+//    Vec4 color;
+//    Vec2 offset;
+//    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
+//};
+
+class CloudParticle{
+public:
+    Vec2 position;
+    Vec2 velocity;
+    Vec2 jostle;
     Vec2 offset;
-    CloudParticle(Vec2 selectedPosition, Vec2 selectedVelocity) : position(Vec2::ZERO), jostle(Vec2::ZERO), velocity(selectedVelocity), color(Vec4(0.0f,0.0f,0.0f,0.0f)), offset(selectedPosition){}
+    Vec4 color;
+    
+    CloudParticle(void) { }
+    virtual ~CloudParticle(void) { }
+    bool init(Vec2 selectedPosition, Vec2 selectedVelocity);
+    static std::shared_ptr<CloudParticle> alloc(Vec2 selectedPosition, Vec2 selectedVelocity) {
+        std::shared_ptr<CloudParticle> result = std::make_shared<CloudParticle>();
+        return (result->init(selectedPosition, selectedVelocity) ? result : nullptr);
+    }
+    
 };
 
 // ParticleGenerator acts as a container for rendering a large number of
@@ -56,7 +74,7 @@ public:
     // Render all particles
     void Draw();
     // State
-    std::vector<CloudParticle> particles;
+    std::vector<std::shared_ptr<CloudParticle>> particles;
     GLuint amount;
     float drawscale = 1.0f;
     float maxJostle = MAX_JOSTLE;

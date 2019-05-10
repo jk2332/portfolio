@@ -82,6 +82,8 @@ void LevelModel::clearRootNode() {
 
 void LevelModel::dispose(){
     CULog("level being disposed");
+    _worldnode->removeAllChildren();
+    _debugnode->removeAllChildren();
     _worldnode = nullptr;
     _debugnode = nullptr;
     for (auto &c : _clouds){
@@ -534,11 +536,10 @@ bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
     return true;
 }
 
-bool LevelModel::reset(){
-    if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+bool LevelModel::reload(bool b){
+    if (!b && (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0)) return false;
     CULog("level reset called");
 
-    CULog("resetting");
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
         int csize = (int)_cloudLayer->size();
@@ -575,6 +576,7 @@ bool LevelModel::reset(){
     
     return true;
 }
+
 
 /**
  * Converts the string to a color
