@@ -409,7 +409,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
-//    cloud->setCloudSizeScale(1.5f); //for testing
+    cloud->setCloudSizeScale(1.5f); //for testing
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 
