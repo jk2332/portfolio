@@ -209,8 +209,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     // Create the scene graph
     std::shared_ptr<Texture> image = _assets->get<Texture>("background");
-    _worldnode = PolygonNode::alloc();
-//    _worldnode = PolygonNode::allocWithTexture(image);
+//    _worldnode = PolygonNode::alloc();
+    _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -230,13 +230,13 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
-    image = _assets->get<Texture>("bigBackground");
-    _backgroundNode = PolygonNode::allocWithTexture(image);
-    _backgroundNode->setName("bigBackground");
-    _backgroundNode->setContentSize(dimen);
-    _backgroundNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    image = _assets->get<Texture>("bigBackground");
+//    _backgroundNode = PolygonNode::allocWithTexture(image);
+//    _backgroundNode->setName("bigBackground");
+//    _backgroundNode->setContentSize(dimen);
+//    _backgroundNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
-    addChildWithName(_backgroundNode,"backgroundNode", Z_EXTENDEDBKGD);
+//    addChildWithName(_backgroundNode,"backgroundNode", Z_EXTENDEDBKGD);
     addChildWithName(_worldnode,"worldNode", Z_BACKGROUND);
     addChildWithName(_debugnode,"debugNode", Z_BACKGROUND);
     addChildWithName(_rootnode,"rootnode", Z_BACKGROUND);
