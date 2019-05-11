@@ -333,6 +333,8 @@
 				EBB4B5762040ADD300238092 /* LoadingController.cpp */,
 				EBB4B5722040ADD200238092 /* LoadingController.h */,
 				EBB1AC2B1DF8C76D00C353B0 /* main.cpp */,
+				F1DE02E6228367DE004BDFAA /* MainMenu.cpp */,
+				F1DE02E7228367DE004BDFAA /* MainMenu.hpp */,
 				F8939EA22236FE2900199385 /* MenuController.cpp */,
 				F8939EA32236FE2900199385 /* MenuController.hpp */,
 				1BD36908224E289B00C253C4 /* Particle.cpp */,
@@ -349,8 +351,6 @@
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
-				F1DE02E6228367DE004BDFAA /* MainMenu.cpp */,
-				F1DE02E7228367DE004BDFAA /* MainMenu.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -516,7 +516,7 @@
 				TargetAttributes = {
 					EB122D9F1E281F4A0019E2D1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 22F3WA64X8;
+						DevelopmentTeam = TX52T47YPD;
 						ProvisioningStyle = Automatic;
 					};
 					EBB1AC051DF8C6BC00C353B0 = {
@@ -711,12 +711,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22F3WA64X8;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defendera;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defender;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -735,12 +735,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 22F3WA64X8;
+				DEVELOPMENT_TEAM = TX52T47YPD;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/iOS-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defendera;
+				PRODUCT_BUNDLE_IDENTIFIER = com.puppyspirit.defender;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

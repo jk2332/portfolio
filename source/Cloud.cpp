@@ -132,7 +132,7 @@ void Cloud::update(float delta) {
     if (_cloudNode != nullptr) {
         _cloudNode->setPosition(_drawscale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
-        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale, _isRaining);
+        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale, _isRaining, _isRainCloud);
         shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
         _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
@@ -263,7 +263,7 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
 }
 
 void Cloud::setCloudSizeScale(float s) {
-     if (s >= 1) {
+    if (s >= 1) {
         _isRainCloud = true;
     }
     else {

@@ -12,8 +12,8 @@
 #define TEXCOORDS_ATTRIBUTE  "texCoords"
 #define OFFSET_UNIFORM       "offset"
 #define COLOR_UNIFORM        "color"
-#define SPRITE_UNIFORM       "sprite"
 #define ASPECT_UNIFORM       "aspectRatio"
+#define SPRITE_UNIFORM       "sprite"
 #define TEXTURE_POSITION     0
 
 using namespace cugl;
@@ -67,7 +67,6 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, 
             }
             else {
                 Vec2 basePosition = cloud_pos + particleScale*p.offset;
-                
                 if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
                     (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
                     p.jostle = Vec2::ZERO;
@@ -93,7 +92,9 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, 
 
 void ParticleShader::dispose() {
     Shader::dispose();
-    particleTexture.dispose();
+    particleTextureWhite.dispose();
+    particleTextureGray.dispose();
+    particleTextureDarkGray.dispose();
     pg.particles.clear();
     if (master){
         glDeleteProgram(_program);
@@ -112,8 +113,12 @@ void ParticleShader::dispose() {
 }
 
 void ParticleShader::onStartup(){
-    particleTexture = Texture();
-    particleTexture.initWithFile("textures/particle1.png");
+    particleTextureWhite = Texture();
+    particleTextureWhite.initWithFile("textures/particle1.png");
+    particleTextureGray = Texture();
+    particleTextureGray.initWithFile("textures/particle3.png");
+    particleTextureDarkGray = Texture();
+    particleTextureDarkGray.initWithFile("textures/particle2.png");
     if (master){compileProgram();}
 }
 
@@ -170,6 +175,9 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     if (!master){return;}
     CULogGLError();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//    CULogGLError();
+//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE);
     CULogGLError();
     //reusing the particle shader program
     glUseProgram( _program );
@@ -179,7 +187,7 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     CULogGLError();
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     CULogGLError();
-    
+
     glBufferData(GL_ARRAY_BUFFER, sizeof(providedPS.particle_quad), providedPS.particle_quad, GL_DYNAMIC_DRAW);
     CULogGLError();
     
@@ -204,33 +212,38 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     glVertexAttribPointer(_aTexCoords, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     CULogGLError();
     
-    particleTexture.bind();
-    _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM );
-    CULogGLError();
-    glUniform1i(_uSprite, TEXTURE_POSITION);
-    CULogGLError();
+    if (!rainCloud){
+        particleTextureWhite.bind(); CULogGLError();
+        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
+        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
+    }
+    
+    else{
+        particleTextureDarkGray.bind(); CULogGLError();
+        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
+        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
+    }
     
     for (CloudParticle p : providedPS.pg.particles){
         SetVector2f(OFFSET_UNIFORM, providedPS.particleFactor*p.position);
         SetVector3f(ASPECT_UNIFORM, providedPS.aspectRatio);
         SetVector4f(COLOR_UNIFORM, p.color);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        CULogGLError();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); CULogGLError();
     }
-    particleTexture.unbind();
-    CULogGLError();
-    glDisableVertexAttribArray(_aPosition);
-    CULogGLError();
-    glDisableVertexAttribArray(_aTexCoords);
-    CULogGLError();
-    glUseProgram(NULL);
-    CULogGLError();
+    
+    if (!rainCloud){particleTextureWhite.unbind(); CULogGLError();}
+    else{particleTextureDarkGray.unbind(); CULogGLError();}
+    
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDisableVertexAttribArray(_aPosition); CULogGLError();
+    glDisableVertexAttribArray(_aTexCoords); CULogGLError();
+    glUseProgram(NULL); CULogGLError();
     // Don't forget to reset to default blending mode
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    CULogGLError();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); CULogGLError();
 }
 
-void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale, bool raining){
+void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale, bool raining, bool rc){
     //Adjust size of particles based on scale of cloud
     bool scaleChange = false;
     if (_particleScale != particleScale){
@@ -251,5 +264,6 @@ void ParticleShader::update(Vec2 cloud_pos, float dt, float particleScale, bool 
         pg.maxVelocity = MAX_VELOCITY*_particleScale;
     }
     wasRaining = raining;
+    rainCloud = rc;
     this->pg.Update(dt, cloud_pos - Vec2(SCENE_WIDTH/2.0f, SCENE_HEIGHT/2.0f), _particleScale, scaleChange);
 }

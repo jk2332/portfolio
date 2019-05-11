@@ -95,8 +95,12 @@ protected:
     GLint _uSprite;
     /** The current perspective matrix */
     Mat4  _mPerspective;
-    /** The current shader texture */
-    Texture particleTexture;
+    /** The default shader texture */
+    Texture particleTextureWhite;
+    /** The darker shader texture */
+    Texture particleTextureGray;
+    /** The darkest shader texture */
+    Texture particleTextureDarkGray;
     float particleFactor;
     //                              Position     Texcoords
     GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
@@ -110,7 +114,10 @@ protected:
         0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
     Vec3 aspectRatio;
+    //was it raining in the previous update loop?
     bool wasRaining;
+    //is this cloud large enough to be a raincloud?
+    bool rainCloud;
     /** The OpenGL program for this shader */
     GLuint _program;
     /** The OpenGL vertex shader for this shader */
@@ -142,6 +149,7 @@ public:
         aspectRatio = ar;
         particleFactor = pf;
         wasRaining = false;
+        rainCloud = false;
         for(int i = 0; i < 16; i++){
             ogParticleQuad[i] = pq[i];
             particle_quad[i] = pq[i];
@@ -154,8 +162,8 @@ public:
     
     void drawParticles(ParticleShader providedPS);
     
-    void update(Vec2 cloud_pos, float dt, float particleScale, bool raining);
-    
+    void update(Vec2 cloud_pos, float dt, float particleScale, bool raining, bool rc);
+
     void SetFloat1f(const GLchar *name, float value){
         glUniform1f(glGetUniformLocation(_program, name), value);
     }

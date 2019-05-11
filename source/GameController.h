@@ -93,7 +93,7 @@ protected:
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
-    
+    std::shared_ptr<cugl::Node> _backgroundNode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
