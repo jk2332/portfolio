@@ -153,6 +153,15 @@
         },
         "pauseButton": {
             "file":     "textures/Pause_1.png"
+        },
+        "victoryboard-1" : {
+            "file":     "textures/Win-Screen-2.png"
+        },
+        "victoryboard-2" : {
+            "file":     "textures/Win-Screen-3.png"
+        },
+        "victoryboard-3" : {
+            "file":     "textures/Win-Screen-4.png"
         }
 	},
     "sounds": {

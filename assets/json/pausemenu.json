@@ -11,6 +11,9 @@
         },
         "pause_board": {
             "file":      "/textures/Pause_2.png"
+        },
+        "victoryboard-0" : {
+            "file":     "textures/Win-Screen-1.png"
         }
     },
     "scenes" : {
@@ -105,6 +108,71 @@
                                 "y_anchor" : "middle",
                                 "x_offset" :  0.3,
                                 "y_offset" : 0
+                            }
+                        }
+                    }
+                },
+                "vicboard"       : {
+                    "type"   : "Image",
+                    "format"    : {
+                        "type" : "Anchored"
+                    },
+                    "data"   : {
+                        "texture"  : "victoryboard-0",
+                        "anchor"   : [0.5,0.5],
+                        "scale" : 0.5
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle"
+                    },
+                    "children" : {
+                        "main"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_mainbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  -0.1,
+                                "y_offset" : -0.33
+                            }
+                        },
+                        "restart"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_restartbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  0,
+                                "y_offset" : -0.33
                             }
                         }
                     }

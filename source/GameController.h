@@ -65,10 +65,13 @@ protected:
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
     
+    std::shared_ptr<Node> _endscreen_nostar;
     std::shared_ptr<cugl::Button> _pauseButton;
-    std::shared_ptr<cugl::Button> _mainbutton;
-    std::shared_ptr<cugl::Button> _resetbutton;
+    std::shared_ptr<cugl::Button> _pmainbutton;
+    std::shared_ptr<cugl::Button> _presetbutton;
     std::shared_ptr<cugl::Button> _continuebutton;
+    std::shared_ptr<cugl::Button> _vresetbutton;
+    std::shared_ptr<cugl::Button> _vmainbutton;
     std::shared_ptr<Node> _pauseboard;
     bool _paused;
     bool _mainSelected;
@@ -350,24 +353,43 @@ public:
         _resetSelected=false;
         _continueSelected=false;
         _paused = false;
+        resetOver();
+    }
+    
+    void resetOver(){
+        if (_level != nullptr) _level->resetOver();
     }
     
     void removePauseDisplay() {
-        if (_mainbutton != nullptr){
-            _mainbutton->deactivate();
-            _mainbutton->setVisible(false);
+        if (_pmainbutton != nullptr){
+            _pmainbutton->deactivate();
+            _pmainbutton->setVisible(false);
         }
         if (_continuebutton != nullptr){
             _continuebutton->deactivate();
             _continuebutton->setVisible(false);
         }
-        if (_resetbutton != nullptr){
-            _resetbutton->deactivate();
-            _resetbutton->setVisible(false);
+        if (_presetbutton != nullptr){
+            _presetbutton->deactivate();
+            _presetbutton->setVisible(false);
         }
         if (_pauseboard) _pauseboard->setVisible(false);
     }
+    
+    void removeVictoryDisplay(){
+        if (_vmainbutton != nullptr){
+            _vmainbutton->deactivate();
+            _vmainbutton->setVisible(false);
+        }
+        if (_vresetbutton != nullptr){
+            _vresetbutton->deactivate();
+            _vresetbutton->setVisible(false);
+        }
+        if (_endscreen_nostar) _endscreen_nostar->setVisible(false);
+    }
+    
     void displayPause();
+    void displayVictory();
     
     std::string getLevelId(){
         return _levelId;
