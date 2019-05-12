@@ -215,14 +215,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _worldnode->setPosition(offset);
-
-    // Code to change background into an animation node so skyline changes over the day
-    // _worldnode = AnimationNode::alloc(_assets->get<Texture>("background-film"), 1, 33);
-    // _worldnode->setName("world");
-    // _worldnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    // _worldnode->setPosition(offset);
-    // _changeDay = Animate::alloc(0, 32, 5.0f, 1);
-    // _actions->activate("current", _changeDay, _worldnode);
     
     _debugnode = Node::alloc();
     _debugnode->setScale(_scale); // Debug node draws in PHYSICS coordinates
@@ -270,22 +262,26 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  * Disposes of all (non-static) resources allocated to this mode.
  */
 void GameScene::dispose() {
+    removePauseDisplay();
+    removeVictoryDisplay();
+    _input.dispose();
+    
+    // setting the variable values to default
     ticks = 0;
     gesCoolDown = -1;
-    pinchedCloud1 = nullptr;
-    pinchedCloud2 = nullptr;
     rclick1 = -1;
     rclick2 = -1;
     rclick1_touchID = -1;
     lclick1 = -1;
     lclick2 = -1;
     lclick1_touchID = -1;
-    clicked_cloud = nullptr;
     shadowClicked = false;
-    clickedShadowCloud = nullptr;
     _shadowSelectors.clear();
     pinched = false;
-    masterCloudNode = nullptr;
+    _complete = false;
+
+    
+    // clear up the objects
     for (auto &c : _clouds){
         c->dispose();
     }
@@ -293,29 +289,37 @@ void GameScene::dispose() {
     for (auto &p : _plants){
         p->dispose();
     }
-    _plants.clear();
+    pinchedCloud1 = nullptr;
+    pinchedCloud2 = nullptr;
+    clickedShadowCloud = nullptr;
+    clicked_cloud = nullptr;
+    masterCloudNode = nullptr;
+    _memory = nullptr;
+    _rainNode = nullptr;
     currentPlant = nullptr;
+    _plants.clear();
+    _particles.clear();
     _selectors.clear();
     cloudsToSplit.clear();
     cloudsToSplit_temp.clear();
     touchIDs_started_outside.clear();
-    removePauseDisplay();
-    _complete = false;
-    _input.dispose();
-    _memory = nullptr;
-    _rainNode = nullptr;
-    _particles.clear();
 //    _board->dispose();
     _world = nullptr;
-    _mainbutton = nullptr;
-    _resetbutton = nullptr;
+    _vmainbutton = nullptr;
+    _vresetbutton = nullptr;
+    _pmainbutton = nullptr;
+    _presetbutton = nullptr;
     _continuebutton = nullptr;
+    _endscreen_nostar = nullptr;
     _pauseboard = nullptr;
     if (_pauseButton != nullptr){
         _pauseButton->deactivate();
     }
     _pauseButton = nullptr;
     if (_level) _level->dispose();
+    
+    if (_worldnode) _worldnode->removeAllChildren();
+    if (_debugnode) _debugnode->removeAllChildren();
     _worldnode = nullptr;
     _level = nullptr;
     _rootnode = nullptr;
@@ -359,14 +363,6 @@ void GameScene::populate() {
     float WALL2[] = { w,h, w,h*0.9f, 0.0f,h*0.9f, 0.0f,h };
     float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
     float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };
-
-    //Ragdoll Walls
-    //float WALL1[] = { 16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-    //    1.0f,  1.0f, 16.0f,  1.0f, 16.0f,  0.0f,
-    //    0.f,  0.0f,  0.0f, 18.0f };
-    //float WALL2[] = { 32.0f, 18.0f, 32.0f,  0.0f, 16.0f,  0.0f,
-    //    16.0f,  1.0f, 31.0f,  1.0f, 31.0f, 17.0f,
-    //    16.0f, 17.0f, 16.0f, 18.0f };
     
 #pragma mark : Wall polygon 1
     // Create ground pieces
@@ -479,8 +475,9 @@ void GameScene::populate() {
     _pauseButton->setAnchor(Vec2::ANCHOR_TOP_LEFT);
     _pauseButton->setPosition(0, SCENE_HEIGHT);
     _pauseButton->setListener([=](const std::string& name, bool down) {
-        _paused = true;
+        removeVictoryDisplay();
         displayPause();
+        _paused = true;
         _mainSelected = false;
         _resetSelected = false;
         _continueSelected = false;
@@ -518,29 +515,47 @@ void GameScene::populate() {
         i++;
     }
     
+    _pauseboard = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_pboard"));
+    _pauseboard->setVisible(false);
+    
+    _endscreen_nostar = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_vicboard"));
+    _endscreen_nostar->setVisible(false);
+    
     auto layer = _assets->get<Node>("pause");
-    if (_mainbutton == nullptr || _resetbutton == nullptr || _continuebutton == nullptr){
+    if (_pmainbutton == nullptr || _presetbutton == nullptr || _continuebutton == nullptr || _vmainbutton == nullptr || _vresetbutton == nullptr){
         CULog("adding the buttons to the worldnode");
         layer->setContentSize(dimen);
         layer->doLayout();
         _levelworldnode->addChild(layer);
-        
-        _pauseboard = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_pboard"));
-        _pauseboard->setVisible(false);
-        
-        _mainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard_main"));
-        _mainbutton->deactivate();
-        _mainbutton->setVisible(false);
-        _mainbutton->setListener([=](const std::string& name, bool down) {
+    
+        _pmainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard_main"));
+        _pmainbutton->deactivate();
+        _pmainbutton->setVisible(false);
+        _pmainbutton->setListener([=](const std::string& name, bool down) {
             this->_active = down;
             _mainSelected = true;
         });
-        std::cout << _mainbutton->getPosition().x << endl;
         
-        _resetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard")->getChildByName("restart"));
-        _resetbutton->deactivate();
-        _resetbutton->setVisible(false);
-        _resetbutton->setListener([=](const std::string& name, bool down) {
+        _vmainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_vicboard_main"));
+        _vmainbutton->deactivate();
+        _vmainbutton->setVisible(false);
+        _vmainbutton->setListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _mainSelected = true;
+        });
+        
+        _presetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard")->getChildByName("restart"));
+        _presetbutton->deactivate();
+        _presetbutton->setVisible(false);
+        _presetbutton->setListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _resetSelected = true;
+        });
+        
+        _vresetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_vicboard")->getChildByName("restart"));
+        _vresetbutton->deactivate();
+        _vresetbutton->setVisible(false);
+        _vresetbutton->setListener([=](const std::string& name, bool down) {
             this->_active = down;
             _resetSelected = true;
         });
@@ -551,8 +566,8 @@ void GameScene::populate() {
         _continuebutton->setListener([=](const std::string& name, bool down) {
             _continueSelected = true;
         });
-        
     }
+    
 
 }
 
@@ -595,11 +610,20 @@ void GameScene::displayPause(){
 //    CULog("displaying pause button");
     _continuebutton->setVisible(true);
     _continuebutton->activate(80);
-    _resetbutton->setVisible(true);
-    _resetbutton->activate(81);
-    _mainbutton->setVisible(true);
-    _mainbutton->activate(82);
+    _presetbutton->setVisible(true);
+    _presetbutton->activate(81);
+    _pmainbutton->setVisible(true);
+    _pmainbutton->activate(82);
     _pauseboard->setVisible(true);
+}
+
+void GameScene::displayVictory(){
+    // display right end screen here
+    _endscreen_nostar->setVisible(true);
+    _vresetbutton->setVisible(true);
+    _vresetbutton->activate(90);
+    _vmainbutton->setVisible(true);
+    _vmainbutton->activate(91);
 }
 
 
@@ -785,19 +809,15 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
     
-    
     _input.update(dt);
     ticks++;
     
     // Process the toggled key commands
     if (_input.didDebug()) { setDebug(!isDebug()); }
-//    if (_input.didReset()) { reset(); }
     if (_input.didExit())  {
         Application::get()->quit();
     }
     
-    _pauseButton->activate(10);
-    _pauseButton->setVisible(true);
     
     // process combining
     if (_input.didPinchSelect()){
@@ -1021,13 +1041,24 @@ void GameScene::update(float dt) {
     }
     
     _level->update(ticks);
+    
+    if (_level->isOver()){
+        CULog("display victory screen");
+        _pauseButton->deactivate();
+        removePauseDisplay();
+        displayVictory();
+        _mainSelected =false;
+        _resetSelected=false;
+        _continueSelected= false;
+        _paused = true;
+    }
+    else {
+        _pauseButton->activate(10);
+        _pauseButton->setVisible(true);
+    }
+    
     _world->update(dt);
     
-    if (_resetSelected){
-        CULog("resetting the game");
-        reset();
-        resetPauseBool();
-    }
     
 }
 
@@ -1155,7 +1186,7 @@ void GameScene::createResourceClouds(){
 
         _clouds.push_back(new_cloud);
         addObstacle(_levelworldnode, new_cloud, cloudNode, Z_CLOUD);
-        _level->getWorldNode()->sortZOrder();
+        _levelworldnode->sortZOrder();
         cloudInfo.pop_back();
     }
     _level->setNewClouds(cloudInfo);

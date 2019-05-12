@@ -194,8 +194,8 @@ void WeatherDefenderApp::update(float timestep) {
     }
     
     else if (_gameplay.isActive() && _paused){
-//        CULog("paused");
         Application::onResume();
+        CULog("paused");
         if (_gameplay.continueSelected()){
             CULog("continue has been selected");
             _gameplay.removePauseDisplay();
@@ -224,6 +224,7 @@ void WeatherDefenderApp::update(float timestep) {
             if (b) _paused = false;
         }
         else if (_gameplay.mainSelected()){
+            CULog("main has been selected");
             _gameplay.dispose();
             CULogGLError();
             _mainselected = !_main.init(_assets);
