@@ -89,7 +89,7 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _creditboard = std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_creditboard"));
     _creditboard->setVisible(false);
     
-    _creditback = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_creditboard_image")->getChildByName("back"));
+    _creditback = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_creditboard")->getChildByName("back"));
     _creditback->deactivate();
     _creditback->setVisible(true);
     _creditback->setListener([=](const std::string& name, bool down) {

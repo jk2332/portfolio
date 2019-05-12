@@ -125,43 +125,34 @@
                         "y_offset" : 0.15
                     }
                 },
-                "creditboard" : {
-                    "type"      : "Node",
+                "creditboard"       : {
+                    "type"   : "Image",
                     "format"    : {
                         "type" : "Anchored"
                     },
+                    "data"   : {
+                        "texture"  : "main_creditboard",
+                        "anchor"   : [0.5,0.5],
+                        "scale" : 0.3
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "middle"
+                    },
                     "children" : {
-                       "image"       : {
-                            "type"   : "Image",
+                        "back"  : {
+                            "type"   : "Button",
                             "data"   : {
-                                "texture"  : "main_creditboard",
-                                "anchor"   : [0.5,0.5],
-                                "scale" : 0.5
-                            },
-                            "layout" : {
-                                "x_anchor" : "center",
-                                "y_anchor" : "middle"
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "scale"    : 0.4
                             },
                             "children" : {
-                                "back"  : {
-                                    "type"   : "Button",
+                                "up"       : {
+                                    "type"   : "Image",
                                     "data"   : {
-                                        "upnode"   : "up",
-                                        "visible"  : false,
-                                        "pushsize" : true,
-                                        "scale"    : 0.4
-                                    },
-                                    "children" : {
-                                        "up"       : {
-                                            "type"   : "Image",
-                                            "data"   : {
-                                                "texture"  : "main_goback"
-                                            }
-                                        }
-                                    },
-                                    "layout" : {
-                                        "x_anchor" : "right",
-                                        "y_anchor" : "down"
+                                        "texture"  : "main_goback"
                                     }
                                 }
                             }
