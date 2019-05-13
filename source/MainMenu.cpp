@@ -43,6 +43,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
+    ticks = 01;
+    buttoncooldown = 01;
     
     std::shared_ptr<Texture> image = _assets->get<Texture>("main menu background");
     auto bknode = PolygonNode::allocWithTexture(image);
@@ -89,11 +91,55 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _creditboard = std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_creditboard"));
     _creditboard->setVisible(false);
     
-    _creditback = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_creditboard_image")->getChildByName("back"));
+    _creditback = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_creditboard")->getChildByName("back"));
     _creditback->deactivate();
     _creditback->setVisible(true);
     _creditback->setListener([=](const std::string& name, bool down) {
         _creditSelected = false;
+    });
+    
+    _instback = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_back"));
+    _instback->deactivate();
+    _instback->setVisible(true);
+    _instback->setListener([=](const std::string& name, bool down) {
+        _instSelected = false;
+    });
+    
+    _instboard1 = std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-1"));
+    _instboard1->setVisible(false);
+    
+    _instboard2= std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-2"));
+    _instboard2->setVisible(false);
+    
+    _instboard3= std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-3"));
+    _instboard3->setVisible(false);
+    
+    _instboard4= std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-4"));
+    _instboard4->setVisible(false);
+    
+    _instboard5= std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-5"));
+    _instboard5->setVisible(false);
+    
+    _leftarr = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_left"));
+    _leftarr->deactivate();
+    _leftarr->setVisible(false);
+    _leftarr->setListener([=](const std::string& name, bool down) {
+        if (inst_num > 1 && ticks - buttoncooldown >= 40) {
+            inst_num --;
+            buttoncooldown = ticks;
+        }
+    });
+    
+    _rightarr = std::dynamic_pointer_cast<Button>(_assets->get<Node>("main_right"));
+    _rightarr->deactivate();
+    _rightarr->setVisible(false);
+    _rightarr->setListener([=](const std::string& name, bool down) {
+        //        this->_active = down;        
+        if (inst_num < 5 && ticks - buttoncooldown >= 40) {
+            CULog("right arrow selected %i", inst_num);
+            inst_num ++;
+            buttoncooldown = ticks;
+        }
     });
     
     addChild(layer);
@@ -113,15 +159,24 @@ void MainMenu::dispose() {
     if (isPending(_startbutton)) _startbutton->deactivate();
     if (isPending(_levelbutton)) _levelbutton->deactivate();
     if (isPending(_creditback)) _creditback->deactivate();
+    if (isPending(_leftarr)) _leftarr->deactivate();
+    if (isPending(_rightarr)) _rightarr->deactivate();
     _creditbutton = nullptr;
     _instbutton = nullptr;
     _startbutton = nullptr;
     _levelbutton = nullptr;
     _creditboard = nullptr;
     _creditback = nullptr;
+    _instboard1 = nullptr;
+    _instboard2 = nullptr;
+    _instboard3 = nullptr;
+    _instboard4 = nullptr;
+    _instboard5 = nullptr;
     _assets = nullptr;
+    inst_num = 1;
     removeAllChildren();
 }
+
 
 
 #pragma mark -
@@ -134,6 +189,7 @@ void MainMenu::dispose() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void MainMenu::update(float progress) {
+    ticks++;
     _creditbutton->setVisible(true);
     _creditbutton->activate(1000);
     _instbutton->setVisible(true);
@@ -142,25 +198,56 @@ void MainMenu::update(float progress) {
     _startbutton->activate(1002);
     _levelbutton->setVisible(true);
     _levelbutton->activate(1003);
+    
     if (_instSelected) {
-
-    }
-    else {
-        
-    }
-    if (_creditSelected) {
-        CULog("credit button");
-        _instbutton->deactivate();
         _levelbutton->deactivate();
         _startbutton->deactivate();
+        deactivateCredit();
+        _leftarr->setVisible(true);
+        _leftarr->activate(2000);
+        _rightarr->setVisible(true);
+        _rightarr->activate(2001);
+        _instback->setVisible(true);
+        _instback->activate(2002);
+        
+        if (inst_num == 1) {
+            hideinstboards();
+            _instboard1->setVisible(true);
+        }
+        else if (inst_num == 2) {
+            hideinstboards();
+            _instboard2->setVisible(true);
+        }
+        else if (inst_num==3) {
+            hideinstboards();
+            _instboard3->setVisible(true);
+        }
+        else if (inst_num == 4) {
+            hideinstboards();
+            _instboard4->setVisible(true);
+        }
+        else {
+            hideinstboards();
+            _instboard5->setVisible(true);
+        }
+    }
+    else {
+        deactivateInst();
+    }
+    
+    if (!_instSelected && _creditSelected) {
+        CULog("credit button");
+        deactivateInst();
+        _levelbutton->deactivate();
+        _startbutton->deactivate();
+        
         _creditboard->setVisible(true);
         _creditback->setVisible(true);
         _creditback->activate(1004);
+        
     }
     else {
-        _creditboard->setVisible(false);
-        _creditback->setVisible(false);
-        _creditback->deactivate();
+        deactivateCredit();
     }
     
     

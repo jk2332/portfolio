@@ -37,14 +37,29 @@ protected:
     std::shared_ptr<cugl::Button> _instbutton;
     std::shared_ptr<cugl::Button> _creditbutton;
     std::shared_ptr<cugl::Button> _levelbutton;
+    long buttoncooldown = 0l;
+    long ticks = 01;
     std::shared_ptr<cugl::Node> _creditboard;
+    
+    std::shared_ptr<cugl::Node> _instboard1;
+    std::shared_ptr<cugl::Node> _instboard2;
+     std::shared_ptr<cugl::Node> _instboard3;
+     std::shared_ptr<cugl::Node> _instboard4;
+     std::shared_ptr<cugl::Node> _instboard5;
+    
+    std::shared_ptr<cugl::Button> _leftarr;
+    std::shared_ptr<cugl::Button> _rightarr;
+    
     std::shared_ptr<cugl::Button> _creditback;
+    std::shared_ptr<cugl::Button> _instback;
+    
 
     float _scale;
     bool _startSelected = false;
     bool _instSelected= false;
     bool _creditSelected = false;
     bool _levelSelected = false;
+    int inst_num = 1;
     
     /**
      * Returns the active screen size of this scene.
@@ -117,8 +132,30 @@ public:
     void resetSelectBool() {
         _startSelected=false;
         _levelSelected = false;
-        _instSelected = false;
-        _levelSelected = false;
+    }
+    
+    void hideinstboards(){
+        _instboard1->setVisible(false);
+        _instboard2->setVisible(false);
+        _instboard3->setVisible(false);
+        _instboard4->setVisible(false);
+        _instboard5->setVisible(false);
+    }
+    
+    void deactivateInst(){
+        _leftarr->deactivate();
+        _rightarr->deactivate();
+        _leftarr->setVisible(false);
+        _rightarr->setVisible(false);
+        _instback->setVisible(false);
+        _instback->deactivate();
+        hideinstboards();
+    }
+    
+    void deactivateCredit(){
+        _creditboard->setVisible(false);
+        _creditback->setVisible(false);
+        _creditback->deactivate();
     }
 };
 

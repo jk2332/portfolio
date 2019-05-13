@@ -526,7 +526,7 @@ void GameScene::populate() {
         CULog("adding the buttons to the worldnode");
         layer->setContentSize(dimen);
         layer->doLayout();
-        _levelworldnode->addChild(layer);
+        _levelworldnode->addChild(layer, 100);
     
         _pmainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_pboard_main"));
         _pmainbutton->deactivate();
@@ -619,6 +619,7 @@ void GameScene::displayPause(){
 
 void GameScene::displayVictory(){
     // display right end screen here
+    _levelworldnode->sortZOrder();
     _endscreen_nostar->setVisible(true);
     _vresetbutton->setVisible(true);
     _vresetbutton->activate(90);
@@ -1041,24 +1042,22 @@ void GameScene::update(float dt) {
     }
     
     _level->update(ticks);
+    _world->update(dt);
     
     if (_level->isOver()){
         CULog("display victory screen");
         _pauseButton->deactivate();
         removePauseDisplay();
-        displayVictory();
         _mainSelected =false;
         _resetSelected=false;
         _continueSelected= false;
+        displayVictory();
         _paused = true;
     }
     else {
         _pauseButton->activate(10);
         _pauseButton->setVisible(true);
     }
-    
-    _world->update(dt);
-    
     
 }
 

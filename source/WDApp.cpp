@@ -155,11 +155,11 @@ void WeatherDefenderApp::update(float timestep) {
     else if (!_mainselected && _main.isActive()){
         _main.update(0.01f);
         if (_main.instSelected()){
-            CULog("inst selected from main");
+//            CULog("inst selected from main");
             _main.resetSelectBool();
         }
         else if (_main.creditSelected()){
-            CULog("credit selected from main");
+//            CULog("credit selected from main");
             _main.resetSelectBool();
         }
     }
