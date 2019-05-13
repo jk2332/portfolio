@@ -103,6 +103,7 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _instback->setVisible(true);
     _instback->setListener([=](const std::string& name, bool down) {
         _instSelected = false;
+        inst_num = 1;
     });
     
     _instboard1 = std::dynamic_pointer_cast<Node>(_assets->get<Node>("main_instboard-1"));
@@ -161,6 +162,7 @@ void MainMenu::dispose() {
     if (isPending(_creditback)) _creditback->deactivate();
     if (isPending(_leftarr)) _leftarr->deactivate();
     if (isPending(_rightarr)) _rightarr->deactivate();
+    if (isPending(_instback)) _creditback->deactivate();
     _creditbutton = nullptr;
     _instbutton = nullptr;
     _startbutton = nullptr;
@@ -200,15 +202,30 @@ void MainMenu::update(float progress) {
     _levelbutton->activate(1003);
     
     if (_instSelected) {
+        
         _levelbutton->deactivate();
         _startbutton->deactivate();
         deactivateCredit();
-        _leftarr->setVisible(true);
-        _leftarr->activate(2000);
-        _rightarr->setVisible(true);
-        _rightarr->activate(2001);
         _instback->setVisible(true);
         _instback->activate(2002);
+        
+        if (inst_num == 1){
+            _leftarr->setVisible(false);
+            _leftarr->deactivate();
+        }
+        else {
+            _leftarr->setVisible(true);
+            _leftarr->activate(2000);
+        }
+        
+        if (inst_num == 5){
+            _rightarr->setVisible(false);
+            _rightarr->deactivate();
+        }
+        else {
+            _rightarr->setVisible(true);
+            _rightarr->activate(2001);
+        }
         
         if (inst_num == 1) {
             hideinstboards();

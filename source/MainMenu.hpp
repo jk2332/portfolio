@@ -37,6 +37,7 @@ protected:
     std::shared_ptr<cugl::Button> _instbutton;
     std::shared_ptr<cugl::Button> _creditbutton;
     std::shared_ptr<cugl::Button> _levelbutton;
+    
     long buttoncooldown = 0l;
     long ticks = 01;
     std::shared_ptr<cugl::Node> _creditboard;
