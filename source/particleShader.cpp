@@ -230,19 +230,6 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
         SetVector4f(COLOR_UNIFORM, p.color);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); CULogGLError();
     }
-<<<<<<< HEAD
-    particleTexture.unbind();
-    CULogGLError();
-    glDisableVertexAttribArray(_aPosition);
-    CULogGLError();
-    glDisableVertexAttribArray(_aTexCoords);
-    CULogGLError();
-    glUseProgram(NULL);
-    CULogGLError();
-
-    glDeleteBuffers(1, &EBO);
-    glDeleteBuffers(1, &VBO);
-=======
     
     if (!rainCloud){particleTextureWhite.unbind(); CULogGLError();}
     else{particleTextureDarkGray.unbind(); CULogGLError();}
@@ -252,7 +239,6 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     glDisableVertexAttribArray(_aPosition); CULogGLError();
     glDisableVertexAttribArray(_aTexCoords); CULogGLError();
     glUseProgram(NULL); CULogGLError();
->>>>>>> 1b2ccf02706c055729d55264fdc08b864c22eac0
     // Don't forget to reset to default blending mode
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); CULogGLError();
 }

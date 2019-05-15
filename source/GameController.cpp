@@ -886,17 +886,8 @@ void GameScene::update(float dt) {
     }
 
     //Check win/loss conditions
-<<<<<<< HEAD
     for (auto &plant : _level->getPlants()){
         plant->updateState(ticks);
-=======
-    auto plantNode = _levelworldnode->getChildByName("plantNode");
-    for (auto &plant : _plants){
-       if (ticks % 250 == 0 && ticks > 150) {
-           plant->updateState();
-       }
-//       int st = plant->getState();
->>>>>>> 1b2ccf02706c055729d55264fdc08b864c22eac0
    }
 
     if (ticks % 50 == 0 && ticks > 50) {
