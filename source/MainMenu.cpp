@@ -41,6 +41,9 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     }
     _active=true;
     
+    Vec2 offset((_dimen.width-SCENE_WIDTH)/2.0f,(_dimen.height-SCENE_HEIGHT)/2.0f);
+
+    
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     ticks = 01;
@@ -48,7 +51,9 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     std::shared_ptr<Texture> image = _assets->get<Texture>("main menu background");
     auto bknode = PolygonNode::allocWithTexture(image);
-    bknode->setContentSize(_dimen);
+    bknode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
+    bknode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    bknode->setPosition(offset);
     addChild(bknode);
     
     auto layer = _assets->get<Node>("main");

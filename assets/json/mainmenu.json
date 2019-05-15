@@ -1,7 +1,7 @@
 {
     "textures": {
         "main menu background": {
-            "file":     "/textures/main-menu-background.png"
+            "file":     "/textures/main-menu.png"
         },
         "main_creditbutton": {
             "file":      "/textures/credits.png"

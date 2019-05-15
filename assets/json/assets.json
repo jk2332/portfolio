@@ -41,10 +41,10 @@
             "file":     "textures/tile5.png"
         },
         "background": {
-            "file":     "textures/openbeta-background.png"
+            "file":     "textures/gamescreen.png"
         },
         "bigBackground": {
-            "file":     "textures/big-background.png"
+            "file":     "textures/ipad-background.png"
         },
         "cloudFace": {
             "file":     "textures/cf2.png"
