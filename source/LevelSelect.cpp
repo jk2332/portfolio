@@ -43,12 +43,23 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     }
     _active=true;
     
+    Vec2 offset((dimen.width-SCENE_WIDTH)/2.0f,(dimen.height-SCENE_HEIGHT)/2.0f);
+
+    
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     
-    std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
+    std::shared_ptr<Texture> image = _assets->get<Texture>("bigBackground");
+    auto bigBkNode = PolygonNode::allocWithTexture(image);
+    bigBkNode->setContentSize(dimen);
+    bigBkNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    addChild(bigBkNode);
+    
+    image = _assets->get<Texture>("level select background");
     auto bknode = PolygonNode::allocWithTexture(image);
-    bknode->setContentSize(dimen);
+    bknode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
+    bknode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    bknode->setPosition(offset);
     addChild(bknode);
     
     auto layer = _assets->get<Node>("levelselect");

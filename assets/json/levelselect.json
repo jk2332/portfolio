@@ -1,7 +1,7 @@
 {
     "textures": {
         "level select background": {
-            "file":     "/textures/levelselect-background.png"
+            "file":     "/textures/levelselect_background.png"
         },
         "level0button": {
             "file":      "/textures/cloud-1.png"
