@@ -87,10 +87,14 @@ protected:
 //    std::shared_ptr<cugl::Button> _nextlevelbutton;
 //    std::shared_ptr<cugl::Button> _homebutton;
     int _time;
+    int _bkgd_change;
+
+    std::shared_ptr<cugl::TexturedNode> _super_worldnode;
+    int _curr_bkgd;
 
     Poly2 _poly;
 
-    std::shared_ptr<cugl::ProgressBar>  _bar;
+    std::shared_ptr<cugl::ProgressBar> _bar;
 
     bool _over;
 
@@ -317,7 +321,8 @@ public:
      * @release the previous scene graph node used by this object
      */
     void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::shared_ptr<Board> board,
-                     std::shared_ptr<cugl::ObstacleWorld> world);
+                     std::shared_ptr<cugl::ObstacleWorld> world, std::shared_ptr<cugl::TexturedNode> super_worldnode
+                     );
     
     /**
      * Sets the loaded assets for this game level

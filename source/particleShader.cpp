@@ -59,14 +59,15 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, 
             if(scaleChange){p.lifetime = 0.0f;}
             else{p.lifetime += dt;}
             
+            Vec2 basePosition = cloud_pos + particleScale*p.offset;
+            
             if (p.lifetime <= INIT_TIME){
                 p.jostle = Vec2::ZERO;
                 float fraction = abs(p.lifetime/INIT_TIME);
-                p.position = cloud_pos + fraction*particleScale*p.offset;
+                p.position = basePosition;
                 p.color.w = fraction;
             }
             else {
-                Vec2 basePosition = cloud_pos + particleScale*p.offset;
                 if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
                     (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
                     p.jostle = Vec2::ZERO;
@@ -212,17 +213,17 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     glVertexAttribPointer(_aTexCoords, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     CULogGLError();
     
-    if (!rainCloud){
-        particleTextureWhite.bind(); CULogGLError();
-        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
-        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
-    }
-    
-    else{
+//    if (!rainCloud){
+//        particleTextureWhite.bind(); CULogGLError();
+//        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
+//        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
+//    }
+//
+//    else{
         particleTextureDarkGray.bind(); CULogGLError();
         _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
         glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
-    }
+//    }
     
     for (CloudParticle p : providedPS.pg.particles){
         SetVector2f(OFFSET_UNIFORM, providedPS.particleFactor*p.position);
@@ -231,8 +232,14 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); CULogGLError();
     }
     
-    if (!rainCloud){particleTextureWhite.unbind(); CULogGLError();}
-    else{particleTextureDarkGray.unbind(); CULogGLError();}
+//    if (!rainCloud){
+//    particleTextureWhite.unbind(); CULogGLError();
+    
+//}
+//    else{
+        particleTextureDarkGray.unbind(); CULogGLError();
+    
+//}
     
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);

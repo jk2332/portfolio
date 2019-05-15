@@ -133,12 +133,14 @@ void LevelModel::dispose(){
  */
 
 void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std::shared_ptr<Board> board,
-                             std::shared_ptr<cugl::ObstacleWorld> world) {
+                             std::shared_ptr<cugl::ObstacleWorld> world, std::shared_ptr<cugl::TexturedNode> super_worldnode){
     if (!_root) {
         clearRootNode();
     }
     _over = false;
     _world = world;
+    _super_worldnode = super_worldnode;
+    _curr_bkgd = 1;
 
     _root = node;
     _scale.set(_root->getContentSize().width/_bounds.size.width,
@@ -303,10 +305,12 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
         }
     }
     
-   _time = json->get(TIME_FIELD)->asInt();
-   float w = json->get(WIDTH_FIELD)->asFloat();
-   float h = json->get(HEIGHT_FIELD)->asFloat();
-   _bounds.size.set(w, h);
+    _time = json->get(TIME_FIELD)->asInt();
+    _bkgd_change = (int)_time/33;
+
+    float w = json->get(WIDTH_FIELD)->asFloat();
+    float h = json->get(HEIGHT_FIELD)->asFloat();
+    _bounds.size.set(w, h);
     
     /** Create the physics world */
 //    _world = ObstacleWorld::alloc(getBounds(),getGravity());
@@ -628,7 +632,12 @@ Color4 LevelModel::parseColor(std::string name) {
 }
 
 void LevelModel::update(long ticks) {
-//    _ticks = ticks;
+    if (ticks % _bkgd_change == 0) {
+        if (_curr_bkgd < 33) {
+            _curr_bkgd += 1;
+        }
+        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
+    }
     
     // Find which plants are being attacked
     shared_ptr<Node> thisNode;

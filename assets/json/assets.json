@@ -41,10 +41,10 @@
             "file":     "textures/tile5.png"
         },
         "background": {
-            "file":     "textures/openbeta-background.png"
+            "file":     "textures/gamescreen.png"
         },
         "bigBackground": {
-            "file":     "textures/big-background.png"
+            "file":     "textures/ipad-background.png"
         },
         "cloudFace": {
             "file":     "textures/cf2.png"
@@ -165,6 +165,105 @@
         },
         "victoryboard-3" : {
             "file":     "textures/Win-Screen-4.png"
+        },
+        "background1" : {
+            "file":     "textures/background1.png"
+        },
+        "background2" : {
+            "file":     "textures/background2.png"
+        },
+        "background3" : {
+            "file":     "textures/background3.png"
+        },
+        "background4" : {
+            "file":     "textures/background4.png"
+        },
+        "background5" : {
+            "file":     "textures/background5.png"
+        },
+        "background6" : {
+            "file":     "textures/background6.png"
+        },
+        "background7" : {
+            "file":     "textures/background7.png"
+        },
+        "background8" : {
+            "file":     "textures/background8.png"
+        },
+        "background9" : {
+            "file":     "textures/background9.png"
+        },
+        "background10" : {
+            "file":     "textures/background10.png"
+        },
+        "background11" : {
+            "file":     "textures/background11.png"
+        },
+        "background12" : {
+            "file":     "textures/background12.png"
+        },
+        "background13" : {
+            "file":     "textures/background13.png"
+        },
+        "background14" : {
+            "file":     "textures/background14.png"
+        },
+        "background15" : {
+            "file":     "textures/background15.png"
+        },
+        "background16" : {
+            "file":     "textures/background16.png"
+        },
+        "background17" : {
+            "file":     "textures/background17.png"
+        },
+        "background18" : {
+            "file":     "textures/background18.png"
+        },
+        "background19" : {
+            "file":     "textures/background19.png"
+        },
+        "background20" : {
+            "file":     "textures/background20.png"
+        },
+        "background21" : {
+            "file":     "textures/background21.png"
+        },
+        "background22" : {
+            "file":     "textures/background22.png"
+        },
+        "background23" : {
+            "file":     "textures/background23.png"
+        },
+        "background24" : {
+            "file":     "textures/background24.png"
+        },
+        "background25" : {
+            "file":     "textures/background25.png"
+        },
+        "background26" : {
+            "file":     "textures/background26.png"
+        },
+        "background27" : {
+            "file":     "textures/background27.png"
+        },
+        "background28" : {
+            "file":     "textures/background28.png"
+        },
+        "background29" : {
+            "file":     "textures/background29.png"
+        },
+        "background30" : {
+            "file":     "textures/background30.png"
+        },
+        "background31" : {
+            "file":     "textures/background31.png"
+        },
+        "background32" : {
+            "file":     "textures/background32.png"
+        },
+        "background33" : {
+            "file":     "textures/background33.png"
         }
 	},
     "sounds": {
