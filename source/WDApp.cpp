@@ -110,7 +110,7 @@ void WeatherDefenderApp::onShutdown() {
  * the background.
  */
 void WeatherDefenderApp::onSuspend() {
-    if (_loaded) {
+    if (_gameplay.isActive() && _loaded) {
         CULog("suspend being called");
         _paused = true;
     }
