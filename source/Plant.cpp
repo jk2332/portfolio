@@ -23,6 +23,11 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     _shadeProb = shadeProb;
     _drawscale = drawscale;
     _maxStage = 4;
+    _defaultHealth = 500;
+    
+    _shadeNeeded = 100;
+    _rainNeeded = 100;
+    _health = _defaultHealth;
 
     _stage = 1;
     _shaded = false;
@@ -32,6 +37,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     _active = false;
 
     _shadeCounter = 0;
+    _rainCounter = 0;
     
     // Plant animations
     _actions = ActionManager::alloc();
@@ -78,9 +84,9 @@ void Plant::setRained(bool f) {
     _rained = f && (_state == needRain);
 }
 
-void Plant::updateState(){
-    _progress += 2;
-    if (_state == dead) { 
+void Plant::updateState(int ticks){
+    CULog("health: %d", _health);
+    if (_state == dead) {
         changeSign();
         return;
     } else {
@@ -91,33 +97,27 @@ void Plant::updateState(){
             if (_shaded){
                 incHealth();
                 _shadeCounter += 1;
-                if (_health >= 0 && _shadeCounter == 2){
+                if (_health >= 0 && _shadeCounter == _shadeNeeded){
                     setState(noNeed);
                     _shadeCounter = 0;
-                    _progress += 2;
                 }
             } else{
                 decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
             }
         }
         else if (_state == needRain){
             if (_rained){
                 incHealth();
-                if (_health >= 0){
+                _rainCounter += 1;
+                if (_health >= 0 && _rainCounter == _rainNeeded){
+                    _rainCounter = 0;
                     setState(noNeed);
-                    _progress += 2;
                 }
             } else{
                 decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
             }
         }
-        else if (_state == noNeed){
+        else if (_state == noNeed && (ticks % 250 == 0)){
             if (_stage < _maxStage){
                 int statusChance = rand() %  100 + 1;
                 if (statusChance < _rainProb) {
@@ -126,22 +126,11 @@ void Plant::updateState(){
                 } else if (statusChance < _rainProb + _shadeProb) {
                     _state = needShade;
                     _shadeProb /= 1.5;
-                } else {
-                    if (!_shaded){
-                        _progress += 1;
-                    }
                 }
             }
-        } else if (_state == needSun) {
+        } else if (_state == noNeed) {
             if (!_shaded){
-                incHealth();
-                if (_health >= 0){setState(noNeed);}
-            }
-            else{
-                decHealth();
-                if (_progress >= 1) {
-                    _progress -= 1;
-                }
+                _health += 2;
             }
         }
     }
@@ -151,9 +140,10 @@ void Plant::updateState(){
     _shaded = false;
     _rained = false;
 
-    if(_health <= -healthLimit){
+    if(_health <= 0){
         setState(dead);
-    } else if (_progress >= 3) {
+    } else if (_health >= 1000) {
+        _health = _defaultHealth;
         upgradeSprite();
     }
 }
@@ -178,7 +168,6 @@ void Plant::upgradeSprite() {
         _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
         _node->setFrame(0);
         _active = false;
-        _progress = 0;
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
@@ -193,7 +182,6 @@ void Plant::update(float dt) {
 
 void Plant::setState(int s){
     _state = s;
-    _health = 0;
 }
 
 void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string name, float ds){

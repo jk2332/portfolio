@@ -151,7 +151,7 @@ void Cloud::update(float delta) {
     _actions2->update(delta);
     if (_isRaining) {
         _actions->update(delta);
-        setCloudSizeScale(_cloudSizeScale*sqrt(9.98/10.0f));
+        setCloudSizeScale(_cloudSizeScale*sqrt(9.985/10.0f));
         _actions->activate("current", _rain, _rain_node);
     }
 }
@@ -163,6 +163,7 @@ void Cloud::setLightning() {
 
 
 void Cloud::toggleRain() {
+    CULog("is rain cloud: %i", _isRainCloud);
     setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
         //  CULog("undo rain");

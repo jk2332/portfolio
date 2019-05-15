@@ -36,6 +36,10 @@ protected:
 //    std::shared_ptr<cugl::Texture> _currTexture;
     int _stage;
     int _maxStage;
+    int _defaultHealth;
+
+    int _shadeNeeded;
+    int _rainNeeded;
 
     int _state;
     int _type;
@@ -47,6 +51,7 @@ protected:
     
 
     int _shadeCounter;
+    int _rainCounter;
     std::shared_ptr<AnimationNode> _node;
     std::shared_ptr<TexturedNode> _signNode;
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -127,10 +132,10 @@ public:
     void setHealth(int h) {_health = h;}
     //void setTexture(std::shared_ptr<cugl::Texture> texture) {_texture = texture;}
     void decHealth() {
-        if (_health > -healthLimit){_health -= 1;}
+        _health -= 1;
     }
     void incHealth() {
-        if (_health < healthLimit){_health += 2;}
+        _health += 3;
     }
 
     void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
@@ -143,11 +148,12 @@ public:
     int getY() {return _y;};
     int getStage() {return _stage;};
     void setStage(int s){_stage = s;}
+    int getMaxStage() {return _maxStage;}
 
     void setPlantType(std::string s) { _ptype = s; };
     std::string getPlantType() {return _ptype;};
 
-    void updateState();
+    void updateState(int ticks);
     void setState(int s);
     int getState() {return _state;}
 

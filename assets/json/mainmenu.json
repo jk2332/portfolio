@@ -154,7 +154,7 @@
                     "data"   : {
                         "texture"  : "main_creditboard",
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.3
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -163,17 +163,27 @@
                     "children" : {
                         "back"  : {
                             "type"   : "Button",
+                            "format"    : {
+                                "type" : "Anchored"
+                            },
                             "data"   : {
                                 "upnode"   : "up",
                                 "visible"  : false,
                                 "pushsize" : true,
-                                "scale"    : 0.45
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  -0.43,
+                                "y_offset" : 0.4
                             },
                             "children" : {
                                 "up"       : {
                                     "type"   : "Image",
                                     "data"   : {
-                                        "texture"  : "main_goback"
+                                        "texture"  : "pause_mainbutton"
                                     }
                                 }
                             }
@@ -189,7 +199,7 @@
                         "texture"  : "instb-2",
                         "visible"  : false,
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.35
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -205,7 +215,7 @@
                         "texture"  : "instb-3",
                         "visible"  : false,
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.35
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -221,7 +231,7 @@
                         "texture"  : "instb-4",
                         "visible"  : false,
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.35
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -237,7 +247,7 @@
                         "texture"  : "instb-5",
                         "visible"  : false,
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.35
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -253,7 +263,7 @@
                         "texture"  : "instb-1",
                         "visible"  : false,
                         "anchor"   : [0.5,0.5],
-                        "scale" : 0.35
+                        "scale" : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
@@ -275,7 +285,7 @@
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset" :  -0.23,
+                        "x_offset" :  -0.3,
                         "y_offset" : 0
                     },
                     "children" : {
@@ -302,7 +312,7 @@
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset" :  0.32,
+                        "x_offset" :  0.41,
                         "y_offset" : 0
                     },
                     "children" : {
@@ -324,19 +334,19 @@
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.2
+                        "scale"    : 0.45
                     },
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "x_offset" :  -0.25,
-                        "y_offset" : -0.27
+                        "x_offset" :  -0.42,
+                        "y_offset" : 0.4
                     },
                     "children" : {
                         "up"       : {
                             "type"   : "Image",
                             "data"   : {
-                                "texture"  : "main_goback"
+                                "texture"  : "pause_mainbutton"
                             }
                         }
                     }

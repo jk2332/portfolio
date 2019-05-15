@@ -13,7 +13,7 @@
 using namespace std;
 
 map<string, int> pestHealth = {{"snail", 5}, {"raccoon", 15}};
-map<string, float> pestSpeed = {{"snail", 0.35f}, {"raccoon", 1.0f}};
+map<string, float> pestSpeed = {{"snail", 0.45f}, {"raccoon", 1.0f}};
 map<string, float> pestXOffset = {{"snail", 1.0f}, {"raccoon", 2.2f}};
 
 
@@ -113,7 +113,6 @@ void Pest::update(float dt) {
 
 
 void Pest::setScared(bool b) {
-    CULog("set scared");
     if (_state == EATING) {
         _state = RUNNING;
     }

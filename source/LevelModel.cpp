@@ -652,6 +652,12 @@ void LevelModel::update(long ticks) {
                         p->setAttacked(true);
                      }
                 }
+            } else {
+                for (auto p : _plants){
+                    if (p != nullptr && p->getX() == i && p->getY() == j){
+                        p->setAttacked(false);
+                     }
+                }
             }
         }
     }
@@ -685,7 +691,7 @@ void LevelModel::update(long ticks) {
     bool plantsDead = true;
     int alivePlants = 0;
     for (auto &plant : _plants) {
-        plantsDead = plantsDead && plant->getState() == dead;
+        plantsDead = plantsDead && (plant->getState() == dead);
     }
     
     if (plantsDead) {
