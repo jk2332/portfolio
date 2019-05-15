@@ -198,6 +198,9 @@ void WeatherDefenderApp::update(float timestep) {
     }
     
     else if (_gameplay.isActive() && _paused){
+        if (!_gameplay.paused()){
+            _gameplay.displayPause();
+        }
         if (_gameplay.continueSelected()){
             CULog("continue has been selected");
             _gameplay.removePauseDisplay();
