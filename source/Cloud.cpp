@@ -62,7 +62,7 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
     _actions = ActionManager::alloc();
     _actions2 = ActionManager::alloc();
     _rain = Animate::alloc(1, 18, 1.0f, 1);
-    _lightning = Animate::alloc(0, 11, 1.0f, 1);
+    _lightning = Animate::alloc(0, 11, .5f, 1);
     return true;
 }
 

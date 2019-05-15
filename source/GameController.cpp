@@ -184,7 +184,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     _assets = assets;
-    
+    _curr_bkgd = 1;
 
     // Start up the input handler
     _input.init();
@@ -208,8 +208,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _max_cloud_id = _clouds.size();
     
     // Create the scene graph
-    std::shared_ptr<Texture> image = _assets->get<Texture>("background");
-//    _worldnode = PolygonNode::alloc();
+    std::shared_ptr<Texture> image = _assets->get<Texture>("background" + std::to_string(_curr_bkgd));
     _worldnode = PolygonNode::allocWithTexture(image);
     _worldnode->setName("world");
     _worldnode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
@@ -242,7 +241,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen, _board, _world); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen, _board, _world, _worldnode); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
 
     populate();
@@ -255,8 +254,6 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     return true;
 }
-
-
 
 /**
  * Disposes of all (non-static) resources allocated to this mode.
@@ -809,6 +806,7 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
+
     
     _input.update(dt);
     ticks++;

@@ -26,13 +26,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167683"
+            timestampString = "579628399.638188"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "351"
             endingLineNumber = "351"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel:: preload(const std::shared_ptr&lt;cugl::JsonValue&gt;&amp; json)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -42,13 +42,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167744"
+            timestampString = "579628399.63853"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "349"
             endingLineNumber = "349"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel:: preload(const std::shared_ptr&lt;cugl::JsonValue&gt;&amp; json)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -58,12 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/Plant.cpp"
-            timestampString = "578448429.156955"
+            timestampString = "579137009.026889"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "Plant::updateState()"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "Plant::updateState(int ticks)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -74,12 +74,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167802"
+            timestampString = "579628399.6387579"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "144"
             endingLineNumber = "144"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -90,12 +90,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167842"
+            timestampString = "579628399.638962"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
             endingLineNumber = "145"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -106,13 +106,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.1678801"
+            timestampString = "579628399.639158"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "238"
             endingLineNumber = "238"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -122,12 +122,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167917"
+            timestampString = "579628399.6393549"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "343"
             endingLineNumber = "343"
-            landmarkName = "LevelModel::getPlantScore()"
+            landmarkName = "LevelModel:: preload(const std::shared_ptr&lt;cugl::JsonValue&gt;&amp; json)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/Plant.cpp"
-            timestampString = "578448429.157092"
+            timestampString = "579137009.026983"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
             landmarkName = "Plant::changeSign()"
             landmarkType = "7">
          </BreakpointContent>
@@ -154,12 +154,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.167968"
+            timestampString = "579628399.639565"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "142"
             endingLineNumber = "142"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -170,12 +170,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.168007"
+            timestampString = "579628399.639764"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "138"
             endingLineNumber = "138"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -186,12 +186,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.168043"
+            timestampString = "579628399.6399601"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "146"
             endingLineNumber = "146"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -266,12 +266,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/Plant.cpp"
-            timestampString = "578448429.1572061"
+            timestampString = "579137009.027086"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "75"
             endingLineNumber = "75"
-            landmarkName = "Plant::updateState()"
+            landmarkName = "Plant::dispose()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -282,7 +282,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/WDApp.cpp"
-            timestampString = "578103229.751179"
+            timestampString = "579628399.640205"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "191"
@@ -314,7 +314,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/WDApp.cpp"
-            timestampString = "578103229.7512881"
+            timestampString = "579628399.640258"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "196"
@@ -394,7 +394,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169342"
+            timestampString = "579628399.640329"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "482"
@@ -410,7 +410,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169387"
+            timestampString = "579628399.640536"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "481"
@@ -442,12 +442,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169441"
+            timestampString = "579628399.640748"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "157"
             endingLineNumber = "157"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -458,7 +458,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169482"
+            timestampString = "579628399.640947"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "520"
@@ -474,13 +474,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.1695189"
+            timestampString = "579628399.6411459"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "494"
             endingLineNumber = "494"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel::loadPlant(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -490,11 +490,59 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169557"
+            timestampString = "579628399.641345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "504"
             endingLineNumber = "504"
+            landmarkName = "LevelModel::loadPlant(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/LevelModel.cpp"
+            timestampString = "579628399.641616"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world, std::shared_ptr&lt;cugl::TexturedNode&gt; super_worldnode)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/Plant.cpp"
+            timestampString = "579137009.027245"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "Plant::dispose()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/LevelModel.cpp"
+            timestampString = "579628399.641905"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "548"
+            endingLineNumber = "548"
             landmarkName = "LevelModel::loadPest(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
             landmarkType = "7">
          </BreakpointContent>
@@ -506,61 +554,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169594"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
-            landmarkName = "LevelModel::setRootNode(const std::shared_ptr&lt;Node&gt;&amp; node, Size dimen, std::shared_ptr&lt;Board&gt; board, std::shared_ptr&lt;cugl::ObstacleWorld&gt; world)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../source/Plant.cpp"
-            timestampString = "578448429.1573631"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
-            landmarkName = "Plant::updateState()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169644"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "548"
-            endingLineNumber = "548"
-            landmarkName = "LevelModel::loadCrate(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169683"
+            timestampString = "579628399.64221"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "543"
             endingLineNumber = "543"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel::loadPest(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -570,13 +570,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.1697201"
+            timestampString = "579628399.642485"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "558"
             endingLineNumber = "558"
-            landmarkName = "LevelModel::reset()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -602,13 +602,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169767"
+            timestampString = "579628399.6427799"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "545"
             endingLineNumber = "545"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel::loadPest(const std::shared_ptr&lt;JsonValue&gt;&amp; json)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -634,13 +634,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169816"
+            timestampString = "579628399.64308"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "596"
             endingLineNumber = "596"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "LevelModel::reload(bool b)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -650,13 +650,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579131410.169855"
+            timestampString = "579628399.643364"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "610"
             endingLineNumber = "610"
-            landmarkName = "LevelModel::parseColor(std::string name)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
