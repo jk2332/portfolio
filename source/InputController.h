@@ -44,7 +44,7 @@ private:
     /** Whether the down arrow key is down */
     bool  _keyDown;
     /** Whether the reset key is down */
-    bool  _keyReset;
+//    bool  _keyReset;
     /** Whether the debug key is down */
     bool  _keyDebug;
     /** Whether the exit key is down */
@@ -106,7 +106,7 @@ protected:
     /** Whether the reset action was chosen. */
     bool _splitPressed;
     bool _joinPressed;
-    bool _resetPressed;
+//    bool _resetPressed;
     bool _pausePressed;
     /** Whether the debug toggle was chosen. */
     bool _debugPressed;
@@ -222,7 +222,7 @@ public:
      *
      * @return true if the reset button was pressed.
      */
-    bool didReset() const { return _resetPressed; }
+//    bool didReset() const { return _resetPressed; }
     bool didPause() const {return _pausePressed;}
     bool didSplit()const {return _splitPressed;}
     

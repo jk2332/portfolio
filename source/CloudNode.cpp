@@ -89,7 +89,7 @@ void CloudNode::draw(const std::shared_ptr<SpriteBatch>& batch, const Mat4& tran
     if (!_rendered) {
         generateRenderData();
     }
-
+    _rendered = true;
     batch->end();
     //my custom code
     CULogGLError();

@@ -71,6 +71,7 @@ protected:
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _clouds;
     std::vector<std::shared_ptr<Plant>> _plants;
+    int num_plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     bool _alreadyLoaded = false;
 //    std::shared_ptr<Board> _board;
@@ -81,6 +82,10 @@ protected:
     std::vector<int> _loaded;
 
     std::shared_ptr<cugl::Label> _winnode;
+    std::shared_ptr<cugl::Node> _victoryboard;
+//    std::shared_ptr<cugl::Button> _restartbutton;
+//    std::shared_ptr<cugl::Button> _nextlevelbutton;
+//    std::shared_ptr<cugl::Button> _homebutton;
     int _time;
 
     Poly2 _poly;
@@ -88,7 +93,7 @@ protected:
     std::shared_ptr<cugl::ProgressBar>  _bar;
 
     bool _over;
-    
+
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
     
@@ -368,7 +373,8 @@ public:
      * references to other assets, then these should be disconnected earlier.
      */
     void unload();
-    bool reset();
+    bool reload(bool b);
+//    void reset();
     
     
     //#pragma mark -
@@ -391,6 +397,12 @@ public:
     void dispose();
     std::vector<std::tuple<Vec2, float>> getNewClouds() { return _newClouds; };
     void setNewClouds(std::vector<std::tuple<Vec2, float>> clouds) { _newClouds = clouds; };
+    bool isOver(){
+        return _over;
+    }
+    
+    void resetOver(){_over = false;}
+    
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */

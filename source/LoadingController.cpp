@@ -52,6 +52,7 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _assets->loadDirectory("json/loading.json");
     _assets->loadDirectory("json/levelselect.json");
     _assets->loadDirectory("json/pausemenu.json");
+    _assets->loadDirectory("json/mainmenu.json");
     
     _assets->loadAsync<LevelModel>("level1","json/level1.json",nullptr);
     _assets->loadAsync<LevelModel>("level2","json/level2.json",nullptr);

@@ -1,97 +1,184 @@
 {
     "textures": {
-        "lsbutton": {
-            "file":      "/textures/SelectedLevel.png"
+        "pause_continuebutton": {
+            "file":      "/textures/resume.png"
         },
-        "quitbutton": {
-            "file":      "/textures/quit.png"
+        "pause_mainbutton": {
+            "file":      "/textures/home.png"
+        },
+        "pause_restartbutton": {
+            "file":      "/textures/restart.png"
+        },
+        "pause_board": {
+            "file":      "/textures/Pause_2.png"
+        },
+        "victoryboard-0" : {
+            "file":     "textures/Win-Screen-1.png"
         }
     },
     "scenes" : {
-        "pausemenu" : {
+        "pause" : {
             "type"      : "Node",
             "format"    : {
                 "type" : "Anchored"
             },
             "children" : {
-                "ls"  : {
-                    "type"   : "Button",
-                    "data"   : {
-                        "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
-                        "visible"  : false,
-                        "pushsize" : true,
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 0.8
+                "vicboard"       : {
+                    "type"   : "Image",
+                    "format"    : {
+                        "type" : "Anchored"
                     },
-                    "children" : {
-                        "up"       : {
-                            "type"   : "Image",
-                            "data"   : {
-                                "texture"  : "lsbutton"
-                            }
-                        }
+                    "data"   : {
+                        "texture"  : "victoryboard-0",
+                        "anchor"   : [0.5,0.5],
+                        "scale" : 0.5
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" :  -0.4,
-                        "y_offset" : -0.08
+                        "y_anchor" : "middle"
+                    },
+                    "children" : {
+                        "main"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_mainbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  -0.1,
+                                "y_offset" : -0.33
+                            }
+                        },
+                        "restart"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_restartbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  0,
+                                "y_offset" : -0.33
+                            }
+                        }
                     }
                 },
-                "quit"  : {
-                    "type"   : "Button",
-                    "data"   : {
-                        "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
-                        "visible"  : false,
-                        "pushsize" : true,
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 0.8
+                "pboard"       : {
+                    "type"   : "Image",
+                    "format"    : {
+                        "type" : "Anchored"
                     },
-                    "children" : {
-                        "up"       : {
-                            "type"   : "Image",
-                            "data"   : {
-                                "texture"  : "quitbutton"
-                            }
-                        }
+                    "data"   : {
+                        "texture"  : "pause_board",
+                        "anchor"   : [0.5,0.5],
+                        "scale" : 0.7
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" :  -0.22,
-                        "y_offset" : -0.13
-                    }
-                },
-                "continue"  : {
-                    "type"   : "Button",
-                    "data"   : {
-                        "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
-                        "visible"  : false,
-                        "pushsize" : true,
-                        "anchor"   : [0.5,0.5],
-                        "scale"    : 0.8
+                        "y_anchor" : "middle"
                     },
                     "children" : {
-                        "up"       : {
-                            "type"   : "Image",
+                        "continue"  : {
+                            "type"   : "Button",
                             "data"   : {
-                                "texture"  : "play"
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_continuebutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  -0.3,
+                                "y_offset" : 0
+                            }
+                        },
+                        "main"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_mainbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  0,
+                                "y_offset" : 0
+                            }
+                        },
+                        "restart"  : {
+                            "type"   : "Button",
+                            "data"   : {
+                                "upnode"   : "up",
+                                "visible"  : false,
+                                "pushsize" : true,
+                                "anchor"   : [0.5,0.5],
+                                "scale"    : 0.9
+                            },
+                            "children" : {
+                                "up"       : {
+                                    "type"   : "Image",
+                                    "data"   : {
+                                        "texture"  : "pause_restartbutton"
+                                    }
+                                }
+                            },
+                            "layout" : {
+                                "x_anchor" : "center",
+                                "y_anchor" : "middle",
+                                "x_offset" :  0.3,
+                                "y_offset" : 0
                             }
                         }
-                    },
-                    "layout" : {
-                        "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" :  -0.03,
-                        "y_offset" : -0.22
                     }
                 }
                 
             }
-            
         }
     }
 }

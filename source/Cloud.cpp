@@ -73,7 +73,6 @@ bool Cloud::init(Poly2 p, Vec2 pos) {
  * disposed, a Ragdoll may not be used until it is initialized again.
  */
 void Cloud::dispose() {
-    CULog("cloud disposed");
     _texture = nullptr;
     _cloudNode = nullptr;
     _shadowNode = nullptr;
@@ -133,7 +132,7 @@ void Cloud::update(float delta) {
     if (_cloudNode != nullptr) {
         _cloudNode->setPosition(_drawscale*(getPosition() + Vec2(getWidth()/2.0f, getHeight()/2.0f)));
         _cloudNode->setAngle(getAngle());
-        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale, _isRaining);
+        _cloudNode->ps.update(getPosition()*_drawscale, delta, _cloudSizeScale, _isRaining, _isRainCloud);
         shared_ptr<Node> faceSprite = _cloudNode->getChild(0);
         _shadowNode->setContentSize(_shadowNode->getTexture()->getSize()*_cloudSizeScale);
         _shadowNode->setPosition(faceSprite->nodeToWorldCoords(faceSprite->getPosition()
@@ -164,6 +163,7 @@ void Cloud::setLightning() {
 
 
 void Cloud::toggleRain() {
+    CULog("is rain cloud: %i", _isRainCloud);
     setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
         //  CULog("undo rain");
@@ -264,7 +264,7 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
 }
 
 void Cloud::setCloudSizeScale(float s) {
-     if (s >= 1) {
+    if (s >= 1) {
         _isRainCloud = true;
     }
     else {

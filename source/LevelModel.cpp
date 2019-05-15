@@ -82,6 +82,8 @@ void LevelModel::clearRootNode() {
 
 void LevelModel::dispose(){
     CULog("level being disposed");
+    _worldnode->removeAllChildren();
+    _debugnode->removeAllChildren();
     _worldnode = nullptr;
     _debugnode = nullptr;
     for (auto &c : _clouds){
@@ -110,6 +112,7 @@ void LevelModel::dispose(){
     _world = nullptr;
     _newClouds.clear();
     _winnode = nullptr;
+    _victoryboard = nullptr;
     _bar = nullptr;
     _loaded.clear();
     _assets = nullptr;
@@ -189,12 +192,19 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
 //    _worldnode->addChildWithName(rows.at(1), "pestNodeMiddle", Z_PEST_MIDDLE);
 //    _worldnode->addChildWithName(rows.at(0), "pestNodeFront", Z_PEST_FRONT);
     
-    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
-    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
-    _winnode->setPosition(dimen/2.0f);
-    _winnode->setForeground(STATIC_COLOR);
-    _winnode->setVisible(false);
-    _worldnode->addChild(_winnode, Z_UI);
+//    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
+//    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
+//    _winnode->setPosition(dimen/2.0f);
+//    _winnode->setForeground(STATIC_COLOR);
+//    _winnode->setVisible(false);
+//    _worldnode->addChild(_winnode, Z_UI);
+    
+    _victoryboard = Node::alloc();
+    _victoryboard->setContentSize(Size(20, 16)*_scale);
+    _victoryboard->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
+    _victoryboard->setVisible(false);
+    _worldnode->addChild(_victoryboard);
+    
     
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
@@ -486,7 +496,8 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     } else {
         plant = nullptr;
     }
-
+    
+    num_plants = _plants.size();
     return success;
 }
 
@@ -547,11 +558,10 @@ bool LevelModel::loadCrate(const std::shared_ptr<JsonValue>& json) {
     return true;
 }
 
-bool LevelModel::reset(){
-    if (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0) return false;
+bool LevelModel::reload(bool b){
+    if (!b && (_clouds.size() != 0 || _plants.size() != 0 || _pests.size() != 0)) return false;
     CULog("level reset called");
 
-    CULog("resetting");
     if (_cloudLayer != nullptr) {
         // Convert the object to an array so we can see keys and values
         int csize = (int)_cloudLayer->size();
@@ -588,6 +598,7 @@ bool LevelModel::reset(){
     
     return true;
 }
+
 
 /**
  * Converts the string to a color
@@ -673,34 +684,35 @@ void LevelModel::update(long ticks) {
         CULog("added cloud from level");
         _loaded.push_back(ii);
     }
-
-    if (_over) {
-        return;
-    }
+    
+    float progress = (float)ticks/(float)_time;
+    _bar->setProgress(progress);
 
     bool plantsDead = true;
+    int alivePlants = 0;
     for (auto &plant : _plants) {
-        plantsDead = plantsDead && plant->getState() == dead;
+        plantsDead = plantsDead && (plant->getState() == dead);
     }
     
     if (plantsDead) {
         CULog("All plants are dead");
         _over = true;
-        _winnode->setText("You Lost" + std::to_string(getPlantScore()));
+//        _winnode->setText("You Lost" + std::to_string(getPlantScore()));
 //        _winnode->setVisible(true);
     }
 
     if (ticks >= _time) {
         CULog("tick over time");
-        _winnode->setText("Score: " + std::to_string(getPlantScore()));
+//        _winnode->setText("Score: " + std::to_string(getPlantScore()));
 //        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
         // return;
     }
     
-    float progress = (float)ticks/(float)_time;
-    _bar->setProgress(progress);
+//    if (ticks % 100 == 0) _over=true;
+    if (_over) return;
+    
 }
 
 void LevelModel::addObstacle(const std::shared_ptr<cugl::Node> worldNode, const std::shared_ptr<cugl::Obstacle>& obj, const std::shared_ptr<cugl::Node>& node, int zOrder) {

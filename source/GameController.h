@@ -55,6 +55,7 @@ class GameScene : public cugl::Scene {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    std::string _levelId;
 
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -63,16 +64,36 @@ protected:
     RagdollInput _input;
     std::vector<std::shared_ptr<Plant>> _plants;
     std::shared_ptr<Board> _board;
+    
+    std::shared_ptr<Node> _endscreen_nostar;
     std::shared_ptr<cugl::Button> _pauseButton;
+    std::shared_ptr<cugl::Button> _pmainbutton;
+    std::shared_ptr<cugl::Button> _presetbutton;
+    std::shared_ptr<cugl::Button> _continuebutton;
+    std::shared_ptr<cugl::Button> _vresetbutton;
+    std::shared_ptr<cugl::Button> _vmainbutton;
+    std::shared_ptr<Node> _pauseboard;
+    bool _paused;
+    bool _mainSelected;
+    bool _resetSelected;
+    bool _continueSelected;
+    
+    
+    std::shared_ptr<ParticleNode> _rainNode;
+    std::shared_ptr<cugl::FreeList<Particle>> _memory;
+    std::set<Particle*> _particles;
     std::shared_ptr<LevelModel> _level;
     cugl::Size dimen;
     Vec3 dimenWithIndicator;
-    bool _paused;
+    std::vector<Particle*> _pQ;
+    std::vector<Particle*> _pD;
+
     int _max_cloud_id = 0;
 
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::Node> _worldnode;
+    std::shared_ptr<cugl::Node> _backgroundNode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
@@ -171,6 +192,7 @@ public:
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose();
+    
 
     /**
      * Initializes the controller contents, and starts the game
@@ -319,6 +341,59 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
+    bool paused(){return _paused;}
+    bool mainSelected() {return _mainSelected;}
+    bool resetSelected(){return _resetSelected;}
+    bool continueSelected() {return _continueSelected;}
+    
+    void resetPause(){_paused = false;}
+    
+    void resetPauseBool(){
+        _mainSelected =false;
+        _resetSelected=false;
+        _continueSelected=false;
+        _paused = false;
+        resetOver();
+    }
+    
+    void resetOver(){
+        if (_level != nullptr) _level->resetOver();
+    }
+    
+    void removePauseDisplay() {
+        if (_pmainbutton != nullptr){
+            _pmainbutton->deactivate();
+            _pmainbutton->setVisible(false);
+        }
+        if (_continuebutton != nullptr){
+            _continuebutton->deactivate();
+            _continuebutton->setVisible(false);
+        }
+        if (_presetbutton != nullptr){
+            _presetbutton->deactivate();
+            _presetbutton->setVisible(false);
+        }
+        if (_pauseboard) _pauseboard->setVisible(false);
+    }
+    
+    void removeVictoryDisplay(){
+        if (_vmainbutton != nullptr){
+            _vmainbutton->deactivate();
+            _vmainbutton->setVisible(false);
+        }
+        if (_vresetbutton != nullptr){
+            _vresetbutton->deactivate();
+            _vresetbutton->setVisible(false);
+        }
+        if (_endscreen_nostar) _endscreen_nostar->setVisible(false);
+    }
+    
+    void displayPause();
+    void displayVictory();
+    
+    std::string getLevelId(){
+        return _levelId;
+    }
 
 };
 
