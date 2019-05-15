@@ -59,14 +59,15 @@ void ParticleGenerator::Update(GLfloat dt, Vec2 cloud_pos, float particleScale, 
             if(scaleChange){p.lifetime = 0.0f;}
             else{p.lifetime += dt;}
             
+            Vec2 basePosition = cloud_pos + particleScale*p.offset;
+            
             if (p.lifetime <= INIT_TIME){
                 p.jostle = Vec2::ZERO;
                 float fraction = abs(p.lifetime/INIT_TIME);
-                p.position = cloud_pos + fraction*particleScale*p.offset;
+                p.position = basePosition;
                 p.color.w = fraction;
             }
             else {
-                Vec2 basePosition = cloud_pos + particleScale*p.offset;
                 if ((p.position.x > basePosition.x + maxJostle || p.position.y > basePosition.y + maxJostle) ||
                     (p.position.x < basePosition.x - maxJostle || p.position.y < basePosition.y - maxJostle)){
                     p.jostle = Vec2::ZERO;

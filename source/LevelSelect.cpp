@@ -49,7 +49,13 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // IMMEDIATELY load the splash screen assets
     _assets = assets;
     
-    std::shared_ptr<Texture> image = _assets->get<Texture>("level select background");
+    std::shared_ptr<Texture> image = _assets->get<Texture>("bigBackground");
+    auto bigBkNode = PolygonNode::allocWithTexture(image);
+    bigBkNode->setContentSize(dimen);
+    bigBkNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    addChild(bigBkNode);
+    
+    image = _assets->get<Texture>("level select background");
     auto bknode = PolygonNode::allocWithTexture(image);
     bknode->setContentSize(SCENE_WIDTH, SCENE_HEIGHT);
     bknode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
