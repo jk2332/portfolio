@@ -685,7 +685,7 @@ void LevelModel::update(long ticks) {
     bool plantsDead = true;
     int alivePlants = 0;
     for (auto &plant : _plants) {
-        plantsDead = plantsDead && plant->getState() == dead;
+        plantsDead = plantsDead && (plant->getState() == dead || plant->getStage() == plant->getMaxStage());
     }
     
     if (plantsDead) {

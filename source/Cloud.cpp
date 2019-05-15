@@ -163,6 +163,7 @@ void Cloud::setLightning() {
 
 
 void Cloud::toggleRain() {
+    CULog("is rain cloud: %i", _isRainCloud);
     setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
         //  CULog("undo rain");
