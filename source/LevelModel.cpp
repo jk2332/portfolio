@@ -641,6 +641,12 @@ void LevelModel::update(long ticks) {
                         p->setAttacked(true);
                      }
                 }
+            } else {
+                for (auto p : _plants){
+                    if (p != nullptr && p->getX() == i && p->getY() == j){
+                        p->setAttacked(false);
+                     }
+                }
             }
         }
     }

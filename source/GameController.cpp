@@ -805,10 +805,7 @@ void GameScene::update(float dt) {
 
     //Check win/loss conditions
     for (auto &plant : _level->getPlants()){
-       if (ticks % 250 == 0 && ticks > 150) {
-           plant->updateState();
-       }
-//       int st = plant->getState();
+        plant->updateState(ticks);
    }
 
     if (ticks % 50 == 0 && ticks > 50) {

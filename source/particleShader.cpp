@@ -225,6 +225,9 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     CULogGLError();
     glUseProgram(NULL);
     CULogGLError();
+
+    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &VBO);
     // Don't forget to reset to default blending mode
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     CULogGLError();
