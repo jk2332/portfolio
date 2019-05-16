@@ -264,6 +264,11 @@ void GameScene::dispose() {
     rclick1_touchID = -1;
     lclick1 = -1;
     lclick2 = -1;
+    _st1plantnum = nullptr;
+    _st2plantnum = nullptr;
+    _st3plantnum = nullptr;
+    _st4plantnum = nullptr;
+    
     lclick1_touchID = -1;
     shadowClicked = false;
     _shadowSelectors.clear();
@@ -301,6 +306,9 @@ void GameScene::dispose() {
     _presetbutton = nullptr;
     _continuebutton = nullptr;
     _endscreen_nostar = nullptr;
+    _endscreen_3star = nullptr;
+    _endscreen_2star = nullptr;
+    _endscreen_1star = nullptr;
     _pauseboard = nullptr;
     if (_pauseButton != nullptr){
         _pauseButton->deactivate();
@@ -511,6 +519,15 @@ void GameScene::populate() {
     _endscreen_nostar = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_vicboard"));
     _endscreen_nostar->setVisible(false);
     
+    _endscreen_1star = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_vicboard-star1"));
+    _endscreen_1star->setVisible(false);
+    
+    _endscreen_2star = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_vicboard-star2"));
+    _endscreen_2star->setVisible(false);
+    
+    _endscreen_3star = std::dynamic_pointer_cast<Node>(_assets->get<Node>("pause_vicboard-star3"));
+    _endscreen_3star->setVisible(false);
+    
     auto layer = _assets->get<Node>("pause");
     if (_pmainbutton == nullptr || _presetbutton == nullptr || _continuebutton == nullptr || _vmainbutton == nullptr || _vresetbutton == nullptr){
         CULog("adding the buttons to the worldnode");
@@ -526,7 +543,7 @@ void GameScene::populate() {
             _mainSelected = true;
         });
         
-        _vmainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_vicboard_main"));
+        _vmainbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_main"));
         _vmainbutton->deactivate();
         _vmainbutton->setVisible(false);
         _vmainbutton->setListener([=](const std::string& name, bool down) {
@@ -542,7 +559,7 @@ void GameScene::populate() {
             _resetSelected = true;
         });
         
-        _vresetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_vicboard")->getChildByName("restart"));
+        _vresetbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_restart"));
         _vresetbutton->deactivate();
         _vresetbutton->setVisible(false);
         _vresetbutton->setListener([=](const std::string& name, bool down) {
@@ -557,7 +574,6 @@ void GameScene::populate() {
             _continueSelected = true;
         });
     }
-    
 
 }
 
@@ -610,7 +626,43 @@ void GameScene::displayPause(){
 void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
-    _endscreen_nostar->setVisible(true);
+    float percent = float(_level->getPlantScore())/float(_level->getPossibleMaxScore());
+    _st1plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
+    _st1plantnum->setAnchor(0.5, 0.5);
+    _st1plantnum->setScale(0.7);
+    _st1plantnum->setPosition(dimen.width/2, dimen.height/2 + 50);
+    _levelworldnode->addChild(_st1plantnum);
+    
+    _st2plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(2)), _assets->get<Font>(PRIMARY_FONT));
+    _st2plantnum->setAnchor(0.5, 0.5);
+    _st2plantnum->setScale(0.7);
+    _st2plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 + 50);
+    _levelworldnode->addChild(_st2plantnum);
+    
+    _st3plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(3)), _assets->get<Font>(PRIMARY_FONT));
+    _st3plantnum->setAnchor(0.5, 0.5);
+    _st3plantnum->setScale(0.7);
+    _st3plantnum->setPosition(dimen.width/2, dimen.height/2 - 70);
+    _levelworldnode->addChild(_st3plantnum);
+    
+    _st4plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(4)), _assets->get<Font>(PRIMARY_FONT));
+    _st4plantnum->setAnchor(0.5, 0.5);
+    _st4plantnum->setScale(0.7);
+    _st4plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 - 70);
+    _levelworldnode->addChild(_st4plantnum);
+    
+    if (percent == 0){
+        _endscreen_nostar->setVisible(true);
+    }
+    else if (percent <= 60){
+        _endscreen_1star->setVisible(true);
+    }
+    else if (percent != 100){
+        _endscreen_2star->setVisible(true);
+    }
+    else {
+        _endscreen_3star->setVisible(true);
+    }
     _vresetbutton->setVisible(true);
     _vresetbutton->activate(90);
     _vmainbutton->setVisible(true);

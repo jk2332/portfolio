@@ -52,7 +52,7 @@ protected:
     Vec2 _debugScale;
 //    long _ticks;
 //    long _lastTicks;
-    
+    int maxscore;
     float _cscale;
     float _drawscale;
     Size _dimen;
@@ -70,6 +70,10 @@ protected:
     std::shared_ptr<cugl::JsonValue> _pestLayer;   
     std::vector<std::shared_ptr<Cloud>> _clouds;
     std::vector<std::shared_ptr<Plant>> _plants;
+    int st1plantnum;
+    int st2plantnum;
+    int st3plantnum;
+    int st4plantnum;
     int num_plants;
     std::vector<std::shared_ptr<Pest>> _pests;
     bool _alreadyLoaded = false;
@@ -409,6 +413,18 @@ public:
     
     void resetOver(){_over = false;}
     
+    int getEachStagePlantNum(int st){
+        if (st == 1) {
+            return st1plantnum;
+        }
+        else if (st == 2) return st2plantnum;
+        else if (st == 3) return st3plantnum;
+        else{
+            return st4plantnum;
+        }
+    }
+    
+    int getPossibleMaxScore(){return maxscore;}
 };
 
 #endif /* defined(__JS_LEVEL_MODEL_H__) */

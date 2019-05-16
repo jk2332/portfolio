@@ -66,6 +66,14 @@ protected:
     std::shared_ptr<Board> _board;
     
     std::shared_ptr<Node> _endscreen_nostar;
+    std::shared_ptr<Node> _endscreen_1star;
+    std::shared_ptr<Node> _endscreen_2star;
+    std::shared_ptr<Node> _endscreen_3star;
+    std::shared_ptr<Node> _st1plantnum;
+    std::shared_ptr<Node> _st2plantnum;
+    std::shared_ptr<Node> _st3plantnum;
+    std::shared_ptr<Node> _st4plantnum;
+    
     std::shared_ptr<cugl::Button> _pauseButton;
     std::shared_ptr<cugl::Button> _pmainbutton;
     std::shared_ptr<cugl::Button> _presetbutton;
@@ -384,6 +392,9 @@ public:
             _vresetbutton->setVisible(false);
         }
         if (_endscreen_nostar) _endscreen_nostar->setVisible(false);
+        if (_endscreen_1star) _endscreen_1star->setVisible(false);
+        if (_endscreen_2star) _endscreen_2star->setVisible(false);
+        if (_endscreen_3star) _endscreen_3star->setVisible(false);
     }
     
     void displayPause();

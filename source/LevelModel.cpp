@@ -86,6 +86,10 @@ void LevelModel::dispose(){
     _debugnode->removeAllChildren();
     _worldnode = nullptr;
     _debugnode = nullptr;
+    st1plantnum = 0;
+    st2plantnum = 0;
+    st3plantnum = 0;
+    st4plantnum = 0;
     for (auto &c : _clouds){
         c->dispose();
         c = nullptr;
@@ -113,7 +117,6 @@ void LevelModel::dispose(){
     _newClouds.clear();
     _winnode = nullptr;
     _victoryboard = nullptr;
-    _bar = nullptr;
     _loaded.clear();
     _assets = nullptr;
 }
@@ -144,6 +147,11 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     _dimen = dimen;
 
     _curr_bkgd = 1;
+    
+    st1plantnum = 0;
+    st2plantnum = 0;
+    st3plantnum = 0;
+    st4plantnum = 0;
 
     _root = node;
     _scale.set(_root->getContentSize().width/_bounds.size.width,
@@ -340,7 +348,17 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
 
 int LevelModel::getPlantScore() {
     int score = 0;
+    st1plantnum = 0;
+    st2plantnum = 0;
+    st3plantnum = 0;
+    st4plantnum = 0;
     for (auto &plant : _plants) {
+        if (plant->getStage() == 1) st1plantnum++;
+        else if (plant->getStage() == 2) st2plantnum++;
+        else if (plant->getMaxStage() == 3) st3plantnum++;
+        else {
+            st4plantnum++;
+        }
         score += plant->getStage();
     }
     return score;
@@ -489,6 +507,7 @@ bool LevelModel::loadPlant(const std::shared_ptr<JsonValue>& json) {
     }
     
     num_plants = _plants.size();
+    maxscore = num_plants*4;
     return success;
 }
 
@@ -706,11 +725,14 @@ void LevelModel::update(long ticks) {
 //        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
-        // return;
     }
     
-//    if (ticks % 100 == 0) _over=true;
-    if (_over) return;
+//    if (ticks % 100 == 0) _over = true;
+    
+    if (_over) {
+        getPlantScore();
+        return;
+    }
     
 }
 
