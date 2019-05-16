@@ -5,11 +5,6 @@
             "wrapS":    "repeat",
             "wrapT":    "repeat"
 		},
-        "bubble": {
-            "file":      "textures/bubble.png",
-            "minfilter": "linear",
-            "magfilter": "linear"
-        },
         "sparkle-film": {
             "file":     "textures/sparkle-filmstrip.png"
         },
