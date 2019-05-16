@@ -150,8 +150,18 @@ public:
     void setStage(int s){_stage = s;}
     int getMaxStage() {return _maxStage;}
 
-    void setPlantType(std::string s) { _ptype = s; };
-    std::string getPlantType() {return _ptype;};
+    void setPlantType(std::string s) {
+        if (s == "shadeOnly"){
+            _ptype = "tomato";
+        }
+        else if (s == "rainOnly"){
+            _ptype = "eggplant";
+        }
+        else {
+            _ptype = s;
+        }
+    }
+    std::string getPlantType() {return _ptype;}
 
     void updateState(int ticks);
     void setState(int s);
