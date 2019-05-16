@@ -53,11 +53,11 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"corn",
+                 "type":"tomato",
                  "visible":true,
                  "width":94,
-                 "x":0,
-                 "y":1
+                 "x":1,
+                 "y":2
                 }, 
                 {
                  "gid":5,
@@ -65,35 +65,11 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"eggplant",
-                 "visible":true,
-                 "width":94,
-                 "x":1,
-                 "y":1
-                },
-                {
-                "gid":5,
-                "height":126,
-                "id":6,
-                "name":"",
-                "rotation":0,
-                "type":"tomato",
-                "visible":true,
-                "width":94,
-                "x":2,
-                "y":1
-                },
-                {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
                  "type":"corn",
                  "visible":true,
                  "width":94,
-                 "x":3,
-                 "y":1
+                 "x":2,
+                 "y":2
                 }, 
                 {
                  "gid":5,
@@ -105,7 +81,55 @@
                  "visible":true,
                  "width":94,
                  "x":4,
-                 "y":1
+                 "y":2
+                }, 
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"tomato",
+                 "visible":true,
+                 "width":94,
+                 "x":5,
+                 "y":2
+                },
+                {
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"corn",
+                    "visible":true,
+                    "width":94,
+                    "x":2,
+                    "y":1
+                },
+                {
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"corn",
+                    "visible":true,
+                    "width":94,
+                    "x":4,
+                    "y":1
+                },
+                {
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"eggplant",
+                    "visible":true,
+                    "width":94,
+                    "x":1,
+                    "y":0
                 },
                 {
                     "gid":5,
@@ -116,8 +140,20 @@
                     "type":"tomato",
                     "visible":true,
                     "width":94,
-                    "x":5,
-                    "y":1
+                    "x":2,
+                    "y":0
+                },
+                {
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"tomato",
+                    "visible":true,
+                    "width":94,
+                    "x":4,
+                    "y":0
                 },
                 {
                  "gid":5,
@@ -128,8 +164,8 @@
                  "type":"corn",
                  "visible":true,
                  "width":94,
-                 "x":6,
-                 "y":1
+                 "x":5,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -141,7 +177,23 @@
          "draworder":"topdown",
          "id":8,
          "name":"ResourceClouds",
-         "objects":[],
+         "objects":[
+                {
+                 "gid":9,
+                 "height":105,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":206,
+                 "texture": "cloud",
+                 "time": 4000,
+                 "size": 1.0,
+                 "x":5,
+                 "y":15
+                }
+              ],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -163,7 +215,7 @@
                  "visible":true,
                  "width":165,
                  "texture": "cloud",
-                 "x":0,
+                 "x":28,
                  "y":10
                 }, 
                 {
@@ -176,7 +228,7 @@
                  "visible":true,
                  "width":248,
                  "texture": "cloud",
-                 "x":10,
+                 "x":22,
                  "y":10
                 }, 
                 {
@@ -200,7 +252,22 @@
         },
        {
               "name":"Pests",
-              "objects": []
+              "objects": [
+                     {
+                            "x": 2,
+                            "y": 1,
+                            "type": "raccoon",
+                            "side": "left",
+                            "id": 2
+                     },
+                     {
+                            "x": 4,
+                            "y": 1,
+                            "type": "raccoon",
+                            "side": "right",
+                            "id": 2
+                     }
+              ]
        }],
  "nextlayerid":10,
  "nextobjectid":8,

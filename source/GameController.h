@@ -113,16 +113,12 @@ protected:
     std::map<long, Obstacle *> _shadowSelectors;
 
     int _curr_bkgd;
-
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
-
-    // std::shared_ptr<ActionManager> _actions;
-    // std::shared_ptr<Animate> _changeDay;
 
 #pragma mark Internal Object Management
     /**

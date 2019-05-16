@@ -22,7 +22,8 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
     _target = Vec2(x, y);
     //scale in setSceneNode instead
     _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH * x + GRID_WIDTH/2 + GRID_OFFSET_X * x);
-    _type = type;
+    if(type == "rabbit"){_type = "raccoon";}
+    else {_type = type;}
     _side = side;
     _state = INACTIVE;
     _attacked = false;
