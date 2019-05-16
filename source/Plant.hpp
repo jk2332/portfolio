@@ -53,11 +53,13 @@ protected:
     int _shadeCounter;
     int _rainCounter;
     std::shared_ptr<AnimationNode> _node;
+    std::shared_ptr<AnimationNode> _sparkleNode;
     std::shared_ptr<TexturedNode> _signNode;
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<ActionManager> _actions;
     std::shared_ptr<Animate> _grow;
+    std::shared_ptr<Animate> _sparkle;
 
 public:
 #pragma mark -
