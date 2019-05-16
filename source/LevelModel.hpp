@@ -54,9 +54,8 @@ protected:
 //    long _lastTicks;
     
     float _cscale;
-    
     float _drawscale;
-    
+    Size _dimen;
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<Node> _worldnode = nullptr;
     /** Reference to the debug root of the scene graph */
@@ -87,10 +86,16 @@ protected:
 //    std::shared_ptr<cugl::Button> _nextlevelbutton;
 //    std::shared_ptr<cugl::Button> _homebutton;
     int _time;
+    int _bkgd_change;
+
+    std::shared_ptr<cugl::TexturedNode> _super_worldnode;
+    std::shared_ptr<cugl::TexturedNode> _mega_worldnode;
+
+    int _curr_bkgd;
 
     Poly2 _poly;
 
-    std::shared_ptr<cugl::ProgressBar>  _bar;
+    std::shared_ptr<cugl::ProgressBar> _bar;
 
     bool _over;
 
@@ -316,8 +321,9 @@ public:
      * @retain  a reference to this scene graph node
      * @release the previous scene graph node used by this object
      */
-    void setRootNode(const std::shared_ptr<Node>& root, Size dimen, std::shared_ptr<Board> board,
-                     std::shared_ptr<cugl::ObstacleWorld> world);
+    void setRootNode(const shared_ptr<Node>& root, Size dimen, shared_ptr<Board> board,
+                     shared_ptr<ObstacleWorld> world, shared_ptr<TexturedNode> super_worldnode, shared_ptr<TexturedNode> mega_worldnode
+                     );
     
     /**
      * Sets the loaded assets for this game level

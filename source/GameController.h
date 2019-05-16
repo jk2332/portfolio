@@ -92,8 +92,8 @@ protected:
 
     // VIEW
     /** Reference to the physics root of the scene graph */
-    std::shared_ptr<cugl::Node> _worldnode;
-    std::shared_ptr<cugl::Node> _backgroundNode;
+    std::shared_ptr<cugl::TexturedNode> _worldnode;
+    std::shared_ptr<cugl::TexturedNode> _backgroundNode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
@@ -112,6 +112,7 @@ protected:
     std::map<long, Obstacle *> _selectors;
     std::map<long, Obstacle *> _shadowSelectors;
 
+    int _curr_bkgd;
 
     /** Whether we have completed this "game" */
     bool _complete;
@@ -325,6 +326,7 @@ public:
      */
     void beforeSolve(b2Contact* contact, const b2Manifold* oldManifold);    
     void createResourceClouds();
+    void updateBackground();
 
 #pragma mark -
 #pragma mark Gameplay Handling

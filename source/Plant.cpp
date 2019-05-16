@@ -85,7 +85,7 @@ void Plant::setRained(bool f) {
 }
 
 void Plant::updateState(int ticks){
-    CULog("health: %d", _health);
+    // CULog("health: %d", _health);
     if (_state == dead) {
         changeSign();
         return;

@@ -110,7 +110,10 @@ void WeatherDefenderApp::onShutdown() {
  * the background.
  */
 void WeatherDefenderApp::onSuspend() {
-    CULog("suspend being called");
+    if (_gameplay.isActive() && _loaded) {
+        CULog("suspend being called");
+        _paused = true;
+    }
     AudioChannels::get()->pauseAll();
 }
 
@@ -125,6 +128,8 @@ void WeatherDefenderApp::onSuspend() {
  * paused before app suspension.
  */
 void WeatherDefenderApp::onResume() {
+    CULog("on resume");
+    _paused = false;
     AudioChannels::get()->resumeAll();
 }
 
@@ -172,7 +177,6 @@ void WeatherDefenderApp::update(float timestep) {
             _mainselected = _gameplay.init(_assets, "level1", false);
             _levelselected = _mainselected;
             _main.resetSelectBool();
-            
         }
         else if (_main.levelSelected()){
             CULog("level selected");
@@ -194,8 +198,9 @@ void WeatherDefenderApp::update(float timestep) {
     }
     
     else if (_gameplay.isActive() && _paused){
-        Application::onResume();
-        CULog("paused");
+        if (!_gameplay.paused()){
+            _gameplay.displayPause();
+        }
         if (_gameplay.continueSelected()){
             CULog("continue has been selected");
             _gameplay.removePauseDisplay();
@@ -209,8 +214,6 @@ void WeatherDefenderApp::update(float timestep) {
         if (_gameplay.paused()){
             CULog("gameplay paused");
             _paused = true;
-            _gameplay.resetPause();
-            Application::onSuspend();
         }
     }
     else if (!_gameplay.isActive()){
@@ -220,8 +223,12 @@ void WeatherDefenderApp::update(float timestep) {
             auto level = _gameplay.getLevelId();
             _gameplay.dispose();
             CULogGLError();
+
             bool b = _gameplay.init(_assets, level, true);
-            if (b) _paused = false;
+            if (b) {
+                _gameplay.resetPauseBool();
+                _paused = false;
+            }
         }
         else if (_gameplay.mainSelected()){
             CULog("main has been selected");
