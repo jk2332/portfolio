@@ -349,7 +349,7 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.0f, w,0.9f*h/3.0f, 0.0f,0.9f*h/3.0f, 0.0f,h/3.0f };
+    float WALL1[] = { w,h/3.5f, w,0.9f*h/3.5f, 0.0f,0.9f*h/3.5f, 0.0f,h/3.5f };
     float WALL2[] = { w,h, w,h*0.9f, 0.0f,h*0.9f, 0.0f,h };
     float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
     float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };

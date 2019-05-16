@@ -410,7 +410,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
-    cloud->setCloudSizeScale(1.5f); //for testing
+//    cloud->setCloudSizeScale(1.5f); //for testing
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 
@@ -517,9 +517,10 @@ bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
     success = success && json->get(TYPE)->isString();
     auto pestType = json->getString(TYPE);
 
+    if(pestType == "rabbit"){pestType = "raccoon";}
+    
     success = success && json->get("side")->isString();
     auto side = json->getString("side");
-
 
     auto pest = Pest::alloc(x, y, pestType, side, _drawscale);
     auto pestName = pestType + std::to_string(plantId);
@@ -619,14 +620,14 @@ Color4 LevelModel::parseColor(std::string name) {
 }
 
 void LevelModel::update(long ticks) {
-    if (ticks % _bkgd_change == 0) {
-        if (_curr_bkgd < 33) {
-            _curr_bkgd += 1;
-        }
-        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
-        _mega_worldnode->setContentSize(_dimen);
-        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
-    }
+//    if (ticks % _bkgd_change == 0) {
+//        if (_curr_bkgd < 33) {
+//            _curr_bkgd += 1;
+//        }
+//        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
+//        _mega_worldnode->setContentSize(_dimen);
+//        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
+//    }
     
     // Find which plants are being attacked
     shared_ptr<Node> thisNode;
