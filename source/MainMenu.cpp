@@ -155,7 +155,9 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     addChild(layer);
     
-//    Application::get()->setClearColor(Color4(192,192,192,255));
+    std::shared_ptr<Sound> source = _assets->get<Sound>(MAIN_MENU_MUSIC);
+    AudioChannels::get()->playMusic(source, true, source->getVolume(), 1.0f);
+    
     return true;
 }
 

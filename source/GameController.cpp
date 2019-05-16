@@ -39,19 +39,7 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Level Geography
-
-/** This is adjusted by screen aspect ratio to get the height */
-#define SCENE_WIDTH  1024
-#define SCENE_HEIGHT 576
-
-/** Width of the game world in Box2d units */
-#define DEFAULT_WIDTH   32.0f
-/** Height of the game world in Box2d units */
-#define DEFAULT_HEIGHT  18.0f
-#define SWIPE_VERT_OFFSET   3.5
-#define GES_COOLDOWN      20
-#define SPLIT_COOLDOWN      30
-#define PARTICLE_MODE  true
+#define GAMEPLAY_MUSIC      "gameplay"
 
 //long splitCoolDown = -1;
 long gesCoolDown = -1;
@@ -113,14 +101,14 @@ _counter(0)
  *
  * @return true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, bool reset) {
     CULogGLError();
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), "level1");
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), "level1", reset);
 }
 
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string level) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string level, bool reset) {
     CULogGLError();
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), level);
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), level, reset);
 }
 
 /**
@@ -139,8 +127,8 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string le
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect) {
-    return init(assets,rect,Vec2(0,WATER_GRAVITY), "level1");
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, bool reset) {
+    return init(assets,rect,Vec2(0,WATER_GRAVITY), "level1", reset);
 }
 
 /**
@@ -160,7 +148,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId, bool reset) {
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimenWithIndicator = computeActiveSize();
@@ -221,7 +209,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _debugnode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _debugnode->setPosition(offset);
     
-    image = _assets->get<Texture>("bigBackground");
+    image = _assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd));
     _backgroundNode = PolygonNode::allocWithTexture(image);
     _backgroundNode->setName("bigBackground");
     _backgroundNode->setContentSize(dimen);
@@ -241,7 +229,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _rootnode->setContentSize(Size(SCENE_WIDTH,SCENE_HEIGHT));
     _level->setDrawScale(_scale);
     _level->setAssets(_assets);
-    _level->setRootNode(_rootnode, dimen, _board, _world, _worldnode); // Obtains ownership of root.
+    _level->setRootNode(_rootnode, dimen, _board, _world, _worldnode, _backgroundNode); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
 
     populate();
@@ -251,7 +239,12 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
 
     // XNA nostalgia
     Application::get()->setClearColor(Color4f::CORNFLOWER);
-
+    
+    if (!reset){
+        std::shared_ptr<Sound> source = _assets->get<Sound>(GAMEPLAY_MUSIC);
+        AudioChannels::get()->playMusic(source, true, source->getVolume(), 1.0f);
+    }
+    
     return true;
 }
 
@@ -487,7 +480,7 @@ void GameScene::populate() {
         _resetSelected = false;
         _continueSelected = false;
     });
-    _levelworldnode->addChild(_pauseButton);
+    _levelworldnode->addChild(_pauseButton, Z_PAUSE);
     
     //Must add this node right before the actual clouds
     CULogGLError();

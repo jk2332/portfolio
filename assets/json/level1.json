@@ -1,6 +1,6 @@
 { "height":18,
  "infinite":false,
- "time": 3000,
+ "time": 2500,
  "layers":[
         {
          "id":2,
@@ -50,73 +50,13 @@
                 {
                  "gid":5,
                  "height":126,
-                 "id":4,
-                 "name":"",
-                 "rotation":0,
-                 "type":"tomato",
-                 "visible":true,
-                 "width":94,
-                 "x":2,
-                 "y":0
-                }, 
-                {
-                 "gid":5,
-                 "height":126,
-                 "id":5,
-                 "name":"",
-                 "rotation":0,
-                 "type":"tomato",
-                 "visible":true,
-                 "width":94,
-                 "x":2,
-                 "y":1
-                }, 
-                {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"tomato",
-                 "visible":true,
-                 "width":94,
-                 "x":3,
-                 "y":1
-                }, 
-                {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"tomato",
-                 "visible":true,
-                 "width":94,
-                 "x":4,
-                 "y":0
-                }, 
-                {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"corn",
-                 "visible":true,
-                 "width":94,
-                 "x":3,
-                 "y":0
-                }, 
-                {
-                 "gid":5,
-                 "height":126,
                  "id":7,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"shadeOnly",
                  "visible":true,
                  "width":94,
-                 "x":4,
+                 "x":3,
                  "y":1
                 }],
          "opacity":1,
@@ -130,32 +70,6 @@
          "id":8,
          "name":"Clouds",
          "objects":[
-                {
-                 "gid":3,
-                 "height":84,
-                 "id":1,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":165,
-                 "texture": "cloud",
-                 "x":28,
-                 "y":10
-                }, 
-                {
-                 "gid":6,
-                 "height":126,
-                 "id":2,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":248,
-                 "texture": "cloud",
-                 "x":22,
-                 "y":10
-                }, 
                 {
                  "gid":9,
                  "height":105,
@@ -179,23 +93,7 @@
          "draworder":"topdown",
          "id":8,
          "name":"ResourceClouds",
-         "objects":[
-                {
-                 "gid":9,
-                 "height":105,
-                 "id":3,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":206,
-                 "texture": "cloud",
-                 "time": 1500,
-                 "size": 1.0,
-                 "x":5,
-                 "y":15
-                }
-              ],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

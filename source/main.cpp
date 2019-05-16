@@ -57,7 +57,6 @@ int main(int argc, char * argv[]) {
 //    app.setSize(800, 600); //iPad
 //    app.setSize(1200, 300);
 //    app.setSize(1600, 400);
-//    app.setSize(200, 900);
 //    app.setSize(800, 800);
     
     app.setFPS(60.0f);

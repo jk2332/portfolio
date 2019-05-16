@@ -159,7 +159,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "770"
             endingLineNumber = "770"
-            landmarkName = "GameScene::checkForRain(Obstacle * o, long touchID)"
+            landmarkName = "GameScene::makeLightning(Obstacle * ob)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -382,8 +382,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "858"
             endingLineNumber = "858"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "GameScene::update(float dt)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

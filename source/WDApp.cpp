@@ -174,7 +174,7 @@ void WeatherDefenderApp::update(float timestep) {
         CULogGLError();
         if (_main.startSelected()){
 //            CULog("start selected");
-            _mainselected = _gameplay.init(_assets, "level1");
+            _mainselected = _gameplay.init(_assets, "level1", false);
             _levelselected = _mainselected;
             _main.resetSelectBool();
         }
@@ -193,7 +193,7 @@ void WeatherDefenderApp::update(float timestep) {
         auto level = "level" + std::to_string(_levelSelect.getLevelSelected());
         _levelSelect.dispose();
         CULogGLError();
-        _levelselected = _gameplay.init(_assets, level);
+        _levelselected = _gameplay.init(_assets, level, false);
         _paused = false;
     }
     
@@ -223,7 +223,8 @@ void WeatherDefenderApp::update(float timestep) {
             auto level = _gameplay.getLevelId();
             _gameplay.dispose();
             CULogGLError();
-            bool b = _gameplay.init(_assets, level);
+
+            bool b = _gameplay.init(_assets, level, true);
             if (b) {
                 _gameplay.resetPauseBool();
                 _paused = false;
