@@ -43,7 +43,7 @@
 #define STATIC_COLOR    Color4::YELLOW
 /** Opacity of the physics outlines */
 #define DYNAMIC_COLOR   Color4::GREEN
-#define PRIMARY_FONT        "retro"
+#define PRIMARY_FONT        "chalkboard"
 
 // Pests
 #define LEFT -2

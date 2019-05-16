@@ -182,21 +182,36 @@ void Cloud::setScale(float s) {
     _scale = s;
 }
 
+bool shadowHelper(Vec2 p1, Vec2 p2, float a, float b){
+    int p = (pow((p1.x - p2.x), 2) / pow(a, 2)) + (pow((p1.y - p2.y), 2) / pow(b, 2));
+    return (p < 1);
+}
+
 bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
     Vec2 sc = worldNode->nodeToWorldCoords(_shadowNode->getPosition());
     Vec2 gridPos = worldNode->nodeToWorldCoords(gridNode->getPosition());
     float a = _shadowNode->getWidth()/2;
     float b = _shadowNode->getHeight()/2;
     
-    int p = (pow((gridPos.x - sc.x), 2) / pow(a, 2)) + (pow((gridPos.y - sc.y), 2) / pow(b, 2));
-    //inside
-    if (p < 1){
-//        gridNode->setColor(Color4(255, 0, 0));
-        return true;
+    bool centerInside = shadowHelper(gridPos, sc, a, b);
+    //center inside
+    if (centerInside){return true;}
+    //center outside, check corners
+    else{
+        float denom = 8.0f;
+        Vec2 upperLeft = worldNode->nodeToWorldCoords(gridNode->getPosition())
+                                                      + _drawscale*Vec2(-GRID_WIDTH/denom, GRID_HEIGHT/denom);
+        Vec2 lowerLeft = worldNode->nodeToWorldCoords(gridNode->getPosition())
+                                                      + _drawscale*Vec2(-GRID_WIDTH/denom, -GRID_HEIGHT/denom);
+        Vec2 upperRight = worldNode->nodeToWorldCoords(gridNode->getPosition())
+                                                      + _drawscale*Vec2(GRID_WIDTH/denom, GRID_HEIGHT/denom);
+        Vec2 lowerRight = worldNode->nodeToWorldCoords(gridNode->getPosition())
+                                                      + _drawscale*Vec2(GRID_WIDTH/denom, -GRID_HEIGHT/denom);
         
+        if (shadowHelper(upperLeft, sc, a, b) || shadowHelper(lowerLeft, sc, a, b) ||
+            shadowHelper(upperRight, sc, a, b) || shadowHelper(lowerRight, sc, a, b) ){return true;}
+        else{return false;}
     }
-    //outside
-    else{return false;}
 }
 
 std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
