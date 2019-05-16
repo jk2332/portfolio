@@ -168,24 +168,22 @@
         }
 	},
     "sounds": {
-        "bubble01": {
+        "game": {
             "type":     "sample",
-            "file":     "sounds/bubble01.wav",
-            "volume":   0.2
-        },
-        "bubble02": {
-            "type":     "sample",
-            "file":     "sounds/bubble02.wav",
+            "file":     "sounds/DD_Main.ogg",
+            "stream":   true,
             "volume":   0.5
         },
-        "bubble03": {
+        "gameplay": {
             "type":     "sample",
-            "file":     "sounds/bubble03.wav",
+            "file":     "sounds/gameplayMusic.ogg",
+            "stream":   true,
             "volume":   0.5
         },
-        "bubble04": {
+        "mainMenu": {
             "type":     "sample",
-            "file":     "sounds/bubble04.wav",
+            "file":     "sounds/menuMusic.ogg",
+            "stream":   true,
             "volume":   0.5
         }
     },

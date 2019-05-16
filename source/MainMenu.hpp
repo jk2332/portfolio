@@ -9,8 +9,10 @@
 #define MainMenu_hpp
 
 #include <stdio.h>
-
 #include <cugl/cugl.h>
+
+//Music
+#define MAIN_MENU_MUSIC     "mainMenu"
 
 #pragma mark -
 #pragma mark GameController

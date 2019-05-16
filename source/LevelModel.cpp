@@ -163,24 +163,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
     
-    vector<shared_ptr<Node>> rows;
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
             plant->setSceneNode(_worldnode, plant->getName(), _drawscale);
         }
     }
-//    _worldnode->addChildWithName(rows.at(2), "plantNodeBack", Z_PLANT_BACK);
-//    _worldnode->addChildWithName(rows.at(1), "plantNodeMiddle", Z_PLANT_MIDDLE);
-//    _worldnode->addChildWithName(rows.at(0), "plantNodeFront", Z_PLANT_FRONT);
-    
-    rows.clear();
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
     
     for(auto &pest : _pests) {
         if (pest != nullptr) {
@@ -188,9 +176,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
             pest->setSceneNode(_worldnode, pest->getName(), _drawscale);
         }
     }
-//    _worldnode->addChildWithName(rows.at(2), "pestNodeBack", Z_PEST_BACK);
-//    _worldnode->addChildWithName(rows.at(1), "pestNodeMiddle", Z_PEST_MIDDLE);
-//    _worldnode->addChildWithName(rows.at(0), "pestNodeFront", Z_PEST_FRONT);
     
 //    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
 //    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -204,7 +189,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     _victoryboard->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
     _victoryboard->setVisible(false);
     _worldnode->addChild(_victoryboard);
-    
     
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
@@ -419,7 +403,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
-//    cloud->setCloudSizeScale(1.5f); //for testing
+    cloud->setCloudSizeScale(1.5f); //for testing
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 

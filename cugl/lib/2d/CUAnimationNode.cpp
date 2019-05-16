@@ -159,7 +159,7 @@ bool AnimationNode::initWithData(const SceneLoader* loader, const std::shared_pt
  * @param frame the index to make the active frame
  */
 void AnimationNode::setFrame(int frame) {
-    CUAssertLog(frame >= 0 && frame < _size, "Invalid animation frame %d", frame);
+//    CUAssertLog(frame >= 0 && frame < _size, "Invalid animation frame %d", frame);
 
     _frame = frame;
     float x = (frame % _cols)*_bounds.size.width;
