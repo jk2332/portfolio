@@ -42,6 +42,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     // Plant animations
     _actions = ActionManager::alloc();
     _grow = Animate::alloc(0, 8, 1.5f, 1);
+    _sparkle = Animate::alloc(0, 12, 0.5f, 1);
 
 
     return true;
@@ -74,6 +75,7 @@ void Plant::dispose() {
     _assets = nullptr;
     _actions = nullptr;
     _grow = nullptr;
+    _sparkle = nullptr;
 }
 
 void Plant::setShade(bool f) {
@@ -95,6 +97,7 @@ void Plant::updateState(int ticks){
         }
         if (_state == needShade){
             if (_shaded){
+                _actions->activate("current", _sparkle, _sparkleNode);
                 incHealth();
                 _shadeCounter += 1;
                 if (_health >= 0 && _shadeCounter == _shadeNeeded){
@@ -107,6 +110,7 @@ void Plant::updateState(int ticks){
         }
         else if (_state == needRain){
             if (_rained){
+                _actions->activate("current", _sparkle, _sparkleNode);
                 incHealth();
                 _rainCounter += 1;
                 if (_health >= 0 && _rainCounter == _rainNeeded){
@@ -192,6 +196,13 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 a = _drawscale*cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2),
                               (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - 3*GRID_HEIGHT/4));
     _node->setPosition(a);
+
+    _sparkleNode = AnimationNode::alloc(_assets->get<Texture>("sparkle-film"), 1, 13);
+    _sparkleNode->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
+    cugl::Vec2 c = _drawscale*cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2),
+                                         (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - 5*GRID_HEIGHT/8));
+    _sparkleNode->setScale(0.2f);
+    _sparkleNode->setPosition(c);
     
     _signNode = PolygonNode::allocWithTexture(_assets->get<Texture>("signSun"));
     _signNode->setScale(0.3f);
@@ -212,4 +223,5 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     }
     node->addChildWithName(_node, name, plantZ);
     node->addChildWithName(_signNode, name + "sign", signZ);
+    node->addChildWithName(_sparkleNode, name + "sparkle", signZ);
 }

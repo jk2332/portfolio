@@ -10,6 +10,9 @@
             "minfilter": "linear",
             "magfilter": "linear"
         },
+        "sparkle-film": {
+            "file":     "textures/sparkle-filmstrip.png"
+        },
         "rain-film": {
             "file":     "textures/rain3.png"
         },
