@@ -120,6 +120,8 @@ void ParticleShader::onStartup(){
     particleTextureGray.initWithFile("textures/particle3.png");
     particleTextureDarkGray = Texture();
     particleTextureDarkGray.initWithFile("textures/particle2.png");
+    particleTextureLarge = Texture();
+    particleTextureLarge.initWithFile("textures/particle4.png");
     if (master){compileProgram();}
 }
 
@@ -175,9 +177,9 @@ void ParticleShader::compileProgram(){
 void ParticleShader::drawParticles(ParticleShader providedPS){
     if (!master){return;}
     CULogGLError();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//    glBlendFunc(GL_SRC_ALPHA, GL_ZERO);
 //    CULogGLError();
-//    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 //    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE);
     CULogGLError();
     //reusing the particle shader program
@@ -213,16 +215,18 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
     glVertexAttribPointer(_aTexCoords, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     CULogGLError();
     
-//    if (!rainCloud){
+//    if (!providedPS.rainCloud){
 //        particleTextureWhite.bind(); CULogGLError();
-//        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
-//        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
+    particleTextureLarge.bind(); CULogGLError();
+        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
+        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
 //    }
 //
 //    else{
-        particleTextureDarkGray.bind(); CULogGLError();
-        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
-        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
+////        particleTextureWhite.bind(); CULogGLError();
+//        particleTextureDarkGray.bind(); CULogGLError();
+//        _uSprite = glGetUniformLocation( _program, SPRITE_UNIFORM ); CULogGLError();
+//        glUniform1i(_uSprite, TEXTURE_POSITION); CULogGLError();
 //    }
     
     for (CloudParticle p : providedPS.pg.particles){
@@ -232,14 +236,15 @@ void ParticleShader::drawParticles(ParticleShader providedPS){
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); CULogGLError();
     }
     
-//    if (!rainCloud){
-//    particleTextureWhite.unbind(); CULogGLError();
-    
-//}
+//    if (!providedPS.rainCloud){
+//        particleTextureWhite.unbind(); CULogGLError();
+    particleTextureLarge.unbind(); CULogGLError();
+
+//    }
 //    else{
-        particleTextureDarkGray.unbind(); CULogGLError();
-    
-//}
+////        particleTextureWhite.unbind(); CULogGLError();
+//        particleTextureDarkGray.unbind(); CULogGLError();
+//    }
     
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);

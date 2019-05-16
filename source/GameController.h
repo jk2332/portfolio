@@ -93,7 +93,7 @@ protected:
     // VIEW
     /** Reference to the physics root of the scene graph */
     std::shared_ptr<cugl::TexturedNode> _worldnode;
-    std::shared_ptr<cugl::Node> _backgroundNode;
+    std::shared_ptr<cugl::TexturedNode> _backgroundNode;
     /** Reference to the debug root of the scene graph */
     std::shared_ptr<cugl::Node> _debugnode;
     std::shared_ptr<cugl::Node> _rootnode;
@@ -113,16 +113,12 @@ protected:
     std::map<long, Obstacle *> _shadowSelectors;
 
     int _curr_bkgd;
-
     /** Whether we have completed this "game" */
     bool _complete;
     /** Whether or not debug mode is active */
     bool _debug;
 	/** Counter to timestamp sound generation */
 	unsigned long _counter;
-
-    // std::shared_ptr<ActionManager> _actions;
-    // std::shared_ptr<Animate> _changeDay;
 
 #pragma mark Internal Object Management
     /**
@@ -209,9 +205,9 @@ public:
      *
      * @return true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, bool reset);
 
-    bool init(const std::shared_ptr<AssetManager>& assets, std::string level);
+    bool init(const std::shared_ptr<AssetManager>& assets, std::string level, bool reset);
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -228,7 +224,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, bool reset);
 
     /**
      * Initializes the controller contents, and starts the game
@@ -247,7 +243,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity, std::string level);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity, std::string level, bool reset);
 
 
 #pragma mark -

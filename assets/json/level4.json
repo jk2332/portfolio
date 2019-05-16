@@ -53,11 +53,11 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"corn",
                  "visible":true,
                  "width":94,
-                 "x":4,
-                 "y":0
+                 "x":0,
+                 "y":1
                 }, 
                 {
                  "gid":5,
@@ -65,7 +65,31 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"eggplant",
+                 "visible":true,
+                 "width":94,
+                 "x":1,
+                 "y":1
+                },
+                {
+                "gid":5,
+                "height":126,
+                "id":6,
+                "name":"",
+                "rotation":0,
+                "type":"tomato",
+                "visible":true,
+                "width":94,
+                "x":2,
+                "y":1
+                },
+                {
+                 "gid":5,
+                 "height":126,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"corn",
                  "visible":true,
                  "width":94,
                  "x":3,
@@ -77,31 +101,31 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"corn",
+                 "type":"eggplant",
                  "visible":true,
                  "width":94,
                  "x":4,
                  "y":1
-                }, 
+                },
                 {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"tomato",
-                 "visible":true,
-                 "width":94,
-                 "x":5,
-                 "y":1
-                }, 
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"tomato",
+                    "visible":true,
+                    "width":94,
+                    "x":5,
+                    "y":1
+                },
                 {
                  "gid":5,
                  "height":126,
                  "id":7,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"corn",
                  "visible":true,
                  "width":94,
                  "x":6,
@@ -117,23 +141,7 @@
          "draworder":"topdown",
          "id":8,
          "name":"ResourceClouds",
-         "objects":[
-                {
-                 "gid":9,
-                 "height":105,
-                 "id":3,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":206,
-                 "texture": "cloud",
-                 "time": 3000,
-                 "size": 1.0,
-                 "x":5,
-                 "y":15
-                }
-              ],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -155,7 +163,7 @@
                  "visible":true,
                  "width":165,
                  "texture": "cloud",
-                 "x":28,
+                 "x":0,
                  "y":10
                 }, 
                 {
@@ -168,7 +176,7 @@
                  "visible":true,
                  "width":248,
                  "texture": "cloud",
-                 "x":22,
+                 "x":10,
                  "y":10
                 }, 
                 {
@@ -192,22 +200,7 @@
         },
        {
               "name":"Pests",
-              "objects": [
-                     {
-                            "x": 5,
-                            "y": 1,
-                            "type": "raccoon",
-                            "side": "left",
-                            "id": 2
-                     },
-                     {
-                            "x": 4,
-                            "y": 0,
-                            "type": "snail",
-                            "side": "left",
-                            "id": 2
-                     }
-              ]
+              "objects": []
        }],
  "nextlayerid":10,
  "nextobjectid":8,

@@ -132,14 +132,17 @@ void LevelModel::dispose(){
  * @release the previous scene graph node used by this object
  */
 
-void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std::shared_ptr<Board> board,
-                             std::shared_ptr<cugl::ObstacleWorld> world, std::shared_ptr<cugl::TexturedNode> super_worldnode){
+void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_ptr<Board> board,
+                             shared_ptr<ObstacleWorld> world, shared_ptr<TexturedNode> super_worldnode, shared_ptr<TexturedNode> mega_worldnode){
     if (!_root) {
         clearRootNode();
     }
     _over = false;
     _world = world;
     _super_worldnode = super_worldnode;
+    _mega_worldnode = mega_worldnode;
+    _dimen = dimen;
+
     _curr_bkgd = 1;
 
     _root = node;
@@ -165,24 +168,12 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     std::shared_ptr<PolygonNode> poly;
     std::shared_ptr<WireNode> draw;
     
-    vector<shared_ptr<Node>> rows;
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
     for(auto &plant : _plants) {
         if (plant != nullptr) {
             plant->setAssets(_assets);
             plant->setSceneNode(_worldnode, plant->getName(), _drawscale);
         }
     }
-//    _worldnode->addChildWithName(rows.at(2), "plantNodeBack", Z_PLANT_BACK);
-//    _worldnode->addChildWithName(rows.at(1), "plantNodeMiddle", Z_PLANT_MIDDLE);
-//    _worldnode->addChildWithName(rows.at(0), "plantNodeFront", Z_PLANT_FRONT);
-    
-    rows.clear();
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
-    rows.push_back(Node::alloc());
     
     for(auto &pest : _pests) {
         if (pest != nullptr) {
@@ -190,9 +181,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
             pest->setSceneNode(_worldnode, pest->getName(), _drawscale);
         }
     }
-//    _worldnode->addChildWithName(rows.at(2), "pestNodeBack", Z_PEST_BACK);
-//    _worldnode->addChildWithName(rows.at(1), "pestNodeMiddle", Z_PEST_MIDDLE);
-//    _worldnode->addChildWithName(rows.at(0), "pestNodeFront", Z_PEST_FRONT);
     
 //    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
 //    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
@@ -206,7 +194,6 @@ void LevelModel::setRootNode(const std::shared_ptr<Node>& node, Size dimen, std:
     _victoryboard->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
     _victoryboard->setVisible(false);
     _worldnode->addChild(_victoryboard);
-    
     
     auto barempty = _assets->get<Texture>("barempty");
     auto barfull = _assets->get<Texture>("barfull");
@@ -423,7 +410,7 @@ bool LevelModel::loadCloud(const std::shared_ptr<JsonValue>& cloudJson, int i) {
     cloud->setId(i);
     // Why is scale a vec2, not a float lol
     cloud->setScale(_cscale);
-//    cloud->setCloudSizeScale(1.5f); //for testing
+    cloud->setCloudSizeScale(1.5f); //for testing
     cloud_texture_key = cloudJson->getString(TEXTURE_FIELD);
     cloud->setTextureKey(cloud_texture_key);
 
@@ -636,6 +623,8 @@ void LevelModel::update(long ticks) {
         if (_curr_bkgd < 33) {
             _curr_bkgd += 1;
         }
+        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
+        _mega_worldnode->setContentSize(_dimen);
         _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
     }
     

@@ -101,17 +101,19 @@ protected:
     Texture particleTextureGray;
     /** The darkest shader texture */
     Texture particleTextureDarkGray;
+    /** The larger particle texture */
+    Texture particleTextureLarge;
     float particleFactor;
     //                              Position     Texcoords
     GLfloat ogParticleQuad[16] = {  0.0f, 0.0f,  0.0f, 0.0f,
-        0.0f, 0.0f,  0.0f, 1.0f,
-        0.0f, 0.0f,  1.0f, 0.0f,
-        0.0f, 0.0f,  1.0f, 1.0f};
+                                    0.0f, 0.0f,  0.0f, 1.0f,
+                                    0.0f, 0.0f,  1.0f, 0.0f,
+                                    0.0f, 0.0f,  1.0f, 1.0f};
     //                              Position     Texcoords
     GLfloat particle_quad [16] = {  0.0f,0.0f,   0.0f, 0.0f,
-        0.0f,0.0f,   0.0f, 1.0f,
-        0.0f,0.0f,   1.0f, 0.0f,
-        0.0f,0.0f,   1.0f, 1.0f};
+                                    0.0f,0.0f,   0.0f, 1.0f,
+                                    0.0f,0.0f,   1.0f, 0.0f,
+                                    0.0f,0.0f,   1.0f, 1.0f};
     float _particleScale;
     Vec3 aspectRatio;
     //was it raining in the previous update loop?
