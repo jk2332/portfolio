@@ -643,7 +643,6 @@ void LevelModel::update(long ticks) {
        if (_curr_bkgd < 30) {
            _curr_bkgd += 3;
        }
-       CULog(std::to_string(_curr_bkgd).c_str());
        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
        _mega_worldnode->setContentSize(_dimen);
        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));

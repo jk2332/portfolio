@@ -931,6 +931,7 @@ void GameScene::update(float dt) {
     //Check win/loss conditions
     for (auto &plant : _level->getPlants()){
         plant->updateState(ticks);
+        plant->update(dt);
    }
 
     if (ticks % 50 == 0 && ticks > 50) {
@@ -952,9 +953,6 @@ void GameScene::update(float dt) {
         pest->update(dt);
     }
 
-   for(auto &plant : _plants) {
-       plant->update(dt);
-   }
     
     auto IDs = _input.getTouchIDs();
     auto selected = _input.didSelect();
