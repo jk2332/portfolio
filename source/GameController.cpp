@@ -233,7 +233,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _level->setAssets(_assets);
     _level->setRootNode(_rootnode, dimen, _board, _world, _worldnode, _backgroundNode); // Obtains ownership of root.
     _levelworldnode = _level->getWorldNode();
-
+    _levelworldnode->sortZOrder();
     populate();
     _active = true;
     _complete = false;
@@ -477,7 +477,8 @@ void GameScene::populate() {
     _pauseButton->deactivate();
     _pauseButton->setVisible(false);
     _pauseButton->setAnchor(Vec2::ANCHOR_TOP_LEFT);
-    _pauseButton->setPosition(0, SCENE_HEIGHT);
+
+    _pauseButton->setPosition(0, dimen.height - abs(SCENE_HEIGHT/2.0f - dimen.height/2.0f));
     _pauseButton->setListener([=](const std::string& name, bool down) {
 //        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
 //        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);

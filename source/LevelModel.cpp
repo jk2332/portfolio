@@ -216,15 +216,16 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     float capScale = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
     float barScale = 1.5f*capScale;
     _bar->setScale(barScale);
-    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getWidth()/barScale
-                                                            + capScale*moonNode->getWidth(),
-                                                            _bar->getHeight()/barScale));
+    Vec2 b = Vec2(_dimen.width, _dimen.height - abs(SCENE_HEIGHT/2.0f - _dimen.height/2.0f));
+    _bar->setPosition(b - Vec2(_bar->getWidth() + (capScale/2.0f)*moonNode->getTexture()->getWidth(),
+                               _bar->getHeight()/1.5f));
     sunNode->setScale(capScale);
-    sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
+    sunNode->setAnchor(Vec2::ANCHOR_CENTER);
+    sunNode->setPosition(_bar->getPosition() + Vec2(-0.01f*_bar->getWidth(), _bar->getHeight()/2.8f));
     _worldnode->addChildWithName(sunNode, "sun", Z_UI);
     moonNode->setScale(capScale);
-    moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
-                                                     moonNode->getHeight()/2.0f));
+    sunNode->setAnchor(Vec2::ANCHOR_CENTER);
+    moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth(), _bar->getHeight()/2.8f));
     _worldnode->addChildWithName(moonNode, "moon", Z_UI);
     _worldnode->addChildWithName(_bar, "bar", Z_UI);
     

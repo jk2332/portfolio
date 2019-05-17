@@ -72,8 +72,8 @@
                             "layout" : {
                                 "x_anchor" : "center",
                                 "y_anchor" : "middle",
-                                "x_offset" :  0.035,
-                                "y_offset" : -0.175
+                                "x_offset" :  0.0,
+                                "y_offset" : -0.3
                             }
                         }
                     }
