@@ -55,6 +55,7 @@
 #define needSun 2
 #define needShade 3
 #define dead 4
+#define fullgrown 5
 
 //Clouds
 #define ORIGINAL_SIZE_X    165

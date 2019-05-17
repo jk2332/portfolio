@@ -11,7 +11,7 @@
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
-
+#include "ConstantsMusic.hpp"
 
 using namespace cugl;
 
@@ -162,19 +162,21 @@ void Cloud::setLightning() {
 }
 
 
-void Cloud::toggleRain() {
+void Cloud::toggleRain(std::shared_ptr<Sound> source) {
     CULog("is rain cloud: %i", _isRainCloud);
     setCloudSizeScale(_cloudSizeScale);
      if (_isRaining) {
         //  CULog("undo rain");
-         _rain_node->setVisible(false);
+        _rain_node->setVisible(false);
         _rain_node->setFrame(0);
         _isRaining = false;
+        AudioChannels::get()->stopEffect(RAIN_EFFECT);
     } else if (_isRainCloud){
         // CULog("do rain");
         _rain_node->setVisible(true);
         _actions->activate("current", _rain, _rain_node);
         _isRaining = true;
+        AudioChannels::get()->playEffect(RAIN_EFFECT,source,false,EFFECT_VOLUME);
     }
 }
 
@@ -288,6 +290,7 @@ void Cloud::setCloudSizeScale(float s) {
             _rain_node->setFrame(0);
             _rain_node->setVisible(false);
             _isRaining = false;
+            AudioChannels::get()->stopEffect(RAIN_EFFECT);
         }
         _cloudSizeScale = s;
     }

@@ -7,6 +7,7 @@
 //
 
 #include "MainMenu.hpp"
+#include "ConstantsMusic.hpp"
 
 using namespace cugl;
 
@@ -69,6 +70,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _startbutton->deactivate();
     _startbutton->setVisible(false);
     _startbutton->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         this->_active = down;
         _startSelected = true;
     });
@@ -78,6 +81,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _levelbutton->setVisible(false);
     _levelbutton->setListener([=](const std::string& name, bool down) {
         CULog("level button clicked");
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         this->_active = down;
         _levelSelected = true;
     });
@@ -86,6 +91,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _instbutton->deactivate();
     _instbutton->setVisible(false);
     _instbutton->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
 //        this->_active = down;
         _instSelected = true;
     });
@@ -94,6 +101,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _creditbutton->deactivate();
     _creditbutton->setVisible(false);
     _creditbutton->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
 //        this->_active = down;
         _creditSelected = true;
     });
@@ -105,6 +114,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _creditback->deactivate();
     _creditback->setVisible(true);
     _creditback->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         _creditSelected = false;
     });
     
@@ -112,6 +123,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _instback->deactivate();
     _instback->setVisible(true);
     _instback->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         _instSelected = false;
         inst_num = 1;
     });
@@ -135,6 +148,8 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _leftarr->deactivate();
     _leftarr->setVisible(false);
     _leftarr->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         if (inst_num > 1 && ticks - buttoncooldown >= 40) {
             inst_num --;
             buttoncooldown = ticks;
@@ -145,7 +160,9 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _rightarr->deactivate();
     _rightarr->setVisible(false);
     _rightarr->setListener([=](const std::string& name, bool down) {
-        //        this->_active = down;        
+//        this->_active = down;
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         if (inst_num < 5 && ticks - buttoncooldown >= 40) {
             CULog("right arrow selected %i", inst_num);
             inst_num ++;
@@ -156,7 +173,7 @@ bool MainMenu::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     addChild(layer);
     
     std::shared_ptr<Sound> source = _assets->get<Sound>(MAIN_MENU_MUSIC);
-    AudioChannels::get()->playMusic(source, true, source->getVolume(), 1.0f);
+    AudioChannels::get()->playMusic(source, true, MUSIC_VOLUME, 1.0f);
     
     return true;
 }
