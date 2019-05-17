@@ -32,6 +32,9 @@
         },
         "level9button": {
             "file":      "/textures/cloud-10.png"
+        },
+        "pause_mainbutton": {
+            "file":      "/textures/home.png"
         }
     },
     "scenes" : {
@@ -289,6 +292,30 @@
                         "y_anchor" : "middle",
                         "x_offset" : 0.43,
                         "y_offset" : 0.0
+                    }
+                },
+                "homebutton"  : {
+                    "type"   : "Button",
+                    "data"   : {
+                        "upnode"   : "up",
+                        "visible"  : false,
+                        "pushsize" : true,
+                        "anchor"   : [0.5,0.5],
+                        "scale"    : 0.35
+                    },
+                    "children" : {
+                        "up"       : {
+                            "type"   : "Image",
+                            "data"   : {
+                                "texture"  : "pause_mainbutton"
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "left",
+                        "y_anchor" : "bottom",
+                        "x_offset" : 0.05,
+                        "y_offset" : 0.05
                     }
                 }
             }
