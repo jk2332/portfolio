@@ -69,10 +69,10 @@ protected:
     std::shared_ptr<Node> _endscreen_1star;
     std::shared_ptr<Node> _endscreen_2star;
     std::shared_ptr<Node> _endscreen_3star;
-    std::shared_ptr<Node> _st1plantnum;
-    std::shared_ptr<Node> _st2plantnum;
-    std::shared_ptr<Node> _st3plantnum;
-    std::shared_ptr<Node> _st4plantnum;
+    std::shared_ptr<Label> _st1plantnum;
+    std::shared_ptr<Label> _st2plantnum;
+    std::shared_ptr<Label> _st3plantnum;
+    std::shared_ptr<Label> _st4plantnum;
     
     std::shared_ptr<cugl::Button> _pauseButton;
     std::shared_ptr<cugl::Button> _pmainbutton;

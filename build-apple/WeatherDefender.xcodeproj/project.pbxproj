@@ -94,6 +94,8 @@
 		F8939EAD2236FEFE00199385 /* ResourceCloud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EAA2236FEFE00199385 /* ResourceCloud.cpp */; };
 		F8939EBC22375A9E00199385 /* ResourceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EBA22375A9E00199385 /* ResourceController.cpp */; };
 		F8939EBD22375A9E00199385 /* ResourceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8939EBA22375A9E00199385 /* ResourceController.cpp */; };
+		F8CFFA3A228E2FD1001915A5 /* ConstantsMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */; };
+		F8CFFA3B228E2FD1001915A5 /* ConstantsMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +225,8 @@
 		F8939EAB2236FEFE00199385 /* ResourceCloud.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourceCloud.hpp; sourceTree = "<group>"; };
 		F8939EBA22375A9E00199385 /* ResourceController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceController.cpp; sourceTree = "<group>"; };
 		F8939EBB22375A9E00199385 /* ResourceController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourceController.hpp; sourceTree = "<group>"; };
+		F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantsMusic.cpp; sourceTree = "<group>"; };
+		F8CFFA39228E2FD1001915A5 /* ConstantsMusic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ConstantsMusic.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -351,6 +355,8 @@
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
+				F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */,
+				F8CFFA39228E2FD1001915A5 /* ConstantsMusic.hpp */,
 			);
 			name = Source;
 			path = ../source;
@@ -617,6 +623,7 @@
 				F867DC1A223BEC040038F905 /* Cloud.cpp in Sources */,
 				F8939EA92236FEED00199385 /* Pest.cpp in Sources */,
 				EBB4B5832040ADD300238092 /* LoadingController.cpp in Sources */,
+				F8CFFA3B228E2FD1001915A5 /* ConstantsMusic.cpp in Sources */,
 				1B8274CC22676656008F7E17 /* LevelSelect.cpp in Sources */,
 				1BD3690B224E289B00C253C4 /* Particle.cpp in Sources */,
 				1B18648622673567003E0C2B /* Constants.cpp in Sources */,
@@ -656,6 +663,7 @@
 				1B8274CB22676656008F7E17 /* LevelSelect.cpp in Sources */,
 				F8939EA82236FEED00199385 /* Pest.cpp in Sources */,
 				EBB1AC2D1DF8C76D00C353B0 /* main.cpp in Sources */,
+				F8CFFA3A228E2FD1001915A5 /* ConstantsMusic.cpp in Sources */,
 				F1DE02E8228367DE004BDFAA /* MainMenu.cpp in Sources */,
 				F1F2EDA2223331F600ECCD4B /* Board.cpp in Sources */,
 			);

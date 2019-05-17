@@ -317,7 +317,7 @@ public:
      * @param scale The ratio of the Ragdoll sprite to the physics body
      */
     void setDrawScale(float drawscale);
-    void toggleRain();
+    void toggleRain(std::shared_ptr<Sound> source);
     void setId(int id){_id = id;}
     int getId(){return _id;}
     bool isRaining(){return _isRaining;}

@@ -71,7 +71,7 @@ bool LoadingScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     addChild(layer);
     
     _bar = std::dynamic_pointer_cast<ProgressBar>(assets->get<Node>("load_bar"));
-    _button = std::dynamic_pointer_cast<Button>(assets->get<Node>("load_claw_play"));
+    _button = std::dynamic_pointer_cast<Button>(assets->get<Node>("load_logo_play"));
     _button->deactivate();
     _button->setVisible(false);
     _button->setListener([=](const std::string& name, bool down) {
