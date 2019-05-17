@@ -281,9 +281,14 @@ void WeatherDefenderApp::update(float timestep) {
             
             bool b = _gameplay.init(_assets, level + 1, true);
             if (b) {
-                _gameplay.resetPauseBool();
-                _paused = false;
-                _suspended = false;
+                bool tutorialshown = _gameplay.tutorialDisplay();
+                if (tutorialshown) {
+                    _gameplay.removePauseDisplay();
+                    _paused = true;
+                }
+                else {
+                    _paused = false;
+                }
             }
         }
     }
