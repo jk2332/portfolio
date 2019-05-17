@@ -375,97 +375,97 @@ void GameScene::populate() {
     std::string wname = "wall";
     
 //     Create the polygon outline
-    Poly2 wall1(WALL1,8);
+//    Poly2 wall1(WALL1,8);
     SimpleTriangulator triangulator;
-    triangulator.set(wall1);
-    triangulator.calculate();
-    wall1.setIndices(triangulator.getTriangulation());
-    wall1.setType(Poly2::Type::SOLID);
+//    triangulator.set(wall1);
+//    triangulator.calculate();
+//    wall1.setIndices(triangulator.getTriangulation());
+//    wall1.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
+//    wallobj1->setDebugColor(STATIC_COLOR);
+//    wallobj1->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj1->setBodyType(b2_staticBody);
+//    wallobj1->setDensity(BASIC_DENSITY);
+//    wallobj1->setFriction(BASIC_FRICTION);
+//    wallobj1->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall1 *= _scale;
+//    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
+//
+//#pragma mark : Wall polygon 2
+//    Poly2 wall2(WALL2,8);
+//    triangulator.set(wall2);
+//    triangulator.calculate();
+//    wall2.setIndices(triangulator.getTriangulation());
+//    wall2.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
+//    wallobj2->setDebugColor(STATIC_COLOR);
+//    wallobj2->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj2->setBodyType(b2_staticBody);
+//    wallobj2->setDensity(BASIC_DENSITY);
+//    wallobj2->setFriction(BASIC_FRICTION);
+//    wallobj2->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall2 *= _scale;
+//    sprite = PolygonNode::allocWithTexture(image,wall2);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj2,sprite,Z_BACKGROUND);  // All walls share the same texture
 
-    std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
-    wallobj1->setDebugColor(STATIC_COLOR);
-    wallobj1->setName(wname);
-
-    // Set the physics attributes
-    wallobj1->setBodyType(b2_staticBody);
-    wallobj1->setDensity(BASIC_DENSITY);
-    wallobj1->setFriction(BASIC_FRICTION);
-    wallobj1->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall1 *= _scale;
-    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
-    sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
-    
-#pragma mark : Wall polygon 2
-    Poly2 wall2(WALL2,8);
-    triangulator.set(wall2);
-    triangulator.calculate();
-    wall2.setIndices(triangulator.getTriangulation());
-    wall2.setType(Poly2::Type::SOLID);
-
-    std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
-    wallobj2->setDebugColor(STATIC_COLOR);
-    wallobj2->setName(wname);
-
-    // Set the physics attributes
-    wallobj2->setBodyType(b2_staticBody);
-    wallobj2->setDensity(BASIC_DENSITY);
-    wallobj2->setFriction(BASIC_FRICTION);
-    wallobj2->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall2 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall2);
-    sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj2,sprite,Z_BACKGROUND);  // All walls share the same texture
-
-#pragma mark : Wall polygon 3
-    Poly2 wall3(WALL3,8);
-    triangulator.set(wall3);
-    triangulator.calculate();
-    wall3.setIndices(triangulator.getTriangulation());
-    wall3.setType(Poly2::Type::SOLID);
-
-    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall3);
-    wallobj3->setDebugColor(STATIC_COLOR);
-    wallobj3->setName(wname);
-
-    // Set the physics attributes
-    wallobj3->setBodyType(b2_staticBody);
-    wallobj3->setDensity(BASIC_DENSITY);
-    wallobj3->setFriction(BASIC_FRICTION);
-    wallobj3->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall3 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall3);
-    sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj3,sprite,Z_BACKGROUND);  // All walls share the same texture
-
-#pragma mark : Wall polygon 4
-    Poly2 wall4(WALL4,8);
-    triangulator.set(wall4);
-    triangulator.calculate();
-    wall4.setIndices(triangulator.getTriangulation());
-    wall4.setType(Poly2::Type::SOLID);
-
-    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall4);
-    wallobj4->setDebugColor(STATIC_COLOR);
-    wallobj4->setName(wname);
-
-    // Set the physics attributes
-    wallobj4->setBodyType(b2_staticBody);
-    wallobj4->setDensity(BASIC_DENSITY);
-    wallobj4->setFriction(BASIC_FRICTION);
-    wallobj4->setRestitution(BASIC_RESTITUTION);
-
-    // Add the scene graph nodes to this object
-    wall4 *= _scale;
-    sprite = PolygonNode::allocWithTexture(image,wall4);
-    sprite->setColor(Color4::CLEAR);
-    addObstacle(_worldnode, wallobj4,sprite,Z_BACKGROUND);  // All walls share the same texture
+//#pragma mark : Wall polygon 3
+//    Poly2 wall3(WALL3,8);
+//    triangulator.set(wall3);
+//    triangulator.calculate();
+//    wall3.setIndices(triangulator.getTriangulation());
+//    wall3.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall3);
+//    wallobj3->setDebugColor(STATIC_COLOR);
+//    wallobj3->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj3->setBodyType(b2_staticBody);
+//    wallobj3->setDensity(BASIC_DENSITY);
+//    wallobj3->setFriction(BASIC_FRICTION);
+//    wallobj3->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall3 *= _scale;
+//    sprite = PolygonNode::allocWithTexture(image,wall3);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj3,sprite,Z_BACKGROUND);  // All walls share the same texture
+//
+//#pragma mark : Wall polygon 4
+//    Poly2 wall4(WALL4,8);
+//    triangulator.set(wall4);
+//    triangulator.calculate();
+//    wall4.setIndices(triangulator.getTriangulation());
+//    wall4.setType(Poly2::Type::SOLID);
+//
+//    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall4);
+//    wallobj4->setDebugColor(STATIC_COLOR);
+//    wallobj4->setName(wname);
+//
+//    // Set the physics attributes
+//    wallobj4->setBodyType(b2_staticBody);
+//    wallobj4->setDensity(BASIC_DENSITY);
+//    wallobj4->setFriction(BASIC_FRICTION);
+//    wallobj4->setRestitution(BASIC_RESTITUTION);
+//
+//    // Add the scene graph nodes to this object
+//    wall4 *= _scale;
+//    sprite = PolygonNode::allocWithTexture(image,wall4);
+//    sprite->setColor(Color4::CLEAR);
+//    addObstacle(_worldnode, wallobj4,sprite,Z_BACKGROUND);  // All walls share the same texture
     
     //Add all the buttons for pause
     auto pauseButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pauseButton"));
@@ -1042,6 +1042,10 @@ void GameScene::update(float dt) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
+            if (!(pos.y <= 16 && pos.y >= 8 && pos.x >= 2 && pos.x <= 30)) {
+                CULog("out of boundary");
+                continue;
+            }
             Obstacle * ob;
             if (!_selectors.count(touchID)){
                 ob = getSelectedObstacle(pos, touchID);
@@ -1096,7 +1100,10 @@ void GameScene::update(float dt) {
         if (!selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
-            
+            if (!(pos.y <= 17 && pos.y >= 4 && pos.x >= 2 && pos.x <= 30)) {
+                continue;
+                CULog("out of boundary");
+            }
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
                 if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
@@ -1155,6 +1162,22 @@ void GameScene::update(float dt) {
             
             auto targetPos = c->getTargetPos();
             auto cloudPos = c->getPosition();
+            if (!(targetPos->y <= 17 && targetPos->y >= 4 && targetPos->x >= 2 && targetPos->x <= 30)) {
+                continue;
+                CULog("out of boundary");
+            }
+            else if (cloudPos.y > 17) {
+                c->setTargetPos(Vec2(cloudPos.x, 17));
+            }
+            else if (cloudPos.y < 4){
+                c->setTargetPos(Vec2(cloudPos.x, 4));
+            }
+            else if (cloudPos.x < 2){
+                c->setTargetPos(Vec2(2, cloudPos.y));
+            }
+            else if (cloudPos.x > 30){
+                c->setTargetPos(Vec2(30, cloudPos.y));
+            }
             c->setLinearVelocity(5*(targetPos->x - cloudPos.x), 5*(targetPos->y - cloudPos.y));
         }
     }
