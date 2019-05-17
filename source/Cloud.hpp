@@ -15,21 +15,11 @@
 #include "CloudNode.hpp"
 #include "Constants.hpp"
 
-#define MAX_CLOUD_UNIT  3
-#define PART_NONE           -1
 #define BODY           0
 //#define UP           1
 #define LEFT       1
 #define RIGHT      2
 //#define DOWN        4
-/** Distance between torso center and face center */
-#define TORSO_OFFSET    3.8f
-/** The density for each body part */
-#define DEFAULT_DENSITY  1.0f
-/** The density for the center of mass */
-#define CENTROID_DENSITY 1f
-/** The radius for the center of mass */
-#define CENTROID_RADIUS  0.1f
 
 #pragma mark -
 #pragma mark Ragdoll

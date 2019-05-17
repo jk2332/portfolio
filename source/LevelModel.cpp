@@ -352,7 +352,7 @@ int LevelModel::getPlantScore() {
         if (plant->getState() == dead) continue;
         else if (plant->getStage() == 1) st1plantnum++;
         else if (plant->getStage() == 2) st2plantnum++;
-        else if (plant->getMaxStage() == 3) st3plantnum++;
+        else if (plant->getStage() == 3) st3plantnum++;
         else {st4plantnum++;}
         score += plant->getStage();
     }
@@ -708,14 +708,13 @@ void LevelModel::update(long ticks) {
     if (plantsDead) {
         CULog("All plants are dead");
         _over = true;
-//        _winnode->setText("You Lost" + std::to_string(getPlantScore()));
-//        _winnode->setVisible(true);
     }
-
+    if (plantsDead) {
+        CULog("All plants are dead");
+        _over = true;
+    }
     if (ticks >= _time) {
         CULog("tick over time");
-//        _winnode->setText("Score: " + std::to_string(getPlantScore()));
-//        _winnode->setVisible(true);
         _over = true;
         ticks = _time;
     }

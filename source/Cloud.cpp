@@ -216,10 +216,11 @@ bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
 }
 
 bool Cloud::lightningCheck(shared_ptr<Node> worldNode, shared_ptr<Node> rootNode, shared_ptr<Node> pestNode){
-    Vec2 sc = worldNode->nodeToWorldCoords(_shadowNode->getPosition());
     Vec2 soos = _shadowNode->getPosition();
     Vec2 poos = pestNode->getPosition();
-    Vec2 pestPos = rootNode->nodeToWorldCoords(pestNode->getPosition());
+    
+    Vec2 sc = rootNode->nodeToWorldCoords(soos);
+    Vec2 pestPos = rootNode->nodeToWorldCoords(poos);
     
     float a = _shadowNode->getWidth()/2;
     float b = _shadowNode->getHeight()/2;
