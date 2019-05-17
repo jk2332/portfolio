@@ -206,10 +206,16 @@ void WeatherDefenderApp::update(float timestep) {
         auto level = _levelSelect.getLevelSelected();
         _levelSelect.dispose();
         CULogGLError();
-        _levelselected = _gameplay.init(_assets, level, false);
-        if (_levelselected) {
-            bool tutorialshown = _gameplay.tutorialDisplay();
-            if (tutorialshown) _paused = true;
+        if (_levelSelect.mainSelected()){
+            _levelselected = !_main.init(_assets);
+            _mainselected = _levelselected;
+        }
+        else {
+            _levelselected = _gameplay.init(_assets, level, false);
+            if (_levelselected) {
+                bool tutorialshown = _gameplay.tutorialDisplay();
+                if (tutorialshown) _paused = true;
+            }
         }
     }
     

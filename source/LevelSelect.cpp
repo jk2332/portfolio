@@ -67,6 +67,7 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     layer->setContentSize(dimen);
     layer->doLayout();
     addChild(layer);
+    _mainselected = false;
     
     for (int i = 0; i < _num_level; i++){
         std::string name = "levelselect_level" + std::to_string(i);
@@ -79,8 +80,21 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 //            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             this->_active = down;
             _selectedLevel = i + 1;
+            _mainselected = false;
         });
     }
+
+    
+    _mainbutton = std::dynamic_pointer_cast<Button>(assets->get<Node>("levelselect_homebutton"));
+    _mainbutton->deactivate();
+    _mainbutton->setVisible(false);
+    _mainbutton->setListener([=](const std::string& name, bool down) {
+        //            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+        //            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
+        this->_active = down;
+        _mainselected = true;
+    });
+   
     
     Application::get()->setClearColor(Color4(192,192,192,255));
     return true;
@@ -100,6 +114,10 @@ void LevelSelect::dispose() {
             _levelButtons.at(i)->deactivate();
             _levelButtons.at(i) = nullptr;
         }
+    }
+    if (_mainbutton != nullptr) {
+        _mainbutton->deactivate();
+        _mainbutton = nullptr;
     }
     _levelButtons.clear();
     _assets = nullptr;
@@ -136,6 +154,8 @@ void LevelSelect::update(float progress) {
 //            _selectedLevel = i + 1;
 //        }
     }
+    _mainbutton->setVisible(true);
+    _mainbutton->activate(11);
 }
 
 /**

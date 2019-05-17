@@ -44,9 +44,11 @@ protected:
     //    /** Whether or not the player has pressed play to continue */
     //    bool  _completed;
     std::vector<std::shared_ptr<cugl::Button>> _levelButtons;
+    std::shared_ptr<cugl::Button> _mainbutton;
     int _selectedLevel = -1;
     bool _assetLoaded = false;
     float _scale;
+    bool _mainselected = false;
     int _num_level = 10;
     
     
@@ -115,6 +117,7 @@ public:
      */
     bool isPending(int i) const;
     int getLevelSelected() {return _selectedLevel;}
+    bool mainSelected() {return _mainselected;}
 };
 
 #endif /* LevelSelect_hpp */

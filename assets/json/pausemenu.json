@@ -3,9 +3,6 @@
         "pause_continuebutton": {
             "file":      "/textures/resume.png"
         },
-        "pause_mainbutton": {
-            "file":      "/textures/home.png"
-        },
         "pause_restartbutton": {
             "file":      "/textures/restart.png"
         },
