@@ -12,7 +12,8 @@
 #include <stdio.h>
 
 //Music and Sounds
-#define MUSIC_VOLUME   0.6
+#define MUSIC_VOLUME   0.4
+#define MUSIC_REDUCED_VOLUME   0.2
 #define EFFECT_VOLUME   0.6
 #define RAIN_EFFECT   "rainSound"
 #define ENDGAME_EFFECT   "endgameSound"

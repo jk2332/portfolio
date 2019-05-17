@@ -158,6 +158,21 @@
         "raccoonrev": {
             "file":     "textures/raccoonwalkrev.png"
         },
+        "rabbiteat": {
+            "file":     "textures/rabbiteat.png"
+        },
+        "rabbit": {
+            "file":     "textures/rabbitwalk.png"
+        },
+        "snailscare": {
+            "file":     "textures/snailscare.png"
+        },
+        "raccoonscare": {
+            "file":     "textures/raccoonscare.png"
+        },
+        "rabbitscare": {
+            "file":     "textures/rabbitscare.png"
+        },
         "progressbar": {
             "file":     "textures/progressbar.png"
         },

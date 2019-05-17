@@ -161,6 +161,10 @@ void WeatherDefenderApp::update(float timestep) {
     }
     else if (!_mainselected && _main.isActive()){
         _main.update(0.01f);
+        if (_suspended) {
+            _suspended = false;
+            AudioChannels::get()->resumeAll();
+        }
         if (_main.instSelected()){
 //            CULog("inst selected from main");
             _main.resetSelectBool();
@@ -179,8 +183,8 @@ void WeatherDefenderApp::update(float timestep) {
             _mainselected = _gameplay.init(_assets, "level1", false);
             _levelselected = _mainselected;
             if (_mainselected) {
-                _gameplay.tutorialDisplay();
-                _paused = true;
+                bool tutorialshown = _gameplay.tutorialDisplay();
+                if (tutorialshown) _paused = true;
             }
             _main.resetSelectBool();
         }
@@ -193,6 +197,10 @@ void WeatherDefenderApp::update(float timestep) {
     }
     else if (!_levelselected && _levelSelect.isActive()){
         _levelSelect.update(0.01f);
+        if (_suspended) {
+            AudioChannels::get()->resumeAll();
+            _suspended = false;
+        }
     }
     else if (!_levelselected) {
         auto level = "level" + std::to_string(_levelSelect.getLevelSelected());
@@ -200,8 +208,8 @@ void WeatherDefenderApp::update(float timestep) {
         CULogGLError();
         _levelselected = _gameplay.init(_assets, level, false);
         if (_levelselected) {
-            _gameplay.tutorialDisplay();
-            _paused = true;
+            bool tutorialshown = _gameplay.tutorialDisplay();
+            if (tutorialshown) _paused = true;
         }
     }
     
@@ -215,7 +223,11 @@ void WeatherDefenderApp::update(float timestep) {
             _gameplay.removeTutorialDisplay();
             _gameplay.resetPauseBool();
             _paused = false;
+            if (_suspended) {
+                AudioChannels::get()->resumeAll();
+            }
             _suspended = false;
+        
         }
     }
     

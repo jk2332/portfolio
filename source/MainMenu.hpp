@@ -13,8 +13,6 @@
 
 //Music
 #define MAIN_MENU_MUSIC     "mainMenu"
-#define MUSIC_VOLUME   0.6
-
 
 #pragma mark -
 #pragma mark GameController

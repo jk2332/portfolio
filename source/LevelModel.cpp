@@ -16,7 +16,7 @@
 
 using namespace std;
 
-map<string, int> shadeMap = {{"tomato",40}, {"corn",25}, {"eggplant",10}, {"rainOnly",0}, {"shadeOnly",80}};
+map<string, int> shadeMap = {{"tomato",40}, {"corn",25}, {"eggplant",10}, {"rainOnly",0}, {"shadeOnly",90}};
 map<string, int> rainMap = {{"tomato",25}, {"corn",10}, {"eggplant",40}, {"rainOnly",70}, {"shadeOnly",0}};
 float CLOUD2[] = { 0.f, 0.f, 5.1f, 0.f, 5.1f, 2.6f, 0.f, 2.6};
 std::string cloud_texture_key;
@@ -190,13 +190,6 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
         }
     }
     
-//    _winnode = Label::alloc("Score: 15",_assets->get<Font>(PRIMARY_FONT));
-//    _winnode->setAnchor(Vec2::ANCHOR_CENTER);
-//    _winnode->setPosition(dimen/2.0f);
-//    _winnode->setForeground(STATIC_COLOR);
-//    _winnode->setVisible(false);
-//    _worldnode->addChild(_winnode, Z_UI);
-    
     _victoryboard = Node::alloc();
     _victoryboard->setContentSize(Size(20, 16)*_scale);
     _victoryboard->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
@@ -210,7 +203,6 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     auto foreground = barfull->getSubTexture(0.1f, 0.99f, 0.f, 1.0f);
     auto sunNode = PolygonNode::allocWithTexture(_assets->get<Texture>("suncap"));
     auto moonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("mooncap"));
-    auto rcNode = PolygonNode::allocWithTexture(_assets->get<Texture>("rcIndicator"));
     
     _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
     float capScale = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
@@ -232,10 +224,11 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     for (int i = 0; i < _resourceLayer->size(); i++){
         int spawnTime = _resourceLayer->get(i)->getInt(TIME_FIELD);
         float t = foreground->getWidth();
+        auto rcNode = PolygonNode::allocWithTexture(_assets->get<Texture>("rcIndicator"));
         rcNode->setAnchor(Vec2::ANCHOR_TOP_CENTER);
         rcNode->setPosition(Vec2(((float)spawnTime/(float)_time)*t + leftcap->getWidth(),
-                                 foreground->getHeight() - 0.035f*SCENE_HEIGHT));
-        rcNode->setScale(2);
+                                 foreground->getHeight() - 0.125f*SCENE_HEIGHT));
+        rcNode->setScale(1.5f);
         //don't need zordering because it is a child of the progress bar
         _bar->addChildWithName(rcNode, "rcI" + std::to_string(i));
     }
@@ -356,12 +349,11 @@ int LevelModel::getPlantScore() {
     st3plantnum = 0;
     st4plantnum = 0;
     for (auto &plant : _plants) {
-        if (plant->getStage() == 1) st1plantnum++;
+        if (plant->getState() == dead) continue;
+        else if (plant->getStage() == 1) st1plantnum++;
         else if (plant->getStage() == 2) st2plantnum++;
         else if (plant->getMaxStage() == 3) st3plantnum++;
-        else {
-            st4plantnum++;
-        }
+        else {st4plantnum++;}
         score += plant->getStage();
     }
     return score;
@@ -538,8 +530,6 @@ bool LevelModel::loadPest(const std::shared_ptr<JsonValue>& json) {
 
     success = success && json->get(TYPE)->isString();
     auto pestType = json->getString(TYPE);
-
-    if(pestType == "rabbit"){pestType = "raccoon";}
     
     success = success && json->get("side")->isString();
     auto side = json->getString("side");

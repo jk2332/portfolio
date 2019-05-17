@@ -215,6 +215,35 @@ bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
     }
 }
 
+bool Cloud::lightningCheck(shared_ptr<Node> worldNode, shared_ptr<Node> rootNode, shared_ptr<Node> pestNode){
+    Vec2 sc = worldNode->nodeToWorldCoords(_shadowNode->getPosition());
+    Vec2 soos = _shadowNode->getPosition();
+    Vec2 poos = pestNode->getPosition();
+    Vec2 pestPos = rootNode->nodeToWorldCoords(pestNode->getPosition());
+    
+    float a = _shadowNode->getWidth()/2;
+    float b = _shadowNode->getHeight()/2;
+    
+    bool centerInside = shadowHelper(pestPos, sc, a, b);
+    //center inside
+    if (centerInside){return true;}
+    //center outside, check corners
+    else{
+        float denom = 8.0f;
+        Vec2 upperLeft = worldNode->nodeToWorldCoords(pestNode->getPosition())
+                            + _drawscale*Vec2(-pestNode->getWidth()/denom, pestNode->getHeight()/denom);
+        Vec2 lowerLeft = worldNode->nodeToWorldCoords(pestNode->getPosition())
+                            + _drawscale*Vec2(-pestNode->getWidth()/denom, -pestNode->getHeight()/denom);
+        Vec2 upperRight = worldNode->nodeToWorldCoords(pestNode->getPosition())
+                            + _drawscale*Vec2(pestNode->getWidth()/denom, pestNode->getHeight()/denom);
+        Vec2 lowerRight = worldNode->nodeToWorldCoords(pestNode->getPosition())
+                            + _drawscale*Vec2(pestNode->getWidth()/denom, -pestNode->getHeight()/denom);
+        if (shadowHelper(upperLeft, sc, a, b) || shadowHelper(lowerLeft, sc, a, b) ||
+            shadowHelper(upperRight, sc, a, b) || shadowHelper(lowerRight, sc, a, b) ){return true;}
+        else{return false;}
+    }
+}
+
 std::shared_ptr<BoxObstacle> Cloud::getObstacle() {
     return _ob;
 }
@@ -268,7 +297,7 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
     // Set rain animation
     _rain_node = AnimationNode::alloc(rain, 1, 20);
     _rain_node->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
-    _rain_node->setScale(0.5f*_cloudSizeScale);
+    _rain_node->setScale(0.3f*_cloudSizeScale);
     _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     _rain_node->setName("rainAnimation");
 

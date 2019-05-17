@@ -246,6 +246,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<Sound> source = _assets->get<Sound>(GAMEPLAY_MUSIC);
         AudioChannels::get()->playMusic(source, true, MUSIC_VOLUME, 1.0f);
     }
+    AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
     
     return true;
 }
@@ -364,7 +365,7 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.5f, w,0.9f*h/3.5f, 0.0f,0.9f*h/3.5f, 0.0f,h/3.5f }; //Bottom
+    float WALL1[] = { w,h/5.0f, w,0.9f*h/5.0f, 0.0f,0.9f*h/5.0f, 0.0f,h/5.0f }; //Bottom
     float WALL2[] = { w,h, w,h*0.97f, 0.0f,h*0.97f, 0.0f,h }; //Top
     float WALL3[] = { 0.0f,h*0.97f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.97f }; //Left
     float WALL4[] = { w*0.975f,h*0.97f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.97f }; //Right
@@ -376,97 +377,97 @@ void GameScene::populate() {
     std::string wname = "wall";
     
 //     Create the polygon outline
-//    Poly2 wall1(WALL1,8);
+    Poly2 wall1(WALL1,8);
     SimpleTriangulator triangulator;
-//    triangulator.set(wall1);
-//    triangulator.calculate();
-//    wall1.setIndices(triangulator.getTriangulation());
-//    wall1.setType(Poly2::Type::SOLID);
-//
-//    std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
-//    wallobj1->setDebugColor(STATIC_COLOR);
-//    wallobj1->setName(wname);
-//
-//    // Set the physics attributes
-//    wallobj1->setBodyType(b2_staticBody);
-//    wallobj1->setDensity(BASIC_DENSITY);
-//    wallobj1->setFriction(BASIC_FRICTION);
-//    wallobj1->setRestitution(BASIC_RESTITUTION);
-//
-//    // Add the scene graph nodes to this object
-//    wall1 *= _scale;
-//    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
-//    sprite->setColor(Color4::CLEAR);
-//    addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
-//
-//#pragma mark : Wall polygon 2
-//    Poly2 wall2(WALL2,8);
-//    triangulator.set(wall2);
-//    triangulator.calculate();
-//    wall2.setIndices(triangulator.getTriangulation());
-//    wall2.setType(Poly2::Type::SOLID);
-//
-//    std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
-//    wallobj2->setDebugColor(STATIC_COLOR);
-//    wallobj2->setName(wname);
-//
-//    // Set the physics attributes
-//    wallobj2->setBodyType(b2_staticBody);
-//    wallobj2->setDensity(BASIC_DENSITY);
-//    wallobj2->setFriction(BASIC_FRICTION);
-//    wallobj2->setRestitution(BASIC_RESTITUTION);
-//
-//    // Add the scene graph nodes to this object
-//    wall2 *= _scale;
-//    sprite = PolygonNode::allocWithTexture(image,wall2);
-//    sprite->setColor(Color4::CLEAR);
-//    addObstacle(_worldnode, wallobj2,sprite,Z_BACKGROUND);  // All walls share the same texture
+    triangulator.set(wall1);
+    triangulator.calculate();
+    wall1.setIndices(triangulator.getTriangulation());
+    wall1.setType(Poly2::Type::SOLID);
 
-//#pragma mark : Wall polygon 3
-//    Poly2 wall3(WALL3,8);
-//    triangulator.set(wall3);
-//    triangulator.calculate();
-//    wall3.setIndices(triangulator.getTriangulation());
-//    wall3.setType(Poly2::Type::SOLID);
-//
-//    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall3);
-//    wallobj3->setDebugColor(STATIC_COLOR);
-//    wallobj3->setName(wname);
-//
-//    // Set the physics attributes
-//    wallobj3->setBodyType(b2_staticBody);
-//    wallobj3->setDensity(BASIC_DENSITY);
-//    wallobj3->setFriction(BASIC_FRICTION);
-//    wallobj3->setRestitution(BASIC_RESTITUTION);
-//
-//    // Add the scene graph nodes to this object
-//    wall3 *= _scale;
-//    sprite = PolygonNode::allocWithTexture(image,wall3);
-//    sprite->setColor(Color4::CLEAR);
-//    addObstacle(_worldnode, wallobj3,sprite,Z_BACKGROUND);  // All walls share the same texture
-//
-//#pragma mark : Wall polygon 4
-//    Poly2 wall4(WALL4,8);
-//    triangulator.set(wall4);
-//    triangulator.calculate();
-//    wall4.setIndices(triangulator.getTriangulation());
-//    wall4.setType(Poly2::Type::SOLID);
-//
-//    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall4);
-//    wallobj4->setDebugColor(STATIC_COLOR);
-//    wallobj4->setName(wname);
-//
-//    // Set the physics attributes
-//    wallobj4->setBodyType(b2_staticBody);
-//    wallobj4->setDensity(BASIC_DENSITY);
-//    wallobj4->setFriction(BASIC_FRICTION);
-//    wallobj4->setRestitution(BASIC_RESTITUTION);
-//
-//    // Add the scene graph nodes to this object
-//    wall4 *= _scale;
-//    sprite = PolygonNode::allocWithTexture(image,wall4);
-//    sprite->setColor(Color4::CLEAR);
-//    addObstacle(_worldnode, wallobj4,sprite,Z_BACKGROUND);  // All walls share the same texture
+    std::shared_ptr<PolygonObstacle> wallobj1 = PolygonObstacle::alloc(wall1);
+    wallobj1->setDebugColor(STATIC_COLOR);
+    wallobj1->setName(wname);
+
+    // Set the physics attributes
+    wallobj1->setBodyType(b2_staticBody);
+    wallobj1->setDensity(BASIC_DENSITY);
+    wallobj1->setFriction(BASIC_FRICTION);
+    wallobj1->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall1 *= _scale;
+    std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
+    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
+
+#pragma mark : Wall polygon 2
+    Poly2 wall2(WALL2,8);
+    triangulator.set(wall2);
+    triangulator.calculate();
+    wall2.setIndices(triangulator.getTriangulation());
+    wall2.setType(Poly2::Type::SOLID);
+
+    std::shared_ptr<PolygonObstacle> wallobj2 = PolygonObstacle::alloc(wall2);
+    wallobj2->setDebugColor(STATIC_COLOR);
+    wallobj2->setName(wname);
+
+    // Set the physics attributes
+    wallobj2->setBodyType(b2_staticBody);
+    wallobj2->setDensity(BASIC_DENSITY);
+    wallobj2->setFriction(BASIC_FRICTION);
+    wallobj2->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall2 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall2);
+    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj2,sprite,Z_BACKGROUND);  // All walls share the same texture
+
+#pragma mark : Wall polygon 3
+    Poly2 wall3(WALL3,8);
+    triangulator.set(wall3);
+    triangulator.calculate();
+    wall3.setIndices(triangulator.getTriangulation());
+    wall3.setType(Poly2::Type::SOLID);
+
+    std::shared_ptr<PolygonObstacle> wallobj3 = PolygonObstacle::alloc(wall3);
+    wallobj3->setDebugColor(STATIC_COLOR);
+    wallobj3->setName(wname);
+
+    // Set the physics attributes
+    wallobj3->setBodyType(b2_staticBody);
+    wallobj3->setDensity(BASIC_DENSITY);
+    wallobj3->setFriction(BASIC_FRICTION);
+    wallobj3->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall3 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall3);
+    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj3,sprite,Z_BACKGROUND);  // All walls share the same texture
+
+#pragma mark : Wall polygon 4
+    Poly2 wall4(WALL4,8);
+    triangulator.set(wall4);
+    triangulator.calculate();
+    wall4.setIndices(triangulator.getTriangulation());
+    wall4.setType(Poly2::Type::SOLID);
+
+    std::shared_ptr<PolygonObstacle> wallobj4 = PolygonObstacle::alloc(wall4);
+    wallobj4->setDebugColor(STATIC_COLOR);
+    wallobj4->setName(wname);
+
+    // Set the physics attributes
+    wallobj4->setBodyType(b2_staticBody);
+    wallobj4->setDensity(BASIC_DENSITY);
+    wallobj4->setFriction(BASIC_FRICTION);
+    wallobj4->setRestitution(BASIC_RESTITUTION);
+
+    // Add the scene graph nodes to this object
+    wall4 *= _scale;
+    sprite = PolygonNode::allocWithTexture(image,wall4);
+    sprite->setColor(Color4::CLEAR);
+    addObstacle(_worldnode, wallobj4,sprite,Z_BACKGROUND);  // All walls share the same texture
     
     //Add all the buttons for pause
     auto pauseButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pauseButton"));
@@ -489,6 +490,7 @@ void GameScene::populate() {
         _mainSelected = false;
         _resetSelected = false;
         _continueSelected = false;
+        AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
     });
     _levelworldnode->addChild(_pauseButton, Z_PAUSE);
     
@@ -596,6 +598,7 @@ void GameScene::populate() {
 //            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
 //            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             _continueSelected = true;
+            AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
         });
     }
 
@@ -678,6 +681,7 @@ void GameScene::displayPause(){
 void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
+    AudioChannels::get()->setMusicVolume(MUSIC_REDUCED_VOLUME);
     float percent = float(_level->getPlantScore())/float(_level->getPossibleMaxScore());
     _st1plantnum = Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
     _st1plantnum->setForeground(Color4(99, 59, 7));
@@ -1004,14 +1008,12 @@ void GameScene::update(float dt) {
         plant->update(dt);
    }
 
-    if (ticks % 50 == 0 && ticks > 50) {
-        for (auto &pest : _level->getPests()){
+    for (auto &pest : _level->getPests()){
+        if (ticks % 50*((int)pest->getSpeed()) == 0) {
             int targetY = pest->getTarget().y;
-            int targetX;
-            pest->walk();
+            int targetX = pest->getTarget().x;
             for(auto &plant : _plants) {
-                if (plant->getStage() > 2 && plant->getX()) {
-                    targetX = plant->getX();
+                if (plant->getX() == targetX && plant->getY() == targetY &&  plant->getStage() > 2) {
                     pest->walk();
                     break;
                 }
@@ -1031,6 +1033,7 @@ void GameScene::update(float dt) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
+
             Obstacle * ob;
             if (!_selectors.count(touchID)){
                 ob = getSelectedObstacle(pos, touchID);
@@ -1151,6 +1154,7 @@ void GameScene::update(float dt) {
             
             auto targetPos = c->getTargetPos();
             auto cloudPos = c->getPosition();
+
             c->setLinearVelocity(5*(targetPos->x - cloudPos.x), 5*(targetPos->y - cloudPos.y));
         }
     }
@@ -1339,6 +1343,16 @@ void GameScene::beginContact(b2Contact* contact) {
 //        CULog("clouds null");
         return;
     }
+}
+
+bool GameScene::tutorialDisplay(){
+    if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
+        _tutorialpage->setVisible(true);
+        _tcontinuebutton->activate(101);
+        _tcontinuebutton->setVisible(true);
+        return true;
+    }
+    return false;
 }
 
 

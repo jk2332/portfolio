@@ -51,10 +51,10 @@ int main(int argc, char * argv[]) {
     app.setHighDPI(true);
 
 //    app.setFullscreen(true);
-//    app.setSize(1024, 576);
+    app.setSize(1024, 576);
 //    app.setSize(512, 288);
 //    app.setSize(800, 400);
-    app.setSize(800, 600); //iPad
+//    app.setSize(800, 600); //iPad
 //    app.setSize(1200, 300);
 //    app.setSize(1600, 400);
 //    app.setSize(800, 800);
@@ -62,6 +62,7 @@ int main(int argc, char * argv[]) {
     app.setFPS(60.0f);
 #if CU_PLATFORM == CU_PLATFORM_MACOS || CU_PLATFORM == CU_PLATFORM_WINDOWS
     app.setMultiSampled(true);
+    app.setSize(800, 600); //iPad
 #endif
     
     /// DO NOT MODIFY ANYTHING BELOW THIS LINE

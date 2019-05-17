@@ -395,13 +395,7 @@ public:
         if (_tutorialpage) _tutorialpage->setVisible(false);
     }
     
-    void tutorialDisplay(){
-        if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
-            _tutorialpage->setVisible(true);
-            _tcontinuebutton->activate(101);
-            _tcontinuebutton->setVisible(true);
-        }
-    }
+    bool tutorialDisplay();
     
     void removeVictoryDisplay(){
         if (_vmainbutton != nullptr){

@@ -12,9 +12,9 @@
 
 using namespace std;
 
-map<string, int> pestHealth = {{"snail", 5}, {"raccoon", 15}};
-map<string, float> pestSpeed = {{"snail", 0.45f}, {"raccoon", 1.0f}};
-map<string, float> pestXOffset = {{"snail", 1.0f}, {"raccoon", 2.2f}};
+map<string, int> pestHealth = {{"snail", 5}, {"raccoon", 15}, {"rabbit", 20}};
+map<string, float> pestSpeed = {{"snail", 0.45f}, {"raccoon", 1.0f}, {"rabbit", 1.5f}};
+map<string, float> pestXOffset = {{"snail", 1.0f}, {"raccoon", 2.2f}, {"rabbit", 1.5f}};
 
 
 bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
@@ -22,8 +22,7 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
     _target = Vec2(x, y);
     //scale in setSceneNode instead
     _scaledTargetX = (DOWN_LEFT_CORNER_X + GRID_WIDTH * x + GRID_WIDTH/2 + GRID_OFFSET_X * x);
-    if(type == "rabbit"){_type = "raccoon";}
-    else {_type = type;}
+    _type = type;
     _side = side;
     _state = INACTIVE;
     _attacked = false;
@@ -50,6 +49,9 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
     } else if (type == "raccoon") {
         _move = Animate::alloc(0, 9, 1.0f, 1);
         _eat = Animate::alloc(0, 14, 2.0f, 1);
+    } else if (type == "rabbit") {
+        _move = Animate::alloc(0, 7, 1.0f, 1);
+        _eat = Animate::alloc(0, 12, 2.5f, 1);
     }
 
     return true;
@@ -58,15 +60,13 @@ bool Pest::init(int x, int y, std::string type, string side, float drawscale) {
 void Pest::dispose() {
     _active = false;
     _health = pestHealth[_type];
-    
     texture = nullptr;
     _actions = nullptr;
     _move = nullptr;
     _assets = nullptr;
     _node = nullptr;
-    _node_rev = nullptr;
     _eat_node = nullptr;
-    
+    _scared_node = nullptr;
 }
 
 void Pest::walk() {
@@ -85,38 +85,44 @@ void Pest::update(float dt) {
         // Stop when target reached
         _state = EATING;
         _ate = true;
-            // _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
+        // _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
     }
 
     if (_state == ATTACKING) {
         _actions->update(dt);
         auto pos = _node->getPosition();
         _node->setPosition(Vec2(pos.x + _speed, pos.y));
-        _node_rev->setPosition(Vec2(pos.x + _speed, pos.y));
         _eat_node->setPosition(Vec2(pos.x + _speed, pos.y));
+        _scared_node->setPosition(Vec2(pos.x + _speed, pos.y));
         _actions->activate("current", _move, _node);
     } else if (_state == RUNNING) {
-        _node->setVisible(false);
+        _node->setVisible(true);
         _eat_node->setVisible(false);
-        _node_rev->setVisible(true);
+        _scared_node->setVisible(false);
         _actions->update(dt);
-        auto pos = _node_rev->getPosition();
-        _node_rev->setPosition(Vec2(pos.x - 2*_speed, pos.y));
-        _actions->activate("current", _move, _node_rev);
+        _actions->activate("current", _move, _node);
+        auto pos = _node->getPosition();
+        _node->setPosition(Vec2(pos.x + 3*_speed, pos.y));
     } else if (_state == EATING) {
         _node->setVisible(false);
-        _node_rev->setVisible(false);
         _eat_node->setVisible(true);
+        _scared_node->setVisible(false);
         _actions->update(dt);
         _actions->activate("current", _eat, _eat_node);
+    }  else if (_state == SCARED) {
+        _node->setVisible(false);
+        _eat_node->setVisible(false);
+        _scared_node->setVisible(true);
+        _actions->pause("current");
+        if (scare_ticks >= SCARE_TIME){_state = RUNNING;}
+        else{scare_ticks++;}
     }
 }
 
-
 void Pest::setScared(bool b) {
-    if (_state == EATING) {
-        _state = RUNNING;
-    }
+    _ate = true;
+    _state = SCARED;
+    scare_ticks = 0;
 }
 
 bool Pest::checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode) {
@@ -138,38 +144,33 @@ bool Pest::checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode) {
 void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id, float ds){
     _drawscale = ds;
     _scaledTargetX *= ds;
-    _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 15);
+    _scared_node = PolygonNode::allocWithTexture(_assets->get<Texture>(_type + "scare"));
     if (_type == "snail") {
-        if (_side == "left") {
-            _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
-            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 6);
-        } else if (_side == "right") {
-            _node = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 6);
-            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
-        }
+        _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
+        _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 15);
+        _node->setScale(1.1f);
     } else if (_type == "raccoon") {
-        if (_side == "left") {
-            _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 10);
-            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 10);
-        } else if (_side == "right") {
-            _node = AnimationNode::alloc(_assets->get<Texture>(_type + "rev"), 1, 10);
-            _node_rev = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 10);
-        }
+        _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 10);
+        _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 15);
+        _node->setScale(1.1f);
+    } else if (_type == "rabbit") {
+        _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 8);
+        _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 13);
+        _node->setScale(0.5f);
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
-    _node->setScale(1.1f);
     cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y);
     _node->setPosition(a);
-
-    _node_rev->setAnchor(Vec2::ANCHOR_CENTER);
-    _node_rev->setScale(1.1f);
-    _node_rev->setPosition(a);
-    _node_rev->setVisible(false);
 
     _eat_node->setAnchor(Vec2::ANCHOR_CENTER);
     _eat_node->setScale(0.45);
     _eat_node->setPosition(a);
     _eat_node->setVisible(false);
+    
+    _scared_node->setAnchor(Vec2::ANCHOR_CENTER);
+    _scared_node->setScale(0.45);
+    _scared_node->setPosition(a);
+    _scared_node->setVisible(false);
 
     int pestZ = Z_PEST_BACK;
     if(_target.y == 1){
@@ -179,6 +180,6 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id,
         pestZ = Z_PEST_FRONT;
     }
     node->addChildWithName(_node, id, pestZ);
-    node->addChildWithName(_node_rev, id + "rev", pestZ);
     node->addChildWithName(_eat_node, id + "eat", pestZ);
+    node->addChildWithName(_scared_node, id + "scared", pestZ);
 }
