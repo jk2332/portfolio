@@ -301,7 +301,7 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     }
     
     _time = json->get(TIME_FIELD)->asInt();
-    _bkgd_change = (int)_time/33;
+    _bkgd_change = (int)(_time/33)*3;
 
     float w = json->get(WIDTH_FIELD)->asFloat();
     float h = json->get(HEIGHT_FIELD)->asFloat();
@@ -639,14 +639,15 @@ Color4 LevelModel::parseColor(std::string name) {
 }
 
 void LevelModel::update(long ticks) {
-//    if (ticks % _bkgd_change == 0) {
-//        if (_curr_bkgd < 33) {
-//            _curr_bkgd += 1;
-//        }
-//        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
-//        _mega_worldnode->setContentSize(_dimen);
-//        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
-//    }
+   if (ticks % _bkgd_change == 0) {
+       if (_curr_bkgd < 30) {
+           _curr_bkgd += 3;
+       }
+       CULog(std::to_string(_curr_bkgd).c_str());
+       _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
+       _mega_worldnode->setContentSize(_dimen);
+       _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));
+   }
     
     // Find which plants are being attacked
     shared_ptr<Node> thisNode;
