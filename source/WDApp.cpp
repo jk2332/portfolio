@@ -180,7 +180,7 @@ void WeatherDefenderApp::update(float timestep) {
         CULogGLError();
         if (_main.startSelected()){
 //            CULog("start selected");
-            _mainselected = _gameplay.init(_assets, "level1", false);
+            _mainselected = _gameplay.init(_assets, 1, false);
             _levelselected = _mainselected;
             if (_mainselected) {
                 bool tutorialshown = _gameplay.tutorialDisplay();
@@ -203,7 +203,7 @@ void WeatherDefenderApp::update(float timestep) {
         }
     }
     else if (!_levelselected) {
-        auto level = "level" + std::to_string(_levelSelect.getLevelSelected());
+        auto level = _levelSelect.getLevelSelected();
         _levelSelect.dispose();
         CULogGLError();
         _levelselected = _gameplay.init(_assets, level, false);
@@ -260,6 +260,21 @@ void WeatherDefenderApp::update(float timestep) {
             _mainselected = !_main.init(_assets);
             _levelselected = _mainselected;
             if (!_mainselected){
+                _gameplay.resetPauseBool();
+                _paused = false;
+                _suspended = false;
+            }
+        }
+        else if (_gameplay.nextLevelSelected()){
+            CULog("main has been selected");
+            _gameplay.dispose();
+            CULogGLError();
+            auto level = _gameplay.getLevelId();
+            _gameplay.dispose();
+            CULogGLError();
+            
+            bool b = _gameplay.init(_assets, level + 1, true);
+            if (b) {
                 _gameplay.resetPauseBool();
                 _paused = false;
                 _suspended = false;

@@ -104,12 +104,12 @@ _counter(0)
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, bool reset) {
     CULogGLError();
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), "level1", reset);
+    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), 1, reset);
 }
 
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string level, bool reset) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, int level, bool reset) {
     CULogGLError();
-    return init(assets,Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0), level, reset);
+    return init(assets, Rect(0, 0, DEFAULT_WIDTH,DEFAULT_HEIGHT), Vec2(0,0), level, reset);
 }
 
 /**
@@ -129,7 +129,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, std::string le
  * @return  true if the controller is initialized properly, false otherwise.
  */
 bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, bool reset) {
-    return init(assets,rect,Vec2(0,WATER_GRAVITY), "level1", reset);
+    return init(assets,rect,Vec2(0,WATER_GRAVITY), 1, reset);
 }
 
 /**
@@ -149,7 +149,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
  *
  * @return  true if the controller is initialized properly, false otherwise.
  */
-bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, std::string levelId, bool reset) {
+bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& rect, const Vec2& gravity, int levelId, bool reset) {
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimenWithIndicator = computeActiveSize();
@@ -168,7 +168,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         return false;
     }
     
-    _level = assets->get<LevelModel>(levelId);
+    _level = assets->get<LevelModel>("level"+std::to_string(levelId));
     if (_level == nullptr) {
         CULog("Fail!");
         return false;
@@ -307,6 +307,7 @@ void GameScene::dispose() {
     _vresetbutton = nullptr;
     _pmainbutton = nullptr;
     _presetbutton = nullptr;
+    _nlbutton = nullptr;
     _continuebutton = nullptr;
     _endscreen_nostar = nullptr;
     _endscreen_3star = nullptr;
@@ -600,11 +601,19 @@ void GameScene::populate() {
             _continueSelected = true;
             AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
         });
+        
+        _nlbutton = std::dynamic_pointer_cast<Button>(_assets->get<Node>("pause_nextlevel"));
+        _nlbutton->deactivate();
+        _nlbutton->setVisible(false);
+        _nlbutton->setListener([=](const std::string& name, bool down) {
+            this->_active = down;
+            _nextlevelselected = true;
+        });
     }
 
-    if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
+    if (_levelId < 7 && _levelId > 0 && _levelId != 4){
         CULog("setting tutorial");
-        image = _assets->get<Texture>(_levelId + "-tutorial");
+        image = _assets->get<Texture>("level" + std::to_string(_levelId) + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
         _tutorialpage->setContentSize(dimen/1.2);
         _tutorialpage->setVisible(false);
@@ -735,6 +744,11 @@ void GameScene::displayVictory(){
     _vresetbutton->activate(90);
     _vmainbutton->setVisible(true);
     _vmainbutton->activate(91);
+    
+    if (_levelId < 10 && _levelId >= 1){
+        _nlbutton->activate(92);
+        _nlbutton->setVisible(true);
+    }
 }
 
 
@@ -1346,7 +1360,7 @@ void GameScene::beginContact(b2Contact* contact) {
 }
 
 bool GameScene::tutorialDisplay(){
-    if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
+    if (_levelId > 0 && _levelId < 7 && _levelId != 4){
         _tutorialpage->setVisible(true);
         _tcontinuebutton->activate(101);
         _tcontinuebutton->setVisible(true);

@@ -55,7 +55,7 @@ class GameScene : public cugl::Scene {
 protected:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    std::string _levelId;
+    int _levelId;
 
     // CONTROLLERS
     /** Controller for abstracting out input across multiple platforms */
@@ -84,11 +84,13 @@ protected:
     std::shared_ptr<cugl::Button> _continuebutton;
     std::shared_ptr<cugl::Button> _vresetbutton;
     std::shared_ptr<cugl::Button> _vmainbutton;
+    std::shared_ptr<cugl::Button> _nlbutton;
     std::shared_ptr<Node> _pauseboard;
     bool _paused;
     bool _mainSelected;
     bool _resetSelected;
     bool _continueSelected;
+    bool _nextlevelselected;
     
     
     std::shared_ptr<ParticleNode> _rainNode;
@@ -219,7 +221,7 @@ public:
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets, bool reset);
 
-    bool init(const std::shared_ptr<AssetManager>& assets, std::string level, bool reset);
+    bool init(const std::shared_ptr<AssetManager>& assets, int level, bool reset);
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -255,7 +257,7 @@ public:
      *
      * @return  true if the controller is initialized properly, false otherwise.
      */
-    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity, std::string level, bool reset);
+    bool init(const std::shared_ptr<cugl::AssetManager>& assets, const cugl::Rect& rect, const cugl::Vec2& gravity, int level, bool reset);
 
 
 #pragma mark -
@@ -354,6 +356,7 @@ public:
     bool paused(){return _paused;}
     bool mainSelected() {return _mainSelected;}
     bool resetSelected(){return _resetSelected;}
+    bool nextLevelSelected() {return _nextlevelselected;}
     bool continueSelected() {return _continueSelected;}
     
     void resetPause(){_paused = false;}
@@ -364,6 +367,7 @@ public:
         _continueSelected=false;
         _paused = false;
         resetOver();
+        _nextlevelselected = false;
         _tutorialshown = true;
     }
     
@@ -406,6 +410,10 @@ public:
             _vresetbutton->deactivate();
             _vresetbutton->setVisible(false);
         }
+        if (_nlbutton != nullptr){
+            _nlbutton->deactivate();
+            _nlbutton->setVisible(false);
+        }
         if (_endscreen_nostar) _endscreen_nostar->setVisible(false);
         if (_endscreen_1star) _endscreen_1star->setVisible(false);
         if (_endscreen_2star) _endscreen_2star->setVisible(false);
@@ -419,7 +427,7 @@ public:
     void displayPause();
     void displayVictory();
     
-    std::string getLevelId(){
+    int getLevelId(){
         return _levelId;
     }
 
