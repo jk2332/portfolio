@@ -598,7 +598,7 @@ void GameScene::populate() {
         });
     }
 
-    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+    if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
         image = _assets->get<Texture>(_levelId + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
         _tutorialpage->setContentSize(dimen/1.2);
@@ -930,14 +930,14 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
     
-    if (!_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+    if (!_tutorialshown && _levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
         CULog("display tutorial");
         _tutorialpage->setVisible(true);
         _tcontinuebutton->activate(101);
         _tcontinuebutton->setVisible(true);
     }
     
-    if (_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6") {
+    if (_tutorialshown && _levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6") {
         _tutorialpage->setVisible(false);
         _tcontinuebutton->setVisible(false);
         _tcontinuebutton->deactivate();
