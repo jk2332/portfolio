@@ -398,7 +398,7 @@ void GameScene::populate() {
     std::shared_ptr<PolygonNode> sprite = PolygonNode::allocWithTexture(image,wall1);
     sprite->setColor(Color4::CLEAR);
     addObstacle(_worldnode, wallobj1,sprite,Z_BACKGROUND);  // All walls share the same texture
-    
+
 #pragma mark : Wall polygon 2
     Poly2 wall2(WALL2,8);
     triangulator.set(wall2);
@@ -1045,6 +1045,10 @@ void GameScene::update(float dt) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
+//            if (!(pos.y <= 16 && pos.y >= 8 && pos.x >= 2 && pos.x <= 30)) {
+//                CULog("out of boundary");
+//                continue;
+//            }
             Obstacle * ob;
             if (!_selectors.count(touchID)){
                 ob = getSelectedObstacle(pos, touchID);
@@ -1099,7 +1103,10 @@ void GameScene::update(float dt) {
         if (!selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
-            
+//            if (!(pos.y <= 17 && pos.y >= 4 && pos.x >= 2 && pos.x <= 30)) {
+//                continue;
+//                CULog("out of boundary");
+//            }
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
                 if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
@@ -1158,6 +1165,22 @@ void GameScene::update(float dt) {
             
             auto targetPos = c->getTargetPos();
             auto cloudPos = c->getPosition();
+//            if (!(targetPos->y <= 17 && targetPos->y >= 4 && targetPos->x >= 2 && targetPos->x <= 30)) {
+//                continue;
+//                CULog("out of boundary");
+//            }
+//            else if (cloudPos.y > 17) {
+//                c->setTargetPos(Vec2(cloudPos.x, 17));
+//            }
+//            else if (cloudPos.y < 4){
+//                c->setTargetPos(Vec2(cloudPos.x, 4));
+//            }
+//            else if (cloudPos.x < 2){
+//                c->setTargetPos(Vec2(2, cloudPos.y));
+//            }
+//            else if (cloudPos.x > 30){
+//                c->setTargetPos(Vec2(30, cloudPos.y));
+//            }
             c->setLinearVelocity(5*(targetPos->x - cloudPos.x), 5*(targetPos->y - cloudPos.y));
         }
     }
