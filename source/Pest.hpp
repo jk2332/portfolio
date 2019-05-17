@@ -17,6 +17,8 @@
 #define EATING 1
 #define RUNNING 2
 #define INACTIVE 3
+#define SCARED 4
+#define SCARE_TIME 30
 
 using namespace cugl;
 
@@ -29,6 +31,7 @@ private:
     
 protected:
     int _health;
+    int scare_ticks;
     Vec2 _pos;
     Vec2 _target;
     int _status;
@@ -42,6 +45,7 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Node> _node;
     std::shared_ptr<Node> _eat_node;
+    std::shared_ptr<PolygonNode> _scared_node;
     std::string _side;
     std::string _name;
     int _xside;

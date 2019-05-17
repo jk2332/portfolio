@@ -297,7 +297,7 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
     // Set rain animation
     _rain_node = AnimationNode::alloc(rain, 1, 20);
     _rain_node->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
-    _rain_node->setScale(0.5f*_cloudSizeScale);
+    _rain_node->setScale(0.3f*_cloudSizeScale);
     _rain_node->setPosition(_cloudNode->getPosition() + _cloudNode->getSize()/2.0f + displacement);
     _rain_node->setName("rainAnimation");
 

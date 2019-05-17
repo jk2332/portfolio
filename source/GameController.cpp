@@ -364,7 +364,7 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.5f, w,0.9f*h/3.5f, 0.0f,0.9f*h/3.5f, 0.0f,h/3.5f }; //Bottom
+    float WALL1[] = { w,h/5.0f, w,0.9f*h/5.0f, 0.0f,0.9f*h/5.0f, 0.0f,h/5.0f }; //Bottom
     float WALL2[] = { w,h, w,h*0.97f, 0.0f,h*0.97f, 0.0f,h }; //Top
     float WALL3[] = { 0.0f,h*0.97f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.97f }; //Left
     float WALL4[] = { w*0.975f,h*0.97f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.97f }; //Right
@@ -1018,14 +1018,12 @@ void GameScene::update(float dt) {
         plant->update(dt);
    }
 
-    if (ticks % 50 == 0 && ticks > 50) {
-        for (auto &pest : _level->getPests()){
+    for (auto &pest : _level->getPests()){
+        if (ticks % 50*((int)pest->getSpeed()) == 0) {
             int targetY = pest->getTarget().y;
-            int targetX;
-            pest->walk();
+            int targetX = pest->getTarget().x;
             for(auto &plant : _plants) {
-                if (plant->getStage() > 2 && plant->getX()) {
-                    targetX = plant->getX();
+                if (plant->getX() == targetX && plant->getY() == targetY &&  plant->getStage() > 2) {
                     pest->walk();
                     break;
                 }
