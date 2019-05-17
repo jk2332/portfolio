@@ -71,6 +71,9 @@ protected:
     std::shared_ptr<Node> _endscreen_3star;
     std::shared_ptr<Node> _st1plantnum;
     std::shared_ptr<Node> _st2plantnum;
+    bool _tutorialshown = false;
+    std::shared_ptr<Node> _tutorialpage = nullptr;
+    std::shared_ptr<Button> _tcontinuebutton = nullptr;
     std::shared_ptr<Node> _st3plantnum;
     std::shared_ptr<Node> _st4plantnum;
     
@@ -396,6 +399,7 @@ public:
         if (_endscreen_2star) _endscreen_2star->setVisible(false);
         if (_endscreen_3star) _endscreen_3star->setVisible(false);
     }
+
     
     void displayPause();
     void displayVictory();

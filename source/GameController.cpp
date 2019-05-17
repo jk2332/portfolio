@@ -152,6 +152,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimenWithIndicator = computeActiveSize();
+    _tutorialshown = false;
     dimen = Size(dimenWithIndicator.x, dimenWithIndicator.y);
     _levelId = levelId;
     
@@ -314,6 +315,10 @@ void GameScene::dispose() {
         _pauseButton->deactivate();
     }
     _pauseButton = nullptr;
+    if (_tcontinuebutton != nullptr){
+        _tcontinuebutton->deactivate();
+    }
+    _tutorialpage = nullptr;
     if (_level) _level->dispose();
     
     if (_worldnode) _worldnode->removeAllChildren();
@@ -481,6 +486,39 @@ void GameScene::populate() {
         _continueSelected = false;
     });
     _levelworldnode->addChild(_pauseButton, Z_PAUSE);
+    
+    auto tutorialNode = Node::alloc();
+    tutorialNode->setName("tutorial Node");
+    
+    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+        std::cout << "level" + _levelId + "-tutorial" << endl;
+        image = _assets->get<Texture>(_levelId + "-tutorial");
+        _tutorialpage = PolygonNode::allocWithTexture(image);
+        _tutorialpage->setContentSize(dimen/1.2);
+//        _tutorialpage->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
+        tutorialNode->addChild(_tutorialpage);
+        
+        auto tutorialButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pause_continuebutton"));
+        tutorialButtonNode->setContentSize(Size(3, 3)*_scale);
+        tutorialButtonNode->setName("tutorial back button");
+        tutorialButtonNode->setPosition(0, 0);
+        
+        _tcontinuebutton = Button::alloc(tutorialButtonNode);
+        _tcontinuebutton->deactivate();
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->setScale(0.8);
+        _tcontinuebutton->setPosition(SCENE_WIDTH/2 + 200, SCENE_HEIGHT/2 - 200);
+        _tcontinuebutton->setListener([=](const std::string& name, bool down) {
+            _tutorialpage->setVisible(false);
+            _paused = false;
+            _continueSelected = true;
+            _tcontinuebutton->setVisible(false);
+            _tcontinuebutton->deactivate();
+        });
+        tutorialNode->addChild(_tcontinuebutton);
+        _levelworldnode->addChild(tutorialNode, 999);
+    }
     
     //Must add this node right before the actual clouds
     CULogGLError();
@@ -851,7 +889,14 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
-
+    if (!_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6") {
+        _levelworldnode->sortZOrder();
+        _tcontinuebutton->setVisible(true);
+        _tcontinuebutton->activate(101);
+        _tutorialpage->setVisible(true);
+        _tutorialshown = true;
+        _paused = true;
+    }
     
     _input.update(dt);
     ticks++;
