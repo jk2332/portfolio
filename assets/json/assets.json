@@ -208,6 +208,21 @@
         },
         "bigBackground" : {
             "file":     "textures/bigBackground.png"
+        },
+        "level1-tutorial" : {
+            "file":     "textures/Level-1.png"
+        },
+        "level2-tutorial" : {
+            "file":     "textures/Level-2.png"
+        },
+        "level3-tutorial" : {
+            "file":     "textures/Level-3.png"
+        },
+        "level5-tutorial" : {
+            "file":     "textures/Level-5.png"
+        },
+        "level6-tutorial" : {
+            "file":     "textures/Level-6.png"
         }
 	},
     "sounds": {

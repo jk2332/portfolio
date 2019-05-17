@@ -73,6 +73,9 @@ protected:
     std::shared_ptr<Label> _st2plantnum;
     std::shared_ptr<Label> _st3plantnum;
     std::shared_ptr<Label> _st4plantnum;
+    bool _tutorialshown = false;
+    std::shared_ptr<Node> _tutorialpage = nullptr;
+    std::shared_ptr<Button> _tcontinuebutton = nullptr;
     
     std::shared_ptr<cugl::Button> _pauseButton;
     std::shared_ptr<cugl::Button> _pmainbutton;
@@ -396,6 +399,7 @@ public:
         if (_endscreen_2star) _endscreen_2star->setVisible(false);
         if (_endscreen_3star) _endscreen_3star->setVisible(false);
     }
+
     
     void displayPause();
     void displayVictory();
