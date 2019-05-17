@@ -48,7 +48,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -73,7 +72,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -98,7 +96,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -123,7 +120,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -148,7 +144,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -173,7 +168,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -198,7 +192,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -223,7 +216,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -248,7 +240,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
@@ -273,7 +264,6 @@
                     "type"   : "Button",
                     "data"   : {
                         "upnode"   : "up",
-                        "pushable" : [0,100,29,171,100,200,171,171,200,100,171,29,100,0,29,29],
                         "visible"  : false,
                         "pushsize" : true,
                         "anchor"   : [0.5,0.5],
