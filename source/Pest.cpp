@@ -145,6 +145,7 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id,
     _drawscale = ds;
     _scaledTargetX *= ds;
     _scared_node = PolygonNode::allocWithTexture(_assets->get<Texture>(_type + "scare"));
+    float rabbitYOffset = 0.0f;
     if (_type == "snail") {
         _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 6);
         _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 15);
@@ -157,9 +158,10 @@ void Pest::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string id,
         _node = AnimationNode::alloc(_assets->get<Texture>(_type), 1, 8);
         _eat_node = AnimationNode::alloc(_assets->get<Texture>(_type + "eat"), 1, 13);
         _node->setScale(0.5f);
+        rabbitYOffset = 0.15f;
     }
     _node->setAnchor(Vec2::ANCHOR_CENTER);
-    cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y);
+    cugl::Vec2 a = _drawscale*Vec2(DOWN_LEFT_CORNER_X + GRID_WIDTH*(_xside) + GRID_WIDTH/2 + GRID_OFFSET_X*_xside, 0.15f + rabbitYOffset + DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_target.y);
     _node->setPosition(a);
 
     _eat_node->setAnchor(Vec2::ANCHOR_CENTER);

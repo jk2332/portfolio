@@ -92,15 +92,15 @@ void Plant::setRained(bool f) {
 void Plant::updateState(int ticks){
     if (_state == dead) {
         return;
-    }else if (_state == fullgrown){return;}
+    }
     else {
         if  (_attacked) {
             decHealth();
         }
-        if (_health >= 1000){
+        if (_health >= 1000 && _state != fullgrown){
             _state = noNeed;
         }
-        else if (_state == needShade){
+        else if (_state == needShade && _state != fullgrown){
             if (_shaded){
                 _actions2->activate("current", _sparkle, _sparkleNode);
                 incHealth();
@@ -113,7 +113,7 @@ void Plant::updateState(int ticks){
                 decHealth();
             }
         }
-        else if (_state == needRain){
+        else if (_state == needRain && _state != fullgrown){
             if (_rained){
                 _actions2->activate("current", _sparkle, _sparkleNode);
                 incHealth();
@@ -167,8 +167,7 @@ void Plant::updateState(int ticks){
     } else if (_health < 0) {
         setState(dead);
     }
-
-    changeSign();
+    if(_state != fullgrown){changeSign();}
 }
 
 void Plant::setSick(int sickStage) {

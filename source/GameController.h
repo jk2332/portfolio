@@ -74,6 +74,7 @@ protected:
     std::shared_ptr<Label> _st2plantnum;
     std::shared_ptr<Label> _st3plantnum;
     std::shared_ptr<Label> _st4plantnum;
+    std::shared_ptr<Label> _finalScore;
     bool _tutorialshown = false;
     std::shared_ptr<Node> _tutorialpage = nullptr;
     std::shared_ptr<Button> _tcontinuebutton = nullptr;

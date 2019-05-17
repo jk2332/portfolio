@@ -217,10 +217,15 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     _backgroundNode->setContentSize(dimen);
     _backgroundNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     
-    addChildWithName(_backgroundNode,"backgroundNode", Z_EXTENDEDBKGD);
-    addChildWithName(_worldnode,"worldNode", Z_BACKGROUND);
+    shared_ptr<Node> containerNode = Node::alloc();
+    addChildWithName(containerNode, "container");
+    containerNode->addChildWithName(_backgroundNode, "backgroundNode", Z_EXTENDEDBKGD);
+    containerNode->addChildWithName(_worldnode, "worldNode", Z_BACKGROUND);
+//    addChildWithName(_backgroundNode,"backgroundNode", Z_EXTENDEDBKGD);
+//    addChildWithName(_worldnode,"worldNode", Z_BACKGROUND);
     addChildWithName(_debugnode,"debugNode", Z_BACKGROUND);
-    addChildWithName(_rootnode,"rootnode", Z_BACKGROUND);
+    containerNode->addChildWithName(_rootnode, "rootnode", Z_BACKGROUND);
+//    addChildWithName(_rootnode,"rootnode", Z_BACKGROUND);
     
     _board = Board::alloc(SCENE_WIDTH, _scale, _assets->get<Texture>("tile"), GRID_NUM_X, GRID_NUM_Y);
     CULogGLError();
@@ -691,34 +696,41 @@ void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
     AudioChannels::get()->setMusicVolume(MUSIC_REDUCED_VOLUME);
-    float percent = float(_level->getPlantScore())/float(_level->getPossibleMaxScore());
+    int percent = (int)(100.0f * float(_level->getPlantScore())/float(_level->getPossibleMaxScore()));
     _st1plantnum = Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
     _st1plantnum->setForeground(Color4(99, 59, 7));
     _st1plantnum->setAnchor(0.5, 0.5);
     _st1plantnum->setScale(0.7);
-    _st1plantnum->setPosition(dimen.width/2, dimen.height/2 + 50);
-    _levelworldnode->addChild(_st1plantnum);
+    _st1plantnum->setPosition(dimen.width/2 - 10, dimen.height/2 - 20);
+    _levelworldnode->addChild(_st1plantnum, Z_UI);
     
     _st2plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(2)), _assets->get<Font>(PRIMARY_FONT));
     _st2plantnum->setForeground(Color4(99, 59, 7));
     _st2plantnum->setAnchor(0.5, 0.5);
     _st2plantnum->setScale(0.7);
-    _st2plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 + 50);
-    _levelworldnode->addChild(_st2plantnum);
+    _st2plantnum->setPosition(dimen.width/2 + 160, dimen.height/2 - 20);
+    _levelworldnode->addChild(_st2plantnum,  Z_UI);
     
     _st3plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(3)), _assets->get<Font>(PRIMARY_FONT));
     _st3plantnum->setForeground(Color4(99, 59, 7));
     _st3plantnum->setAnchor(0.5, 0.5);
     _st3plantnum->setScale(0.7);
-    _st3plantnum->setPosition(dimen.width/2, dimen.height/2 - 70);
-    _levelworldnode->addChild(_st3plantnum);
+    _st3plantnum->setPosition(dimen.width/2 - 10, dimen.height/2 - 140);
+    _levelworldnode->addChild(_st3plantnum,  Z_UI);
     
     _st4plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(4)), _assets->get<Font>(PRIMARY_FONT));
     _st4plantnum->setForeground(Color4(99, 59, 7));
     _st4plantnum->setAnchor(0.5, 0.5);
     _st4plantnum->setScale(0.7);
-    _st4plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 - 70);
-    _levelworldnode->addChild(_st4plantnum);
+    _st4plantnum->setPosition(dimen.width/2 + 160, dimen.height/2 - 140);
+    _levelworldnode->addChild(_st4plantnum,  Z_UI);
+
+    _finalScore = Label::alloc(std::to_string(percent) + "%", _assets->get<Font>(PRIMARY_FONT));
+    _finalScore->setForeground(Color4(99, 59, 7));
+    _finalScore->setAnchor(0.5, 0.5);
+    _finalScore->setScale(0.7);
+    _finalScore->setPosition(dimen.width/2 + 90, dimen.height/2 - 200);
+    _levelworldnode->addChild(_finalScore,  Z_UI);
     
     if (percent == 0){
         _endscreen_nostar->setVisible(true);
@@ -861,22 +873,30 @@ void GameScene::makeLightning(Obstacle * ob){
     AudioChannels::get()->playEffect(THUNDER_EFFECT,source,false,EFFECT_VOLUME);
     bool lightning;
     shared_ptr<Node> thisNode;
-    for (int i=0; i < GRID_NUM_X; i++){
-        for (int j=0; j < GRID_NUM_Y; j++){
-            lightning = false;
-            thisNode = _board->getNodeAt(i, j);
-            lightning = c->shadowCheck(_worldnode, thisNode);
-
-            if (lightning) {
+//    for (int i=0; i < GRID_NUM_X; i++){
+//        for (int j=0; j < GRID_NUM_Y; j++){
+//            lightning = false;
+//            thisNode = _board->getNodeAt(i, j);
+//            lightning = c->shadowCheck(_worldnode, thisNode);
+//
+//            if (lightning) {
+//                for (std::shared_ptr<Pest> p : _level->getPests()){
+//                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
+//                        CULog("Set scared!");
+//                        p->setScared(true);
+//                    }
+//                }
+//            }
+            
                 for (std::shared_ptr<Pest> p : _level->getPests()){
-                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
+                    if (c->lightningCheck(_worldnode, _rootnode, p->getNode())){
                         CULog("Set scared!");
                         p->setScared(true);
                     }
                 }
-            }
-        }
-    }
+            
+//        }
+//    }
 }
 
 void GameScene::checkForLightning(Obstacle * o, long touchID){
