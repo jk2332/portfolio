@@ -213,16 +213,19 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     auto rcNode = PolygonNode::allocWithTexture(_assets->get<Texture>("rcIndicator"));
     
     _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
-    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
-    _bar->setScale(x);
-    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getWidth() + x*moonNode->getWidth(),
-                                                            _bar->getHeight()));
-    sunNode->setScale(x);
-    sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
+    float capScale = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
+    float barScale = 1.5f*capScale;
+    _bar->setScale(barScale);
+    Vec2 b = Vec2(_dimen.width, _dimen.height - abs(SCENE_HEIGHT/2.0f - _dimen.height/2.0f));
+    _bar->setPosition(b - Vec2(_bar->getWidth() + (capScale/2.0f)*moonNode->getTexture()->getWidth(),
+                               _bar->getHeight()/1.5f));
+    sunNode->setScale(capScale);
+    sunNode->setAnchor(Vec2::ANCHOR_CENTER);
+    sunNode->setPosition(_bar->getPosition() + Vec2(-0.01f*_bar->getWidth(), _bar->getHeight()/2.8f));
     _worldnode->addChildWithName(sunNode, "sun", Z_UI);
-    moonNode->setScale(x);
-    moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
-                                                     moonNode->getHeight()/2.0f));
+    moonNode->setScale(capScale);
+    sunNode->setAnchor(Vec2::ANCHOR_CENTER);
+    moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth(), _bar->getHeight()/2.8f));
     _worldnode->addChildWithName(moonNode, "moon", Z_UI);
     _worldnode->addChildWithName(_bar, "bar", Z_UI);
     
@@ -643,7 +646,6 @@ void LevelModel::update(long ticks) {
        if (_curr_bkgd < 30) {
            _curr_bkgd += 3;
        }
-       CULog(std::to_string(_curr_bkgd).c_str());
        _mega_worldnode->setTexture(_assets->get<Texture>("ipad-" + std::to_string(_curr_bkgd)));
        _mega_worldnode->setContentSize(_dimen);
        _super_worldnode->setTexture(_assets->get<Texture>("background" + std::to_string(_curr_bkgd)));

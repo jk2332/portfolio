@@ -60,6 +60,7 @@
 //Clouds
 #define ORIGINAL_SIZE_X    165
 #define ORIGINAL_SIZE_Y    84
+#define RAINCLOUD_SIZE     1.3f
 
 // Level Model
 #define DYNAMIC_COLOR   Color4::GREEN

@@ -209,7 +209,6 @@ bool Cloud::shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode){
                                                       + _drawscale*Vec2(GRID_WIDTH/denom, GRID_HEIGHT/denom);
         Vec2 lowerRight = worldNode->nodeToWorldCoords(gridNode->getPosition())
                                                       + _drawscale*Vec2(GRID_WIDTH/denom, -GRID_HEIGHT/denom);
-        
         if (shadowHelper(upperLeft, sc, a, b) || shadowHelper(lowerLeft, sc, a, b) ||
             shadowHelper(upperRight, sc, a, b) || shadowHelper(lowerRight, sc, a, b) ){return true;}
         else{return false;}
@@ -281,7 +280,7 @@ vector<shared_ptr<Node>> Cloud::setSceneNode(const shared_ptr<cugl::CloudNode>& 
 }
 
 void Cloud::setCloudSizeScale(float s) {
-    if (s >= 1) {
+    if (s >= RAINCLOUD_SIZE) {
         _isRainCloud = true;
     }
     else {
