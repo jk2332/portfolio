@@ -493,35 +493,6 @@ void GameScene::populate() {
     auto tutorialNode = Node::alloc();
     tutorialNode->setName("tutorial Node");
     
-    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
-        std::cout << "level" + _levelId + "-tutorial" << endl;
-        image = _assets->get<Texture>(_levelId + "-tutorial");
-        _tutorialpage = PolygonNode::allocWithTexture(image);
-        _tutorialpage->setContentSize(dimen/1.2);
-//        _tutorialpage->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
-        tutorialNode->addChild(_tutorialpage);
-        
-        auto tutorialButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pause_continuebutton"));
-        tutorialButtonNode->setContentSize(Size(3, 3)*_scale);
-        tutorialButtonNode->setName("tutorial back button");
-        tutorialButtonNode->setPosition(0, 0);
-        
-        _tcontinuebutton = Button::alloc(tutorialButtonNode);
-        _tcontinuebutton->deactivate();
-        _tcontinuebutton->setVisible(false);
-        _tcontinuebutton->setScale(0.8);
-        _tcontinuebutton->setPosition(SCENE_WIDTH/2 + 200, SCENE_HEIGHT/2 - 200);
-        _tcontinuebutton->setListener([=](const std::string& name, bool down) {
-            _tutorialpage->setVisible(false);
-            _paused = false;
-            _continueSelected = true;
-            _tcontinuebutton->setVisible(false);
-            _tcontinuebutton->deactivate();
-        });
-        tutorialNode->addChild(_tcontinuebutton);
-        _levelworldnode->addChild(tutorialNode, 999);
-    }
     
     //Must add this node right before the actual clouds
     CULogGLError();
@@ -626,6 +597,33 @@ void GameScene::populate() {
         });
     }
 
+    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+        _paused =true;
+        std::cout << "level" + _levelId + "-tutorial" << endl;
+        image = _assets->get<Texture>(_levelId + "-tutorial");
+        _tutorialpage = PolygonNode::allocWithTexture(image);
+        _tutorialpage->setContentSize(dimen/1.2);
+        _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
+        tutorialNode->addChild(_tutorialpage);
+        
+        auto tutorialButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pause_continuebutton"));
+        tutorialButtonNode->setContentSize(Size(3, 3)*_scale);
+        tutorialButtonNode->setName("tutorial back button");
+        tutorialButtonNode->setPosition(0, 0);
+        
+        _tcontinuebutton = Button::alloc(tutorialButtonNode);
+        _tcontinuebutton->setScale(0.8);
+        _tcontinuebutton->setPosition(SCENE_WIDTH/2 + 200, SCENE_HEIGHT/2 - 200);
+        _tcontinuebutton->setListener([=](const std::string& name, bool down) {
+            CULog("button pressed");
+            _tutorialpage->setVisible(false);
+            _tutorialshown = true;
+            _continueSelected = true;
+        });
+        _tcontinuebutton->activate(101);
+        tutorialNode->addChild(_tcontinuebutton);
+        _levelworldnode->addChild(tutorialNode, 999);
+    }
 }
 
 /**
@@ -921,13 +919,10 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
-    if (!_tutorialshown && (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6")) {
-        _levelworldnode->sortZOrder();
-        _tcontinuebutton->setVisible(true);
-        _tcontinuebutton->activate(101);
-        _tutorialpage->setVisible(true);
-        _tutorialshown = true;
-        _paused = true;
+
+    if (_tutorialshown) {
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->deactivate();
     }
     
     _input.update(dt);
