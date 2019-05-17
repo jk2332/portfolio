@@ -620,7 +620,7 @@ void GameScene::populate() {
         CULog("setting tutorial");
         image = _assets->get<Texture>("level" + std::to_string(_levelId) + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
-        _tutorialpage->setContentSize(dimen/1.2);
+        _tutorialpage->setContentSize(SCENE_WIDTH*0.9f, SCENE_HEIGHT*0.9f);
         _tutorialpage->setVisible(false);
         _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
         tutorialNode->addChild(_tutorialpage);
@@ -699,7 +699,7 @@ void GameScene::displayVictory(){
     float correction = dimen.height/SCENE_HEIGHT;
     float upFactor = 1.2f/correction;
     float downFactor = 0.8f/correction;
-    float downFactor2 = 0.75f/correction;
+    float downFactor2 = 0.8f/correction;
     float lowestFactor = 0.57f/correction;
     float leftFactor = 1.0f;
     float rightFactor = 1.3f;

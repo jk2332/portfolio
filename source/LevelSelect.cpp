@@ -87,6 +87,9 @@ bool LevelSelect::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     _mainbutton = std::dynamic_pointer_cast<Button>(assets->get<Node>("levelselect_homebutton"));
     _mainbutton->deactivate();
+    _mainbutton->setAnchor(Vec2::ANCHOR_TOP_LEFT);
+    _mainbutton->setPosition(0.0f,
+                             dimen.height - abs(SCENE_HEIGHT/2.0f - dimen.height/2.0f));
     _mainbutton->setVisible(false);
     _mainbutton->setListener([=](const std::string& name, bool down) {
         //            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);

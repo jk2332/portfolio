@@ -42,7 +42,7 @@ protected:
     int _rainNeeded;
     
     int _sickStage;
-
+    bool playedSound = false;
     int _state;
     int _type;
     int _rainProb;

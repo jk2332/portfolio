@@ -146,7 +146,7 @@ void Plant::updateState(int ticks){
             }
         }
     }
-    if(_state != fullgrown){changeSign();}
+    changeSign();
 
     _shaded = false;
     _rained = false;
@@ -168,6 +168,7 @@ void Plant::updateState(int ticks){
     } else if (_health < 0) {
         setState(dead);
     }
+    changeSign();
 }
 
 void Plant::setSick(int sickStage) {
@@ -191,13 +192,21 @@ void Plant::changeSign() {
     } else if (_state == needRain) {
         _signNode->setTexture(_assets->get<Texture>("signRain"));
     } else if (_state == dead) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(PLANTDEATH_EFFECT);
-        AudioChannels::get()->playEffect(PLANTDEATH_EFFECT,source,false,EFFECT_VOLUME);
+        if(!playedSound){
+            std::shared_ptr<Sound> source = _assets->get<Sound>(PLANTDEATH_EFFECT);
+            AudioChannels::get()->playEffect(PLANTDEATH_EFFECT,source,false,EFFECT_VOLUME);
+            playedSound = true;
+        }
         _signNode->setTexture(_assets->get<Texture>("signSkull"));
+
     } else if (_stage >= _maxStage) {
-        std::shared_ptr<Sound> source = _assets->get<Sound>(FULLGROWN_EFFECT);
-        AudioChannels::get()->playEffect(FULLGROWN_EFFECT,source,false,EFFECT_VOLUME);
+        if(!playedSound){
+            std::shared_ptr<Sound> source = _assets->get<Sound>(FULLGROWN_EFFECT);
+            AudioChannels::get()->playEffect(FULLGROWN_EFFECT,source,false,EFFECT_VOLUME);
+            playedSound = true;
+        }
         _signNode->setTexture(_assets->get<Texture>("signHappy"));
+
     } else {
         _signNode->setTexture(_assets->get<Texture>("signSun"));
     }
