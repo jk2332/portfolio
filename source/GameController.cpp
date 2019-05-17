@@ -598,11 +598,10 @@ void GameScene::populate() {
     }
 
     if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
-        _paused =true;
-        std::cout << "level" + _levelId + "-tutorial" << endl;
         image = _assets->get<Texture>(_levelId + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
         _tutorialpage->setContentSize(dimen/1.2);
+        _tutorialpage->setVisible(false);
         _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
         tutorialNode->addChild(_tutorialpage);
         
@@ -620,7 +619,8 @@ void GameScene::populate() {
             _tutorialshown = true;
             _continueSelected = true;
         });
-        _tcontinuebutton->activate(101);
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->deactivate();
         tutorialNode->addChild(_tcontinuebutton);
         _levelworldnode->addChild(tutorialNode, 999);
     }
@@ -919,11 +919,6 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
-
-    if (_tutorialshown) {
-        _tcontinuebutton->setVisible(false);
-        _tcontinuebutton->deactivate();
-    }
     
     _input.update(dt);
     ticks++;
@@ -932,6 +927,19 @@ void GameScene::update(float dt) {
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didExit())  {
         Application::get()->quit();
+    }
+    
+    if (!_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+        CULog("display tutorial");
+        _tutorialpage->setVisible(true);
+        _tcontinuebutton->activate(101);
+        _tcontinuebutton->setVisible(true);
+    }
+    
+    if (_tutorialshown) {
+        _tutorialpage->setVisible(false);
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->deactivate();
     }
     
     
