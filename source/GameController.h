@@ -69,6 +69,7 @@ protected:
     std::shared_ptr<Node> _endscreen_1star;
     std::shared_ptr<Node> _endscreen_2star;
     std::shared_ptr<Node> _endscreen_3star;
+    bool showtutorial;
     std::shared_ptr<Node> _st1plantnum;
     std::shared_ptr<Node> _st2plantnum;
     bool _tutorialshown = false;
@@ -363,6 +364,7 @@ public:
         _continueSelected=false;
         _paused = false;
         resetOver();
+        _tutorialshown = true;
     }
     
     void resetOver(){
@@ -399,7 +401,10 @@ public:
         if (_endscreen_2star) _endscreen_2star->setVisible(false);
         if (_endscreen_3star) _endscreen_3star->setVisible(false);
     }
-
+    
+//    void setShowTutorial(){
+//        _showtutorial = true;
+//    }
     
     void displayPause();
     void displayVictory();
