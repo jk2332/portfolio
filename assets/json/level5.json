@@ -48,16 +48,16 @@
          "name":"Plants",
          "objects":[
                 {
-                 "gid":5,
-                 "height":126,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"corn",
-                 "visible":true,
-                 "width":94,
-                 "x":1,
-                 "y":1
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"corn",
+                    "visible":true,
+                    "width":94,
+                    "x":1,
+                    "y":1
                 },
                 {
                     "gid":5,
@@ -69,18 +69,6 @@
                     "visible":true,
                     "width":94,
                     "x":2,
-                    "y":1
-                },
-                {
-                    "gid":5,
-                    "height":126,
-                    "id":6,
-                    "name":"",
-                    "rotation":0,
-                    "type":"corn",
-                    "visible":true,
-                    "width":94,
-                    "x":3,
                     "y":1
                 },
                 {
@@ -101,7 +89,7 @@
                     "id":6,
                     "name":"",
                     "rotation":0,
-                    "type":"corn",
+                    "type":"eggplant",
                     "visible":true,
                     "width":94,
                     "x":5,
@@ -125,7 +113,7 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"corn",
+                 "type":"eggplant",
                  "visible":true,
                  "width":94,
                  "x":3,
@@ -137,7 +125,7 @@
                  "id":7,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"corn",
                  "visible":true,
                  "width":94,
                  "x":4,
@@ -164,7 +152,7 @@
                  "visible":true,
                  "width":206,
                  "texture": "cloud",
-                 "time": 4000,
+                 "time": 1200,
                  "size": 1.0,
                  "x":5,
                  "y":15

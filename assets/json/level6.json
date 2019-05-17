@@ -1,6 +1,6 @@
 { "height":18,
  "infinite":false,
- "time": 5000,
+ "time": 3000,
  "layers":[
         {
          "id":2,
@@ -81,7 +81,7 @@
                  "visible":true,
                  "width":94,
                  "x":4,
-                 "y":1
+                 "y":0
                 },
                 {
                  "gid":5,
@@ -93,7 +93,7 @@
                  "visible":true,
                  "width":94,
                  "x":5,
-                 "y":1
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -106,7 +106,7 @@
          "id":8,
          "name":"ResourceClouds",
          "objects":[
-                {
+             {
                  "gid":9,
                  "height":105,
                  "id":3,
@@ -116,12 +116,12 @@
                  "visible":true,
                  "width":206,
                  "texture": "cloud",
-                 "time": 4000,
+                 "time": 1200,
                  "size": 1.0,
                  "x":5,
                  "y":15
-                }
-              ],
+             }
+         ],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -190,9 +190,9 @@
                      },
                      {
                             "x": 5,
-                            "y": 1,
+                            "y": 0,
                             "type": "snail",
-                            "side": "right",
+                            "side": "left",
                             "id": 2
                      }
               ]

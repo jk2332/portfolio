@@ -323,6 +323,7 @@ public:
     bool isRaining(){return _isRaining;}
     long getRainCoolDown(){return _rainCoolDown;}
     bool shadowCheck(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
+    bool lightningCheck(shared_ptr<Node> worldNode, shared_ptr<Node> rootNode, shared_ptr<Node> pestNode);
     float getCloudSizeScale() {
         return _cloudSizeScale;
     }

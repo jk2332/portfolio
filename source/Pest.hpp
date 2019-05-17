@@ -41,7 +41,6 @@ protected:
     std::shared_ptr<Animate> _eat;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Node> _node;
-    std::shared_ptr<Node> _node_rev;
     std::shared_ptr<Node> _eat_node;
     std::string _side;
     std::string _name;
@@ -149,5 +148,7 @@ public:
     bool checkTarget(shared_ptr<Node> worldNode, shared_ptr<Node> gridNode);
 
     void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
+    
+    shared_ptr<Node> getNode(){return _node;};
 };
 #endif /* Pest_hpp */

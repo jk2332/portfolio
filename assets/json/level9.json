@@ -1,6 +1,6 @@
 { "height":18,
  "infinite":false,
- "time": 5000,
+ "time": 3500,
  "layers":[
         {
          "id":2,
@@ -77,7 +77,7 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"tomato",
+                 "type":"eggplant",
                  "visible":true,
                  "width":94,
                  "x":4,
@@ -89,7 +89,7 @@
                  "id":6,
                  "name":"",
                  "rotation":0,
-                 "type":"eggplant",
+                 "type":"tomato",
                  "visible":true,
                  "width":94,
                  "x":5,
@@ -101,47 +101,11 @@
                     "id":6,
                     "name":"",
                     "rotation":0,
-                    "type":"corn",
-                    "visible":true,
-                    "width":94,
-                    "x":1,
-                    "y":1
-                },
-                {
-                    "gid":5,
-                    "height":126,
-                    "id":6,
-                    "name":"",
-                    "rotation":0,
-                    "type":"corn",
-                    "visible":true,
-                    "width":94,
-                    "x":5,
-                    "y":1
-                },
-                {
-                    "gid":5,
-                    "height":126,
-                    "id":6,
-                    "name":"",
-                    "rotation":0,
-                    "type":"tomato",
-                    "visible":true,
-                    "width":94,
-                    "x":1,
-                    "y":0
-                },
-                {
-                    "gid":5,
-                    "height":126,
-                    "id":6,
-                    "name":"",
-                    "rotation":0,
                     "type":"eggplant",
                     "visible":true,
                     "width":94,
-                    "x":2,
-                    "y":0
+                    "x":0,
+                    "y":1
                 },
                 {
                     "gid":5,
@@ -153,7 +117,7 @@
                     "visible":true,
                     "width":94,
                     "x":3,
-                    "y":0
+                    "y":1
                 },
                 {
                     "gid":5,
@@ -164,7 +128,19 @@
                     "type":"corn",
                     "visible":true,
                     "width":94,
-                    "x":4,
+                    "x":6,
+                    "y":1
+                },
+                {
+                    "gid":5,
+                    "height":126,
+                    "id":6,
+                    "name":"",
+                    "rotation":0,
+                    "type":"tomato",
+                    "visible":true,
+                    "width":94,
+                    "x":0,
                     "y":0
                 },
                 {
@@ -176,7 +152,7 @@
                  "type":"tomato",
                  "visible":true,
                  "width":94,
-                 "x":5,
+                 "x":6,
                  "y":0
                 }],
          "opacity":1,
@@ -190,6 +166,21 @@
          "id":8,
          "name":"ResourceClouds",
          "objects":[
+             {
+                 "gid":9,
+                 "height":105,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":206,
+                 "texture": "cloud",
+                 "time": 875,
+                 "size": 1.0,
+                 "x":5,
+                 "y":15
+             },
                 {
                  "gid":9,
                  "height":105,
@@ -200,7 +191,7 @@
                  "visible":true,
                  "width":206,
                  "texture": "cloud",
-                 "time": 4000,
+                 "time": 2425,
                  "size": 1.0,
                  "x":5,
                  "y":15
@@ -242,7 +233,33 @@
                  "texture": "cloud",
                  "x":22,
                  "y":10
-                }, 
+                },
+                {
+                    "gid":6,
+                    "height":126,
+                    "id":2,
+                    "name":"",
+                    "rotation":0,
+                    "type":"",
+                    "visible":true,
+                    "width":248,
+                    "texture": "cloud",
+                    "x":10,
+                    "y":10
+                },
+                {
+                    "gid":6,
+                    "height":126,
+                    "id":2,
+                    "name":"",
+                    "rotation":0,
+                    "type":"",
+                    "visible":true,
+                    "width":248,
+                    "texture": "cloud",
+                    "x":5,
+                    "y":15
+                },
                 {
                  "gid":9,
                  "height":105,
@@ -267,23 +284,23 @@
               "objects": [
                      {
                             "x": 1,
-                            "y": 1,
+                            "y": 2,
                             "type": "raccoon",
                             "side": "left",
                             "id": 2
                      },
                      {
                          "x": 3,
-                         "y": 0,
+                         "y": 1,
                          "type": "rabbit",
                          "side": "left",
                          "id": 2
                      },
                      {
-                            "x": 5,
-                            "y": 1,
+                            "x": 6,
+                            "y": 0,
                             "type": "snail",
-                            "side": "right",
+                            "side": "left",
                             "id": 2
                      }
               ]

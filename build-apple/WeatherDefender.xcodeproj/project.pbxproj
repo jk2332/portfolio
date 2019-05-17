@@ -326,6 +326,8 @@
 				F86A31522239D6D600233ED5 /* cloudParticle.vert */,
 				1B18648322673567003E0C2B /* Constants.cpp */,
 				1B18648422673567003E0C2B /* Constants.hpp */,
+				F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */,
+				F8CFFA39228E2FD1001915A5 /* ConstantsMusic.hpp */,
 				EBB4B56F2040ADD200238092 /* GameController.cpp */,
 				EBB4B56D2040ADD200238092 /* GameController.h */,
 				EBB4B5702040ADD200238092 /* InputController.cpp */,
@@ -355,8 +357,6 @@
 				F8939EBB22375A9E00199385 /* ResourceController.hpp */,
 				EBB4B56C2040ADD200238092 /* WDApp.cpp */,
 				EBB4B56E2040ADD200238092 /* WDApp.h */,
-				F8CFFA38228E2FD1001915A5 /* ConstantsMusic.cpp */,
-				F8CFFA39228E2FD1001915A5 /* ConstantsMusic.hpp */,
 			);
 			name = Source;
 			path = ../source;
