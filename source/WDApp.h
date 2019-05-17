@@ -45,7 +45,7 @@ protected:
     bool _levelselected;
     bool _mainselected;
     bool _paused = false;
-    
+    bool _suspended = false;
     
 public:
 #pragma mark Constructors

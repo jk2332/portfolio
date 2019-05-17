@@ -396,6 +396,8 @@ public:
         if (_tutorialpage) _tutorialpage->setVisible(false);
     }
     
+    bool tutorialDisplay();
+    
     void removeVictoryDisplay(){
         if (_vmainbutton != nullptr){
             _vmainbutton->deactivate();
