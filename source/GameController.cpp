@@ -773,12 +773,19 @@ void GameScene::displayVictory(){
         std::shared_ptr<Sound> source = _assets->get<Sound>(ENDGAME_EFFECT);
         AudioChannels::get()->playEffect(ENDGAME_EFFECT,source,false,EFFECT_VOLUME);
     }
+    
+    _vresetbutton->setPosition(_vresetbutton->getPositionX(),
+                               _vresetbutton->getPositionY()/correction);
     _vresetbutton->setVisible(true);
     _vresetbutton->activate(90);
+    _vmainbutton->setPosition(_vmainbutton->getPositionX(),
+                               _vmainbutton->getPositionY()/correction);
     _vmainbutton->setVisible(true);
     _vmainbutton->activate(91);
     
     if (_levelId < 10 && _levelId >= 1){
+        _nlbutton->setPosition(_nlbutton->getPositionX(),
+                                _nlbutton->getPositionY()/correction);
         _nlbutton->activate(92);
         _nlbutton->setVisible(true);
     }
@@ -894,30 +901,30 @@ void GameScene::makeLightning(Obstacle * ob){
     AudioChannels::get()->playEffect(THUNDER_EFFECT,source,false,EFFECT_VOLUME);
     bool lightning;
     shared_ptr<Node> thisNode;
-//    for (int i=0; i < GRID_NUM_X; i++){
-//        for (int j=0; j < GRID_NUM_Y; j++){
-//            lightning = false;
-//            thisNode = _board->getNodeAt(i, j);
-//            lightning = c->shadowCheck(_worldnode, thisNode);
-//
-//            if (lightning) {
-//                for (std::shared_ptr<Pest> p : _level->getPests()){
-//                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
-//                        CULog("Set scared!");
-//                        p->setScared(true);
-//                    }
-//                }
-//            }
-            
+    for (int i=0; i < GRID_NUM_X; i++){
+        for (int j=0; j < GRID_NUM_Y; j++){
+            lightning = false;
+            thisNode = _board->getNodeAt(i, j);
+            lightning = c->shadowCheck(_worldnode, thisNode);
+
+            if (lightning) {
                 for (std::shared_ptr<Pest> p : _level->getPests()){
-                    if (c->lightningCheck(_worldnode, _rootnode, p->getNode())){
+                    if (p != nullptr && p->getTarget() == Vec2(i, j)){
                         CULog("Set scared!");
                         p->setScared(true);
                     }
                 }
-            
-//        }
-//    }
+            }
+            //One Day - when we can attack on the move
+//                for (std::shared_ptr<Pest> p : _level->getPests()){
+//                    if (c->lightningCheck(_worldnode, _rootnode, p->getNode())){
+//                        CULog("Set scared!");
+//                        p->setScared(true);
+//                    }
+//                }
+    
+        }
+    }
 }
 
 void GameScene::checkForLightning(Obstacle * o, long touchID){
