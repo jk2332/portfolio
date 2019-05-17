@@ -204,6 +204,7 @@ void WeatherDefenderApp::update(float timestep) {
         if (_gameplay.continueSelected()){
             CULog("continue has been selected");
             _gameplay.removePauseDisplay();
+            _gameplay.removeTutorialDisplay();
             _gameplay.resetPauseBool();
             _paused = false;
         }

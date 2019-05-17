@@ -11,7 +11,7 @@
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2World.h>
-
+#include "ConstantsMusic.hpp"
 
 using namespace cugl;
 
@@ -91,9 +91,9 @@ void Plant::setRained(bool f) {
 
 void Plant::updateState(int ticks){
     if (_state == dead) {
-        changeSign();
         return;
-    } else {
+    }else if (_state == fullgrown){return;}
+    else {
         if  (_attacked) {
             decHealth();
         }
@@ -180,6 +180,7 @@ void Plant::setSick(int sickStage) {
         _node->setVisible(false);
         _deathNode->setFrame(sickStage);
     }
+    changeSign();
 }
 
 void Plant::changeSign() {
@@ -188,8 +189,13 @@ void Plant::changeSign() {
     } else if (_state == needRain) {
         _signNode->setTexture(_assets->get<Texture>("signRain"));
     } else if (_state == dead) {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(PLANTDEATH_EFFECT);
+        AudioChannels::get()->playEffect(PLANTDEATH_EFFECT,source,false,EFFECT_VOLUME);
         _signNode->setTexture(_assets->get<Texture>("signSkull"));
     } else if (_stage >= _maxStage) {
+        std::shared_ptr<Sound> source = _assets->get<Sound>(FULLGROWN_EFFECT);
+        AudioChannels::get()->playEffect(FULLGROWN_EFFECT,source,false,EFFECT_VOLUME);
+        _state = fullgrown;
         _signNode->setTexture(_assets->get<Texture>("signHappy"));
     } else {
         _signNode->setTexture(_assets->get<Texture>("signSun"));

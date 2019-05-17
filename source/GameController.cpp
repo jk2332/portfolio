@@ -28,6 +28,7 @@
 #include <cugl/2d/CUPathNode.h>
 #include <Box2D/Collision/b2Collision.h>
 #include "Constants.hpp"
+#include "ConstantsMusic.hpp"
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -152,6 +153,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     // Initialize the scene to a locked height (iPhone X is narrow, but wide)
     dimenWithIndicator = computeActiveSize();
+    _tutorialshown = false;
     dimen = Size(dimenWithIndicator.x, dimenWithIndicator.y);
     _levelId = levelId;
     
@@ -242,7 +244,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
     
     if (!reset){
         std::shared_ptr<Sound> source = _assets->get<Sound>(GAMEPLAY_MUSIC);
-        AudioChannels::get()->playMusic(source, true, source->getVolume(), 1.0f);
+        AudioChannels::get()->playMusic(source, true, MUSIC_VOLUME, 1.0f);
     }
     
     return true;
@@ -314,6 +316,10 @@ void GameScene::dispose() {
         _pauseButton->deactivate();
     }
     _pauseButton = nullptr;
+    if (_tcontinuebutton != nullptr){
+        _tcontinuebutton->deactivate();
+    }
+    _tutorialpage = nullptr;
     if (_level) _level->dispose();
     
     if (_worldnode) _worldnode->removeAllChildren();
@@ -357,10 +363,10 @@ void GameScene::populate() {
     float w = SCENE_WIDTH/_scale;
     float h = SCENE_HEIGHT/_scale;
     //Define wall vertices in terms of the width and height of the playable area
-    float WALL1[] = { w,h/3.5f, w,0.9f*h/3.5f, 0.0f,0.9f*h/3.5f, 0.0f,h/3.5f };
-    float WALL2[] = { w,h, w,h*0.9f, 0.0f,h*0.9f, 0.0f,h };
-    float WALL3[] = { 0.0f,h*0.9f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.9f };
-    float WALL4[] = { w*0.975f,h*0.9f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.9f };
+    float WALL1[] = { w,h/3.5f, w,0.9f*h/3.5f, 0.0f,0.9f*h/3.5f, 0.0f,h/3.5f }; //Bottom
+    float WALL2[] = { w,h, w,h*0.97f, 0.0f,h*0.97f, 0.0f,h }; //Top
+    float WALL3[] = { 0.0f,h*0.97f, 0.0f,h/3.0f, 0.025f*w,h/3.0f, 0.025f*w,h*0.97f }; //Left
+    float WALL4[] = { w*0.975f,h*0.97f, w*0.975f,h/3.0f, w,h/3.0f, w,h*0.97f }; //Right
     
 #pragma mark : Wall polygon 1
     // Create ground pieces
@@ -473,6 +479,8 @@ void GameScene::populate() {
     _pauseButton->setAnchor(Vec2::ANCHOR_TOP_LEFT);
     _pauseButton->setPosition(0, SCENE_HEIGHT);
     _pauseButton->setListener([=](const std::string& name, bool down) {
+//        std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//        AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
         removeVictoryDisplay();
         displayPause();
         _paused = true;
@@ -481,6 +489,10 @@ void GameScene::populate() {
         _continueSelected = false;
     });
     _levelworldnode->addChild(_pauseButton, Z_PAUSE);
+    
+    auto tutorialNode = Node::alloc();
+    tutorialNode->setName("tutorial Node");
+    
     
     //Must add this node right before the actual clouds
     CULogGLError();
@@ -539,6 +551,8 @@ void GameScene::populate() {
         _pmainbutton->deactivate();
         _pmainbutton->setVisible(false);
         _pmainbutton->setListener([=](const std::string& name, bool down) {
+//            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             this->_active = down;
             _mainSelected = true;
         });
@@ -547,6 +561,8 @@ void GameScene::populate() {
         _vmainbutton->deactivate();
         _vmainbutton->setVisible(false);
         _vmainbutton->setListener([=](const std::string& name, bool down) {
+//            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             this->_active = down;
             _mainSelected = true;
         });
@@ -555,6 +571,8 @@ void GameScene::populate() {
         _presetbutton->deactivate();
         _presetbutton->setVisible(false);
         _presetbutton->setListener([=](const std::string& name, bool down) {
+//            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             this->_active = down;
             _resetSelected = true;
         });
@@ -563,6 +581,8 @@ void GameScene::populate() {
         _vresetbutton->deactivate();
         _vresetbutton->setVisible(false);
         _vresetbutton->setListener([=](const std::string& name, bool down) {
+//            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             this->_active = down;
             _resetSelected = true;
         });
@@ -571,10 +591,39 @@ void GameScene::populate() {
         _continuebutton->deactivate();
         _continuebutton->setVisible(false);
         _continuebutton->setListener([=](const std::string& name, bool down) {
+//            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
+//            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             _continueSelected = true;
         });
     }
 
+    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+        image = _assets->get<Texture>(_levelId + "-tutorial");
+        _tutorialpage = PolygonNode::allocWithTexture(image);
+        _tutorialpage->setContentSize(dimen/1.2);
+        _tutorialpage->setVisible(false);
+        _tutorialpage->setPosition(SCENE_WIDTH/2, SCENE_HEIGHT/2);
+        tutorialNode->addChild(_tutorialpage);
+        
+        auto tutorialButtonNode = PolygonNode::allocWithTexture(_assets->get<Texture>("pause_continuebutton"));
+        tutorialButtonNode->setContentSize(Size(3, 3)*_scale);
+        tutorialButtonNode->setName("tutorial back button");
+        tutorialButtonNode->setPosition(0, 0);
+        
+        _tcontinuebutton = Button::alloc(tutorialButtonNode);
+        _tcontinuebutton->setScale(0.8);
+        _tcontinuebutton->setPosition(SCENE_WIDTH/2 + 200, SCENE_HEIGHT/2 - 200);
+        _tcontinuebutton->setListener([=](const std::string& name, bool down) {
+            CULog("button pressed");
+            _tutorialpage->setVisible(false);
+            _tutorialshown = true;
+            _continueSelected = true;
+        });
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->deactivate();
+        tutorialNode->addChild(_tcontinuebutton);
+        _levelworldnode->addChild(tutorialNode, 999);
+    }
 }
 
 /**
@@ -627,25 +676,29 @@ void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
     float percent = float(_level->getPlantScore())/float(_level->getPossibleMaxScore());
-    _st1plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
+    _st1plantnum = Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
+    _st1plantnum->setForeground(Color4(99, 59, 7));
     _st1plantnum->setAnchor(0.5, 0.5);
     _st1plantnum->setScale(0.7);
     _st1plantnum->setPosition(dimen.width/2, dimen.height/2 + 50);
     _levelworldnode->addChild(_st1plantnum);
     
     _st2plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(2)), _assets->get<Font>(PRIMARY_FONT));
+    _st2plantnum->setForeground(Color4(99, 59, 7));
     _st2plantnum->setAnchor(0.5, 0.5);
     _st2plantnum->setScale(0.7);
     _st2plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 + 50);
     _levelworldnode->addChild(_st2plantnum);
     
     _st3plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(3)), _assets->get<Font>(PRIMARY_FONT));
+    _st3plantnum->setForeground(Color4(99, 59, 7));
     _st3plantnum->setAnchor(0.5, 0.5);
     _st3plantnum->setScale(0.7);
     _st3plantnum->setPosition(dimen.width/2, dimen.height/2 - 70);
     _levelworldnode->addChild(_st3plantnum);
     
     _st4plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(4)), _assets->get<Font>(PRIMARY_FONT));
+    _st4plantnum->setForeground(Color4(99, 59, 7));
     _st4plantnum->setAnchor(0.5, 0.5);
     _st4plantnum->setScale(0.7);
     _st4plantnum->setPosition(dimen.width/2 + 170, dimen.height/2 - 70);
@@ -653,15 +706,23 @@ void GameScene::displayVictory(){
     
     if (percent == 0){
         _endscreen_nostar->setVisible(true);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_EFFECT);
+        AudioChannels::get()->playEffect(LOSE_EFFECT,source,false,EFFECT_VOLUME);
     }
     else if (percent <= 60){
         _endscreen_1star->setVisible(true);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_EFFECT);
+        AudioChannels::get()->playEffect(LOSE_EFFECT,source,false,EFFECT_VOLUME);
     }
     else if (percent != 100){
         _endscreen_2star->setVisible(true);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(ENDGAME_EFFECT);
+        AudioChannels::get()->playEffect(ENDGAME_EFFECT,source,false,EFFECT_VOLUME);
     }
     else {
         _endscreen_3star->setVisible(true);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(ENDGAME_EFFECT);
+        AudioChannels::get()->playEffect(ENDGAME_EFFECT,source,false,EFFECT_VOLUME);
     }
     _vresetbutton->setVisible(true);
     _vresetbutton->activate(90);
@@ -686,7 +747,11 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2){
     float offset = PINCH_OFFSET/_scale;
     
     if (c1p.distance(c2p) > c1p_rad + c2p_rad + offset) return;
-    if (cind1->getCloudSizeScale() >= 5 && cind2->getCloudSizeScale() >= 5) return;
+    if (cind1->getCloudSizeScale() >= 5 && cind2->getCloudSizeScale() >= 5){
+        std::shared_ptr<Sound> source = _assets->get<Sound>(FAIL_EFFECT);
+        AudioChannels::get()->playEffect(FAIL_EFFECT,source,false,EFFECT_VOLUME);
+        return;
+    }
     
     Cloud * cloudToGetLarger = cind1;
     Cloud * cloudToBeDeleted = cind2;
@@ -720,6 +785,8 @@ void GameScene::combineByPinch(Cloud* cind1, Cloud* cind2){
             if (cloudsToSplit.count(toDelete)) cloudsToSplit.erase(toDelete);
         }
         cloudToBeDeleted->markForRemoval();
+        std::shared_ptr<Sound> source = _assets->get<Sound>(COMBINE_EFFECT);
+        AudioChannels::get()->playEffect(COMBINE_EFFECT,source,false,EFFECT_VOLUME);
     }
 }
 
@@ -769,7 +836,8 @@ void GameScene::makeLightning(Obstacle * ob){
     auto c = (Cloud *) ob;
     if (!c->isRainCloud()) return;
     c->setLightning();
-
+    std::shared_ptr<Sound> source = _assets->get<Sound>(THUNDER_EFFECT);
+    AudioChannels::get()->playEffect(THUNDER_EFFECT,source,false,EFFECT_VOLUME);
     bool lightning;
     shared_ptr<Node> thisNode;
     for (int i=0; i < GRID_NUM_X; i++){
@@ -851,7 +919,6 @@ Obstacle * GameScene::getSelectedObstacle(Vec2 pos, long touchID){
  */
 void GameScene::update(float dt) {
 //    CULog("game scene updating");
-
     
     _input.update(dt);
     ticks++;
@@ -860,6 +927,19 @@ void GameScene::update(float dt) {
     if (_input.didDebug()) { setDebug(!isDebug()); }
     if (_input.didExit())  {
         Application::get()->quit();
+    }
+    
+    if (!_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+        CULog("display tutorial");
+        _tutorialpage->setVisible(true);
+        _tcontinuebutton->activate(101);
+        _tcontinuebutton->setVisible(true);
+    }
+    
+    if (_tutorialshown) {
+        _tutorialpage->setVisible(false);
+        _tcontinuebutton->setVisible(false);
+        _tcontinuebutton->deactivate();
     }
     
     
@@ -1133,7 +1213,8 @@ void GameScene::makeRain(Obstacle * ob){
     if (!ob) return;
     auto c = (Cloud *) ob;
     // CULog("toggle rain");
-    c->toggleRain();
+    std::shared_ptr<Sound> source = _assets->get<Sound>(RAIN_EFFECT);
+    c->toggleRain(source);
 }
 
 void GameScene::splitClouds(){
@@ -1142,10 +1223,13 @@ void GameScene::splitClouds(){
         // split clouds here
         Cloud * c =(Cloud *)(ic.second);
         
-        // to small to split
-        if (c->getCloudSizeScale()/sqrt(2) < 0.5) continue;
+        // too small to split
+        if (c->getCloudSizeScale()/sqrt(2) < 0.5) {
+            std::shared_ptr<Sound> source = _assets->get<Sound>(FAIL_EFFECT);
+            AudioChannels::get()->playEffect(FAIL_EFFECT,source,false,EFFECT_VOLUME);
+            continue;
+        }
 
-        
         c->setCloudSizeScale(c->getCloudSizeScale()/sqrt(2));
         auto cloudPos = c->getPosition();
         
@@ -1184,6 +1268,8 @@ void GameScene::splitClouds(){
 //        CULog("created new cloud %i", new_cloud->getId());
         _clouds.push_back(new_cloud);
         addObstacle(_levelworldnode, new_cloud, cloudNode, Z_CLOUD);
+        std::shared_ptr<Sound> source = _assets->get<Sound>(SPLIT_EFFECT);
+        AudioChannels::get()->playEffect(SPLIT_EFFECT,source,false,EFFECT_VOLUME);
         _levelworldnode->sortZOrder();
     }
 }
@@ -1224,6 +1310,8 @@ void GameScene::createResourceClouds(){
         addObstacle(_levelworldnode, new_cloud, cloudNode, Z_CLOUD);
         _levelworldnode->sortZOrder();
         cloudInfo.pop_back();
+        std::shared_ptr<Sound> source = _assets->get<Sound>(CREATE_EFFECT);
+        AudioChannels::get()->playEffect(CREATE_EFFECT,source,false,EFFECT_VOLUME);
     }
     _level->setNewClouds(cloudInfo);
 }

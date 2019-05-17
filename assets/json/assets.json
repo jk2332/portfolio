@@ -235,26 +235,88 @@
         },
         "bigBackground" : {
             "file":     "textures/bigBackground.png"
+        },
+        "level1-tutorial" : {
+            "file":     "textures/Level-1.png"
+        },
+        "level2-tutorial" : {
+            "file":     "textures/Level-2.png"
+        },
+        "level3-tutorial" : {
+            "file":     "textures/Level-3.png"
+        },
+        "level5-tutorial" : {
+            "file":     "textures/Level-5.png"
+        },
+        "level6-tutorial" : {
+            "file":     "textures/Level-6.png"
         }
 	},
     "sounds": {
-        "game": {
+        "plantDeathSound": {
             "type":     "sample",
-            "file":     "sounds/DD_Main.ogg",
-            "stream":   true,
-            "volume":   0.5
+            "file":     "sounds/plantdeath.wav",
+            "stream":   false
+        },
+        "endgameSound": {
+            "type":     "sample",
+            "file":     "sounds/endgame.wav",
+            "stream":   false
+        },
+        "rainSound": {
+            "type":     "sample",
+            "file":     "sounds/rain01.wav",
+            "stream":   false
+        },
+        "loseSound": {
+            "type":     "sample",
+            "file":     "sounds/guitar01.wav",
+            "stream":   false
+        },
+        "thunderSound": {
+            "type":     "sample",
+            "file":     "sounds/thunder.wav",
+            "stream":   false
+        },
+        "combineSound": {
+            "type":     "sample",
+            "file":     "sounds/combine.wav",
+            "stream":   false
+        },
+        "buttonSound": {
+            "type":     "sample",
+            "file":     "sounds/pressbutton.wav",
+            "stream":   false
+        },
+        "cloudFailSound": {
+            "type":     "sample",
+            "file":     "sounds/nosplitcombine.wav",
+            "stream":   false
+        },
+        "createCloudSound": {
+            "type":     "sample",
+            "file":     "sounds/createcloud.wav",
+            "stream":   false
+        },
+        "splitSound": {
+            "type":     "sample",
+            "file":     "sounds/split.wav",
+            "stream":   false
+        },
+        "fullGrownSound": {
+            "type":     "sample",
+            "file":     "sounds/fullgrown.wav",
+            "stream":   false
         },
         "gameplay": {
             "type":     "sample",
             "file":     "sounds/gameplayMusic.ogg",
-            "stream":   true,
-            "volume":   0.5
+            "stream":   true
         },
         "mainMenu": {
             "type":     "sample",
             "file":     "sounds/menuMusic.ogg",
-            "stream":   true,
-            "volume":   0.5
+            "stream":   true
         }
     },
 	"fonts": {

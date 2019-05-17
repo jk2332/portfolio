@@ -69,10 +69,14 @@ protected:
     std::shared_ptr<Node> _endscreen_1star;
     std::shared_ptr<Node> _endscreen_2star;
     std::shared_ptr<Node> _endscreen_3star;
-    std::shared_ptr<Node> _st1plantnum;
-    std::shared_ptr<Node> _st2plantnum;
-    std::shared_ptr<Node> _st3plantnum;
-    std::shared_ptr<Node> _st4plantnum;
+
+    std::shared_ptr<Label> _st1plantnum;
+    std::shared_ptr<Label> _st2plantnum;
+    std::shared_ptr<Label> _st3plantnum;
+    std::shared_ptr<Label> _st4plantnum;
+    bool _tutorialshown = false;
+    std::shared_ptr<Node> _tutorialpage = nullptr;
+    std::shared_ptr<Button> _tcontinuebutton = nullptr;
     
     std::shared_ptr<cugl::Button> _pauseButton;
     std::shared_ptr<cugl::Button> _pmainbutton;
@@ -360,6 +364,7 @@ public:
         _continueSelected=false;
         _paused = false;
         resetOver();
+        _tutorialshown = true;
     }
     
     void resetOver(){
@@ -382,6 +387,14 @@ public:
         if (_pauseboard) _pauseboard->setVisible(false);
     }
     
+    void removeTutorialDisplay() {
+        if (_tcontinuebutton != nullptr){
+            _tcontinuebutton->deactivate();
+            _tcontinuebutton->setVisible(false);
+        }
+        if (_tutorialpage) _tutorialpage->setVisible(false);
+    }
+    
     void removeVictoryDisplay(){
         if (_vmainbutton != nullptr){
             _vmainbutton->deactivate();
@@ -396,6 +409,10 @@ public:
         if (_endscreen_2star) _endscreen_2star->setVisible(false);
         if (_endscreen_3star) _endscreen_3star->setVisible(false);
     }
+    
+//    void setShowTutorial(){
+//        _showtutorial = true;
+//    }
     
     void displayPause();
     void displayVictory();
