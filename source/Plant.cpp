@@ -146,6 +146,7 @@ void Plant::updateState(int ticks){
             }
         }
     }
+    if(_state != fullgrown){changeSign();}
 
     _shaded = false;
     _rained = false;
@@ -167,7 +168,6 @@ void Plant::updateState(int ticks){
     } else if (_health < 0) {
         setState(dead);
     }
-    if(_state != fullgrown){changeSign();}
 }
 
 void Plant::setSick(int sickStage) {
@@ -197,7 +197,6 @@ void Plant::changeSign() {
     } else if (_stage >= _maxStage) {
         std::shared_ptr<Sound> source = _assets->get<Sound>(FULLGROWN_EFFECT);
         AudioChannels::get()->playEffect(FULLGROWN_EFFECT,source,false,EFFECT_VOLUME);
-        _state = fullgrown;
         _signNode->setTexture(_assets->get<Texture>("signHappy"));
     } else {
         _signNode->setTexture(_assets->get<Texture>("signSun"));
@@ -220,6 +219,7 @@ void Plant::upgradeSprite() {
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
+        if(_stage == _maxStage){_state = fullgrown;}
         _node->setVisible(true);
         _deathNode->setVisible(false);
         _actions->activate("current", _grow, _node);

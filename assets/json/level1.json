@@ -1,6 +1,6 @@
 { "height":18,
  "infinite":false,
- "time": 1500,
+ "time": 50,
  "layers":[
         {
          "id":2,

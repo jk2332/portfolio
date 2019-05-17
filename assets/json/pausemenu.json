@@ -45,9 +45,7 @@
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" : -0.02,
-                        "y_offset" : -0.1
+                        "y_anchor" : "middle"
                     }
                 },
                 "vicboard-star2"       : {
@@ -63,9 +61,7 @@
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" : -0.02,
-                        "y_offset" : -0.1
+                        "y_anchor" : "middle"
                     }
                 },
                 "vicboard-star3"       : {
@@ -81,9 +77,7 @@
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" : -0.02,
-                        "y_offset" : -0.1
+                        "y_anchor" : "middle"
                     }
                 },
                 "vicboard"       : {
@@ -99,9 +93,7 @@
                     },
                     "layout" : {
                         "x_anchor" : "center",
-                        "y_anchor" : "middle",
-                        "x_offset" : -0.02,
-                        "y_offset" : -0.1
+                        "y_anchor" : "middle"
                     }
                 },
                 "main"  : {
@@ -117,7 +109,7 @@
                         "up"       : {
                             "type"   : "Image",
                             "data"   : {
-                            "texture"  : "pause_mainbutton"
+                                "texture"  : "pause_mainbutton"
                             }
                         }
                     },

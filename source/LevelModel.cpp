@@ -699,18 +699,20 @@ void LevelModel::update(long ticks) {
     float progress = (float)ticks/(float)_time;
     _bar->setProgress(progress);
 
+    bool allFullOrDead = true;
     bool plantsDead = true;
     int alivePlants = 0;
     for (auto &plant : _plants) {
         plantsDead = plantsDead && (plant->getState() == dead);
+        if (plant->getState() != fullgrown && plant->getState() != dead){allFullOrDead = false;}
     }
     
     if (plantsDead) {
         CULog("All plants are dead");
         _over = true;
     }
-    if (plantsDead) {
-        CULog("All plants are dead");
+    if (allFullOrDead) {
+        CULog("All plants are fully grown or dead");
         _over = true;
     }
     if (ticks >= _time) {
@@ -718,8 +720,6 @@ void LevelModel::update(long ticks) {
         _over = true;
         ticks = _time;
     }
-    
-//    if (ticks % 100 == 0) _over = true;
     
     if (_over) {
         getPlantScore();

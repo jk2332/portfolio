@@ -687,58 +687,79 @@ void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
     AudioChannels::get()->setMusicVolume(MUSIC_REDUCED_VOLUME);
+    float correction = dimen.height/SCENE_HEIGHT;
+    float upFactor = 1.2f/correction;
+    float downFactor = 0.8f/correction;
+    float downFactor2 = 0.75f/correction;
+    float lowestFactor = 0.57f/correction;
+    float leftFactor = 1.0f;
+    float rightFactor = 1.3f;
+    float rightestFactor = 1.17f;
     int percent = (int)(100.0f * float(_level->getPlantScore())/float(_level->getPossibleMaxScore()));
     _st1plantnum = Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
     _st1plantnum->setForeground(Color4(99, 59, 7));
     _st1plantnum->setAnchor(0.5, 0.5);
     _st1plantnum->setScale(0.7);
-    _st1plantnum->setPosition(dimen.width/2 - 10, dimen.height/2 - 20);
+    _st1plantnum->setPosition(_endscreen_nostar->getPositionX()*leftFactor,
+                              _endscreen_nostar->getPositionY()*upFactor);
     _levelworldnode->addChild(_st1plantnum, Z_UI);
     
     _st2plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(2)), _assets->get<Font>(PRIMARY_FONT));
     _st2plantnum->setForeground(Color4(99, 59, 7));
     _st2plantnum->setAnchor(0.5, 0.5);
     _st2plantnum->setScale(0.7);
-    _st2plantnum->setPosition(dimen.width/2 + 160, dimen.height/2 - 20);
+    _st2plantnum->setPosition(_endscreen_nostar->getPositionX()*rightFactor,
+                              _endscreen_nostar->getPositionY()*upFactor);
     _levelworldnode->addChild(_st2plantnum,  Z_UI);
     
     _st3plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(3)), _assets->get<Font>(PRIMARY_FONT));
     _st3plantnum->setForeground(Color4(99, 59, 7));
     _st3plantnum->setAnchor(0.5, 0.5);
     _st3plantnum->setScale(0.7);
-    _st3plantnum->setPosition(dimen.width/2 - 10, dimen.height/2 - 140);
+    _st3plantnum->setPosition(_endscreen_nostar->getPositionX()*leftFactor,
+                              _endscreen_nostar->getPositionY()*downFactor);
     _levelworldnode->addChild(_st3plantnum,  Z_UI);
     
     _st4plantnum =  Label::alloc(std::to_string(_level->getEachStagePlantNum(4)), _assets->get<Font>(PRIMARY_FONT));
     _st4plantnum->setForeground(Color4(99, 59, 7));
     _st4plantnum->setAnchor(0.5, 0.5);
     _st4plantnum->setScale(0.7);
-    _st4plantnum->setPosition(dimen.width/2 + 160, dimen.height/2 - 140);
+    _st4plantnum->setPosition(_endscreen_nostar->getPositionX()*rightFactor,
+                              _endscreen_nostar->getPositionY()*downFactor2);
     _levelworldnode->addChild(_st4plantnum,  Z_UI);
 
     _finalScore = Label::alloc(std::to_string(percent) + "%", _assets->get<Font>(PRIMARY_FONT));
     _finalScore->setForeground(Color4(99, 59, 7));
     _finalScore->setAnchor(0.5, 0.5);
     _finalScore->setScale(0.7);
-    _finalScore->setPosition(dimen.width/2 + 90, dimen.height/2 - 200);
+    _finalScore->setPosition(_endscreen_nostar->getPositionX()*rightestFactor,
+                             _endscreen_nostar->getPositionY()*lowestFactor);
     _levelworldnode->addChild(_finalScore,  Z_UI);
     
     if (percent == 0){
+        _endscreen_nostar->setPosition(_endscreen_nostar->getPositionX(),
+                                       _endscreen_nostar->getPositionY()/correction);
         _endscreen_nostar->setVisible(true);
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_EFFECT);
         AudioChannels::get()->playEffect(LOSE_EFFECT,source,false,EFFECT_VOLUME);
     }
     else if (percent <= 60){
+        _endscreen_1star->setPosition(_endscreen_1star->getPositionX(),
+                                       _endscreen_1star->getPositionY()/correction);
         _endscreen_1star->setVisible(true);
         std::shared_ptr<Sound> source = _assets->get<Sound>(LOSE_EFFECT);
         AudioChannels::get()->playEffect(LOSE_EFFECT,source,false,EFFECT_VOLUME);
     }
     else if (percent != 100){
+        _endscreen_2star->setPosition(_endscreen_2star->getPositionX(),
+                                      _endscreen_2star->getPositionY()/correction);
         _endscreen_2star->setVisible(true);
         std::shared_ptr<Sound> source = _assets->get<Sound>(ENDGAME_EFFECT);
         AudioChannels::get()->playEffect(ENDGAME_EFFECT,source,false,EFFECT_VOLUME);
     }
     else {
+        _endscreen_3star->setPosition(_endscreen_3star->getPositionX(),
+                                      _endscreen_3star->getPositionY()/correction);
         _endscreen_3star->setVisible(true);
         std::shared_ptr<Sound> source = _assets->get<Sound>(ENDGAME_EFFECT);
         AudioChannels::get()->playEffect(ENDGAME_EFFECT,source,false,EFFECT_VOLUME);
