@@ -718,9 +718,7 @@ void LevelModel::update(long ticks) {
         _over = true;
         ticks = _time;
     }
-    
-//    if (ticks % 100 == 0) _over = true;
-    
+        
     if (_over) {
         getPlantScore();
         return;
