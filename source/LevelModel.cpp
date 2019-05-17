@@ -213,14 +213,16 @@ void LevelModel::setRootNode(const shared_ptr<Node>& node, Size dimen, shared_pt
     auto rcNode = PolygonNode::allocWithTexture(_assets->get<Texture>("rcIndicator"));
     
     _bar = ProgressBar::allocWithCaps(barempty, foreground, leftcap, rightcap);
-    float x = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
-    _bar->setScale(x);
-    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getWidth() + x*moonNode->getWidth(),
-                                                            _bar->getHeight()));
-    sunNode->setScale(x);
+    float capScale = (SCENE_HEIGHT - 0.90f*SCENE_HEIGHT)/barempty->getHeight();
+    float barScale = 1.5f*capScale;
+    _bar->setScale(barScale);
+    _bar->setPosition(Vec2(SCENE_WIDTH,SCENE_HEIGHT) - Vec2(_bar->getWidth()/barScale
+                                                            + capScale*moonNode->getWidth(),
+                                                            _bar->getHeight()/barScale));
+    sunNode->setScale(capScale);
     sunNode->setPosition(_bar->getPosition() + Vec2(-sunNode->getWidth()/2.0f, sunNode->getHeight()/2.0f));
     _worldnode->addChildWithName(sunNode, "sun", Z_UI);
-    moonNode->setScale(x);
+    moonNode->setScale(capScale);
     moonNode->setPosition(_bar->getPosition() + Vec2(_bar->getWidth() + moonNode->getWidth()/2.0f,
                                                      moonNode->getHeight()/2.0f));
     _worldnode->addChildWithName(moonNode, "moon", Z_UI);
