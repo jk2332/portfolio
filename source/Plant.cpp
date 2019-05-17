@@ -24,6 +24,7 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     _drawscale = drawscale;
     _maxStage = 4;
     _defaultHealth = 500;
+    _sickStage = 0;
     
     _shadeNeeded = 100;
     _rainNeeded = 100;
@@ -35,14 +36,16 @@ bool Plant::init(int x, int y, int rainProb, int shadeProb, float drawscale) {
     _node = nullptr;
     _progress = 0;
     _active = false;
+    _activecount = 0;
 
     _shadeCounter = 0;
     _rainCounter = 0;
     
     // Plant animations
     _actions = ActionManager::alloc();
+    _actions2 = ActionManager::alloc();
     _grow = Animate::alloc(0, 8, 1.5f, 1);
-    _sparkle = Animate::alloc(0, 12, 0.5f, 1);
+    _sparkle = Animate::alloc(0, 12, 0.75f, 1);
 
 
     return true;
@@ -87,7 +90,6 @@ void Plant::setRained(bool f) {
 }
 
 void Plant::updateState(int ticks){
-    // CULog("health: %d", _health);
     if (_state == dead) {
         return;
     }else if (_state == fullgrown){return;}
@@ -95,9 +97,12 @@ void Plant::updateState(int ticks){
         if  (_attacked) {
             decHealth();
         }
-        if (_state == needShade){
+        if (_health >= 1000){
+            _state=noNeed;
+        }
+        else if (_state == needShade){
             if (_shaded){
-                _actions->activate("current", _sparkle, _sparkleNode);
+                _actions2->activate("current", _sparkle, _sparkleNode);
                 incHealth();
                 _shadeCounter += 1;
                 if (_health >= 0 && _shadeCounter == _shadeNeeded){
@@ -110,7 +115,7 @@ void Plant::updateState(int ticks){
         }
         else if (_state == needRain){
             if (_rained){
-                _actions->activate("current", _sparkle, _sparkleNode);
+                _actions2->activate("current", _sparkle, _sparkleNode);
                 incHealth();
                 _rainCounter += 1;
                 if (_health >= 0 && _rainCounter == _rainNeeded){
@@ -142,11 +147,38 @@ void Plant::updateState(int ticks){
     _shaded = false;
     _rained = false;
 
-    if(_health <= 0){
-        setState(dead);
-    } else if (_health >= 1000) {
-        _health = _defaultHealth;
+    if (_health >= 1000) {
+        // not a typo
+        _health = 100000;
         upgradeSprite();
+    } else if (_health >= 400){
+        setSick(0);
+    } else if (_health >= 300) {
+        setSick(1);
+    } else if (_health >= 200) {
+        setSick(2);
+    } else if (_health >= 100) {
+        setSick(3);
+    } else if (_health >= 0) {
+        setSick(4);
+    } else if (_health < 0) {
+        setState(dead);
+    }
+
+    changeSign();
+}
+
+void Plant::setSick(int sickStage) {
+    if (sickStage == _sickStage || _active) { return; }
+    _sickStage = sickStage;
+    if (_sickStage == 0) {
+        _deathNode->setVisible(false);
+        _node->setVisible(true);
+        _deathNode->setFrame(0);
+    } else {
+        _deathNode->setVisible(true);
+        _node->setVisible(false);
+        _deathNode->setFrame(sickStage);
     }
     changeSign();
 }
@@ -171,21 +203,30 @@ void Plant::changeSign() {
 }
 
 void Plant::upgradeSprite() {
-     if (_active && _stage < _maxStage) {
-        //  CULog("change texture to stage %d", (_stage));
+     if (_active && _activecount < 100) {
+         _activecount += 1;
+     } else if (_active && _activecount >= 100 && _stage < _maxStage) {
+        _health = _defaultHealth;
+        _activecount = 0;
         _node->setTexture(_assets->get<Texture>(getPlantType() + std::to_string(_stage)));
         _node->setFrame(0);
+        _node->setVisible(true);
+        _deathNode->setTexture(_assets->get<Texture>(getPlantType() + "-death" + std::to_string(_stage)));
+        _deathNode->setFrame(0);
+        _deathNode->setVisible(false);
         _active = false;
     } else if (_stage < _maxStage) {
         _active = true;
         _stage += 1;
-        // CULog("Grew to stage %d", (_stage));
+        _node->setVisible(true);
+        _deathNode->setVisible(false);
         _actions->activate("current", _grow, _node);
     }
 }
 
 void Plant::update(float dt) {
     _actions->update(dt);
+    _actions2->update(dt);
 }
 
 void Plant::setState(int s){
@@ -200,6 +241,12 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     cugl::Vec2 a = _drawscale*cugl::Vec2((DOWN_LEFT_CORNER_X + GRID_WIDTH*_x + GRID_OFFSET_X*_x + GRID_WIDTH/2),
                               (DOWN_LEFT_CORNER_Y + GRID_HEIGHT*_y + GRID_OFFSET_Y*_y - 3*GRID_HEIGHT/4));
     _node->setPosition(a);
+
+    _deathNode = AnimationNode::alloc(_assets->get<Texture>(getPlantType() + "-death" + std::to_string(_stage)), 1, 5);
+    _deathNode->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
+    _deathNode->setScale(0.15f);
+    _deathNode->setPosition(a);
+    _deathNode->setVisible(false);
 
     _sparkleNode = AnimationNode::alloc(_assets->get<Texture>("sparkle-film"), 1, 13);
     _sparkleNode->setAnchor(Vec2::ANCHOR_BOTTOM_CENTER);
@@ -228,4 +275,5 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     node->addChildWithName(_node, name, plantZ);
     node->addChildWithName(_signNode, name + "sign", signZ);
     node->addChildWithName(_sparkleNode, name + "sparkle", signZ);
+    node->addChildWithName(_deathNode, name + "death", signZ);
 }

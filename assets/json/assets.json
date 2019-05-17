@@ -113,6 +113,33 @@
         "eggplant3": {
             "file":     "textures/eggplant3.png"
         },
+        "eggplant-death1": {
+            "file":     "textures/eggplant-death1.png"
+        },
+        "eggplant-death2": {
+            "file":     "textures/eggplant-death2.png"
+        },
+        "eggplant-death3": {
+            "file":     "textures/eggplant-death3.png"
+        },
+        "tomato-death1": {
+            "file":     "textures/tom-death1.png"
+        },
+        "tomato-death2": {
+            "file":     "textures/tom-death2.png"
+        },
+        "tomato-death3": {
+            "file":     "textures/tom-death3.png"
+        },
+        "corn-death1": {
+            "file":     "textures/corn-death1.png"
+        },
+        "corn-death2": {
+            "file":     "textures/corn-death2.png"
+        },
+        "corn-death3": {
+            "file":     "textures/corn-death3.png"
+        },
         "snail": {
             "file":     "textures/snailwalk.png"
         },

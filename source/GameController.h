@@ -387,6 +387,14 @@ public:
         if (_pauseboard) _pauseboard->setVisible(false);
     }
     
+    void removeTutorialDisplay() {
+        if (_tcontinuebutton != nullptr){
+            _tcontinuebutton->deactivate();
+            _tcontinuebutton->setVisible(false);
+        }
+        if (_tutorialpage) _tutorialpage->setVisible(false);
+    }
+    
     void removeVictoryDisplay(){
         if (_vmainbutton != nullptr){
             _vmainbutton->deactivate();

@@ -40,6 +40,8 @@ protected:
 
     int _shadeNeeded;
     int _rainNeeded;
+    
+    int _sickStage;
 
     int _state;
     int _type;
@@ -48,16 +50,19 @@ protected:
     int _progress;
     bool _active;
     std::string _ptype;
+    int _activecount;
     
 
     int _shadeCounter;
     int _rainCounter;
     std::shared_ptr<AnimationNode> _node;
+    std::shared_ptr<AnimationNode> _deathNode;
     std::shared_ptr<AnimationNode> _sparkleNode;
     std::shared_ptr<TexturedNode> _signNode;
     std::shared_ptr<cugl::AssetManager> _assets;
 
     std::shared_ptr<ActionManager> _actions;
+    std::shared_ptr<ActionManager> _actions2;
     std::shared_ptr<Animate> _grow;
     std::shared_ptr<Animate> _sparkle;
 
@@ -142,6 +147,7 @@ public:
 
     void setAssets(std::shared_ptr<cugl::AssetManager> a) { _assets = a; };
 
+    void setSick(int i);
     void setShade(bool f);
     void setRained(bool f);
     void setAttacked(bool f) {_attacked = f;};
