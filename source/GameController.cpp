@@ -941,7 +941,7 @@ void GameScene::update(float dt) {
         _tcontinuebutton->setVisible(true);
     }
     
-    if (_tutorialshown) {
+    if (_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6") {
         _tutorialpage->setVisible(false);
         _tcontinuebutton->setVisible(false);
         _tcontinuebutton->deactivate();
