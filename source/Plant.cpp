@@ -98,7 +98,7 @@ void Plant::updateState(int ticks){
             decHealth();
         }
         if (_health >= 1000){
-            _state=noNeed;
+            _state = noNeed;
         }
         else if (_state == needShade){
             if (_shaded){
@@ -140,6 +140,9 @@ void Plant::updateState(int ticks){
         } else if (_state == noNeed) {
             if (!_shaded){
                 _health += 2;
+            }
+            else{
+                _health -= 2;
             }
         }
     }

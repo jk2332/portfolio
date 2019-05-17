@@ -246,6 +246,7 @@ bool GameScene::init(const std::shared_ptr<AssetManager>& assets, const Rect& re
         std::shared_ptr<Sound> source = _assets->get<Sound>(GAMEPLAY_MUSIC);
         AudioChannels::get()->playMusic(source, true, MUSIC_VOLUME, 1.0f);
     }
+    AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
     
     return true;
 }
@@ -488,6 +489,7 @@ void GameScene::populate() {
         _mainSelected = false;
         _resetSelected = false;
         _continueSelected = false;
+        AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
     });
     _levelworldnode->addChild(_pauseButton, Z_PAUSE);
     
@@ -595,10 +597,11 @@ void GameScene::populate() {
 //            std::shared_ptr<Sound> source = _assets->get<Sound>(BUTTON_EFFECT);
 //            AudioChannels::get()->playEffect(BUTTON_EFFECT,source,false,EFFECT_VOLUME);
             _continueSelected = true;
+            AudioChannels::get()->setMusicVolume(MUSIC_VOLUME);
         });
     }
 
-    if (_levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+    if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
         image = _assets->get<Texture>(_levelId + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
         _tutorialpage->setContentSize(dimen/1.2);
@@ -676,6 +679,7 @@ void GameScene::displayPause(){
 void GameScene::displayVictory(){
     // display right end screen here
     _levelworldnode->sortZOrder();
+    AudioChannels::get()->setMusicVolume(MUSIC_REDUCED_VOLUME);
     float percent = float(_level->getPlantScore())/float(_level->getPossibleMaxScore());
     _st1plantnum = Label::alloc(std::to_string(_level->getEachStagePlantNum(1)), _assets->get<Font>(PRIMARY_FONT));
     _st1plantnum->setForeground(Color4(99, 59, 7));
@@ -930,7 +934,7 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
     
-    if (!_tutorialshown && _levelId == "level1" or _levelId == "level2" or _levelId == "level3" or _levelId == "level5" or _levelId == "level6"){
+    if (!_tutorialshown && (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6")){
         CULog("display tutorial");
         _tutorialpage->setVisible(true);
         _tcontinuebutton->activate(101);
@@ -942,7 +946,6 @@ void GameScene::update(float dt) {
         _tcontinuebutton->setVisible(false);
         _tcontinuebutton->deactivate();
     }
-    
     
     // process combining
     if (_input.didPinchSelect()){
