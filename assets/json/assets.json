@@ -8,6 +8,66 @@
         "sparkle-film": {
             "file":     "textures/sparkle-filmstrip.png"
         },
+        "ipad-4" : {
+            "file":     "textures/ipad-4.png"
+        },
+        "ipad-7" : {
+            "file":     "textures/ipad-7.png"
+        },
+        "ipad-10" : {
+            "file":     "textures/ipad-10.png"
+        },
+        "ipad-13" : {
+            "file":     "textures/ipad-13.png"
+        },
+        "ipad-16" : {
+            "file":     "textures/ipad-16.png"
+        },
+        "ipad-19" : {
+            "file":     "textures/ipad-19.png"
+        },
+        "ipad-22" : {
+            "file":     "textures/ipad-22.png"
+        },
+        "ipad-25" : {
+            "file":     "textures/ipad-25.png"
+        },
+        "ipad-28" : {
+            "file":     "textures/ipad-28.png"
+        },
+        "ipad-31" : {
+            "file":     "textures/ipad-31.png"
+        },
+        "background4" : {
+            "file":     "textures/background4.png"
+        },
+        "background7" : {
+            "file":     "textures/background7.png"
+        },
+        "background10" : {
+            "file":     "textures/background10.png"
+        },
+        "background13" : {
+            "file":     "textures/background13.png"
+        },
+        "background16" : {
+            "file":     "textures/background16.png"
+        },
+        "background19" : {
+            "file":     "textures/background19.png"
+        },
+        "background22" : {
+            "file":     "textures/background22.png"
+        },
+        "background25" : {
+            "file":     "textures/background25.png"
+        },
+        "background28" : {
+            "file":     "textures/background28.png"
+        },
+        "background31" : {
+            "file":     "textures/background31.png"
+        },
         "rain-film": {
             "file":     "textures/rain3.png"
         },
