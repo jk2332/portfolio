@@ -318,6 +318,7 @@ void GameScene::dispose() {
     _pauseButton = nullptr;
     if (_tcontinuebutton != nullptr){
         _tcontinuebutton->deactivate();
+        continueSelected();
     }
     _tutorialpage = nullptr;
     if (_level) _level->dispose();
@@ -599,6 +600,7 @@ void GameScene::populate() {
     }
 
     if (_levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
+        CULog("setting tutorial");
         image = _assets->get<Texture>(_levelId + "-tutorial");
         _tutorialpage = PolygonNode::allocWithTexture(image);
         _tutorialpage->setContentSize(dimen/1.2);
@@ -930,19 +932,6 @@ void GameScene::update(float dt) {
         Application::get()->quit();
     }
     
-    if (!_tutorialshown && _levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6"){
-        CULog("display tutorial");
-        _tutorialpage->setVisible(true);
-        _tcontinuebutton->activate(101);
-        _tcontinuebutton->setVisible(true);
-    }
-    
-    if (_tutorialshown && _levelId == "level1" || _levelId == "level2" || _levelId == "level3" || _levelId == "level5" || _levelId == "level6") {
-        _tutorialpage->setVisible(false);
-        _tcontinuebutton->setVisible(false);
-        _tcontinuebutton->deactivate();
-    }
-    
     
     // process combining
     if (_input.didPinchSelect()){
@@ -1042,10 +1031,6 @@ void GameScene::update(float dt) {
         if (selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
-            if (!(pos.y <= 16 && pos.y >= 8 && pos.x >= 2 && pos.x <= 30)) {
-                CULog("out of boundary");
-                continue;
-            }
             Obstacle * ob;
             if (!_selectors.count(touchID)){
                 ob = getSelectedObstacle(pos, touchID);
@@ -1100,10 +1085,10 @@ void GameScene::update(float dt) {
         if (!selected.count(touchID)){
             auto pos = _input.getSelection(touchID);
             pos = _worldnode->screenToNodeCoords(pos)/_scale;
-            if (!(pos.y <= 17 && pos.y >= 4 && pos.x >= 2 && pos.x <= 30)) {
-                continue;
-                CULog("out of boundary");
-            }
+//            if (!(pos.y <= 17 && pos.y >= 4 && pos.x >= 2 && pos.x <= 30)) {
+//                continue;
+//                CULog("out of boundary");
+//            }
             if (cloudsToSplit_temp.count(touchID)){
                 auto cloudPos = cloudsToSplit_temp.at(touchID)->getPosition();
                 if (_selectors.count(touchID) && abs(pos.y - cloudPos.y) >= SWIPE_VERT_OFFSET){
@@ -1112,6 +1097,10 @@ void GameScene::update(float dt) {
                 }
                 cloudsToSplit_temp.erase(touchID);
             }
+//            if (!(pos.y <= 17 && pos.y >= 4 && pos.x >= 2 && pos.x <= 30)) {
+//                continue;
+//                CULog("out of boundary");
+//            }
             Obstacle * o;
             if (_selectors.count(touchID)){
                 o = _selectors.at(touchID);
@@ -1162,22 +1151,6 @@ void GameScene::update(float dt) {
             
             auto targetPos = c->getTargetPos();
             auto cloudPos = c->getPosition();
-            if (!(targetPos->y <= 17 && targetPos->y >= 4 && targetPos->x >= 2 && targetPos->x <= 30)) {
-                continue;
-                CULog("out of boundary");
-            }
-            else if (cloudPos.y > 17) {
-                c->setTargetPos(Vec2(cloudPos.x, 17));
-            }
-            else if (cloudPos.y < 4){
-                c->setTargetPos(Vec2(cloudPos.x, 4));
-            }
-            else if (cloudPos.x < 2){
-                c->setTargetPos(Vec2(2, cloudPos.y));
-            }
-            else if (cloudPos.x > 30){
-                c->setTargetPos(Vec2(30, cloudPos.y));
-            }
             c->setLinearVelocity(5*(targetPos->x - cloudPos.x), 5*(targetPos->y - cloudPos.y));
         }
     }

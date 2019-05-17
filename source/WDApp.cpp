@@ -114,6 +114,7 @@ void WeatherDefenderApp::onSuspend() {
         CULog("suspend being called");
         _paused = true;
     }
+    _suspended = true;
     AudioChannels::get()->pauseAll();
 }
 
@@ -130,6 +131,7 @@ void WeatherDefenderApp::onSuspend() {
 void WeatherDefenderApp::onResume() {
     CULog("on resume");
     _paused = false;
+    _suspended = false;
     AudioChannels::get()->resumeAll();
 }
 
@@ -176,6 +178,10 @@ void WeatherDefenderApp::update(float timestep) {
 //            CULog("start selected");
             _mainselected = _gameplay.init(_assets, "level1", false);
             _levelselected = _mainselected;
+            if (_mainselected) {
+                _gameplay.tutorialDisplay();
+                _paused = true;
+            }
             _main.resetSelectBool();
         }
         else if (_main.levelSelected()){
@@ -189,16 +195,18 @@ void WeatherDefenderApp::update(float timestep) {
         _levelSelect.update(0.01f);
     }
     else if (!_levelselected) {
-        CULog("from levelselect");
         auto level = "level" + std::to_string(_levelSelect.getLevelSelected());
         _levelSelect.dispose();
         CULogGLError();
         _levelselected = _gameplay.init(_assets, level, false);
-        _paused = false;
+        if (_levelselected) {
+            _gameplay.tutorialDisplay();
+            _paused = true;
+        }
     }
     
     else if (_gameplay.isActive() && _paused){
-        if (!_gameplay.paused()){
+        if (!_gameplay.paused() && _suspended){
             _gameplay.displayPause();
         }
         if (_gameplay.continueSelected()){
@@ -207,6 +215,7 @@ void WeatherDefenderApp::update(float timestep) {
             _gameplay.removeTutorialDisplay();
             _gameplay.resetPauseBool();
             _paused = false;
+            _suspended = false;
         }
     }
     
@@ -229,6 +238,7 @@ void WeatherDefenderApp::update(float timestep) {
             if (b) {
                 _gameplay.resetPauseBool();
                 _paused = false;
+                _suspended = false;
             }
         }
         else if (_gameplay.mainSelected()){
@@ -240,6 +250,7 @@ void WeatherDefenderApp::update(float timestep) {
             if (!_mainselected){
                 _gameplay.resetPauseBool();
                 _paused = false;
+                _suspended = false;
             }
         }
     }

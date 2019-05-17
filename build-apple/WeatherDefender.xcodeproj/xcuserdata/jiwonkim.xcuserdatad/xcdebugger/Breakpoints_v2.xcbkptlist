@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.4713891"
+            timestampString = "579803985.391019"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "739"
-            endingLineNumber = "739"
+            startingLineNumber = "741"
+            endingLineNumber = "741"
             landmarkName = "GameScene::combineByPinch(Cloud* cind1, Cloud* cind2)"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.471691"
+            timestampString = "579803985.391346"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1021"
-            endingLineNumber = "1021"
+            startingLineNumber = "1010"
+            endingLineNumber = "1010"
             landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.471909"
+            timestampString = "579803985.391574"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "18"
@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/WDApp.cpp"
-            timestampString = "579765217.199098"
+            timestampString = "579803985.3918051"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "45"
@@ -90,7 +90,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelSelect.cpp"
-            timestampString = "579236243.113611"
+            timestampString = "579803985.3918771"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "71"
@@ -122,7 +122,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579727021.049157"
+            timestampString = "579803761.725554"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "96"
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.472165"
+            timestampString = "579803985.391939"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "806"
-            endingLineNumber = "806"
+            startingLineNumber = "808"
+            endingLineNumber = "808"
             landmarkName = "GameScene::checkForCombining(Obstacle * ob)"
             landmarkType = "7">
             <Locations>
@@ -265,7 +265,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/LevelModel.cpp"
-            timestampString = "579727021.049662"
+            timestampString = "579803761.7259901"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
@@ -281,11 +281,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/WDApp.cpp"
-            timestampString = "579765217.1995"
+            timestampString = "579803985.392205"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
             landmarkName = "WeatherDefenderApp::update(float timestep)"
             landmarkType = "7">
          </BreakpointContent>
@@ -297,7 +297,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.h"
-            timestampString = "579765217.1995521"
+            timestampString = "579803985.392251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "352"
@@ -313,11 +313,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.472442"
+            timestampString = "579803985.392289"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "511"
-            endingLineNumber = "511"
+            startingLineNumber = "512"
+            endingLineNumber = "512"
             landmarkName = "GameScene::populate()"
             landmarkType = "7">
          </BreakpointContent>
@@ -329,11 +329,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.472653"
+            timestampString = "579803985.392505"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "515"
-            endingLineNumber = "515"
+            startingLineNumber = "516"
+            endingLineNumber = "516"
             landmarkName = "GameScene::populate()"
             landmarkType = "7">
          </BreakpointContent>
@@ -361,11 +361,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.47287"
+            timestampString = "579803985.39273"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "497"
-            endingLineNumber = "497"
+            startingLineNumber = "498"
+            endingLineNumber = "498"
             landmarkName = "GameScene::populate()"
             landmarkType = "7">
          </BreakpointContent>
@@ -377,11 +377,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/WDApp.cpp"
-            timestampString = "579765217.200282"
+            timestampString = "579803985.392941"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
             landmarkName = "WeatherDefenderApp::onResume()"
             landmarkType = "7">
          </BreakpointContent>
@@ -409,11 +409,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.4730951"
+            timestampString = "579803985.392997"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1139"
-            endingLineNumber = "1139"
+            startingLineNumber = "1128"
+            endingLineNumber = "1128"
             landmarkName = "GameScene::update(float dt)"
             landmarkType = "7">
          </BreakpointContent>
@@ -425,12 +425,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../source/GameController.cpp"
-            timestampString = "579767472.473307"
+            timestampString = "579803985.393211"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "618"
-            endingLineNumber = "618"
+            startingLineNumber = "620"
+            endingLineNumber = "620"
             landmarkName = "GameScene::populate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/WDApp.cpp"
+            timestampString = "579803985.39343"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "214"
+            endingLineNumber = "214"
+            landmarkName = "WeatherDefenderApp::update(float timestep)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../source/WDApp.cpp"
+            timestampString = "579803985.393472"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "WeatherDefenderApp::update(float timestep)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
