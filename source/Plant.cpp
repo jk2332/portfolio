@@ -286,5 +286,5 @@ void Plant::setSceneNode(const std::shared_ptr<cugl::Node>& node, std::string na
     node->addChildWithName(_node, name, plantZ);
     node->addChildWithName(_signNode, name + "sign", signZ);
     node->addChildWithName(_sparkleNode, name + "sparkle", signZ);
-    node->addChildWithName(_deathNode, name + "death", signZ);
+    node->addChildWithName(_deathNode, name + "death", plantZ);
 }
