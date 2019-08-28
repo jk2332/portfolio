@@ -1,0 +1,347 @@
+{
+	"textures": {
+		"earth": {
+			"file":     "textures/earthtile.png",
+            "wrapS":    "repeat",
+            "wrapT":    "repeat"
+		},
+        "sparkle-film": {
+            "file":     "textures/sparkle-filmstrip.png"
+        },
+        "ipad-4" : {
+            "file":     "textures/ipad-4.png"
+        },
+        "ipad-7" : {
+            "file":     "textures/ipad-7.png"
+        },
+        "ipad-10" : {
+            "file":     "textures/ipad-10.png"
+        },
+        "ipad-13" : {
+            "file":     "textures/ipad-13.png"
+        },
+        "ipad-16" : {
+            "file":     "textures/ipad-16.png"
+        },
+        "ipad-19" : {
+            "file":     "textures/ipad-19.png"
+        },
+        "ipad-22" : {
+            "file":     "textures/ipad-22.png"
+        },
+        "ipad-25" : {
+            "file":     "textures/ipad-25.png"
+        },
+        "ipad-28" : {
+            "file":     "textures/ipad-28.png"
+        },
+        "ipad-31" : {
+            "file":     "textures/ipad-31.png"
+        },
+        "background4" : {
+            "file":     "textures/background4.png"
+        },
+        "background7" : {
+            "file":     "textures/background7.png"
+        },
+        "background10" : {
+            "file":     "textures/background10.png"
+        },
+        "background13" : {
+            "file":     "textures/background13.png"
+        },
+        "background16" : {
+            "file":     "textures/background16.png"
+        },
+        "background19" : {
+            "file":     "textures/background19.png"
+        },
+        "background22" : {
+            "file":     "textures/background22.png"
+        },
+        "background25" : {
+            "file":     "textures/background25.png"
+        },
+        "background28" : {
+            "file":     "textures/background28.png"
+        },
+        "background31" : {
+            "file":     "textures/background31.png"
+        },
+        "rain-film": {
+            "file":     "textures/rain3.png"
+        },
+        "lightning-film": {
+            "file":     "textures/lightning-film.png"
+        },
+        "shadow": {
+            "file":     "textures/2-tile-shadow.png"
+        },
+        "tile": {
+            "file":     "textures/tile.png"
+        },
+        "background": {
+            "file":     "textures/gamescreen.png"
+        },
+        "cloudFace": {
+            "file":     "textures/cf2.png"
+        },
+        "tomato1": {
+            "file":     "textures/tomato-film1.png"
+        },
+        "tomato2": {
+            "file":     "textures/tomato-film2.png"
+        },
+        "tomato3": {
+            "file":     "textures/tomato-film3.png"
+        },
+        "corn1": {
+            "file":     "textures/corn1.png"
+        },
+        "corn2": {
+            "file":     "textures/cornp1.png"
+        },
+        "corn3": {
+            "file":     "textures/corn3.png"
+        },
+        "eggplant1": {
+            "file":     "textures/eggplant1.png"
+        },
+        "eggplant2": {
+            "file":     "textures/eggplant2.png"
+        },
+        "eggplant3": {
+            "file":     "textures/eggplant3.png"
+        },
+        "eggplant-death1": {
+            "file":     "textures/eggplant-death1.png"
+        },
+        "eggplant-death2": {
+            "file":     "textures/eggplant-death2.png"
+        },
+        "eggplant-death3": {
+            "file":     "textures/eggplant-death3.png"
+        },
+        "tomato-death1": {
+            "file":     "textures/tom-death1.png"
+        },
+        "tomato-death2": {
+            "file":     "textures/tom-death2.png"
+        },
+        "tomato-death3": {
+            "file":     "textures/tom-death3.png"
+        },
+        "corn-death1": {
+            "file":     "textures/corn-death1.png"
+        },
+        "corn-death2": {
+            "file":     "textures/corn-death2.png"
+        },
+        "corn-death3": {
+            "file":     "textures/corn-death3.png"
+        },
+        "snail": {
+            "file":     "textures/snailwalk.png"
+        },
+        "snaileat": {
+            "file":     "textures/snaileat.png"
+        },
+        "snailrev": {
+            "file":     "textures/snailwalkrev.png"
+        },
+        "raccooneat": {
+            "file":     "textures/raccooneat.png"
+        },
+        "raccoon": {
+            "file":     "textures/raccoonwalk.png"
+        },
+        "raccoonrev": {
+            "file":     "textures/raccoonwalkrev.png"
+        },
+        "rabbiteat": {
+            "file":     "textures/rabbiteat.png"
+        },
+        "rabbit": {
+            "file":     "textures/rabbitwalk.png"
+        },
+        "snailscare": {
+            "file":     "textures/snailscare.png"
+        },
+        "raccoonscare": {
+            "file":     "textures/raccoonscare.png"
+        },
+        "rabbitscare": {
+            "file":     "textures/rabbitscare.png"
+        },
+        "progressbar": {
+            "file":     "textures/progressbar.png"
+        },
+        "barempty": {
+            "file":     "textures/empty-bar.png"
+        },
+        "barfull": {
+            "file":     "textures/full-bar.png"
+        },
+        "suncap": {
+            "file":     "textures/sun.png"
+        },
+        "mooncap": {
+            "file":     "textures/moon.png"
+        },
+        "iconShade": {
+            "file":     "textures/iconShade.png"
+        },
+        "iconSad": {
+            "file":     "textures/iconSad.png"
+        },
+        "iconHappy": {
+            "file":     "textures/iconHappy.png"
+        },
+        "iconRain": {
+            "file":     "textures/iconRain.png"
+        },
+        "signSun": {
+            "file":     "textures/signSun.png"
+        },
+        "signShade": {
+            "file":     "textures/signShade.png"
+        },
+        "signSkull": {
+            "file":     "textures/signSkull.png"
+        },
+        "signHappy": {
+            "file":     "textures/signHappy.png"
+        },
+        "signRain": {
+            "file":     "textures/signRain.png"
+        },
+        "smallRain": {
+            "file":     "textures/small_rain.png"
+        },
+        "iconSun": {
+            "file":     "textures/iconSun.png"
+        },
+        "particle": {
+            "file":     "textures/particle1.png"
+        },
+        "backToLevelSelectButton": {
+            "file":     "textures/Back.png"
+        },
+        "rcIndicator": {
+            "file":     "textures/rcIndicator.png"
+        },
+        "pauseButton": {
+            "file":     "textures/Pause_1.png"
+        },
+        "victoryboard-1" : {
+            "file":     "textures/Win-Screen-2.png"
+        },
+        "victoryboard-2" : {
+            "file":     "textures/Win-Screen-3.png"
+        },
+        "victoryboard-3" : {
+            "file":     "textures/Win-Screen-4.png"
+        },
+        "ipad-1" : {
+            "file":     "textures/ipad-1.png"
+        },
+        "background1" : {
+            "file":     "textures/background1.png"
+        },
+        "bigBackground" : {
+            "file":     "textures/bigBackground.png"
+        },
+        "level1-tutorial" : {
+            "file":     "textures/Level-1.png"
+        },
+        "level2-tutorial" : {
+            "file":     "textures/Level-2.png"
+        },
+        "level3-tutorial" : {
+            "file":     "textures/Level-3.png"
+        },
+        "level5-tutorial" : {
+            "file":     "textures/Level-5.png"
+        },
+        "level6-tutorial" : {
+            "file":     "textures/Level-6.png"
+        }
+	},
+    "sounds": {
+        "plantDeathSound": {
+            "type":     "sample",
+            "file":     "sounds/plantdeath.wav",
+            "stream":   false
+        },
+        "endgameSound": {
+            "type":     "sample",
+            "file":     "sounds/endgame.wav",
+            "stream":   false
+        },
+        "rainSound": {
+            "type":     "sample",
+            "file":     "sounds/rain01.wav",
+            "stream":   false
+        },
+        "loseSound": {
+            "type":     "sample",
+            "file":     "sounds/guitar01.wav",
+            "stream":   false
+        },
+        "thunderSound": {
+            "type":     "sample",
+            "file":     "sounds/thunder.wav",
+            "stream":   false
+        },
+        "combineSound": {
+            "type":     "sample",
+            "file":     "sounds/combine.wav",
+            "stream":   false
+        },
+        "buttonSound": {
+            "type":     "sample",
+            "file":     "sounds/pressbutton.wav",
+            "stream":   false
+        },
+        "cloudFailSound": {
+            "type":     "sample",
+            "file":     "sounds/nosplitcombine.wav",
+            "stream":   false
+        },
+        "createCloudSound": {
+            "type":     "sample",
+            "file":     "sounds/createcloud.wav",
+            "stream":   false
+        },
+        "splitSound": {
+            "type":     "sample",
+            "file":     "sounds/split.wav",
+            "stream":   false
+        },
+        "fullGrownSound": {
+            "type":     "sample",
+            "file":     "sounds/fullgrown.wav",
+            "stream":   false
+        },
+        "gameplay": {
+            "type":     "sample",
+            "file":     "sounds/gameplayMusic.ogg",
+            "stream":   true
+        },
+        "mainMenu": {
+            "type":     "sample",
+            "file":     "sounds/menuMusic.ogg",
+            "stream":   true
+        }
+    },
+	"fonts": {
+		"retro": {
+			"file":     "fonts/RetroGame.ttf",
+			"size":     64
+		},
+        "chalkboard": {
+            "file":     "fonts/ChalkboardSE-Regular.ttf",
+            "size":     64
+        }
+	}
+}
