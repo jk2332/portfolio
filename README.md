@@ -1,4 +1,4 @@
-![WeatherDefender](/images/logo.png)
+![WeatherDefender](/wd-1.png)
 
 Weather Defender is a resource management game that challenges players to protect their farm’s harvest from harsh weather patterns and ravenous pests. With multiple crops to tend to at once, keeping the harvest safe throughout the day is a tall order. Thankfully, a band of little storm clouds is here to help! Players can guide the kindly clouds to satisfy the ever-changing needs of their crops and keep the hungry critters at bay.
 
