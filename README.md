@@ -1,4 +1,4 @@
-## Different Projects are included in different branch!
+## Note: Check out other branches for different projects!
 
 ![WeatherDefender](/wd-1.png)
 ![What is this game?](/wd-2.png)
